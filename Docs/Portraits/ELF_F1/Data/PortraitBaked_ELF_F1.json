@@ -1,0 +1,68 @@
+{
+  "portraitId": "ELF_F1",
+  "canvasPx": [
+    1024,
+    1536
+  ],
+  "pivotNormalized": [
+    0.5,
+    0.5
+  ],
+  "irisSolidRegions": [
+    {
+      "x": 0.423828125,
+      "y": 0.6751302083333334,
+      "width": 0.0390625,
+      "height": 0.020833333333333332
+    },
+    {
+      "x": 0.5390625,
+      "y": 0.701171875,
+      "width": 0.0439453125,
+      "height": 0.022786458333333332
+    }
+  ],
+  "irisSolidMask": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_SOLID_MASK.png",
+  "hairBack": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_BACK.png",
+  "eyeClosed": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_EYE_CLOSED.png",
+  "hairFront": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_FRONT.png",
+  "defaultEye": "blue",
+  "colors": {
+    "blue": "#3F74C8",
+    "green": "#3F9A4A",
+    "purple": "#8A4FC0"
+  },
+  "defaultHair": "gold",
+  "hairColors": {
+    "gold": "#D9B34A",
+    "silver": "#C9CCD6",
+    "black": "#2B2A33"
+  },
+  "styles": {
+    "soft": {
+      "label": "부드러운 반사",
+      "base": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_BASE_IRIS_BAKED_SOFT.png",
+      "highlight": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_HIGHLIGHT_SOFT.png"
+    },
+    "clear": {
+      "label": "선명한 반짝임",
+      "base": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_BASE_IRIS_BAKED_CLEAR.png",
+      "highlight": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_HIGHLIGHT_CLEAR.png"
+    },
+    "glow": {
+      "label": "아래쪽 잔광",
+      "base": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_BASE_IRIS_BAKED_GLOW.png",
+      "highlight": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_HIGHLIGHT_GLOW.png"
+    },
+    "oblique": {
+      "label": "비스듬한 빛",
+      "base": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_BASE_IRIS_BAKED_OBLIQUE.png",
+      "highlight": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_HIGHLIGHT_OBLIQUE.png"
+    },
+    "slit": {
+      "label": "세로 동공",
+      "base": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_BASE_IRIS_BAKED_SLIT.png",
+      "highlight": "Assets/Arts/Portraits/ELF_F1/Iris/Baked/POR_ELF_F1_IRIS_HIGHLIGHT_SLIT.png"
+    }
+  }
+}
