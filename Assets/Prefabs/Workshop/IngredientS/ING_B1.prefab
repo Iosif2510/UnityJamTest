@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8544992720750583973}
   - component: {fileID: 8621574350093789113}
   - component: {fileID: 7238771885242772110}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ING_B1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
