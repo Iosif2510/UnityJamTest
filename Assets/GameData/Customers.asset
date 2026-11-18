@@ -35,6 +35,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -73,6 +75,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -111,6 +115,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -148,6 +154,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -186,6 +194,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -224,6 +234,8 @@ MonoBehaviour:
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: ddfe6d56fa775dde9e48412642258948, type: 3}
+    happyExpression: {fileID: 21300000, guid: a86ecdc51a8c446480d89f0a037cdae2, type: 3}
+    angryExpression: {fileID: 21300000, guid: 6c2e207b20644353b87beb7a52e6100d, type: 3}
     hairFront: {fileID: 21300000, guid: 685da72a7dc9552ea278e65afa602c5b, type: 3}
     hairBack: {fileID: 21300000, guid: 6f6db4bbfbc95d3185597751b514e813, type: 3}
     hairColors: 
@@ -262,6 +274,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 538a4c6adf4a56d0b12406a1ac9332b6, type: 3}
+    happyExpression: {fileID: 21300000, guid: d412589c397441ecb018ebc61fa024c7, type: 3}
+    angryExpression: {fileID: 21300000, guid: 6ea88ca4a80b4f0cb46de01263bb3705, type: 3}
     hairFront: {fileID: 21300000, guid: a31ad37a275b5eb2a2e55725af7cfda9, type: 3}
     hairBack: {fileID: 21300000, guid: faf704fbc5a25f5a95dc8cceea3c555c, type: 3}
     hairColors: 
@@ -300,6 +314,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -337,6 +353,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -375,6 +393,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: b7ecec968a0151ffb3e9d4e52ea0987e, type: 3}
+    happyExpression: {fileID: 21300000, guid: 08cbf3c947214637a68d1a0f51c5dc1e, type: 3}
+    angryExpression: {fileID: 21300000, guid: 19d606ec27d649ff9573b3d38542f84a, type: 3}
     hairFront: {fileID: 21300000, guid: b3c2f0970352565ea94766ae1b301945, type: 3}
     hairBack: {fileID: 21300000, guid: b931dad91dd4555db4cf5f063ae51c80, type: 3}
     hairColors: 
@@ -443,6 +463,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -480,6 +502,8 @@ MonoBehaviour:
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -518,6 +542,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -558,6 +584,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 82aeadea13295849bf7cd4d914236267, type: 3}
+    happyExpression: {fileID: 21300000, guid: 05e09f15bbc04e98bc3e687e341bacfc, type: 3}
+    angryExpression: {fileID: 21300000, guid: 18751e81c23b42ec875b09714bc77ce4, type: 3}
     hairFront: {fileID: 21300000, guid: ceb06b47298c533293ca1b80da090a05, type: 3}
     hairBack: {fileID: 21300000, guid: 70787c6a364055b3aa402b3d3feb1aee, type: 3}
     hairColors: 
@@ -597,6 +625,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -637,6 +667,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -676,6 +708,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -715,6 +749,8 @@ MonoBehaviour:
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -754,6 +790,8 @@ MonoBehaviour:
     earType: 1
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 949983452e8f504e8d4b844991c1fe0b, type: 3}
+    happyExpression: {fileID: 21300000, guid: c90f6522c172481cabcf9db39d48e865, type: 3}
+    angryExpression: {fileID: 21300000, guid: 5c86cf97b576483fa2833eb562313f4c, type: 3}
     hairFront: {fileID: 21300000, guid: 6a9fca233e4a5e9cb8d5ba366682f0c5, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
@@ -787,6 +825,8 @@ MonoBehaviour:
     earType: 1
     hasFang: 1
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -820,6 +860,8 @@ MonoBehaviour:
     earType: 1
     hasFang: 0
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -853,6 +895,8 @@ MonoBehaviour:
     earType: 1
     hasFang: 1
     eyeClosed: {fileID: 0}
+    happyExpression: {fileID: 0}
+    angryExpression: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -872,4 +916,4 @@ MonoBehaviour:
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
     irisDetails: []
-  slimePortrait: {fileID: 21300000, guid: 21e81d1868785374982584ba6d6647a1, type: 3}
+  slimePortrait: {fileID: 21300000, guid: 24de899a2fe84add937cb7e915cfe922, type: 3}

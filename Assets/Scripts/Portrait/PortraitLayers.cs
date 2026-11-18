@@ -51,6 +51,8 @@ namespace PotionShop.Portraits
             }
         }
 
+        public void ShowExpression(Sprite sprite) => Set(eyeClosed, sprite);
+
         private static void Set(Image image, Sprite sprite)
         { image.sprite = sprite; image.enabled = sprite != null; image.raycastTarget = false; }
 

@@ -41,6 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Order Background
+    uniqueID: 595799738
+    locked: 0
+  - name: Order Portrait
+    uniqueID: 1604785249
+    locked: 0
+  - name: Order Foreground
+    uniqueID: 1436628987
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1

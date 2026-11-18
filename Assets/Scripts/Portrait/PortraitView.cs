@@ -14,7 +14,11 @@ namespace PotionShop.Portraits
         public PortraitLayers Layers => layers;
         public PortraitBlink Blink => blink;
         public PortraitRigModule Rig => rig;
-        public void Show(CustomerProfile profile, AppearanceValue hair, AppearanceValue eyes, PortraitColorCatalog palette)
+        public void Show(CustomerProfile profile, AppearanceValue hair, AppearanceValue eyes, PortraitColorCatalog palette) =>
+            Show(profile, hair, eyes, palette, null);
+
+        private void Show(CustomerProfile profile, AppearanceValue hair, AppearanceValue eyes, PortraitColorCatalog palette,
+            Sprite expression)
         {
             if (profile == null || palette == null) throw new ArgumentNullException("Portrait profile/palette");
             if ((hair != AppearanceValue.None && !profile.HairColors.Contains(hair)) ||
@@ -25,13 +29,19 @@ namespace PotionShop.Portraits
             layers.Compose(profile);
             var hairTint = profile.UseAccessoryTint ? profile.AccessoryTint : palette.Get(PortraitSlot.Hair, hair);
             colors.Apply(hairTint, palette.Get(PortraitSlot.Eyes, eyes));
+            if (expression != null)
+            {
+                layers.ShowExpression(expression);
+                return;
+            }
             rig?.Load(profile.RigPrefab, profile.SpineRig);
             blink.Play();
         }
-        public void Show(GeneratedOrder order, PortraitColorCatalog palette) => Show(order.Customer,
+        public void Show(GeneratedOrder order, PortraitColorCatalog palette, Sprite expression = null) => Show(order.Customer,
             order.Portrait.First(p => p.Slot == PortraitSlot.Hair).Appearance,
-            order.Portrait.First(p => p.Slot == PortraitSlot.Eyes).Appearance, palette);
+            order.Portrait.First(p => p.Slot == PortraitSlot.Eyes).Appearance, palette, expression);
         public void Tint(Color tint) => colors.AnimateTint(tint);
+        public void SetTint(Color tint) => colors.SetTint(tint);
         public void ShowSlime(Sprite sprite)
         {
             if (sprite == null) throw new InvalidOperationException("Assign slime portrait in Customers.");

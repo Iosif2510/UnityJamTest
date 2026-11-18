@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using PotionShop.Data;
+using PotionShop.Portraits;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,8 @@ namespace PotionShop
     [DisallowMultipleComponent]
     public sealed class OrderSceneView : MonoBehaviour
     {
+        private static readonly Color OddPotionTint = new(0.62f, 0.95f, 0.69f);
+
         [SerializeField] private OrderDialogueView dialogueView;
         [SerializeField] private Button enterWorkshopButton;
         [SerializeField] private Text phaseLabel;
@@ -24,10 +27,11 @@ namespace PotionShop
         [SerializeField] private GameObject resultPanel;
         [SerializeField] private Text resultSummary;
         [SerializeField] private Button nextOrderButton;
-        [SerializeField] private PotionShop.Portraits.PortraitView portraitView;
+        [SerializeField] private PortraitView portraitView;
         [SerializeField] private PortraitColorCatalog portraitColors;
 
         private RoundDirector round;
+        private PortraitView resultPortrait;
         private RoundPhase? shownPhase;
         private CancellationTokenSource dialoguePlayback;
         private BottleShape chosenBottle;
@@ -37,6 +41,7 @@ namespace PotionShop
         private void Start()
         {
             round = RoundDirector.Instance;
+            resultPortrait = resultPanel.GetComponentInChildren<PortraitView>(true);
             enterWorkshopButton.onClick.AddListener(AdvanceDialogue);
             squareBottle.onClick.AddListener(() => SelectBottle(BottleShape.Square));
             heartBottle.onClick.AddListener(() => SelectBottle(BottleShape.Heart));
@@ -175,6 +180,7 @@ namespace PotionShop
             else if (result)
             {
                 RoundResult score = round.Result;
+                ShowResultPortrait(score);
                 resultSummary.text = score.TimedOut
                     ? "Time expired\nThe customer left without a potion.\n\nTotal: 0"
                     : $"Ingredients: {score.CorrectIngredients}/{RecipeEntry.RequiredIngredientKinds} (+{score.IngredientPoints})\n" +
@@ -218,6 +224,34 @@ namespace PotionShop
 
         private void SetAdvanceLabel(string title) => enterWorkshopButton.GetComponentInChildren<Text>(true).text = title;
 
+        private void ShowResultPortrait(RoundResult result)
+        {
+            if (resultPortrait == null) return;
+
+            if (result.Effect == CustomerEffect.Slime && round.SlimePortrait != null)
+            {
+                resultPortrait.gameObject.SetActive(true);
+                resultPortrait.ShowSlime(round.SlimePortrait);
+                return;
+            }
+
+            GeneratedOrder order = round.CurrentOrder;
+            CustomerProfile customer = order.Customer;
+            bool visible = portraitColors != null && customer.FixedAppearance && customer.BasePortrait != null;
+            resultPortrait.gameObject.SetActive(visible);
+            if (!visible) return;
+
+            Sprite expression = result.TimedOut ? customer.AngryExpression : result.DrinkDialogueKey switch
+            {
+                "aft_cured" => customer.HappyExpression,
+                "aft_odd" => customer.AngryExpression,
+                _ => null
+            };
+            resultPortrait.Show(order, portraitColors, expression);
+            if (result.Effect == CustomerEffect.OddTint)
+                resultPortrait.SetTint(OddPotionTint);
+        }
+
         private void ApplyEffect(CustomerEffect effect)
         {
             if (portraitView == null) return;
@@ -227,7 +261,7 @@ namespace PotionShop
                 portraitView.ShowSlime(round.SlimePortrait);
             }
             else if (effect == CustomerEffect.OddTint && portraitView.isActiveAndEnabled)
-                portraitView.Tint(new Color(0.62f, 0.95f, 0.69f));
+                portraitView.Tint(OddPotionTint);
         }
 
         private void SelectBottle(BottleShape bottle)
