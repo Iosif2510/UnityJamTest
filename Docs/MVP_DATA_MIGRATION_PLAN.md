@@ -262,7 +262,7 @@ MVP PDF 11~17쪽과 이 문서 6절·11절의 구현 묶음 5를 구체화한다
 
 ### 대사 공급자와 요청 수명
 
-- `IDialogueProvider`의 비동기 진입점은 주문의 대사 입력과 취소 토큰을 받는 `UniTask`로 설계한다. 기본 공급은 해당 주문의 기존 승인 대사와 공통 8종 반응을 제공한다. `OpenAiDialogueProvider`는 Unity의 `UnityWebRequest`로 중계 프로세스와 통신하고 외부 응답을 검증 가능한 데이터로 변환한다. 검수용 공급자에서 성공·지연·오류를 주입할 수 있게 한다.
+- `IDialogueProvider`의 비동기 진입점은 주문의 대사 입력과 취소 토큰을 받는 `UniTask`다. 기본 공급은 해당 주문의 기존 승인 대사와 공통 8종 반응을 제공한다. `OpenAiDialogueProvider`는 로컬 전용 `HttpClient`로 중계 프로세스와 통신하고 응답을 검증한다. 검수용 중계에서 성공·지연·오류를 주입할 수 있다.
 - `RoundDirector`가 준비 토큰과 주문별 요청 ID를 소유한다. 시드는 게임 재현에 사용하고 요청 ID는 별도로 생성한다. 최대 대기 시간 이후나 중단·재시작·Director 파괴 이후에는 응답을 적용하지 않는다. 씬 이동을 견뎌야 하는 주문 대사와 뷰가 소유한 재생 토큰을 분리한다. 주문이 폐기되면 취소하고 폐기된 주문의 후처리가 다음 주문 상태를 건드리지 않게 한다. Play Mode 재진입 때 새 가변 static 요청 상태에 의존하지 않는다.
 - 성공하면 검증된 9줄을 한 묶음으로 채택한다. 준비 시간 초과, 연결 실패, 제공자 비활성, HTTP 오류, 거절·불완전 응답, 스키마·대사 검사 실패 시 주문 전체를 기존 대사로 확정한다. 명시적 주문 종료 시에는 준비를 폐기한다. 한 번 확정한 묶음은 씬 왕복과 반응 재생 동안 사용한다. 온라인 경로의 자동 재시도는 클라이언트와 중계 모두 끄고, 동일 요청 ID는 중계에서 중복 실행을 막는다. 시간 초과 대사는 항상 승인된 고정 대사를 읽는다.
 - 유효한 기존 인물×질병 override가 있다면 기본 공급자가 현재 `OrderGenerator`의 선택 및 검증을 유지하고, 그 외에는 질병별 SYM fallback을 쓴다. 공통 반응과 TIMEOUT은 기존 카탈로그를 읽는다. 생성 대사는 현재 주문 메모리에 보관한다.
@@ -277,7 +277,7 @@ MVP PDF 11~17쪽과 이 문서 6절·11절의 구현 묶음 5를 구체화한다
    중계 환경의 `OPENAI_API_KEY`를 사용해 `POST /v1/responses`를 한 번 요청한다. `text.format`에 `type: json_schema`, `strict: true`를 설정한다. 단건·비스트리밍 요청으로 전체 결과를 받고 `store: false`를 지정한다. 모델 1차 후보는 `gpt-5.4-mini`, 출력 예산은 `max_output_tokens: 1600`으로 시작한다. 한국어 출력의 품질·지연·토큰 사용을 실측하고, 시연에서 사용할 모델은 검증한 스냅샷으로 고정한다. 중계에서 9초, Unity의 준비 전체에서 10초를 초기 대기 상한으로 둔다. [Responses API 가이드](https://developers.openai.com/api/docs/guides/migrate-to-responses) · [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) · [모델 사양](https://developers.openai.com/api/docs/models/gpt-5.4-mini)
 3. **키 보관과 시연 운영**
 
-   키는 중계 프로세스에서만 읽는다. Editor와 Windows Player는 같은 중계 주소와 대사 계약을 사용한다. 리포지토리에서 Git 무시 대상으로 확인된 `Assets/OpenAI_API_DELEATE_ON_BUILD.txt`는 내용 확인 없이 파일 위치만 확인했다. 연동 시 그 경로를 키 입력으로 사용하지 않고, 부스 빌드 검수에서 키 파일과 키 값이 Player·로그에 포함되지 않는지 확인한다. 부스 시작 시 중계를 별도 실행하고, 미실행 또는 오프라인이면 고정 대사로 진행한다. [OpenAI API 키 보관 지침](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)
+   키는 중계 프로세스에서만 사용한다. Editor와 Windows Player는 같은 중계 주소와 대사 계약을 사용한다. 운영자는 중계를 띄울 때 가려진 입력란에 키를 붙여 넣거나 프로세스 환경 변수로 전달한다. 부스 빌드 검수에서 키 파일과 키 값이 Player·로그에 포함되지 않는지 확인한다. 부스 시작 시 중계를 별도 실행하고, 미실행 또는 오프라인이면 고정 대사로 진행한다. [OpenAI API 키 보관 지침](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)
 
 ### 생성 형식과 승인 기준
 
@@ -306,3 +306,12 @@ MVP PDF 11~17쪽과 이 문서 6절·11절의 구현 묶음 5를 구체화한다
 운영 로그는 요청 ID, 모델/프롬프트/데이터 리비전, 대기 시간, 토큰 수, 공급자 선택과 대체 사유를 기록한다. 키와 요청·응답 본문은 일반 로그에서 제외한다. Unity 검증 시 프로젝트 지침에 따라 기존 Editor 인스턴스를 확인해 사용한다.
 
 이 절은 문서·코드·SO의 정적 대조와 공식 API 사양을 근거로 작성했다. 모델·시간·길이 제한값의 실측과 Player 검수는 5-3·5-4에서 진행한다.
+
+### 구현 및 실행
+
+- `01_Order` 씬의 `RoundDirector` Inspector에서 **Use Dialogue Api**를 켜면 다음 주문부터 중계를 사용한다. 기본값은 꺼짐이다. 중계가 없거나 응답이 탈락하면 고정 대사로 진행한다.
+- Node.js 22 환경에서 중계 프로세스에 `OPENAI_API_KEY` 환경 변수를 전달하고 리포지토리 루트에서 `node Tools/OrderDialogueRelay/relay.mjs`를 실행한다. 키는 Unity 에셋·리포지토리·Player에 포함하지 않는다. 중계는 `127.0.0.1:8765`에 연결된다. Unity는 로컬 전용 `HttpClient`를 사용해 프로젝트 전체의 HTTP 보안 설정을 유지한다.
+- 프로젝트 루트에서 `node Tools/OrderDialogueRelay/relay.mjs`를 실행하고 가려진 입력란에 키를 붙여 넣는다. 기존 `OPENAI_API_KEY`가 설정돼 있으면 이를 사용한다. 입력한 키는 실행 중인 중계에서만 사용한다.
+- [고정 프롬프트](../Tools/OrderDialogueRelay/order-dialogue.ko.txt)는 첫 `developer` 메시지, 주문 데이터는 뒤의 `user` 메시지로 전송한다. 같은 프롬프트·스키마 리비전에서 동일한 `prompt_cache_key`를 사용한다. 중계 로그의 `cachedTokens`로 적중을 확인하며 프롬프트 파일을 수정했다면 중계를 재시작한다.
+- 기존 Unity Editor의 Play Mode에서 기본 끔, 주문별 1회 요청, 창고 왕복 후 수령·복용 대사와 점수 패널, 잘못된 응답 및 중계 대기 시간 초과의 고정 대사 전환을 확인했다. OpenAI 실호출에서 9줄과 증상 태그 3쌍을 받았으며, 최종 프롬프트의 두 번째 요청에서 입력 2,852토큰 중 2,048토큰의 캐시 적중을 확인했다.
+- Windows 검수 빌드는 중단했다. Player에서 전체 주문 흐름과 키 파일 패키징 여부를 확인하는 작업은 후속 빌드 검증 단계에 남긴다.

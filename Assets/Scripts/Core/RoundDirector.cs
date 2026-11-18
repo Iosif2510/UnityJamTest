@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using PotionShop.Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace PotionShop
 {
-    public enum RoundPhase { Waiting, Consult, Storage, Prescribe, Result, Ending }
+    public enum RoundPhase { Waiting, Consult, Storage, Prescribe, Result, Ending, Preparing }
 
     [DisallowMultipleComponent]
     public sealed class RoundDirector : MonoBehaviour
@@ -15,11 +17,15 @@ namespace PotionShop
         private const string WorkshopScene = "02_Workshop";
 
         [SerializeField] private PotionCatalog catalog;
+        [SerializeField, Tooltip("Generate dialogue through the local OpenAI relay starting with the next order.")]
+        private bool useDialogueApi;
 
         private readonly System.Random seedSource = new();
         private LoadedCatalog loadedCatalog;
         private AsyncOperation sceneLoad;
         private double deadline;
+        private CancellationTokenSource dialoguePreparation;
+        private OpenAiDialogueProvider onlineDialogue;
 
         public static RoundDirector Instance { get; private set; }
         public RoundPhase Phase { get; private set; }
@@ -61,6 +67,8 @@ namespace PotionShop
         {
             if (Instance == this)
                 Instance = null;
+            dialoguePreparation?.Cancel();
+            onlineDialogue?.Dispose();
         }
 
         private void Update()
@@ -85,9 +93,60 @@ namespace PotionShop
 #endif
             SubmittedIngredients = null;
             Result = null;
+            if (useDialogueApi && CurrentOrder.Voice != null)
+            {
+                Phase = RoundPhase.Preparing;
+                dialoguePreparation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+                onlineDialogue ??= new OpenAiDialogueProvider();
+                PrepareDialogue(CurrentOrder, dialoguePreparation, onlineDialogue).Forget();
+            }
+            else
+                StartConsultation();
+            return true;
+        }
+
+        private async UniTask PrepareDialogue(GeneratedOrder order, CancellationTokenSource preparation,
+            IDialogueProvider provider)
+        {
+            using (preparation)
+            {
+                var token = preparation.Token;
+                var started = System.Diagnostics.Stopwatch.StartNew();
+                using var timeout = preparation.CancelAfterSlim(OpenAiDialogueProvider.PreparationLimit, DelayType.Realtime);
+                try
+                {
+                    var bundle = await provider.GenerateAsync(order, Tuning.LineLength, token);
+                    if (IsPreparing(order) && !token.IsCancellationRequested &&
+                        started.Elapsed < OpenAiDialogueProvider.PreparationLimit)
+                        order.SetGeneratedDialogue(bundle.Symptoms, bundle.Reactions);
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    if (IsPreparing(order))
+                        Debug.LogWarning("[Order dialogue] Fallback: preparation_timeout.", this);
+                }
+                catch (DialogueProviderException exception)
+                {
+                    if (IsPreparing(order))
+                        Debug.LogWarning($"[Order dialogue] Fallback: {exception.Reason}.", this);
+                }
+                finally
+                {
+                    if (dialoguePreparation == preparation)
+                        dialoguePreparation = null;
+                    if (IsPreparing(order))
+                        StartConsultation();
+                }
+            }
+        }
+
+        private bool IsPreparing(GeneratedOrder order) =>
+            Instance == this && this != null && Phase == RoundPhase.Preparing && CurrentOrder == order;
+
+        private void StartConsultation()
+        {
             deadline = Time.unscaledTimeAsDouble + loadedCatalog.Tuning.TimeLimitSeconds;
             Phase = RoundPhase.Consult;
-            return true;
         }
 
         public bool TryEnterStorage()

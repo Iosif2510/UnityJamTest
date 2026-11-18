@@ -733,6 +733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.RoundDirector
   catalog: {fileID: 11400000, guid: 1ca709528c3fcd14d99c07b9e424f23c, type: 2}
+  useDialogueApi: 0
 --- !u!4 &1733224157
 Transform:
   m_ObjectHideFlags: 0

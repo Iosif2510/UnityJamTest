@@ -6,6 +6,11 @@ namespace PotionShop.Data
 {
     public sealed class GeneratedOrder
     {
+        private readonly DialogueOption fallbackDialogue;
+        private readonly IReadOnlyDictionary<string, string> fallbackReactions;
+        private DialogueOption generatedDialogue;
+        private IReadOnlyDictionary<string, string> generatedReactions;
+
         internal GeneratedOrder(int seed, string previousDiseaseId, CustomerProfile customer,
             PortraitPart[] portrait, DiseaseEntry disease, DialogueOption dialogue, RecipeEntry recipe,
             BottleShape bottle, InkRule ink, CharacterVoice voice, IReadOnlyDictionary<string, string> reactionLines)
@@ -15,12 +20,12 @@ namespace PotionShop.Data
             Customer = customer;
             Portrait = Array.AsReadOnly(portrait);
             Disease = disease;
-            Dialogue = dialogue;
+            fallbackDialogue = dialogue;
             Recipe = recipe;
             Bottle = bottle;
             Ink = ink;
             Voice = voice;
-            ReactionLines = reactionLines;
+            fallbackReactions = reactionLines;
         }
 
         public int Seed { get; }
@@ -28,14 +33,24 @@ namespace PotionShop.Data
         public CustomerProfile Customer { get; }
         public IReadOnlyList<PortraitPart> Portrait { get; }
         public DiseaseEntry Disease { get; }
-        public DialogueOption Dialogue { get; }
+        public DialogueOption Dialogue => generatedDialogue ?? fallbackDialogue;
         public RecipeEntry Recipe { get; }
         public BottleShape Bottle { get; }
         public InkRule Ink { get; }
         public CharacterVoice Voice { get; }
-        private IReadOnlyDictionary<string, string> ReactionLines { get; }
-        public string GetReactionLine(string key) =>
-            ReactionLines != null && ReactionLines.TryGetValue(key, out var text) ? text : string.Empty;
+        public string GetReactionLine(string key)
+        {
+            if (generatedReactions != null && generatedReactions.TryGetValue(key, out var generated))
+                return generated;
+            return fallbackReactions != null && fallbackReactions.TryGetValue(key, out var fallback)
+                ? fallback : string.Empty;
+        }
+
+        internal void SetGeneratedDialogue(DialogueOption dialogue, IReadOnlyDictionary<string, string> reactions)
+        {
+            generatedDialogue = dialogue;
+            generatedReactions = reactions;
+        }
     }
 
     public static class OrderGenerator

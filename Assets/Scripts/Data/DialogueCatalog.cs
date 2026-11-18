@@ -49,17 +49,29 @@ namespace PotionShop.Data
         public string TargetLength => targetLength;
         public string Text => text;
 
-        // Keeps the existing order scene usable while reaction dialogue is migrated separately.
         internal DialogueOption CreateSymptomDialogue()
         {
+            if (TryParseSymptoms(text, out var dialogue))
+                return dialogue;
+            throw new InvalidOperationException($"{key}: expected exactly three valid symptom spans.");
+        }
+
+        internal static bool TryParseSymptoms(string text, out DialogueOption dialogue)
+        {
+            dialogue = null;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            var matches = SymptomTags.Matches(text);
+            if (matches.Count != 3 || SymptomTags.Replace(text, "").IndexOfAny(new[] { '<', '>' }) >= 0)
+                return false;
+
             var segments = new List<DialogueSegment>();
             int start = 0;
-            var matches = SymptomTags.Matches(text ?? "");
-            if (matches.Count != 3 || SymptomTags.Replace(text, "").IndexOfAny(new[] { '<', '>' }) >= 0)
-                throw new InvalidOperationException($"{key}: expected exactly three valid symptom spans.");
-
             foreach (Match match in matches)
             {
+                if (string.IsNullOrWhiteSpace(match.Groups[1].Value))
+                    return false;
                 if (match.Index > start)
                     segments.Add(new DialogueSegment(text.Substring(start, match.Index - start), false));
                 segments.Add(new DialogueSegment(match.Groups[1].Value, true));
@@ -68,7 +80,8 @@ namespace PotionShop.Data
             if (start < text.Length)
                 segments.Add(new DialogueSegment(text.Substring(start), false));
 
-            return new DialogueOption(segments);
+            dialogue = new DialogueOption(segments);
+            return true;
         }
     }
 

@@ -127,12 +127,13 @@ namespace PotionShop
             RoundPhase phase = round.Phase;
             shownPhase = phase;
             bool consult = phase == RoundPhase.Consult;
+            bool preparing = phase == RoundPhase.Preparing;
             bool prescribe = phase == RoundPhase.Prescribe;
             bool ending = phase == RoundPhase.Ending;
             bool result = phase == RoundPhase.Result;
             endingReady = false;
 
-            dialogueView.gameObject.SetActive(consult || ending);
+            dialogueView.gameObject.SetActive(preparing || consult || ending);
             enterWorkshopButton.gameObject.SetActive(consult);
             enterWorkshopButton.interactable = false;
             prescriptionPanel.SetActive(prescribe);
@@ -161,7 +162,12 @@ namespace PotionShop
                 dialoguePlayback = new CancellationTokenSource();
             }
 
-            if (consult)
+            if (preparing)
+            {
+                dialogueView.SetSpeaker(string.Empty);
+                dialogueView.ShowMessage("손님이 오고 있어요.");
+            }
+            else if (consult)
             {
                 SetAdvanceLabel("창고로");
                 PlayConsult(round.CurrentOrder, dialoguePlayback.Token).Forget();
