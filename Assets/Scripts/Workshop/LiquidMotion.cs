@@ -28,15 +28,23 @@ namespace PotionShop
         private float sloshTilt;
         private double previousTime;
 
-        public void PlaySlosh()
+        public void StartSloshing()
         {
             if (!isActiveAndEnabled)
                 return;
 
             sloshMotion.TryCancel();
-            sloshMotion = LMotion.Create(0f, 1f, 0.65f)
+            sloshMotion = LMotion.Create(0f, 1f, 0.8f)
+                .WithLoops(-1)
                 .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                 .Bind(UpdateSlosh);
+        }
+
+        public void StopSloshing()
+        {
+            sloshMotion.TryCancel();
+            sloshTilt = 0f;
+            ApplyTilt();
         }
 
         private void UpdateSlosh(float progress)
@@ -120,10 +128,8 @@ namespace PotionShop
 
         private void OnDisable()
         {
-            sloshMotion.TryCancel();
-            sloshTilt = 0f;
             tilt = Vector2.zero;
-            ApplyTilt();
+            StopSloshing();
         }
     }
 }

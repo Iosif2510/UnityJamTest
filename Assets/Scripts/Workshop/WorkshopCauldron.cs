@@ -1,6 +1,7 @@
 using System;
 using PotionShop.Data;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace PotionShop
 {
@@ -9,8 +10,10 @@ namespace PotionShop
     {
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private LiquidMotion liquidMotion;
+        [SerializeField] private VisualEffect brewingSteam;
 
         private bool hasBatch;
+        private bool brewingEffectsPlaying;
         private double completesAt;
 
         public bool CanStartBrewing => isActiveAndEnabled && !hasBatch && tuning != null && liquidMotion != null;
@@ -24,8 +27,36 @@ namespace PotionShop
 
             hasBatch = true;
             completesAt = Time.unscaledTimeAsDouble + tuning.BrewingSeconds;
-            liquidMotion.PlaySlosh();
+            SetBrewingEffects(RemainingSeconds > 0d);
             return true;
+        }
+
+        private void OnEnable() => SetBrewingEffects(RemainingSeconds > 0d);
+
+        private void Update()
+        {
+            if (brewingEffectsPlaying && RemainingSeconds <= 0d)
+                SetBrewingEffects(false);
+        }
+
+        private void OnDisable() => SetBrewingEffects(false);
+
+        private void SetBrewingEffects(bool playing)
+        {
+            if (brewingEffectsPlaying == playing)
+                return;
+
+            brewingEffectsPlaying = playing;
+            if (playing)
+            {
+                liquidMotion.StartSloshing();
+                brewingSteam?.Play();
+            }
+            else
+            {
+                liquidMotion.StopSloshing();
+                brewingSteam?.Stop();
+            }
         }
     }
 }
