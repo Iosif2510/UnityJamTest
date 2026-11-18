@@ -76,8 +76,8 @@ namespace PotionShop
 
         private Vector3 leftArmRestPosition;
         private Vector3 rightArmRestPosition;
-        private Quaternion leftArmRestRotation;
-        private Quaternion rightArmRestRotation;
+        private Quaternion? leftArmRotationBeforeJiggle;
+        private Quaternion? rightArmRotationBeforeJiggle;
         private float armJigglePhase;
         private float armJiggleWeight;
 
@@ -103,15 +103,9 @@ namespace PotionShop
                 pitch = NormalizeAngle(cameraTarget.localEulerAngles.x);
 
             if (leftArm != null)
-            {
                 leftArmRestPosition = leftArm.localPosition;
-                leftArmRestRotation = leftArm.localRotation;
-            }
             if (rightArm != null)
-            {
                 rightArmRestPosition = rightArm.localPosition;
-                rightArmRestRotation = rightArm.localRotation;
-            }
             if (heldItemAnchor != null)
                 heldItemRestPosition = heldItemAnchor.localPosition;
         }
@@ -129,6 +123,7 @@ namespace PotionShop
 
         private void OnDisable()
         {
+            RestoreArmRotations();
             ResetArmJiggle();
             ResetHeldItemWiggle();
             SetCursorLocked(false);
@@ -136,6 +131,8 @@ namespace PotionShop
 
         private void Update()
         {
+            // Remove last frame's sway before the Animator evaluates the new pose.
+            RestoreArmRotations();
             HandleCursor();
             HandleLook();
             HandleMovement();
@@ -166,8 +163,8 @@ namespace PotionShop
             float swing = Mathf.Sin(armJigglePhase);
             float bounce = Mathf.Sin(armJigglePhase * 2f);
             float jiggle = Mathf.Sin(armJigglePhase * 4f) * 0.15f;
-            ApplyArmJiggle(leftArm, leftArmRestPosition, leftArmRestRotation, swing, bounce, jiggle);
-            ApplyArmJiggle(rightArm, rightArmRestPosition, rightArmRestRotation, -swing, bounce, -jiggle);
+            ApplyArmJiggle(leftArm, leftArmRestPosition, ref leftArmRotationBeforeJiggle, swing, bounce, jiggle);
+            ApplyArmJiggle(rightArm, rightArmRestPosition, ref rightArmRotationBeforeJiggle, -swing, bounce, -jiggle);
         }
 
         private void UpdateHeldItemWiggle(float speedRatio)
@@ -198,12 +195,14 @@ namespace PotionShop
                 heldItemAnchor.localPosition = heldItemRestPosition;
         }
 
-        private void ApplyArmJiggle(Transform arm, Vector3 restPosition, Quaternion restRotation,
+        private void ApplyArmJiggle(Transform arm, Vector3 restPosition, ref Quaternion? rotationBeforeJiggle,
             float swing, float bounce, float jiggle)
         {
             if (arm == null)
                 return;
 
+            Quaternion baseRotation = arm.localRotation;
+            rotationBeforeJiggle = baseRotation;
             Vector3 offset = Vector3.Scale(armPositionAmplitude,
                 new Vector3(swing, bounce + jiggle, swing)) * armJiggleWeight;
             Vector3 rotation = Vector3.Scale(armRotationAmplitude,
@@ -214,10 +213,10 @@ namespace PotionShop
                 offset = arm.parent.InverseTransformVector(cameraTarget.TransformVector(offset));
                 Quaternion cameraToParent = Quaternion.Inverse(arm.parent.rotation) * cameraTarget.rotation;
                 arm.localRotation = cameraToParent * Quaternion.Euler(rotation) *
-                    Quaternion.Inverse(cameraToParent) * restRotation;
+                    Quaternion.Inverse(cameraToParent) * baseRotation;
             }
             else
-                arm.localRotation = restRotation * Quaternion.Euler(rotation);
+                arm.localRotation = baseRotation * Quaternion.Euler(rotation);
             arm.localPosition = restPosition + offset;
         }
 
@@ -226,15 +225,22 @@ namespace PotionShop
             armJiggleWeight = 0f;
             armJigglePhase = 0f;
             if (leftArm != null)
-            {
                 leftArm.localPosition = leftArmRestPosition;
-                leftArm.localRotation = leftArmRestRotation;
-            }
             if (rightArm != null)
-            {
                 rightArm.localPosition = rightArmRestPosition;
-                rightArm.localRotation = rightArmRestRotation;
-            }
+        }
+
+        private void RestoreArmRotations()
+        {
+            RestoreArmRotation(leftArm, ref leftArmRotationBeforeJiggle);
+            RestoreArmRotation(rightArm, ref rightArmRotationBeforeJiggle);
+        }
+
+        private static void RestoreArmRotation(Transform arm, ref Quaternion? rotationBeforeJiggle)
+        {
+            if (arm != null && rotationBeforeJiggle.HasValue)
+                arm.localRotation = rotationBeforeJiggle.Value;
+            rotationBeforeJiggle = null;
         }
 
         public void SetCursorLocked(bool locked)
