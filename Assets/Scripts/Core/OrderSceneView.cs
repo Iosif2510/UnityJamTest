@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using PotionShop.Data;
@@ -15,7 +14,6 @@ namespace PotionShop
         [SerializeField] private Button enterWorkshopButton;
         [SerializeField] private Text phaseLabel;
         [SerializeField] private Text timerText;
-        [SerializeField] private Text customerClues;
         [SerializeField] private GameObject prescriptionPanel;
         [SerializeField] private Button squareBottle;
         [SerializeField] private Button heartBottle;
@@ -138,15 +136,9 @@ namespace PotionShop
             enterWorkshopButton.interactable = false;
             prescriptionPanel.SetActive(prescribe);
             resultPanel.SetActive(result);
-            customerClues.transform.parent.gameObject.SetActive(consult || prescribe);
             timerText.gameObject.SetActive(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
             phaseLabel.text = result ? "Result" : ending ? "Reaction" : prescribe ? "Prescription" : "Orders";
-
-            if (consult || prescribe)
-            {
-                customerClues.text = DescribeCustomer(round.CurrentOrder);
-            }
 
             if (portraitView != null)
             {
@@ -258,22 +250,5 @@ namespace PotionShop
             serveButton.interactable = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
         }
 
-        private static string DescribeCustomer(GeneratedOrder order)
-        {
-            string speciesId = order.Customer.SpeciesId;
-            string species = speciesId[(speciesId.LastIndexOf('.') + 1)..].Replace('_', ' ');
-            string Part(PortraitSlot slot) => order.Portrait.First(part => part.Slot == slot).Appearance switch
-            {
-                AppearanceValue.PointedEars => "Pointed",
-                AppearanceValue.RoundEars => "Round",
-                AppearanceValue.AnimalEars => "Animal",
-                AppearanceValue.RockCrack => "Rock crack",
-                var value => value.ToString()
-            };
-
-            return $"{species.ToUpperInvariant()}  |  {order.Customer.Gender}\n" +
-                   $"Hair: {Part(PortraitSlot.Hair)}   |   Eyes: {Part(PortraitSlot.Eyes)}\n" +
-                   $"Mouth: {Part(PortraitSlot.Mouth)}   |   Ears: {Part(PortraitSlot.Ears)}";
-        }
     }
 }

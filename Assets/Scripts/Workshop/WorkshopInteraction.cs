@@ -11,10 +11,12 @@ namespace PotionShop
     public sealed class WorkshopInteraction : MonoBehaviour
     {
         private const float RayOriginRadius = 0.001f;
+        private static readonly int IsHolding = Animator.StringToHash("IsHolding");
 
         [SerializeField] private FirstPersonController player;
         [SerializeField] private Camera playerCamera;
         [SerializeField] private Transform heldItemAnchor;
+        [SerializeField] private Animator armsAnimator;
         [SerializeField, Min(0f)] private float heldRotationSensitivity = 0.35f;
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private Text prompt;
@@ -44,6 +46,9 @@ namespace PotionShop
 
         private void Start()
         {
+            // Free is a release clip. Start at its open-hand pose without playing a release on spawn.
+            if (armsAnimator != null)
+                armsAnimator.Play("Base Layer.Free", 0, 1f);
             pocketModels = new PocketModelDisplay(pocketDisplay, playerCamera, tuning.PocketCapacity, uiTheme);
             var activeRound = RoundDirector.Instance;
             if (activeRound != null && activeRound.CurrentOrder != null)
@@ -121,7 +126,7 @@ namespace PotionShop
             prompt.text = hasSpace ? "[Left click] Pick up" : "Pocket full. Bring ingredients to the cauldron.";
             if (hasSpace && Mouse.current?.leftButton.wasPressedThisFrame == true &&
                 shelf.TryTake(ingredient, heldItemAnchor))
-                held = ingredient;
+                SetHeldIngredient(ingredient);
         }
 
         private void HandleHeldIngredient()
@@ -130,16 +135,23 @@ namespace PotionShop
             if (Mouse.current?.rightButton.wasPressedThisFrame == true)
             {
                 held.ReturnToShelf();
-                held = null;
+                SetHeldIngredient(null);
             }
             else if (Keyboard.current?.fKey.wasPressedThisFrame == true && pocket.Count < tuning.PocketCapacity)
             {
                 var stored = held;
                 pocket.Add(stored.VariantId);
                 stored.gameObject.SetActive(false);
-                held = null;
+                SetHeldIngredient(null);
                 pocketModels.ShowIngredient(pocket.Count - 1, stored.transform);
             }
+        }
+
+        private void SetHeldIngredient(WarehouseIngredient ingredient)
+        {
+            held = ingredient;
+            if (armsAnimator != null)
+                armsAnimator.SetBool(IsHolding, held != null);
         }
 
         private bool TryRotateHeldIngredient()

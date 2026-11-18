@@ -208,8 +208,17 @@ namespace PotionShop
                 new Vector3(swing, bounce + jiggle, swing)) * armJiggleWeight;
             Vector3 rotation = Vector3.Scale(armRotationAmplitude,
                 new Vector3(swing + jiggle, swing, swing)) * armJiggleWeight;
+            // Imported forearm bones can have rotated parents. Keep sway in camera axes.
+            if (cameraTarget != null && arm.parent != null)
+            {
+                offset = arm.parent.InverseTransformVector(cameraTarget.TransformVector(offset));
+                Quaternion cameraToParent = Quaternion.Inverse(arm.parent.rotation) * cameraTarget.rotation;
+                arm.localRotation = cameraToParent * Quaternion.Euler(rotation) *
+                    Quaternion.Inverse(cameraToParent) * restRotation;
+            }
+            else
+                arm.localRotation = restRotation * Quaternion.Euler(rotation);
             arm.localPosition = restPosition + offset;
-            arm.localRotation = restRotation * Quaternion.Euler(rotation);
         }
 
         private void ResetArmJiggle()

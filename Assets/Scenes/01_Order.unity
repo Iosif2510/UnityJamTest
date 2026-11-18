@@ -394,17 +394,6 @@ Transform:
   - {fileID: 1328469598}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &840125571 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2814260040812785308, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
-  m_PrefabInstance: {fileID: 2470176195827802544}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
 --- !u!1 &1075919234
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +456,6 @@ MonoBehaviour:
   enterWorkshopButton: {fileID: 1400713649}
   phaseLabel: {fileID: 2081084771}
   timerText: {fileID: 1372549632}
-  customerClues: {fileID: 840125571}
   prescriptionPanel: {fileID: 650779468}
   squareBottle: {fileID: 1250380309}
   heartBottle: {fileID: 1522126476}
@@ -801,10 +789,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 699014338}
     m_Modifications:
-    - target: {fileID: 203199773733135560, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 825547341438454762, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_Name
       value: OrderCanvas
