@@ -34,6 +34,16 @@
         "gold": "#D9B34A",
         "silver": "#C9CCD6",
         "black": "#2B2A33"
+      },
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
       }
     },
     "HUM_F3": {
@@ -55,6 +65,16 @@
         "black": "#2B2A33",
         "brown": "#7A4A2A",
         "red": "#B8352C"
+      },
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
       }
     },
     "ELF_F1": {
@@ -76,6 +96,16 @@
         "gold": "#D9B34A",
         "silver": "#C9CCD6",
         "black": "#2B2A33"
+      },
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
       }
     },
     "GOL_G1": {
@@ -88,9 +118,9 @@
       "pupilShape": "round",
       "defaultEye": "orange",
       "colors": {
+        "yellow": "#E0B02C",
         "orange": "#E07A2C",
-        "blue": "#3F74C8",
-        "green": "#3F9A4A"
+        "blue": "#3F74C8"
       },
       "defaultHair": "moss",
       "hairColors": {
@@ -98,7 +128,17 @@
         "mossSage": "#829265",
         "mossDry": "#B59A65"
       },
-      "hairBackIsPlaceholder": true
+      "hairBackIsPlaceholder": true,
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
     },
     "BST_M2": {
       "irisSolidMask": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_IRIS_SOLID_MASK.png",
@@ -111,13 +151,25 @@
       "defaultEye": "yellow",
       "colors": {
         "yellow": "#E0B02C",
-        "green": "#3F9A4A"
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
       },
       "defaultHair": "red",
       "hairColors": {
         "brown": "#7A4A2A",
         "white": "#EEEAE2",
         "red": "#B8352C"
+      },
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_EXPRESSION_ANGRY.png",
+          "drawAfter": "eyeClosed"
+        }
       }
     }
   }

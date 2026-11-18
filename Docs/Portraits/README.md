@@ -16,6 +16,14 @@
 
 게임 리소스는 `Assets/Arts/Portraits/`에 있고, 합성 참고 이미지는 `Docs/Portraits/Previews/`에 있습니다. `manifest.json`의 경로는 저장소 루트 기준입니다. Unity Catalog에 베이스와 파츠를 연결하고 기존 단색 홍채 오브젝트에 눈색을 적용합니다.
 
+## 표정 파츠
+
+다섯 인물에 기쁨과 분노 스프라이트를 한 장씩 제공합니다. 기본 표정은 기존 다섯 층을 사용합니다. 기쁨 또는 분노를 표시할 때는 해당 스프라이트 한 장을 같은 중앙 피벗으로 얹습니다.
+
+`manifest.json`의 `expressions`에 스프라이트 경로와 `drawAfter`가 있습니다. 일반 표정은 베이스 위와 감은 눈 아래에 놓습니다. 여우 수인의 분노는 감은 눈 위와 앞머리 아래에 놓습니다.
+
+Unity에서 사용할 때는 표정 전환 코드 또는 데이터의 Sprite 필드에 연결합니다.
+
 ## Unity 연결
 
 ELF_M1, HUM_F3, BST_M2, GOL_G1의 `Customers` 항목에 베이스, 감은 눈, 머리 레이어, **Baked Iris**, **Spine Rig**가 연결되어 있습니다. `PortraitView`는 홍채 스프라이트에 선택된 눈색을 적용하고, 인물 폴더의 Spine JSON에서 `idle`을 반복 재생합니다. 머리카락은 뿌리에서 고개를 따라가고 끝으로 갈수록 움직입니다. GOL_G1의 이끼는 고정 장식 색으로 처리합니다.
@@ -26,3 +34,4 @@ ELF_M1, HUM_F3, BST_M2, GOL_G1의 `Customers` 항목에 베이스, 감은 눈, �
 | HUM_F3 | Red | Green | 4.0초 |
 | BST_M2 | Red | Yellow | 3.7초 |
 | GOL_G1 | None | Orange | 5.2초 |
+
