@@ -1,0 +1,116 @@
+{
+  "portraitId": "ELF_F1",
+  "canvasPx": [
+    1024,
+    1536
+  ],
+  "pivotNormalized": [
+    0.5,
+    0.5
+  ],
+  "drawOrderBackToFront": [
+    "HAIR_BACK",
+    "IRIS",
+    "BASE",
+    "EYE_CLOSED",
+    "HAIR_FRONT"
+  ],
+  "defaultHair": "gold",
+  "defaultEye": "blue",
+  "blink": {
+    "autoEnabled": true,
+    "minIntervalSec": 3,
+    "maxIntervalSec": 5,
+    "closedDurationSec": 0.1
+  },
+  "iris": {
+    "defaultStyle": "default",
+    "defaultMask": "Assets/Arts/Portraits/ELF_F1/Iris/POR_ELF_F1_IRIS_MASK.png",
+    "variantBase": "Assets/Arts/Portraits/ELF_F1/Iris/POR_ELF_F1_BASE_IRIS_EMPTY.png",
+    "variantMask": "Assets/Arts/Portraits/ELF_F1/Iris/POR_ELF_F1_IRIS_VARIANTS_MASK.png",
+    "textureSizePx": [
+      256,
+      256
+    ],
+    "sourceRectPx": [
+      4,
+      4,
+      248,
+      248
+    ],
+    "drawRectPx": {
+      "left": [
+        438.65,
+        462.13,
+        34,
+        30
+      ],
+      "right": [
+        559.17,
+        422.53,
+        35,
+        34
+      ]
+    },
+    "upperShadeLift": 0.92,
+    "backingShade": {
+      "rgb8": [
+        9,
+        15,
+        19
+      ],
+      "opacity": 0.164
+    },
+    "styles": [
+      {
+        "id": "default",
+        "label": "기본"
+      },
+      {
+        "id": "soft",
+        "label": "부드러운 반사",
+        "pair": {
+          "left": "Assets/Arts/Portraits/ELF_F1/Iris/Details/SOFT/POR_ELF_F1_IRIS_DETAIL_SOFT_L.png",
+          "right": "Assets/Arts/Portraits/ELF_F1/Iris/Details/SOFT/POR_ELF_F1_IRIS_DETAIL_SOFT_R.png"
+        },
+        "rotationDegClockwise": 0
+      },
+      {
+        "id": "clear",
+        "label": "선명한 반짝임",
+        "pair": {
+          "left": "Assets/Arts/Portraits/ELF_F1/Iris/Details/CLEAR/POR_ELF_F1_IRIS_DETAIL_CLEAR_L.png",
+          "right": "Assets/Arts/Portraits/ELF_F1/Iris/Details/CLEAR/POR_ELF_F1_IRIS_DETAIL_CLEAR_R.png"
+        },
+        "rotationDegClockwise": 0
+      },
+      {
+        "id": "glow",
+        "label": "아래쪽 잔광",
+        "pair": {
+          "left": "Assets/Arts/Portraits/ELF_F1/Iris/Details/GLOW/POR_ELF_F1_IRIS_DETAIL_GLOW_L.png",
+          "right": "Assets/Arts/Portraits/ELF_F1/Iris/Details/GLOW/POR_ELF_F1_IRIS_DETAIL_GLOW_R.png"
+        },
+        "rotationDegClockwise": 0
+      },
+      {
+        "id": "oblique",
+        "label": "비스듬한 빛",
+        "pair": {
+          "left": "Assets/Arts/Portraits/ELF_F1/Iris/Details/OBLIQUE/POR_ELF_F1_IRIS_DETAIL_OBLIQUE_L.png",
+          "right": "Assets/Arts/Portraits/ELF_F1/Iris/Details/OBLIQUE/POR_ELF_F1_IRIS_DETAIL_OBLIQUE_R.png"
+        },
+        "rotationDegClockwise": 0
+      },
+      {
+        "id": "slit",
+        "label": "세로 동공",
+        "pair": {
+          "left": "Assets/Arts/Portraits/ELF_F1/Iris/Details/SLIT/POR_ELF_F1_IRIS_DETAIL_SLIT_L.png",
+          "right": "Assets/Arts/Portraits/ELF_F1/Iris/Details/SLIT/POR_ELF_F1_IRIS_DETAIL_SLIT_R.png"
+        },
+        "rotationDegClockwise": -17.259624994567776
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "gold",
+    "hex": "#D9B34A"
+  },
+  {
+    "name": "silver",
+    "hex": "#C9CCD6"
+  },
+  {
+    "name": "black",
+    "hex": "#2B2A33"
+  },
+  {
+    "name": "blue",
+    "hex": "#3F74C8"
+  },
+  {
+    "name": "green",
+    "hex": "#3F9A4A"
+  },
+  {
+    "name": "purple",
+    "hex": "#8A4FC0"
+  }
+]

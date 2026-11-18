@@ -1,0 +1,23 @@
+{
+  "id": "ELF_F1",
+  "race": "ELF",
+  "variation": "F1",
+  "gender": "여",
+  "job": "꽃집 직원",
+  "earType": "길고 뾰족한",
+  "hasFang": false,
+  "hairBack": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_BACK.png",
+  "base": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_BASE.png",
+  "eyeClosed": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_EYE_CLOSED.png",
+  "hairFront": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_FRONT.png",
+  "hairColors": [
+    "gold",
+    "silver",
+    "black"
+  ],
+  "eyeColors": [
+    "blue",
+    "green",
+    "purple"
+  ]
+}
