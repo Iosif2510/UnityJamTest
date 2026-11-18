@@ -12,6 +12,8 @@ namespace PotionShop
     [DisallowMultipleComponent]
     public sealed class OrderDialogueView : MonoBehaviour, IPointerClickHandler
     {
+        private const float BottomPadding = 16f;
+
         [SerializeField] private TMP_Text speaker;
         [SerializeField] private TMP_Text body;
         [SerializeField] private ScrollRect scroll;
@@ -28,7 +30,7 @@ namespace PotionShop
         private double startedAt;
         private double skippedAt;
         private int lastScrolledIndex;
-        private float lastWidth;
+        private Vector2 lastViewportSize;
         private bool revealing;
         private bool finalFrameDrawn;
 
@@ -119,10 +121,11 @@ namespace PotionShop
         private void LateUpdate()
         {
             if (activeLine == null) return;
-            if (scroll != null && !Mathf.Approximately(lastWidth, scroll.viewport.rect.width))
+            bool resized = scroll != null && lastViewportSize != scroll.viewport.rect.size;
+            if (resized)
                 FitContent();
             double elapsed = Time.unscaledTimeAsDouble - startedAt;
-            if (!finalFrameDrawn || activeLine.HasEffects)
+            if (resized || !finalFrameDrawn || activeLine.HasEffects)
                 Draw(elapsed);
             if (!revealing && elapsed >= Math.Min(activeLine.Duration + fadeSeconds, skippedAt))
                 finalFrameDrawn = true;
@@ -140,12 +143,14 @@ namespace PotionShop
         private void FitContent()
         {
             if (scroll == null) return;
-            lastWidth = scroll.viewport.rect.width;
-            float height = Mathf.Max(scroll.viewport.rect.height,
-                body.GetPreferredValues(body.text, lastWidth, 0).y + 16);
+            lastViewportSize = scroll.viewport.rect.size;
+            // TMP measures wrapping against the supplied width before adding its text margins.
+            float wrapWidth = Mathf.Max(1f, body.rectTransform.rect.width - body.margin.x - body.margin.z);
+            float height = Mathf.Max(lastViewportSize.y,
+                body.GetPreferredValues(body.text, wrapWidth, 0).y + BottomPadding);
             scroll.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
             body.ForceMeshUpdate();
-            if (revealing) lastScrolledIndex = -1;
+            lastScrolledIndex = -1;
         }
 
         private void ScrollToLatestGlyph(double elapsed)
@@ -161,9 +166,16 @@ namespace PotionShop
                     elapsed < Math.Min(cue.Start, skippedAt))
                     continue;
                 lastScrolledIndex = i;
-                float target = Mathf.Clamp(-character.descender + 12 - scroll.viewport.rect.height, 0, overflow);
-                float current = (1 - Mathf.Clamp01(scroll.verticalNormalizedPosition)) * overflow;
-                if (target > current) scroll.verticalNormalizedPosition = 1 - target / overflow;
+                float descender = info.lineInfo[character.lineNumber].descender;
+                Vector3 worldBottom = body.rectTransform.TransformPoint(new Vector3(0f, descender, 0f));
+                float lineBottom = scroll.viewport.InverseTransformPoint(worldBottom).y;
+                float missingHeight = scroll.viewport.rect.yMin + BottomPadding - lineBottom;
+                if (missingHeight > 0f)
+                {
+                    scroll.StopMovement();
+                    scroll.verticalNormalizedPosition =
+                        Mathf.Clamp01(scroll.verticalNormalizedPosition - missingHeight / overflow);
+                }
                 return;
             }
         }
