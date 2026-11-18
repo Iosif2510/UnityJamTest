@@ -550,7 +550,7 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "d0ac2ff33b6c4430baa7803e7f96214f"
+                    "m_Id": "2eb20826a05c4caa9ad61ba417267614"
                 },
                 "m_SlotId": 0
             },
@@ -1938,10 +1938,10 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "4b55e596ef9a4c24884693d41e15c461",
     "m_Id": 0,
-    "m_DisplayName": "WorldPosition",
+    "m_DisplayName": "ObjectPosition",
     "m_SlotType": 0,
     "m_Hidden": false,
-    "m_ShaderOutputName": "WorldPosition",
+    "m_ShaderOutputName": "ObjectPosition",
     "m_StageCapability": 2,
     "m_Value": {
         "x": 0.0,
@@ -3116,7 +3116,7 @@
     "m_FunctionName": "LiquidWobble",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "// Keep the fill level relative to the container, but the surface level with gravity.\nfloat3 origin = TransformObjectToWorld(float3(0, 0, 0));\nfloat heightScale = max(length(TransformObjectToWorldDir(float3(0, 1, 0), false)), 0.0001);\nfloat3 p = (WorldPosition - origin) / heightScale;\nMotion = length(float2(WobbleX, WobbleZ));\nfloat ripple = sin(p.x * 8.0 + _Time.y * 5.0) * sin(p.z * 7.0 - _Time.y * 4.0) * Motion * 0.08;\nAlpha = Amount - p.y + dot(p.xz, float2(WobbleX, WobbleZ)) + ripple;\nDepth = Alpha - 0.5;\n"
+    "m_FunctionBody": "// Keep the fill level relative to the container, but the surface level with gravity.\nfloat heightScale = max(length(TransformObjectToWorldDir(float3(0, 1, 0), false)), 0.0001);\n// A direction transform excludes translation while preserving gravity alignment.\nfloat3 p = TransformObjectToWorldDir(ObjectPosition, false) / heightScale;\nMotion = length(float2(WobbleX, WobbleZ));\nfloat ripple = sin(p.x * 8.0 + _Time.y * 5.0) * sin(p.z * 7.0 - _Time.y * 4.0) * Motion * 0.08;\nAlpha = Amount - p.y + dot(p.xz, float2(WobbleX, WobbleZ)) + ripple;\nDepth = Alpha - 0.5;\n"
 }
 
 {
