@@ -13,6 +13,14 @@
 2. `ColorPalette_ELF_F1.json`의 6개 색을 키로 연결합니다. `hairColors`와 `eyeColors`는 이 키를 참조하며, 초기 헤어색은 `gold`, 초기 눈색은 `blue`입니다.
 3. `PortraitSettings_ELF_F1.json`에서 기본 스타일, 깜빡임, 홍채 스타일 및 좌표를 읽습니다. JSON 경로는 모두 UnityJamTest 저장소 루트 기준이고 구분자는 `/`입니다. JSON은 데이터 테이블 이관용 예제입니다. 프로젝트의 로더 또는 임포터 형식에 맞춰 연결합니다.
 
+## 엔진용 베이크 홍채
+
+`Assets/Arts/Portraits/ELF_F1/Iris/Baked/`에 스타일별 베이스와 하이라이트가 있습니다. `Data/PortraitBaked_ELF_F1.json`에서 임포트할 스타일 하나를 골라 해당 `base`를 `basePortrait`에 연결합니다. 베이크 베이스에 동공과 음영이 알파로 들어 있어 눈색이 바뀔 때 스프라이트를 교체할 필요가 없습니다.
+
+- 베이스 뒤에는 선택한 눈색의 단색을 둡니다. 기존 `PortraitLayers`의 단색 Image 두 개를 쓰면 `irisSolidRegions`의 좌하단 원점 정규화 Rect를 순서대로 `irisRegions`에 넣습니다. 알파 마스크를 지원하는 구성에서는 `irisSolidMask`를 같은 눈색으로 틴트해 사용할 수 있습니다.
+- 흰 반사점이 필요하면 같은 스타일의 `highlight`를 베이스 위와 감은 눈 아래에 놓습니다. 눈색은 뒤의 단색에만 적용합니다.
+- `hairBack`, `eyeClosed`, `hairFront`는 기존 스프라이트를 사용합니다. 모든 파일의 전체 캔버스와 중앙 피벗을 유지합니다.
+
 ## 레이어와 애니메이션
 
 4개 기본 레이어와 `Iris/` 바로 아래의 보조 PNG 3장은 모두 투명 RGBA, 1024 × 1536px입니다. 전체 캔버스를 유지하고 피벗은 정중앙 `(0.5, 0.5)`으로 가져옵니다. 크기와 위치를 같게 설정한 뒤 아래에서 위 순서로 합성합니다.
