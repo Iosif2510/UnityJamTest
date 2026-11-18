@@ -1,0 +1,124 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "layerOrder": [
+    "hairBack",
+    "irisSolidMask",
+    "base",
+    "eyeClosed",
+    "hairFront"
+  ],
+  "characters": {
+    "ELF_M1": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_M1/POR_ELF_M1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_M1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "purple",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "silver",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "black": "#2B2A33"
+      }
+    },
+    "HUM_F3": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_F3/POR_HUM_F3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_F3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "green",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "red",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C"
+      }
+    },
+    "ELF_F1": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_F1/POR_ELF_F1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_F1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "gold",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "black": "#2B2A33"
+      }
+    },
+    "GOL_G1": {
+      "irisSolidMask": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/GOL_G1/POR_GOL_G1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_GOL_G1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "orange",
+      "colors": {
+        "orange": "#E07A2C",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "moss",
+      "hairColors": {
+        "moss": "#A7944D",
+        "mossSage": "#829265",
+        "mossDry": "#B59A65"
+      },
+      "hairBackIsPlaceholder": true
+    },
+    "BST_M2": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_M2/POR_BST_M2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_M2_PREVIEW.png",
+      "pupilShape": "slit",
+      "defaultEye": "yellow",
+      "colors": {
+        "yellow": "#E0B02C",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "red",
+      "hairColors": {
+        "brown": "#7A4A2A",
+        "white": "#EEEAE2",
+        "red": "#B8352C"
+      }
+    }
+  }
+}
