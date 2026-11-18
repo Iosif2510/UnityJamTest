@@ -195,35 +195,27 @@ namespace PotionShop
         }
 
 #if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
+        public bool TryGetRayGizmo(out Ray ray, out Vector3 end, out RaycastHit hit, out Color color)
         {
+            ray = default;
+            end = default;
+            hit = default;
+            color = Color.cyan;
             if (playerCamera == null || tuning == null)
-                return;
+                return false;
 
-            Ray ray = GetInteractionRay();
-            Vector3 end = ray.GetPoint(tuning.PickupDistance);
-            Color previousColor = Gizmos.color;
-            if (TryGetInteractionHit(ray, out var hit))
+            ray = GetInteractionRay();
+            end = ray.GetPoint(tuning.PickupDistance);
+            if (TryGetInteractionHit(ray, out hit))
             {
-                Gizmos.color = Color.gray;
-                Gizmos.DrawLine(hit.point, end);
-
                 if (cauldron != null && hit.transform.IsChildOf(cauldron))
-                    Gizmos.color = Color.yellow;
+                    color = Color.yellow;
                 else
-                    Gizmos.color = hit.collider.GetComponentInParent<WarehouseIngredient>() != null
+                    color = hit.collider.GetComponentInParent<WarehouseIngredient>() != null
                         ? Color.green : Color.red;
-
-                Gizmos.DrawLine(ray.origin, hit.point);
-                Gizmos.DrawWireSphere(hit.point, 0.045f);
-            }
-            else
-            {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawLine(ray.origin, end);
             }
 
-            Gizmos.color = previousColor;
+            return true;
         }
 #endif
     }
