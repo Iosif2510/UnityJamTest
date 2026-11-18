@@ -52,6 +52,9 @@ namespace PotionShop.Data
                 throw new InvalidOperationException($"{catalog.name}: assign all five data assets.");
             }
 
+            if (catalog.Tuning.TimeLimitSeconds <= 0 || catalog.Tuning.BonusIntervalSeconds <= 0)
+                throw new InvalidOperationException($"{catalog.name}: time limit and bonus interval must be positive.");
+
             var customers = IndexActive(catalog.Customers.Profiles, "customer");
             var diseases = IndexActive(catalog.DiseasesAndRecipes.Diseases, "disease");
             var recipes = IndexActive(catalog.DiseasesAndRecipes.Recipes, "recipe");

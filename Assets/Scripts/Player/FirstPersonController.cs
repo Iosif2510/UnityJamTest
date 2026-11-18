@@ -16,8 +16,6 @@ namespace PotionShop
         [Header("Input")]
         [SerializeField] private InputActionReference moveAction;
         [SerializeField] private InputActionReference lookAction;
-        [SerializeField] private InputActionReference jumpAction;
-        [SerializeField] private InputActionReference sprintAction;
         [Tooltip("Unlocks the cursor (e.g. Escape).")]
         [SerializeField] private InputActionReference unlockCursorAction;
         [Tooltip("Re-locks the cursor when clicking in the game view (ignored while over UI).")]
@@ -28,15 +26,13 @@ namespace PotionShop
         [SerializeField] private Transform cameraTarget;
 
         [Header("Movement")]
-        [SerializeField, Min(0f)] private float walkSpeed = 3.5f;
-        [SerializeField, Min(0f)] private float sprintSpeed = 6f;
+        [SerializeField, Min(0f)] private float walkSpeed = 6f;
         [Tooltip("How quickly horizontal velocity reaches the target speed (units/s²).")]
         [SerializeField, Min(0f)] private float acceleration = 30f;
         [Tooltip("Fraction of acceleration available while airborne.")]
         [SerializeField, Range(0f, 1f)] private float airControl = 0.3f;
 
-        [Header("Jump & Gravity")]
-        [SerializeField, Min(0f)] private float jumpHeight = 1.0f;
+        [Header("Gravity")]
         [SerializeField] private float gravity = -20f;
         [Tooltip("Small downward velocity that keeps the controller snapped to the ground.")]
         [SerializeField] private float groundedStickVelocity = -2f;
@@ -78,8 +74,6 @@ namespace PotionShop
         {
             EnableAction(moveAction);
             EnableAction(lookAction);
-            EnableAction(jumpAction);
-            EnableAction(sprintAction);
             EnableAction(unlockCursorAction);
             EnableAction(lockCursorAction);
 
@@ -146,20 +140,14 @@ namespace PotionShop
             Vector2 input = InputEnabled && moveAction != null ? moveAction.action.ReadValue<Vector2>() : Vector2.zero;
             input = Vector2.ClampMagnitude(input, 1f);
 
-            bool sprinting = InputEnabled && sprintAction != null && sprintAction.action.IsPressed();
-            float targetSpeed = sprinting ? sprintSpeed : walkSpeed;
-
             Vector3 wishDirection = transform.right * input.x + transform.forward * input.y;
-            Vector3 targetVelocity = wishDirection * targetSpeed;
+            Vector3 targetVelocity = wishDirection * walkSpeed;
 
             float accel = grounded ? acceleration : acceleration * airControl;
             horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetVelocity, accel * Time.deltaTime);
 
             if (grounded && verticalVelocity < 0f)
                 verticalVelocity = groundedStickVelocity;
-
-            if (grounded && InputEnabled && WasPressed(jumpAction))
-                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
             verticalVelocity = Mathf.Max(verticalVelocity + gravity * Time.deltaTime, -terminalFallSpeed);
 

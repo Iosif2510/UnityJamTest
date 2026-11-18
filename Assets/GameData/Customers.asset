@@ -69,3 +69,63 @@ MonoBehaviour:
       slot: 3
       appearance: 1
       sprite: {fileID: 0}
+  - id: customer.human.male
+    status: 1
+    speciesId: species.human
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts:
+    - id: portrait.human.male.hair.black
+      slot: 0
+      appearance: 2
+      sprite: {fileID: 0}
+    - id: portrait.human.male.hair.brown
+      slot: 0
+      appearance: 3
+      sprite: {fileID: 0}
+    - id: portrait.human.male.eyes.brown
+      slot: 1
+      appearance: 3
+      sprite: {fileID: 0}
+    - id: portrait.human.male.eyes.green
+      slot: 1
+      appearance: 5
+      sprite: {fileID: 0}
+    - id: portrait.human.male.mouth.smile
+      slot: 2
+      appearance: 16
+      sprite: {fileID: 0}
+    - id: portrait.human.male.ears.roundears
+      slot: 3
+      appearance: 18
+      sprite: {fileID: 0}
+  - id: customer.beastfolk.male
+    status: 1
+    speciesId: species.beastfolk
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts:
+    - id: portrait.beastfolk.male.hair.red
+      slot: 0
+      appearance: 4
+      sprite: {fileID: 0}
+    - id: portrait.beastfolk.male.hair.brown
+      slot: 0
+      appearance: 3
+      sprite: {fileID: 0}
+    - id: portrait.beastfolk.male.eyes.yellow
+      slot: 1
+      appearance: 9
+      sprite: {fileID: 0}
+    - id: portrait.beastfolk.male.mouth.fangs
+      slot: 2
+      appearance: 17
+      sprite: {fileID: 0}
+    - id: portrait.beastfolk.male.mouth.normal
+      slot: 2
+      appearance: 15
+      sprite: {fileID: 0}
+    - id: portrait.beastfolk.male.ears.animalears
+      slot: 3
+      appearance: 20
+      sprite: {fileID: 0}

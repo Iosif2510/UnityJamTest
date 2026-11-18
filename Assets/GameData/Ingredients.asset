@@ -19,15 +19,15 @@ MonoBehaviour:
     variants:
     - id: ingredient.mooncap.blue
       displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uD30C\uB780 \uC904\uAE30)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 8975417487947836475, guid: 99cafe466cdc1a6418dbbfd9b3a9890f, type: 3}
       icon: {fileID: 0}
     - id: ingredient.mooncap.white
       displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uD770 \uC904\uAE30)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 8620908679625889226, guid: caa9416793f4e1140b7599e23debf83c, type: 3}
       icon: {fileID: 0}
     - id: ingredient.mooncap.red
       displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uBD89\uC740 \uC904\uAE30)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 8506939122111857786, guid: e417e88dfad11324bbe3b1c5dc7ef036, type: 3}
       icon: {fileID: 0}
   - id: kind.root
     status: 1
@@ -35,15 +35,15 @@ MonoBehaviour:
     variants:
     - id: ingredient.root.curled
       displayName: "\uD65C\uB825\uBFCC\uB9AC (\uB465\uAE00\uAC8C \uB9D0\uB9B0 \uB05D)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 1415431660070170867, guid: 32ae54e605fe86b42be72c61de96b00c, type: 3}
       icon: {fileID: 0}
     - id: ingredient.root.forked
       displayName: "\uD65C\uB825\uBFCC\uB9AC (\uB450 \uAC08\uB798 \uB05D)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 8796834275946343181, guid: e101afa4688220844b96456db6e3229b, type: 3}
       icon: {fileID: 0}
     - id: ingredient.root.straight
       displayName: "\uD65C\uB825\uBFCC\uB9AC (\uACE7\uC740 \uB05D)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 2222303255803311889, guid: 4065e2b3b044d574395f7318fdac4d8d, type: 3}
       icon: {fileID: 0}
   - id: kind.crystal
     status: 1
@@ -51,13 +51,61 @@ MonoBehaviour:
     variants:
     - id: ingredient.crystal.one_tip
       displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uD558\uB098)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 818199487646318121, guid: 273efe65159c0c64c817b77ede8288a4, type: 3}
       icon: {fileID: 0}
     - id: ingredient.crystal.two_tips
       displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uB458)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 1707753575476412267, guid: 7fb5bdf53b381f142a7e0f427cb6fdf9, type: 3}
       icon: {fileID: 0}
     - id: ingredient.crystal.three_tips
       displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uC14B)"
-      prefab: {fileID: 0}
+      prefab: {fileID: 5880388732937990630, guid: c5456bc93c367544ba7480d62ce5cd54, type: 3}
+      icon: {fileID: 0}
+  - id: kind.moss
+    status: 1
+    displayName: "\uC774\uB07C"
+    variants:
+    - id: ingredient.moss.round_leaf
+      displayName: "\uC774\uB07C (\uB465\uADFC \uC78E)"
+      prefab: {fileID: 8857769007335192663, guid: b206f02863dc5464aa286f65cd222571, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.moss.long_leaf
+      displayName: "\uC774\uB07C (\uAE34 \uC78E)"
+      prefab: {fileID: 8093018536404313717, guid: 54db00af07346a34e8fdad60eec441a9, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.moss.layered_leaf
+      displayName: "\uC774\uB07C (\uACB9\uC78E)"
+      prefab: {fileID: 6812730139593809724, guid: 7084987edcd184e46b8c2ad9d1e49069, type: 3}
+      icon: {fileID: 0}
+  - id: kind.seed
+    status: 1
+    displayName: "\uC528\uC557"
+    variants:
+    - id: ingredient.seed.round
+      displayName: "\uC528\uC557 (\uB3D9\uADF8\uB780 \uC54C)"
+      prefab: {fileID: 1221794933707294754, guid: 988b86cac6e279647a59f3860999139e, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.seed.oval
+      displayName: "\uC528\uC557 (\uD0C0\uC6D0\uD615 \uC54C)"
+      prefab: {fileID: 7570839417294082154, guid: 5972a81f74e3b1e4880fbbf27851b29e, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.seed.twin
+      displayName: "\uC528\uC557 (\uC30D\uC54C)"
+      prefab: {fileID: 5077738604135236331, guid: 7e322d5d3c13d5e438a2b719a0e3bd2e, type: 3}
+      icon: {fileID: 0}
+  - id: kind.salt
+    status: 1
+    displayName: "\uC554\uC5FC"
+    variants:
+    - id: ingredient.salt.large_grain
+      displayName: "\uC554\uC5FC (\uD070 \uC54C)"
+      prefab: {fileID: 4462242970877628171, guid: 36eaadeb6ee9a56459daee379d8cb3dc, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.salt.medium_grain
+      displayName: "\uC554\uC5FC (\uC911\uAC04 \uC54C)"
+      prefab: {fileID: 2050859494395630658, guid: e181d4abd32e0d4458c4fafbe7c28af0, type: 3}
+      icon: {fileID: 0}
+    - id: ingredient.salt.small_grain
+      displayName: "\uC554\uC5FC (\uC791\uC740 \uC54C)"
+      prefab: {fileID: 581590785536326812, guid: a9eadd35fc815e44ca3eb4ef3da97d5e, type: 3}
       icon: {fileID: 0}
