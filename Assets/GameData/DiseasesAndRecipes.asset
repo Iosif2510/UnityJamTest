@@ -18,6 +18,7 @@ MonoBehaviour:
     displayName: "\uADF8\uB9BC\uC790 \uB291\uC7A5\uC99D"
     recipeId: POT_01
     order: 1
+    defaultSymptomEffect: 2
     symptomMeanings:
     - "\uADF8\uB9BC\uC790\uAC00 \uB2A6\uAC8C \uB530\uB77C\uC634"
     - "\uD574 \uC9C8 \uB158\uC5D0 \uC2EC\uD574\uC9D0"
@@ -46,6 +47,7 @@ MonoBehaviour:
     displayName: "\uB418\uC6B8\uB9BC\uC99D"
     recipeId: POT_02
     order: 2
+    defaultSymptomEffect: 3
     symptomMeanings:
     - "\uB0B4\uAC00 \uD55C \uB9D0\uC758 \uB05D\uC774 \uB2E4\uC2DC \uB4E4\uB9BC"
     - "\uC870\uC6A9\uD55C \uACF3\uC5D0\uC11C \uC2EC\uD574\uC9D0"
@@ -74,6 +76,7 @@ MonoBehaviour:
     displayName: "\uB4E4\uB738\uC553\uC774"
     recipeId: POT_03
     order: 3
+    defaultSymptomEffect: 4
     symptomMeanings:
     - "\uBAB8\uC774 \uAC00\uBCBC\uC6CC\uC9D0"
     - "\uBC1C\uC774 \uB545\uC5D0 \uB2FF\uC9C0 \uC54A\uC74C"
@@ -103,6 +106,7 @@ MonoBehaviour:
     displayName: "\uAC70\uC6B8\uC7A0"
     recipeId: POT_04
     order: 4
+    defaultSymptomEffect: 5
     symptomMeanings:
     - "\uAC70\uC6B8 \uC18D \uB0B4\uAC00 \uC878\uC74C"
     - "\uC815\uC791 \uB098\uB294 \uBC24\uC5D0 \uC7A0\uC744 \uBABB \uC7A0"
@@ -133,6 +137,7 @@ MonoBehaviour:
     displayName: "\uBE57\uBB3C\uD600"
     recipeId: POT_05
     order: 5
+    defaultSymptomEffect: 6
     symptomMeanings:
     - "\uBB34\uC5C7\uC744 \uBA39\uC5B4\uB3C4 \uBE57\uBB3C \uB9DB\uC774 \uB0A8"
     - "\uBE44 \uC624\uAE30 \uC804\uB0A0 \uD600\uAC00 \uC800\uB9BC"
@@ -164,6 +169,7 @@ MonoBehaviour:
     displayName: "\uC11C\uB9AC\uC190"
     recipeId: POT_06
     order: 6
+    defaultSymptomEffect: 7
     symptomMeanings:
     - "\uC190\uB05D\uC774 \uB298 \uCC28\uAC00\uC6C0"
     - "\uC190\uC5D0 \uB2FF\uB294 \uBB3C\uAC74\uC774 \uC5BC\uC5B4\uBD99\uC74C"

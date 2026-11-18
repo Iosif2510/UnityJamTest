@@ -78,7 +78,26 @@ namespace PotionShop.Editor
             }
 
             CheckPrescriptions(catalog, Error, Warn);
+            if (source.FallbackDialogue != null)
+                CheckDialogueLengths(source, Warn);
             Debug.Log($"Catalog validation: {errors} error(s), {warnings} warning(s).", source);
+        }
+
+        private static void CheckDialogueLengths(PotionCatalog source, Action<string> warn)
+        {
+            foreach (var line in source.FallbackDialogue.Lines)
+            {
+                var text = line.Text.Replace("<sym>", "").Replace("</sym>", "");
+                int target = source.Tuning.LineLength;
+                (int min, int max) = line.Kind switch
+                {
+                    FallbackKind.Symptom => (target * 8 / 10, target * 12 / 10),
+                    FallbackKind.Receive => (30, 60),
+                    _ => (40, 80)
+                };
+                if (text.Length < min || text.Length > max)
+                    warn($"{line.Key}: {text.Length} characters including spaces. Target: {min}–{max}.");
+            }
         }
 
         private static void CheckPrescriptions(LoadedCatalog catalog, Action<string> error, Action<string> warn)

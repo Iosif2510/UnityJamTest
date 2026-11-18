@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -11,6 +12,28 @@ namespace PotionShop.Data
     public sealed class FallbackLine
     {
         private static readonly Regex SymptomTags = new("<sym>([^<>]+)</sym>");
+        internal static IReadOnlyDictionary<string, FallbackKind> ReactionKinds { get; } =
+            new Dictionary<string, FallbackKind>(StringComparer.Ordinal)
+            {
+                ["rcv_ok"] = FallbackKind.Receive, ["rcv_bottle"] = FallbackKind.Receive,
+                ["rcv_ink"] = FallbackKind.Receive, ["rcv_both"] = FallbackKind.Receive,
+                ["aft_cured"] = FallbackKind.AfterDrinking, ["aft_cured_ink"] = FallbackKind.AfterDrinking,
+                ["aft_odd"] = FallbackKind.AfterDrinking, ["aft_slime"] = FallbackKind.AfterDrinking,
+                ["timeout"] = FallbackKind.Timeout
+            };
+
+        internal static bool IsPlainText(string value) => !string.IsNullOrWhiteSpace(value) &&
+            !value.Contains('<') && !value.Contains('>');
+
+        internal static bool IsValidSymptom(DialogueOption dialogue, DiseaseEntry disease)
+        {
+            if (dialogue == null || dialogue.Segments.Any(segment => segment == null || segment.Text == null ||
+                segment.Text.Contains('<') || segment.Text.Contains('>') || (segment.IsSymptom && !IsPlainText(segment.Text))) ||
+                dialogue.Segments.Count(segment => segment.IsSymptom) != 3)
+                return false;
+            string text = string.Concat(dialogue.Segments.Select(segment => segment.Text));
+            return !disease.BannedWords.Any(word => !string.IsNullOrWhiteSpace(word) && text.Contains(word));
+        }
 
         [SerializeField] private string key;
         [SerializeField] private FallbackKind kind;

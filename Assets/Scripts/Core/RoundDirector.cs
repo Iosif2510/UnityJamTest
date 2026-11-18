@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace PotionShop
 {
-    public enum RoundPhase { Waiting, Consult, Storage, Prescribe, Result }
+    public enum RoundPhase { Waiting, Consult, Storage, Prescribe, Result, Ending }
 
     [DisallowMultipleComponent]
     public sealed class RoundDirector : MonoBehaviour
@@ -26,6 +26,8 @@ namespace PotionShop
         public GeneratedOrder CurrentOrder { get; private set; }
         public IReadOnlyList<string> SubmittedIngredients { get; private set; }
         public RoundResult Result { get; private set; }
+        public RoundTuning Tuning => loadedCatalog?.Tuning;
+        public Sprite SlimePortrait => catalog.Customers.SlimePortrait;
 #if UNITY_EDITOR
         public static Func<LoadedCatalog, string, GeneratedOrder> EditorOrderFactory;
 #endif
@@ -64,7 +66,7 @@ namespace PotionShop
         private void Update()
         {
             ExpireIfNeeded();
-            if (Phase == RoundPhase.Result)
+            if (Phase is RoundPhase.Ending or RoundPhase.Result)
                 LoadSceneIfNeeded(CounterScene);
         }
 
@@ -135,8 +137,14 @@ namespace PotionShop
 
             Result = RoundJudge.Score(CurrentOrder, SubmittedIngredients, bottle, inkNumber, RemainingSeconds,
                 loadedCatalog.Tuning);
-            Phase = RoundPhase.Result;
+            Phase = RoundPhase.Ending;
             return true;
+        }
+
+        internal void CompleteEnding(RoundResult result)
+        {
+            if (Phase == RoundPhase.Ending && Result == result)
+                Phase = RoundPhase.Result;
         }
 
         public static string FormatClock(double seconds)
@@ -151,7 +159,7 @@ namespace PotionShop
                 return false;
 
             Result = RoundResult.TimeExpired();
-            Phase = RoundPhase.Result;
+            Phase = RoundPhase.Ending;
             return true;
         }
 

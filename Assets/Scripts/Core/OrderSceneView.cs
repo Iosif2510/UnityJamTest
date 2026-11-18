@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using PotionShop.Data;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +11,7 @@ namespace PotionShop
     [DisallowMultipleComponent]
     public sealed class OrderSceneView : MonoBehaviour
     {
-        [SerializeField] private Text dialogueText;
+        [SerializeField] private OrderDialogueView dialogueView;
         [SerializeField] private Button enterWorkshopButton;
         [SerializeField] private Text phaseLabel;
         [SerializeField] private Text timerText;
@@ -29,14 +31,15 @@ namespace PotionShop
 
         private RoundDirector round;
         private RoundPhase? shownPhase;
-        private Font temporaryFont;
+        private CancellationTokenSource dialoguePlayback;
         private BottleShape chosenBottle;
         private int chosenInk;
+        private bool endingReady;
 
         private void Start()
         {
             round = RoundDirector.Instance;
-            enterWorkshopButton.onClick.AddListener(EnterWorkshop);
+            enterWorkshopButton.onClick.AddListener(AdvanceDialogue);
             squareBottle.onClick.AddListener(() => SelectBottle(BottleShape.Square));
             heartBottle.onClick.AddListener(() => SelectBottle(BottleShape.Heart));
             roundBottle.onClick.AddListener(() => SelectBottle(BottleShape.Round));
@@ -47,12 +50,6 @@ namespace PotionShop
             }
             serveButton.onClick.AddListener(Serve);
             nextOrderButton.onClick.AddListener(StartNewOrder);
-
-            if (Font.GetOSInstalledFontNames().Contains("Malgun Gothic"))
-            {
-                temporaryFont = Font.CreateDynamicFontFromOSFont("Malgun Gothic", dialogueText.fontSize);
-                dialogueText.font = temporaryFont;
-            }
 
             if (round == null || round.Phase == RoundPhase.Waiting)
                 StartNewOrder();
@@ -72,10 +69,20 @@ namespace PotionShop
                 timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
         }
 
-        private void OnDestroy()
+        private void OnEnable() => shownPhase = null;
+
+        private void OnDisable()
         {
-            if (temporaryFont != null)
-                Destroy(temporaryFont);
+            StopDialogue();
+            if (dialogueView != null) dialogueView.StopPresentation();
+        }
+
+        private void StopDialogue()
+        {
+            if (dialoguePlayback == null) return;
+            dialoguePlayback.Cancel();
+            dialoguePlayback.Dispose();
+            dialoguePlayback = null;
         }
 
         private void StartNewOrder()
@@ -90,15 +97,21 @@ namespace PotionShop
             }
             catch (Exception exception)
             {
-                dialogueText.text = "The order could not be loaded.";
+                dialogueView.ShowMessage("대사를 불러오지 못했습니다.");
                 enterWorkshopButton.interactable = false;
                 Debug.LogException(exception, this);
             }
         }
 
-        private void EnterWorkshop()
+        private void AdvanceDialogue()
         {
-            if (round.TryEnterStorage())
+            if (endingReady && round.Phase == RoundPhase.Ending)
+            {
+                endingReady = false;
+                round.CompleteEnding(round.Result);
+                RefreshPhase();
+            }
+            else if (enterWorkshopButton.interactable && round.TryEnterStorage())
                 enterWorkshopButton.interactable = false;
         }
 
@@ -110,33 +123,48 @@ namespace PotionShop
 
         private void RefreshPhase()
         {
+            StopDialogue();
             RoundPhase phase = round.Phase;
             shownPhase = phase;
             bool consult = phase == RoundPhase.Consult;
             bool prescribe = phase == RoundPhase.Prescribe;
+            bool ending = phase == RoundPhase.Ending;
             bool result = phase == RoundPhase.Result;
+            endingReady = false;
 
-            dialogueText.transform.parent.gameObject.SetActive(consult);
+            dialogueView.gameObject.SetActive(consult || ending);
             enterWorkshopButton.gameObject.SetActive(consult);
+            enterWorkshopButton.interactable = false;
             prescriptionPanel.SetActive(prescribe);
             resultPanel.SetActive(result);
             customerClues.transform.parent.gameObject.SetActive(consult || prescribe);
             timerText.gameObject.SetActive(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-            phaseLabel.text = result ? "Result" : prescribe ? "Prescription" : "Orders";
+            phaseLabel.text = result ? "Result" : ending ? "Reaction" : prescribe ? "Prescription" : "Orders";
 
             if (consult || prescribe)
             {
                 customerClues.text = DescribeCustomer(round.CurrentOrder);
-                if (portraitView != null && portraitColors != null && round.CurrentOrder.Customer.FixedAppearance)
-                    portraitView.Show(round.CurrentOrder, portraitColors);
             }
-            if (portraitView != null) portraitView.gameObject.SetActive(consult || prescribe);
+
+            if (portraitView != null)
+            {
+                bool showPortrait = (consult || prescribe || ending) && portraitColors != null &&
+                    round.CurrentOrder.Customer.FixedAppearance && round.CurrentOrder.Customer.BasePortrait != null;
+                portraitView.gameObject.SetActive(showPortrait);
+                if (showPortrait) portraitView.Show(round.CurrentOrder, portraitColors);
+            }
+
+            if (consult || ending)
+            {
+                dialogueView.SetSpeaker(round.CurrentOrder.Voice?.DisplayName ?? string.Empty);
+                dialoguePlayback = new CancellationTokenSource();
+            }
 
             if (consult)
             {
-                dialogueText.text = string.Concat(round.CurrentOrder.Dialogue.Segments.Select(segment => segment.Text));
-                enterWorkshopButton.interactable = true;
+                SetAdvanceLabel("창고로");
+                PlayConsult(round.CurrentOrder, dialoguePlayback.Token).Forget();
             }
             else if (prescribe)
             {
@@ -144,6 +172,8 @@ namespace PotionShop
                 chosenInk = 0;
                 RefreshChoices();
             }
+            else if (ending)
+                PlayEnding(round.CurrentOrder, round.Result, dialoguePlayback.Token).Forget();
             else if (result)
             {
                 RoundResult score = round.Result;
@@ -154,6 +184,52 @@ namespace PotionShop
                       $"Ink: {(score.InkCorrect ? "Correct" : "Wrong")} (+{score.InkPoints})\n" +
                       $"Time bonus: +{score.TimeBonus}\n\nTotal: {score.Total}   |   {score.Stamp}";
             }
+        }
+
+        private async UniTask PlayConsult(GeneratedOrder order, CancellationToken token)
+        {
+            await dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
+            if (round.Phase == RoundPhase.Consult && round.CurrentOrder == order)
+                enterWorkshopButton.interactable = true;
+        }
+
+        private async UniTask PlayEnding(GeneratedOrder order, RoundResult result, CancellationToken token)
+        {
+            var gap = TimeSpan.FromSeconds(round.Tuning.ReactionGap);
+            int speed = round.Tuning.TextSpeed;
+            if (result.TimedOut)
+            {
+                await dialogueView.PlayReaction(order.GetReactionLine("timeout"), speed, token);
+                await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
+                round.CompleteEnding(result);
+                return;
+            }
+            else
+            {
+                await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token);
+                await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
+                ApplyEffect(result.Effect);
+                await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token);
+            }
+            if (round.Phase != RoundPhase.Ending || round.Result != result) return;
+            endingReady = true;
+            SetAdvanceLabel("결과 보기");
+            enterWorkshopButton.gameObject.SetActive(true);
+            enterWorkshopButton.interactable = true;
+        }
+
+        private void SetAdvanceLabel(string title) => enterWorkshopButton.GetComponentInChildren<Text>(true).text = title;
+
+        private void ApplyEffect(CustomerEffect effect)
+        {
+            if (portraitView == null) return;
+            if (effect == CustomerEffect.Slime && round.SlimePortrait != null)
+            {
+                portraitView.gameObject.SetActive(true);
+                portraitView.ShowSlime(round.SlimePortrait);
+            }
+            else if (effect == CustomerEffect.OddTint && portraitView.isActiveAndEnabled)
+                portraitView.Tint(new Color(0.62f, 0.95f, 0.69f));
         }
 
         private void SelectBottle(BottleShape bottle)

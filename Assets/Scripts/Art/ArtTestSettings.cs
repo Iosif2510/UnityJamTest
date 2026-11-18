@@ -17,11 +17,11 @@ namespace PotionShop.Art
         {
             var settings = UnityEditor.AssetDatabase.LoadAssetAtPath<ArtTestSettings>("Assets/Editor/ArtTestSettings.asset");
             if (settings == null || !settings.useFixedOrder) return;
-            RoundDirector.EditorOrderFactory = (catalog, previous) => OrderGenerator.Generate(catalog,
+            RoundDirector.EditorOrderFactory = (catalog, previous) => OrderGenerator.GenerateFixed(catalog,
                 settings.seed, previous, string.IsNullOrWhiteSpace(settings.customerId) ? null : settings.customerId,
                 settings.hairColor == AppearanceValue.Unspecified ? null : settings.hairColor,
                 settings.eyeColor == AppearanceValue.Unspecified ? null : settings.eyeColor);
-            Debug.Log("[Art Test] Fixed order enabled. Disable it in Potion Shop/Art/Test Settings for normal play.");
+            Debug.Log("[Art Test] Fixed appearance test bypasses the uniform ink draw. Disable it for normal play.");
         }
     }
 }

@@ -4,14 +4,18 @@ using UnityEngine;
 
 namespace PotionShop.Data
 {
+    public enum SymptomEffect { Inherit, None, ShadowLag, Echo, Drift, MirrorDoze, RainDrip, Frost }
+
     [Serializable]
     public sealed class DialogueSegment
     {
         [SerializeField, TextArea] private string text;
         [SerializeField] private bool isSymptom;
+        [SerializeField] private SymptomEffect effect;
 
         public string Text => text;
         public bool IsSymptom => isSymptom;
+        public SymptomEffect Effect => effect;
 
         public DialogueSegment() { }
         internal DialogueSegment(string text, bool isSymptom)
@@ -25,8 +29,10 @@ namespace PotionShop.Data
     public sealed class DialogueOption
     {
         [SerializeField] private List<DialogueSegment> segments = new();
+        [SerializeField] private SymptomEffect defaultSymptomEffect;
 
         public IReadOnlyList<DialogueSegment> Segments => segments;
+        public SymptomEffect DefaultSymptomEffect => defaultSymptomEffect;
 
         public DialogueOption() { }
         internal DialogueOption(List<DialogueSegment> segments) => this.segments = segments;
@@ -38,6 +44,7 @@ namespace PotionShop.Data
         [SerializeField] private string displayName;
         [SerializeField] private string recipeId;
         [SerializeField] private int order;
+        [SerializeField] private SymptomEffect defaultSymptomEffect = SymptomEffect.None;
         [SerializeField] private string[] symptomMeanings = Array.Empty<string>();
         [SerializeField] private string[] docSymptoms = Array.Empty<string>();
         [SerializeField] private string[] lineExamples = Array.Empty<string>();
@@ -49,6 +56,7 @@ namespace PotionShop.Data
         public string DisplayName => displayName;
         public string RecipeId => recipeId;
         public int Order => order;
+        public SymptomEffect DefaultSymptomEffect => defaultSymptomEffect;
         public IReadOnlyList<string> SymptomMeanings => symptomMeanings;
         public IReadOnlyList<string> DocSymptoms => docSymptoms;
         public IReadOnlyList<string> LineExamples => lineExamples;

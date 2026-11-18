@@ -53,7 +53,7 @@ namespace PotionShop
             if (round != null)
             {
                 timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-                if (round.Phase == RoundPhase.Result && !complete)
+                if (round.Phase is (RoundPhase.Ending or RoundPhase.Result) && !complete)
                 {
                     complete = true;
                     crosshair.SetActive(false);

@@ -26,6 +26,7 @@ namespace PotionShop.Data
             KindsByVariant = new ReadOnlyDictionary<string, IngredientKind>(kindsByVariant);
             PrescriptionRules = prescriptionRules;
             Tuning = tuning;
+            Appearances = new AppearanceBuckets(customers.Values, prescriptionRules);
         }
 
         public IReadOnlyDictionary<string, CustomerProfile> Customers { get; }
@@ -36,16 +37,18 @@ namespace PotionShop.Data
         public IReadOnlyDictionary<string, IngredientKind> KindsByVariant { get; }
         public PrescriptionRules PrescriptionRules { get; }
         public RoundTuning Tuning { get; }
+        internal AppearanceBuckets Appearances { get; }
+        public int AppearanceCountForInk(int inkNumber) => Appearances.Count(inkNumber);
         public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue { get; internal set; }
         internal Dictionary<string, DialogueOption> SymptomFallbacks { get; } = new(StringComparer.Ordinal);
+        internal IReadOnlyDictionary<string, string> ReactionLines { get; set; }
+        internal Dictionary<string, CharacterVoice> Voices { get; } = new(StringComparer.Ordinal);
 
         public IReadOnlyList<DialogueOption> GetDiseaseDialogue(DiseaseEntry disease)
         {
-            if (disease.Dialogue.Count > 0)
-                return disease.Dialogue;
             return SymptomFallbacks.TryGetValue(disease.Id, out var fallback)
                 ? new[] { fallback }
-                : Array.Empty<DialogueOption>();
+                : disease.Dialogue;
         }
     }
 
@@ -64,8 +67,10 @@ namespace PotionShop.Data
                 throw new InvalidOperationException($"{catalog.name}: assign all five data assets.");
             }
 
-            if (catalog.Tuning.TimeLimitSeconds <= 0 || catalog.Tuning.BonusIntervalSeconds <= 0)
-                throw new InvalidOperationException($"{catalog.name}: time limit and bonus interval must be positive.");
+            if (catalog.Tuning.TimeLimitSeconds <= 0 || catalog.Tuning.BonusIntervalSeconds <= 0 ||
+                catalog.Tuning.TextSpeed <= 0 || catalog.Tuning.LineLength <= 0 ||
+                !(catalog.Tuning.ReactionGap >= 0f) || float.IsInfinity(catalog.Tuning.ReactionGap))
+                throw new InvalidOperationException($"{catalog.name}: check the round and dialogue timing values.");
 
             var customers = IndexActive(catalog.Customers.Profiles, "customer");
             var diseases = IndexActive(catalog.DiseasesAndRecipes.Diseases, "disease");
@@ -120,8 +125,14 @@ namespace PotionShop.Data
             }
             var loaded = new LoadedCatalog(customers, diseases, recipes, kinds, variants, kindsByVariant,
                 catalog.PrescriptionRules, catalog.Tuning) { CustomerDialogue = catalog.DiseasesAndRecipes.CustomerDialogue };
+            if (catalog.CharacterVoices != null)
+                foreach (var voice in catalog.CharacterVoices.Voices)
+                    if (voice == null || string.IsNullOrWhiteSpace(voice.Code) ||
+                        string.IsNullOrWhiteSpace(voice.DisplayName) || !loaded.Voices.TryAdd(voice.Code, voice))
+                        throw new InvalidOperationException("Invalid or duplicate character voice.");
             if (catalog.FallbackDialogue != null)
             {
+                var reactionLines = new Dictionary<string, string>(StringComparer.Ordinal);
                 var diseaseIds = catalog.DiseasesAndRecipes.Diseases.Select(disease => disease.Id)
                     .ToHashSet(StringComparer.Ordinal);
                 var fallbackIds = new HashSet<string>(StringComparer.Ordinal);
@@ -130,13 +141,30 @@ namespace PotionShop.Data
                     if (line == null)
                         throw new InvalidOperationException("Missing fallback dialogue row.");
                     if (line.Kind != FallbackKind.Symptom)
+                    {
+                        if (!FallbackLine.ReactionKinds.TryGetValue(line.Key ?? "", out var kind) || line.Kind != kind ||
+                            !FallbackLine.IsPlainText(line.Text) || !reactionLines.TryAdd(line.Key, line.Text))
+                            throw new InvalidOperationException($"Invalid or duplicate reaction fallback: {line.Key}.");
                         continue;
-                    if (!diseaseIds.Contains(line.DiseaseId) || !fallbackIds.Add(line.DiseaseId))
+                    }
+                    if (!diseaseIds.Contains(line.DiseaseId) || line.Key != "sym_" + line.DiseaseId ||
+                        !fallbackIds.Add(line.DiseaseId))
                         throw new InvalidOperationException($"Invalid/duplicate symptom fallback: {line.Key}.");
-                    if (diseases.ContainsKey(line.DiseaseId))
-                        loaded.SymptomFallbacks.Add(line.DiseaseId, line.CreateSymptomDialogue());
+                    if (diseases.TryGetValue(line.DiseaseId, out var disease))
+                    {
+                        var dialogue = line.CreateSymptomDialogue();
+                        if (!FallbackLine.IsValidSymptom(dialogue, disease))
+                            throw new InvalidOperationException($"Invalid symptom fallback: {line.Key}.");
+                        loaded.SymptomFallbacks.Add(line.DiseaseId, dialogue);
+                    }
                 }
+                if (reactionLines.Count != FallbackLine.ReactionKinds.Count || loaded.SymptomFallbacks.Count != diseases.Count)
+                    throw new InvalidOperationException("Assign all reaction fallbacks and a symptom fallback for each active disease.");
+                loaded.ReactionLines = new ReadOnlyDictionary<string, string>(reactionLines);
             }
+            if (diseases.Keys.Any(id => id.StartsWith("DIS_", StringComparison.Ordinal)) &&
+                (loaded.ReactionLines == null || customers.Keys.Any(id => !loaded.Voices.ContainsKey(id))))
+                throw new InvalidOperationException("MVP requires reaction fallbacks and a voice for every active customer.");
             return loaded;
         }
 

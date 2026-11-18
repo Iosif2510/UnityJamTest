@@ -356,17 +356,6 @@ Transform:
   - {fileID: 318618506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &709387031 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6655164770779439232, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
-  m_PrefabInstance: {fileID: 2470176195827802544}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
 --- !u!1 &785177321 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3698052460500297408, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
@@ -474,7 +463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db2ee3f82d7ab041b249a6b59309f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.OrderSceneView
-  dialogueText: {fileID: 709387031}
+  dialogueView: {fileID: 2470176195827802546}
   enterWorkshopButton: {fileID: 1400713649}
   phaseLabel: {fileID: 2081084771}
   timerText: {fileID: 1372549632}
@@ -811,6 +800,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 699014338}
     m_Modifications:
+    - target: {fileID: 203199773733135560, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 825547341438454762, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_Name
       value: OrderCanvas
@@ -911,6 +904,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7d703d8bd7781c4a8fc38ba70a5b525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Portraits.PortraitView
+--- !u!114 &2470176195827802546 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9106171257106500683, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+  m_PrefabInstance: {fileID: 2470176195827802544}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a607be091be0879489916e48a1f202e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.OrderDialogueView
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -865,4 +865,4 @@ MonoBehaviour:
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
     irisDetails: []
-  slimePortrait: {fileID: 0}
+  slimePortrait: {fileID: 21300000, guid: 21e81d1868785374982584ba6d6647a1, type: 3}

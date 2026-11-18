@@ -4,6 +4,8 @@ using PotionShop.Data;
 
 namespace PotionShop
 {
+    public enum CustomerEffect { None, Recovered, OddTint, Slime }
+
     public sealed class RoundResult
     {
         internal RoundResult(bool timedOut, int correctIngredients, bool bottleCorrect, bool inkCorrect,
@@ -31,6 +33,29 @@ namespace PotionShop
         public int Total => IngredientPoints + BottlePoints + InkPoints + TimeBonus;
         public string Stamp { get; }
 
+        public string ReceiveDialogueKey => TimedOut ? null : (BottleCorrect, InkCorrect) switch
+        {
+            (true, true) => "rcv_ok",
+            (false, true) => "rcv_bottle",
+            (true, false) => "rcv_ink",
+            _ => "rcv_both"
+        };
+
+        public CustomerEffect Effect => TimedOut ? CustomerEffect.None : CorrectIngredients switch
+        {
+            RecipeEntry.RequiredIngredientKinds => CustomerEffect.Recovered,
+            RecipeEntry.RequiredIngredientKinds - 1 => CustomerEffect.OddTint,
+            _ => CustomerEffect.Slime
+        };
+
+        public string DrinkDialogueKey => Effect switch
+        {
+            CustomerEffect.Recovered => InkCorrect ? "aft_cured" : "aft_cured_ink",
+            CustomerEffect.OddTint => "aft_odd",
+            CustomerEffect.Slime => "aft_slime",
+            _ => null
+        };
+
         internal static RoundResult TimeExpired() => new(true, 0, false, false, 0, 0, 0, 0, "Slime");
     }
 
@@ -50,7 +75,7 @@ namespace PotionShop
             int ingredientPoints = correctIngredients * tuning.PointsPerIngredient;
             int bottlePoints = bottleCorrect ? tuning.BottlePoints : 0;
             int inkPoints = inkCorrect ? tuning.InkPoints : 0;
-            int timeBonus = (int)Math.Floor(remainingSeconds / tuning.BonusIntervalSeconds) *
+            int timeBonus = (int)Math.Floor(Math.Max(0d, remainingSeconds) / tuning.BonusIntervalSeconds) *
                 tuning.PointsPerBonusInterval;
             int total = ingredientPoints + bottlePoints + inkPoints + timeBonus;
             string stamp = total >= tuning.PerfectStampThreshold ? "Fine Brew" :
