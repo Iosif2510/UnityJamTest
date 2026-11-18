@@ -91,6 +91,7 @@ namespace PotionShop
 
         /// <summary>When false, movement and look input are ignored (e.g. while a UI panel is open).</summary>
         public bool InputEnabled { get; set; } = true;
+        internal Func<bool> TryHandleLookInput { get; set; }
 
         private void Awake()
         {
@@ -248,7 +249,9 @@ namespace PotionShop
 
         private void HandleLook()
         {
-            if (!InputEnabled || !IsCursorLocked || lookAction == null || cameraTarget == null)
+            if (!InputEnabled || !IsCursorLocked)
+                return;
+            if (TryHandleLookInput?.Invoke() == true || lookAction == null || cameraTarget == null)
                 return;
 
             Vector2 look = lookAction.action.ReadValue<Vector2>();

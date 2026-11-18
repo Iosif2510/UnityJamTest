@@ -15,6 +15,7 @@ namespace PotionShop
         [SerializeField] private FirstPersonController player;
         [SerializeField] private Camera playerCamera;
         [SerializeField] private Transform heldItemAnchor;
+        [SerializeField, Min(0f)] private float heldRotationSensitivity = 0.35f;
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private Text prompt;
         [SerializeField] private Text pocketDisplay;
@@ -31,6 +32,15 @@ namespace PotionShop
         private bool wasLocked;
         private RoundDirector round;
         private PocketModelDisplay pocketModels;
+
+        private void OnEnable() => player.TryHandleLookInput = TryRotateHeldIngredient;
+
+        private void OnDisable()
+        {
+            if (player != null && player.TryHandleLookInput == TryRotateHeldIngredient)
+                player.TryHandleLookInput = null;
+            wasLocked = false;
+        }
 
         private void Start()
         {
@@ -116,7 +126,7 @@ namespace PotionShop
 
         private void HandleHeldIngredient()
         {
-            prompt.text = "[F] Put in pocket   [Right click] Return to shelf";
+            prompt.text = "[Hold R + mouse] Rotate   [F] Put in pocket   [Right click] Return to shelf";
             if (Mouse.current?.rightButton.wasPressedThisFrame == true)
             {
                 held.ReturnToShelf();
@@ -130,6 +140,20 @@ namespace PotionShop
                 held = null;
                 pocketModels.ShowIngredient(pocket.Count - 1, stored.transform);
             }
+        }
+
+        private bool TryRotateHeldIngredient()
+        {
+            var mouse = Mouse.current;
+            if (!wasLocked || complete || held == null || mouse == null ||
+                Keyboard.current?.rKey.isPressed != true ||
+                (round != null && round.Phase is (RoundPhase.Ending or RoundPhase.Result)))
+                return false;
+
+            Vector2 angles = mouse.delta.ReadValue() * heldRotationSensitivity;
+            if (angles != Vector2.zero)
+                held.RotateInHand(playerCamera.transform, angles);
+            return true;
         }
 
         private void StartBrewing(WorkshopCauldron cauldron)
