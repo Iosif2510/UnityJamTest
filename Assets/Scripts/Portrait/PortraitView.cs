@@ -26,7 +26,6 @@ namespace PotionShop.Portraits
             var hairTint = profile.UseAccessoryTint ? profile.AccessoryTint : palette.Get(PortraitSlot.Hair, hair);
             colors.Apply(hairTint, palette.Get(PortraitSlot.Eyes, eyes));
             rig?.Load(profile.RigPrefab, profile.SpineRig);
-            blink.BindSpine(rig != null ? rig.SpineRig : null);
             blink.Play();
         }
         public void Show(GeneratedOrder order, PortraitColorCatalog palette) => Show(order.Customer,
@@ -37,7 +36,6 @@ namespace PotionShop.Portraits
         {
             if (sprite == null) throw new InvalidOperationException("Assign slime portrait in Customers.");
             blink.Stop();
-            blink.BindSpine(null);
             if (rig != null) rig.Clear();
             colors.Apply(Color.white, Color.white);
             foreach (var image in layers.All) image.enabled = false;

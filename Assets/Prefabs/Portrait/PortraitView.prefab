@@ -410,7 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Portraits.PortraitBlink
   layers: {fileID: 4608378953156854719}
-  interval: {x: 3, y: 5}
+  interval: {x: 2, y: 2.5}
   closedSeconds: 0.1
 --- !u!114 &4446875889919797991
 MonoBehaviour:

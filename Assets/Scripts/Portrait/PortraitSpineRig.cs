@@ -7,15 +7,16 @@ namespace PotionShop.Portraits
 {
     internal sealed class PortraitSpineRig
     {
+        private const float IdleMotionMultiplier = 1.5f;
+        private const float IdlePlaybackSpeed = 1.15f;
+
         private readonly Skeleton skeleton;
         private readonly Spine.AnimationState animation;
-        private readonly Slot blinkSlot;
         private readonly PortraitSkinnedImage baseImage;
         private readonly MeshBinding[] meshes;
         private readonly BoneFollower[] followers;
 
         private Rect Bounds { get; }
-        public bool EyesClosed => blinkSlot.AppliedPose.Attachment != null;
 
         public PortraitSpineRig(TextAsset json, PortraitLayers layers)
         {
@@ -35,13 +36,13 @@ namespace PotionShop.Portraits
             var baseSlot = RequireSlot("base");
             var baseMesh = baseSlot.AppliedPose.Attachment as MeshAttachment
                 ?? throw new InvalidDataException("Spine slot 'base' requires a setup mesh.");
-            blinkSlot = RequireSlot("eye_closed");
+            var blinkBone = RequireSlot("eye_closed").Bone;
             var irisBone = RequireSlot("iris").Bone;
             var meshList = new List<MeshBinding>(3) { new(baseImage, baseSlot, baseMesh, Bounds) };
             var followersList = new List<BoneFollower>(4);
             AddHair(meshList, followersList, layers.hairBack, RequireSlot("hair_back"));
             AddHair(meshList, followersList, layers.hairFront, RequireSlot("hair_front"));
-            AddFollower(followersList, layers.eyeClosed, blinkSlot.Bone);
+            AddFollower(followersList, layers.eyeClosed, blinkBone);
             if (layers.irisMask != null)
                 AddFollower(followersList, layers.irisMask, irisBone);
             else
@@ -53,7 +54,7 @@ namespace PotionShop.Portraits
             followers = followersList.ToArray();
 
             animation = new Spine.AnimationState(new AnimationStateData(data));
-            animation.SetAnimation(0, idle, true);
+            animation.SetAnimation(0, idle, true).TimeScale = IdlePlaybackSpeed;
             Advance(0f);
             foreach (var mesh in meshes)
                 mesh.Image.BindSpine(mesh);
@@ -87,7 +88,16 @@ namespace PotionShop.Portraits
         public void Advance(float deltaTime)
         {
             animation.Update(deltaTime);
+            skeleton.SetupPoseBones();
             animation.Apply(skeleton);
+            foreach (var bone in skeleton.Bones)
+            {
+                var setup = bone.Data.GetSetupPose();
+                var pose = bone.Pose;
+                pose.X = Mathf.LerpUnclamped(setup.X, pose.X, IdleMotionMultiplier);
+                pose.Y = Mathf.LerpUnclamped(setup.Y, pose.Y, IdleMotionMultiplier);
+                pose.Rotation = Mathf.LerpUnclamped(setup.Rotation, pose.Rotation, IdleMotionMultiplier);
+            }
             skeleton.UpdateWorldTransform(Spine.Physics.None);
             foreach (var mesh in meshes)
                 mesh.UpdateVertices(skeleton);
