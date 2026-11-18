@@ -10,28 +10,24 @@ namespace PotionShop
     [DisallowMultipleComponent]
     public sealed class WorkshopInteraction : MonoBehaviour
     {
-        private enum Stage { Collecting, Brewing, Complete }
-
         private const float RayOriginRadius = 0.001f;
 
         [SerializeField] private FirstPersonController player;
         [SerializeField] private Camera playerCamera;
         [SerializeField] private Transform heldItemAnchor;
-        [SerializeField] private Transform cauldron;
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private Text prompt;
         [SerializeField] private Text pocketDisplay;
         [SerializeField] private Text timerText;
         [SerializeField] private GameObject crosshair;
-        [SerializeField] private GameObject potionSurface;
         [SerializeField] private GameObject resultPanel;
 
         private readonly List<string> pocket = new();
         private readonly Collider[] originContacts = new Collider[16];
         private WarehouseIngredient held;
-        private Stage stage;
+        private WorkshopCauldron activeCauldron;
+        private bool complete;
         private bool wasLocked;
-        private double brewEndsAt;
         private RoundDirector round;
         private PocketModelDisplay pocketModels;
 
@@ -56,9 +52,9 @@ namespace PotionShop
             if (round != null)
             {
                 timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-                if (round.Phase == RoundPhase.Result && stage != Stage.Complete)
+                if (round.Phase == RoundPhase.Result && !complete)
                 {
-                    stage = Stage.Complete;
+                    complete = true;
                     crosshair.SetActive(false);
                     player.enabled = false;
                     prompt.text = "Time expired";
@@ -66,13 +62,13 @@ namespace PotionShop
                 }
             }
 
-            if (stage == Stage.Brewing)
+            if (complete)
+                return;
+            if (activeCauldron != null)
             {
-                UpdateBrewing();
+                UpdateBrewing(activeCauldron);
                 return;
             }
-            if (stage != Stage.Collecting)
-                return;
 
             bool locked = player.IsCursorLocked;
             bool canInteract = locked && wasLocked && player.InputEnabled;
@@ -94,28 +90,29 @@ namespace PotionShop
             if (!TryGetInteractionHit(GetInteractionRay(), out var target, out _))
                 return;
 
-            if (target.transform.IsChildOf(cauldron))
+            var cauldron = target.GetComponentInParent<WorkshopCauldron>();
+            if (cauldron != null)
             {
-                bool ready = pocket.Count == tuning.PocketCapacity;
-                prompt.text = ready ? "[Left click] Add ingredients to cauldron" :
+                bool hasIngredients = pocket.Count == tuning.PocketCapacity;
+                prompt.text = hasIngredients ? "[Left click] Add ingredients to cauldron" :
                     $"Fill all {tuning.PocketCapacity} pocket slots first";
-                if (ready && Mouse.current?.leftButton.wasPressedThisFrame == true)
-                    StartBrewing();
+                if (hasIngredients && Mouse.current?.leftButton.wasPressedThisFrame == true)
+                    StartBrewing(cauldron);
                 return;
             }
 
-            var ingredient = target.GetComponentInParent<WarehouseIngredient>();
+            var shelf = target.GetComponentInParent<WorkshopShelf>();
+            var ingredient = shelf != null ? shelf.FindStockedIngredient(target) : null;
             if (ingredient == null)
                 return;
 
             bool hasSpace = pocket.Count < tuning.PocketCapacity;
             prompt.text = hasSpace ? "[Left click] Pick up" : "Pocket full. Bring ingredients to the cauldron.";
-            if (hasSpace && Mouse.current?.leftButton.wasPressedThisFrame == true)
-            {
+            if (hasSpace && Mouse.current?.leftButton.wasPressedThisFrame == true &&
+                shelf.TryTake(ingredient, heldItemAnchor))
                 held = ingredient;
-                held.Hold(heldItemAnchor);
-            }
         }
+
         private void HandleHeldIngredient()
         {
             prompt.text = "[F] Put in pocket   [Right click] Return to shelf";
@@ -134,23 +131,23 @@ namespace PotionShop
             }
         }
 
-        private void StartBrewing()
+        private void StartBrewing(WorkshopCauldron cauldron)
         {
-            if (round != null && !round.TrySubmitIngredients(pocket))
+            if (!cauldron.CanStartBrewing || (round != null && !round.TrySubmitIngredients(pocket)))
+                return;
+            if (!cauldron.TryStartBrewing())
                 return;
 
-            stage = Stage.Brewing;
-            brewEndsAt = Time.unscaledTimeAsDouble + tuning.BrewingSeconds;
+            activeCauldron = cauldron;
             pocket.Clear();
             pocketModels.Clear();
             crosshair.SetActive(false);
-            potionSurface.SetActive(true);
-            UpdateBrewing();
+            UpdateBrewing(cauldron);
         }
 
-        private void UpdateBrewing()
+        private void UpdateBrewing(WorkshopCauldron cauldron)
         {
-            double remaining = brewEndsAt - Time.unscaledTimeAsDouble;
+            double remaining = cauldron.RemainingSeconds;
             if (remaining > 0d)
             {
                 string brewing = $"Brewing... {System.Math.Ceiling(remaining):0}s";
@@ -161,7 +158,7 @@ namespace PotionShop
             if (round != null && !round.TryFinishBrewing())
                 return;
 
-            stage = Stage.Complete;
+            complete = true;
             prompt.text = string.Empty;
             player.enabled = false;
             if (round == null)
@@ -242,10 +239,10 @@ namespace PotionShop
             end = ray.GetPoint(tuning.PickupDistance);
             if (TryGetInteractionHit(ray, out target, out hitPoint))
             {
-                if (cauldron != null && target.transform.IsChildOf(cauldron))
+                if (target.GetComponentInParent<WorkshopCauldron>() != null)
                     color = Color.yellow;
                 else
-                    color = target.GetComponentInParent<WarehouseIngredient>() != null
+                    color = target.GetComponentInParent<WorkshopShelf>()?.FindStockedIngredient(target) != null
                         ? Color.green : Color.red;
             }
 
