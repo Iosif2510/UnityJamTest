@@ -26,4 +26,4 @@ Unity에서 사용할 때는 표정 전환 코드 또는 데이터의 Sprite 필
 
 ## 공용 엔딩 슬라임
 
-manifest.json의 endingSlime에 있는 1024×1536 투명 PNG 한 장을 중앙 피벗으로 사용합니다. 분노 얼굴은 베이스에 포함되어 있습니다.
+합성본은 `manifest.json`의 `endingSlime`에 있습니다. 깜빡임을 적용할 때는 `endingSlimeLayers.base` 위에 `eyeOpen` 또는 `eyeClosed` 한 장을 표시합니다. 세 파츠는 1024×1536 투명 PNG이며 중앙 피벗을 공유합니다.
