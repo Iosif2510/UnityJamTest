@@ -13,194 +13,6 @@ MonoBehaviour:
   m_Name: Customers
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
   profiles:
-  - id: customer.elf.female
-    status: 2
-    speciesId: species.elf
-    gender: 2
-    basePortrait: {fileID: 0}
-    parts:
-    - id: portrait.elf.female.gold_hair
-      slot: 0
-      appearance: 7
-      sprite: {fileID: 0}
-    - id: portrait.elf.female.silver_hair
-      slot: 0
-      appearance: 8
-      sprite: {fileID: 0}
-    - id: portrait.elf.female.blue_eyes
-      slot: 1
-      appearance: 6
-      sprite: {fileID: 0}
-    - id: portrait.elf.female.green_eyes
-      slot: 1
-      appearance: 5
-      sprite: {fileID: 0}
-    - id: portrait.elf.female.smile
-      slot: 2
-      appearance: 16
-      sprite: {fileID: 0}
-    - id: portrait.elf.female.pointed_ears
-      slot: 3
-      appearance: 19
-      sprite: {fileID: 0}
-    fixedAppearance: 0
-    job: 
-    earType: 0
-    hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
-    hairColors: 
-    hairTintOverride: 0
-    eyeColors: 
-    irisRegions: []
-    rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
-  - id: customer.golem.genderless
-    status: 2
-    speciesId: species.golem
-    gender: 3
-    basePortrait: {fileID: 0}
-    parts:
-    - id: portrait.golem.genderless.bare_head
-      slot: 0
-      appearance: 1
-      sprite: {fileID: 0}
-    - id: portrait.golem.genderless.moss_hair
-      slot: 0
-      appearance: 13
-      sprite: {fileID: 0}
-    - id: portrait.golem.genderless.orange_eyes
-      slot: 1
-      appearance: 12
-      sprite: {fileID: 0}
-    - id: portrait.golem.genderless.rock_mouth
-      slot: 2
-      appearance: 21
-      sprite: {fileID: 0}
-    - id: portrait.golem.genderless.no_ears
-      slot: 3
-      appearance: 1
-      sprite: {fileID: 0}
-    fixedAppearance: 0
-    job: 
-    earType: 0
-    hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
-    hairColors: 
-    hairTintOverride: 0
-    eyeColors: 
-    irisRegions: []
-    rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
-  - id: customer.human.male
-    status: 2
-    speciesId: species.human
-    gender: 1
-    basePortrait: {fileID: 0}
-    parts:
-    - id: portrait.human.male.hair.black
-      slot: 0
-      appearance: 2
-      sprite: {fileID: 0}
-    - id: portrait.human.male.hair.brown
-      slot: 0
-      appearance: 3
-      sprite: {fileID: 0}
-    - id: portrait.human.male.eyes.brown
-      slot: 1
-      appearance: 3
-      sprite: {fileID: 0}
-    - id: portrait.human.male.eyes.green
-      slot: 1
-      appearance: 5
-      sprite: {fileID: 0}
-    - id: portrait.human.male.mouth.smile
-      slot: 2
-      appearance: 16
-      sprite: {fileID: 0}
-    - id: portrait.human.male.ears.roundears
-      slot: 3
-      appearance: 18
-      sprite: {fileID: 0}
-    fixedAppearance: 0
-    job: 
-    earType: 0
-    hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
-    hairColors: 
-    hairTintOverride: 0
-    eyeColors: 
-    irisRegions: []
-    rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
-  - id: customer.beastfolk.male
-    status: 2
-    speciesId: species.beastfolk
-    gender: 1
-    basePortrait: {fileID: 0}
-    parts:
-    - id: portrait.beastfolk.male.hair.red
-      slot: 0
-      appearance: 4
-      sprite: {fileID: 0}
-    - id: portrait.beastfolk.male.hair.brown
-      slot: 0
-      appearance: 3
-      sprite: {fileID: 0}
-    - id: portrait.beastfolk.male.eyes.yellow
-      slot: 1
-      appearance: 9
-      sprite: {fileID: 0}
-    - id: portrait.beastfolk.male.mouth.fangs
-      slot: 2
-      appearance: 17
-      sprite: {fileID: 0}
-    - id: portrait.beastfolk.male.mouth.normal
-      slot: 2
-      appearance: 15
-      sprite: {fileID: 0}
-    - id: portrait.beastfolk.male.ears.animalears
-      slot: 3
-      appearance: 20
-      sprite: {fileID: 0}
-    fixedAppearance: 0
-    job: 
-    earType: 0
-    hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
-    hairColors: 
-    hairTintOverride: 0
-    eyeColors: 
-    irisRegions: []
-    rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
   - id: HUM_M1
     status: 1
     speciesId: species.human
@@ -209,14 +21,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB300\uC7A5\uAC04 \uACAC\uC2B5\uC0DD"
+    race: HUM
+    variation: "\uB9C8\uB978"
+    genNotes: "20\uB300 \uCD08\uBC18, \uC218\uC90D\uC740 \uC778\uC0C1, \uADF8\uC744\uB9B0
+      \uC18C\uB9E4"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -233,14 +59,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB4F1\uBD88\uC9C0\uAE30"
+    race: HUM
+    variation: "\uBCF4\uD1B5"
+    genNotes: "40\uB300, \uC218\uB2E4\uC2A4\uB7EC\uC6B4 \uC778\uC0C1, \uB0A1\uC740
+      \uC870\uB07C"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -257,14 +97,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uBC43\uC0AC\uACF5"
+    race: HUM
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "50\uB300, \uBB34\uB69D\uB69D\uD55C \uC778\uC0C1, \uB450\uAEBC\uC6B4
+      \uC678\uD22C, \uD587\uBCD5\uC5D0 \uD0C4 \uD53C\uBD80"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -281,14 +135,27 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB3C4\uC11C\uAD00 \uC0AC\uC11C"
+    race: HUM
+    variation: "\uB9C8\uB978"
+    genNotes: "20\uB300, \uAE54\uB054\uD55C \uC778\uC0C1, \uB2E8\uC815\uD55C \uBE14\uB77C\uC6B0\uC2A4"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -305,14 +172,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uD30C\uC774 \uAC00\uAC8C \uC8FC\uC778"
+    race: HUM
+    variation: "\uBCF4\uD1B5"
+    genNotes: "40\uB300, \uD478\uADFC\uD55C \uC778\uC0C1, \uBC00\uAC00\uB8E8 \uBB3B\uC740
+      \uC55E\uC136"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -329,14 +210,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC591\uBD09\uAC00"
+    race: HUM
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "30\uB300, \uC2DC\uC6D0\uC2DC\uC6D0\uD55C \uC778\uC0C1, \uC18C\uB9E4
+      \uAC77\uC740 \uC791\uC5C5\uBCF5"
     earType: 18
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: ddfe6d56fa775dde9e48412642258948, type: 3}
     hairFront: {fileID: 21300000, guid: 685da72a7dc9552ea278e65afa602c5b, type: 3}
     hairBack: {fileID: 21300000, guid: 6f6db4bbfbc95d3185597751b514e813, type: 3}
-    hairColors: 020000000300000004000000
-    hairTintOverride: 0
-    eyeColors: 030000000600000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    eyeColorIds:
+    - EYE_BROWN
+    - EYE_BLUE
+    - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 4900000, guid: 1e8e237dccc0f8648bd80003a4c03cb4, type: 3}
@@ -353,14 +248,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB5A0\uB3CC\uC774 \uC74C\uC720\uC2DC\uC778"
+    race: ELF
+    variation: "\uB9C8\uB978"
+    genNotes: "\uC80A\uC5B4 \uBCF4\uC784, \uB098\uB978\uD55C \uC778\uC0C1, \uAE34
+      \uB85C\uBE0C"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 538a4c6adf4a56d0b12406a1ac9332b6, type: 3}
     hairFront: {fileID: 21300000, guid: a31ad37a275b5eb2a2e55725af7cfda9, type: 3}
     hairBack: {fileID: 21300000, guid: faf704fbc5a25f5a95dc8cceea3c555c, type: 3}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 4900000, guid: bfc4b79ab3d85d64c81dffd39e99ff4b, type: 3}
@@ -377,14 +286,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC2DC\uACC4\uACF5"
+    race: ELF
+    variation: "\uBCF4\uD1B5"
+    genNotes: "\uC911\uB144, \uAF3C\uAF3C\uD55C \uC778\uC0C1, \uB2E8\uCD94 \uB9CE\uC740
+      \uCF54\uD2B8"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -401,14 +324,27 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC232\uC9C0\uAE30"
+    race: ELF
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "\uC7A5\uB144, \uACFC\uBB35\uD55C \uC778\uC0C1, \uAC00\uC8FD \uC870\uB07C"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -425,14 +361,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uAF43\uC9D1 \uC9C1\uC6D0"
+    race: ELF
+    variation: "\uB9C8\uB978"
+    genNotes: "\uC80A\uC74C, \uD638\uAE30\uC2EC \uB9CE\uC740 \uC778\uC0C1, \uAC00\uBCBC\uC6B4
+      \uB9DD\uD1A0"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: b7ecec968a0151ffb3e9d4e52ea0987e, type: 3}
     hairFront: {fileID: 21300000, guid: b3c2f0970352565ea94766ae1b301945, type: 3}
     hairBack: {fileID: 21300000, guid: b931dad91dd4555db4cf5f063ae51c80, type: 3}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions:
     - serializedVersion: 2
       x: 0.4140625
@@ -479,14 +429,28 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC7AC\uB2E8\uC0AC"
+    race: ELF
+    variation: "\uBCF4\uD1B5"
+    genNotes: "\uC911\uB144, \uC6B0\uC544\uD55C \uC778\uC0C1, \uAE34 \uB4DC\uB808\uC2A4,
+      \uBAA9\uC5D0 \uC904\uC790"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -503,14 +467,27 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB9C8\uBD80"
+    race: ELF
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "\uC7A5\uB144, \uD138\uD138\uD55C \uC778\uC0C1, \uC5EC\uD589\uBCF5"
     earType: 19
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 070000000800000002000000
-    hairTintOverride: 0
-    eyeColors: 06000000050000000a000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_GOLD
+    - HAIR_SILVER
+    - HAIR_WHITE
+    - HAIR_BLACK
+    eyeColorIds:
+    - EYE_BLUE
+    - EYE_GREEN
+    - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -527,14 +504,30 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC6B0\uD3B8\uBC30\uB2EC\uBD80"
+    race: BST
+    variation: "\uB9C8\uB978"
+    genNotes: "\uACE0\uC591\uC774, 20\uB300, \uB0A0\uB835\uD55C \uC778\uC0C1, \uC9E7\uC740
+      \uC7AC\uD0B7"
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -551,14 +544,30 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uD589\uC0C1"
+    race: BST
+    variation: "\uBCF4\uD1B5"
+    genNotes: "\uC5EC\uC6B0, 30\uB300, \uB2A5\uCCAD\uC2A4\uB7EC\uC6B4 \uC778\uC0C1,
+      \uC2A4\uCE74\uD504"
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 82aeadea13295849bf7cd4d914236267, type: 3}
     hairFront: {fileID: 21300000, guid: ceb06b47298c533293ca1b80da090a05, type: 3}
     hairBack: {fileID: 21300000, guid: 70787c6a364055b3aa402b3d3feb1aee, type: 3}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 4900000, guid: b46d9efcbeb3b764982e04e78323d33f, type: 3}
@@ -575,14 +584,29 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uBAA9\uC218"
+    race: BST
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "\uACF0, 50\uB300, \uC21C\uD55C \uC778\uC0C1, \uB2C8\uD2B8"
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -599,14 +623,30 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uCC3B\uC9D1 \uC9C1\uC6D0"
+    race: BST
+    variation: "\uB9C8\uB978"
+    genNotes: "\uD1A0\uB07C, 20\uB300, \uAC81 \uB9CE\uC740 \uC778\uC0C1, \uB450\uD23C\uD55C
+      \uBAA9\uB3C4\uB9AC"
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -623,14 +663,29 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uBE75\uC9D1 \uC8FC\uC778"
+    race: BST
+    variation: "\uBCF4\uD1B5"
+    genNotes: "\uACE0\uC591\uC774, 30\uB300, \uB290\uAE0B\uD55C \uC778\uC0C1, \uCE74\uB514\uAC74"
     earType: 20
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -647,14 +702,29 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uACBD\uBE44\uB300\uC6D0"
+    race: BST
+    variation: "\uD06C\uACE0 \uAC74\uC7A5"
+    genNotes: "\uB291\uB300, 40\uB300, \uB2F9\uB2F9\uD55C \uC778\uC0C1, \uB9DD\uD1A0"
     earType: 20
     hasFang: 1
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
-    hairColors: 030000000b00000004000000
-    hairTintOverride: 0
-    eyeColors: 0900000005000000
+    hairColors: 
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds:
+    - HAIR_BLACK
+    - HAIR_BROWN
+    - HAIR_RED
+    - HAIR_GOLD
+    - HAIR_WHITE
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_GREEN
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -671,14 +741,23 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC815\uC6D0\uC0AC"
+    race: GOL
+    variation: "\uC791\uC740 \uC790\uAC08\uD615"
+    genNotes: "\uB3D9\uAE00\uB3D9\uAE00, \uADC0\uC5EC\uC6B4 \uC778\uC0C1"
     earType: 1
     hasFang: 0
     eyeClosed: {fileID: 21300000, guid: 949983452e8f504e8d4b844991c1fe0b, type: 3}
     hairFront: {fileID: 21300000, guid: 6a9fca233e4a5e9cb8d5ba366682f0c5, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
-    hairTintOverride: 13
-    eyeColors: 060000000c000000
+    useAccessoryTint: 1
+    accessoryTint: {r: 0.654902, g: 0.5803922, b: 0.3019608, a: 1}
+    eyeColors: 
+    hairColorIds: []
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 4900000, guid: cfc47ee4ebe90ce47b4fa1c495de9add, type: 3}
@@ -695,14 +774,23 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uB2E4\uB9AC \uC9C0\uD0B4\uC774"
+    race: GOL
+    variation: "\uBCF4\uD1B5 \uBC14\uC704\uD615"
+    genNotes: "\uBAB8\uC5D0 \uC774\uB07C"
     earType: 1
     hasFang: 1
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
-    hairTintOverride: 0
-    eyeColors: 060000000c000000
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds: []
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -719,14 +807,23 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uAD11\uC0B0 \uAE38\uC7A1\uC774"
+    race: GOL
+    variation: "\uC218\uC815\uD615"
+    genNotes: "\uBAB8\uC774 \uC218\uC815 \uACB0\uC815"
     earType: 1
     hasFang: 0
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
-    hairTintOverride: 0
-    eyeColors: 060000000c000000
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds: []
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
@@ -743,14 +840,23 @@ MonoBehaviour:
     parts: []
     fixedAppearance: 1
     job: "\uC9D0\uAFBC"
+    race: GOL
+    variation: "\uD070 \uBC14\uC704\uD615"
+    genNotes: "\uD654\uBA74\uC744 \uAF49 \uCC44\uC6B0\uB294 \uD06C\uAE30"
     earType: 1
     hasFang: 1
     eyeClosed: {fileID: 0}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
-    hairTintOverride: 0
-    eyeColors: 060000000c000000
+    useAccessoryTint: 0
+    accessoryTint: {r: 1, g: 1, b: 1, a: 1}
+    eyeColors: 
+    hairColorIds: []
+    eyeColorIds:
+    - EYE_YELLOW
+    - EYE_ORANGE
+    - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}

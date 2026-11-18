@@ -70,14 +70,15 @@ namespace PotionShop.Data
                 .OrderBy(disease => disease.Id, StringComparer.Ordinal)
                 .ToArray();
             var disease = Choose(diseases, random);
-            if (disease.Dialogue.Count == 0)
+            var diseaseDialogue = catalog.GetDiseaseDialogue(disease);
+            if (diseaseDialogue.Count == 0)
                 throw new InvalidOperationException($"{disease.Id}: at least one dialogue option is required.");
 
             var recipe = catalog.Recipes[disease.RecipeId];
             var bottle = ResolveBottle(catalog.PrescriptionRules, profile.Gender);
             var ink = ResolveInk(catalog.PrescriptionRules, portrait);
             var dialogueOverride = catalog.CustomerDialogue?.FirstOrDefault(d => d.customerId == profile.Id && d.diseaseId == disease.Id);
-            IReadOnlyList<DialogueOption> dialogues = dialogueOverride != null ? dialogueOverride.dialogue : disease.Dialogue;
+            IReadOnlyList<DialogueOption> dialogues = dialogueOverride != null ? dialogueOverride.dialogue : diseaseDialogue;
             return new GeneratedOrder(seed, previousDiseaseId, profile, portrait, disease,
                 Choose(dialogues, random), recipe, bottle, ink);
         }
@@ -118,7 +119,7 @@ namespace PotionShop.Data
 
         public static InkRule ResolveInk(PrescriptionRules rules, IReadOnlyList<PortraitPart> portrait)
         {
-            foreach (var rule in rules.Inks)
+            foreach (var rule in rules.OrderedInks)
             {
                 if (rule != null && MatchesAll(rule.Conditions, portrait) &&
                     (rule.Exceptions.Count == 0 || !MatchesAll(rule.Exceptions, portrait)))

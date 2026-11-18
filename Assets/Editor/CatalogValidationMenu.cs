@@ -40,7 +40,8 @@ namespace PotionShop.Editor
 
             foreach (var disease in catalog.Diseases.Values)
             {
-                if (disease.Dialogue.Count == 0 || disease.Dialogue.Any(option =>
+                var dialogue = catalog.GetDiseaseDialogue(disease);
+                if (dialogue.Count == 0 || dialogue.Any(option =>
                     option == null || option.Segments.Count == 0 ||
                     option.Segments.Any(segment => segment == null || string.IsNullOrWhiteSpace(segment.Text)) ||
                     !option.Segments.Any(segment => segment.IsSymptom)))
@@ -53,8 +54,10 @@ namespace PotionShop.Editor
             {
                 if (variant.Prefab == null)
                     Error($"{variant.Id}: assign a prefab for storage.");
-                if (variant.Icon == null)
-                    Warn($"{variant.Id}: pocket icon is not assigned.");
+                if (variant.BookletThumbnail == null)
+                    Warn($"{variant.Id}: booklet thumbnail is not assigned.");
+                if (variant.UsesPlaceholderArt)
+                    Warn($"{variant.Id}: temporary model; replace before the MVP showcase.");
                 if (variant.Prefab != null)
                 {
                     var ingredient = variant.Prefab.GetComponent<WarehouseIngredient>();
@@ -91,11 +94,15 @@ namespace PotionShop.Editor
 
             var inkIds = new HashSet<string>(StringComparer.Ordinal);
             bool invalidInk = false;
-            for (int i = 0; i < rules.Inks.Count; i++)
+            var orderedInks = rules.OrderedInks.ToArray();
+            var priorities = new HashSet<int>();
+            bool usesExplicitPriority = orderedInks.Any(ink => ink?.Order > 0);
+            for (int i = 0; i < orderedInks.Length; i++)
             {
-                var ink = rules.Inks[i];
-                bool finalRule = i == rules.Inks.Count - 1;
+                var ink = orderedInks[i];
+                bool finalRule = i == orderedInks.Length - 1;
                 if (ink == null || string.IsNullOrWhiteSpace(ink.Id) || !inkIds.Add(ink.Id) ||
+                    (usesExplicitPriority && (ink.Order <= 0 || !priorities.Add(ink.Order))) ||
                     ink.InkNumber < 1 || ink.InkNumber > 6 || (ink.Conditions.Count == 0) != finalRule ||
                     (finalRule && ink.Exceptions.Count != 0) ||
                     ink.Conditions.Concat(ink.Exceptions).Any(condition => condition == null ||
@@ -121,7 +128,9 @@ namespace PotionShop.Editor
                 {
                     if (profile.EyeClosed == null) warn($"{profile.Id}: closed-eye sprite missing.");
                     if (profile.Gender != CustomerGender.Genderless && profile.HairFront == null) warn($"{profile.Id}: front hair sprite missing.");
-                    if (profile.IrisRegions.Count is < 1 or > 2 || profile.IrisRegions.Any(r => r.width <= 0 || r.height <= 0 || r.xMin < 0 || r.yMin < 0 || r.xMax > 1 || r.yMax > 1))
+                    if (profile.BakedIris == null && (profile.IrisRegions.Count is < 1 or > 2 ||
+                        profile.IrisRegions.Any(r => r.width <= 0 || r.height <= 0 || r.xMin < 0 ||
+                            r.yMin < 0 || r.xMax > 1 || r.yMax > 1)))
                         error($"{profile.Id}: specify 1-2 iris rectangles within 0..1.");
                     foreach (var sprite in new[] {profile.BasePortrait, profile.EyeClosed, profile.HairFront, profile.HairBack}.Where(s => s != null))
                         if (sprite.rect.width != 1024 || sprite.rect.height != 1536) warn($"{profile.Id}: {sprite.name} must use 1024x1536 canvas.");

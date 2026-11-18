@@ -14,26 +14,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.PortraitColorCatalog
   colors:
   - value: 2
+    colorId: HAIR_BLACK
+    displayName: "\uAC80\uC815"
+    usage: 1
     color: {r: 0.16862746, g: 0.16470589, b: 0.2, a: 1}
   - value: 3
+    colorId: HAIR_BROWN
+    displayName: "\uAC08\uC0C9"
+    usage: 1
     color: {r: 0.47843137, g: 0.2901961, b: 0.16470589, a: 1}
   - value: 4
+    colorId: HAIR_RED
+    displayName: "\uBE68\uAC15"
+    usage: 1
     color: {r: 0.72156864, g: 0.20784314, b: 0.17254902, a: 1}
   - value: 7
+    colorId: HAIR_GOLD
+    displayName: "\uAE08\uC0C9"
+    usage: 1
     color: {r: 0.8509804, g: 0.7019608, b: 0.2901961, a: 1}
   - value: 8
+    colorId: HAIR_SILVER
+    displayName: "\uC740\uC0C9"
+    usage: 1
     color: {r: 0.7882353, g: 0.8, b: 0.8392157, a: 1}
   - value: 11
+    colorId: HAIR_WHITE
+    displayName: "\uD770\uC0C9"
+    usage: 1
     color: {r: 0.93333334, g: 0.91764706, b: 0.8862745, a: 1}
+  - value: 3
+    colorId: EYE_BROWN
+    displayName: "\uAC08\uC0C9"
+    usage: 2
+    color: {r: 0.47843137, g: 0.2901961, b: 0.16470589, a: 1}
   - value: 6
-    color: {r: 0.28155038, g: 0.7449174, b: 0.8066038, a: 1}
+    colorId: EYE_BLUE
+    displayName: "\uD30C\uB791"
+    usage: 2
+    color: {r: 0.24705882, g: 0.45490196, b: 0.78431374, a: 1}
   - value: 5
+    colorId: EYE_GREEN
+    displayName: "\uB179\uC0C9"
+    usage: 2
     color: {r: 0.24705882, g: 0.6039216, b: 0.2901961, a: 1}
   - value: 10
+    colorId: EYE_PURPLE
+    displayName: "\uBCF4\uB77C"
+    usage: 2
     color: {r: 0.5411765, g: 0.30980393, b: 0.7529412, a: 1}
   - value: 9
+    colorId: EYE_YELLOW
+    displayName: "\uB178\uB791"
+    usage: 2
     color: {r: 0.8784314, g: 0.6901961, b: 0.17254902, a: 1}
   - value: 12
+    colorId: EYE_ORANGE
+    displayName: "\uC8FC\uD669"
+    usage: 2
     color: {r: 0.8784314, g: 0.47843137, b: 0.17254902, a: 1}
-  - value: 13
-    color: {r: 0.654902, g: 0.5803922, b: 0.3019608, a: 1}

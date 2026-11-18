@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PotionShop.Data
@@ -36,6 +37,16 @@ namespace PotionShop.Data
         public PrescriptionRules PrescriptionRules { get; }
         public RoundTuning Tuning { get; }
         public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue { get; internal set; }
+        internal Dictionary<string, DialogueOption> SymptomFallbacks { get; } = new(StringComparer.Ordinal);
+
+        public IReadOnlyList<DialogueOption> GetDiseaseDialogue(DiseaseEntry disease)
+        {
+            if (disease.Dialogue.Count > 0)
+                return disease.Dialogue;
+            return SymptomFallbacks.TryGetValue(disease.Id, out var fallback)
+                ? new[] { fallback }
+                : Array.Empty<DialogueOption>();
+        }
     }
 
     public static class CatalogLoader
@@ -107,8 +118,26 @@ namespace PotionShop.Data
                     !dialogueKeys.Add(dialogue.customerId + "/" + dialogue.diseaseId) || dialogue.dialogue == null || dialogue.dialogue.Count == 0)
                     throw new InvalidOperationException("Invalid/duplicate customer dialogue reference.");
             }
-            return new LoadedCatalog(customers, diseases, recipes, kinds, variants, kindsByVariant,
+            var loaded = new LoadedCatalog(customers, diseases, recipes, kinds, variants, kindsByVariant,
                 catalog.PrescriptionRules, catalog.Tuning) { CustomerDialogue = catalog.DiseasesAndRecipes.CustomerDialogue };
+            if (catalog.FallbackDialogue != null)
+            {
+                var diseaseIds = catalog.DiseasesAndRecipes.Diseases.Select(disease => disease.Id)
+                    .ToHashSet(StringComparer.Ordinal);
+                var fallbackIds = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var line in catalog.FallbackDialogue.Lines)
+                {
+                    if (line == null)
+                        throw new InvalidOperationException("Missing fallback dialogue row.");
+                    if (line.Kind != FallbackKind.Symptom)
+                        continue;
+                    if (!diseaseIds.Contains(line.DiseaseId) || !fallbackIds.Add(line.DiseaseId))
+                        throw new InvalidOperationException($"Invalid/duplicate symptom fallback: {line.Key}.");
+                    if (diseases.ContainsKey(line.DiseaseId))
+                        loaded.SymptomFallbacks.Add(line.DiseaseId, line.CreateSymptomDialogue());
+                }
+            }
+            return loaded;
         }
 
         private static void CheckRecipe(RecipeEntry recipe, Dictionary<string, IngredientKind> kindsByVariant)
@@ -158,10 +187,20 @@ namespace PotionShop.Data
 
         private static void RequireId(string id, string prefix, string context)
         {
+            string mvpPattern = prefix switch
+            {
+                "kind" => @"\A[A-F]\z",
+                "ingredient" => @"\A[A-F][1-3]\z",
+                "disease" => @"\ADIS_0[1-6]\z",
+                "recipe" => @"\APOT_0[1-6]\z",
+                _ => null
+            };
+            if (id != null && mvpPattern != null && Regex.IsMatch(id, mvpPattern))
+                return;
             if (string.IsNullOrEmpty(id) || !id.StartsWith(prefix + ".", StringComparison.Ordinal) ||
                 !IdPattern.IsMatch(id))
             {
-                throw new InvalidOperationException($"{context}: invalid ID '{id}'; expected '{prefix}.<name>'.");
+                throw new InvalidOperationException($"{context}: invalid {prefix} ID '{id}'.");
             }
         }
     }

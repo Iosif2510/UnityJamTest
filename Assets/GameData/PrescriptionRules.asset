@@ -21,12 +21,19 @@ MonoBehaviour:
     bottle: 3
   inks:
   - id: ink.forest
+    order: 1
+    conditionText: "\uB208\uC774 \uB179\uC0C9"
+    inkName: "\uC232\uC758 \uBB38\uC790"
     inkNumber: 1
     conditions:
     - slot: 1
       anyOf: 05000000
     exceptions: []
   - id: ink.starlight
+    order: 2
+    conditionText: "\uB208\uC774 \uD30C\uB791\uC774\uACE0 \uADC0\uAC00 \uC606\uC73C\uB85C
+      \uAE38\uACE0 \uBFB0\uC871\uD568"
+    inkName: "\uBCC4\uBE5B \uBB38\uC790"
     inkNumber: 2
     conditions:
     - slot: 1
@@ -35,6 +42,10 @@ MonoBehaviour:
       anyOf: 13000000
     exceptions: []
   - id: ink.flame
+    order: 3
+    conditionText: "\uBA38\uB9AC\uAC00 \uBE68\uAC15\uC774\uB098 \uAC80\uC815 (\uB2E8,
+      \uC1A1\uACF3\uB2C8\uAC00 \uC788\uC73C\uBA74 \uAC74\uB108\uB700)"
+    inkName: "\uBD88\uAF43 \uBB38\uC790"
     inkNumber: 3
     conditions:
     - slot: 0
@@ -43,38 +54,28 @@ MonoBehaviour:
     - slot: 2
       anyOf: 11000000
   - id: ink.beast
+    order: 4
+    conditionText: "\uC1A1\uACF3\uB2C8\uAC00 \uC788\uC74C (\uB3CC\uB2C8 \uD3EC\uD568)"
+    inkName: "\uC9D0\uC2B9 \uBB38\uC790"
     inkNumber: 4
     conditions:
     - slot: 2
       anyOf: 11000000
     exceptions: []
   - id: ink.stone
+    order: 5
+    conditionText: "\uADC0\uAC00 \uC5C6\uC74C"
+    inkName: "\uB3CC\uC758 \uBB38\uC790"
     inkNumber: 5
     conditions:
     - slot: 3
       anyOf: 01000000
     exceptions: []
   - id: ink.common
+    order: 6
+    conditionText: "\uC704\uC5D0 \uD574\uB2F9\uD558\uC9C0 \uC54A\uC74C"
+    inkName: "\uACF5\uC6A9\uC5B4"
     inkNumber: 6
     conditions: []
     exceptions: []
-  reactions:
-  - kind: 0
-    lines:
-    - "\uC774 \uBCD1\uC774 \uB9DE\uB098\uC694?"
-  - kind: 1
-    lines:
-    - "\uC774\uAC74 \uBB34\uC2A8 \uC5B8\uC5B4\uC8E0?"
-  - kind: 2
-    lines:
-    - "\uC774\uC81C \uC880 \uAD1C\uCC2E\uB124\uC694. \uACE0\uB9D9\uC2B5\uB2C8\uB2E4!"
-  - kind: 3
-    lines:
-    - "\uB9DB\uC774 \uC880 \uC774\uC0C1\uD55C\uB370\uC694?"
-  - kind: 4
-    lines:
-    - "\uC7A0\uAE50, \uC81C\uAC00 \uC65C \uC774\uB807\uAC8C \uB410\uC8E0?"
-  - kind: 5
-    lines:
-    - "\uC2DC\uAC04\uC774 \uB108\uBB34 \uC624\uB798 \uAC78\uB838\uC5B4\uC694. \uADF8\uB0E5
-      \uAC08\uAC8C\uC694."
+  reactions: []

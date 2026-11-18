@@ -492,7 +492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.moss.layered_leaf
+  variantId: C3
 --- !u!1 &6941132103281092614
 GameObject:
   m_ObjectHideFlags: 0

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.root.curled
+  variantId: B2
 --- !u!1 &2067621128229946701
 GameObject:
   m_ObjectHideFlags: 0

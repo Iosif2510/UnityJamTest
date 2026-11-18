@@ -325,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.salt.medium_grain
+  variantId: F2
 --- !u!1 &135749204
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.seed.oval
+  variantId: E2
 --- !u!1 &144973947
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.moss.layered_leaf
+  variantId: C3
 --- !u!1001 &186386067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -711,7 +711,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.mooncap.blue
+  variantId: A1
 --- !u!114 &213320304 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5414844730591620907, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
@@ -840,7 +840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.seed.twin
+  variantId: E3
 --- !u!1 &319452223
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,7 +960,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.salt.small_grain
+  variantId: F3
 --- !u!1 &384247742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,7 +1076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.root.curled
+  variantId: B2
 --- !u!1 &528220552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.mooncap.red
+  variantId: A3
 --- !u!1 &694067604
 GameObject:
   m_ObjectHideFlags: 0
@@ -2095,7 +2095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.salt.large_grain
+  variantId: F1
 --- !u!1001 &955408908
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2219,7 +2219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.salt.small_grain
+  variantId: F3
 --- !u!114 &955408917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2233,7 +2233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.salt.medium_grain
+  variantId: F2
 --- !u!114 &955408918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2247,7 +2247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.salt.large_grain
+  variantId: F1
 --- !u!1 &963356210
 GameObject:
   m_ObjectHideFlags: 0
@@ -2872,7 +2872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.crystal.two_tips
+  variantId: D2
 --- !u!1 &1101029858
 GameObject:
   m_ObjectHideFlags: 0
@@ -3211,7 +3211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.crystal.three_tips
+  variantId: D3
 --- !u!1 &1309391978
 GameObject:
   m_ObjectHideFlags: 0
@@ -3325,7 +3325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.mooncap.white
+  variantId: A2
 --- !u!1 &1357963025
 GameObject:
   m_ObjectHideFlags: 0
@@ -3651,7 +3651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.crystal.three_tips
+  variantId: D3
 --- !u!114 &1408121737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3665,7 +3665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.crystal.two_tips
+  variantId: D2
 --- !u!114 &1408121738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3679,7 +3679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.crystal.one_tip
+  variantId: D1
 --- !u!1001 &1462867933
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3762,7 +3762,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.root.forked
+  variantId: B1
 --- !u!1 &1474768284 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5349844330231742217, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
@@ -3850,7 +3850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.root.straight
+  variantId: B3
 --- !u!1 &1581979341
 GameObject:
   m_ObjectHideFlags: 0
@@ -4108,7 +4108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.seed.round
+  variantId: E1
 --- !u!1001 &1671220675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4236,7 +4236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.mooncap.red
+  variantId: A3
 --- !u!114 &1671220684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4250,7 +4250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.mooncap.white
+  variantId: A2
 --- !u!114 &1671220685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4264,7 +4264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.mooncap.blue
+  variantId: A1
 --- !u!1001 &1687923427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4347,7 +4347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.crystal.one_tip
+  variantId: D1
 --- !u!1 &1722264350
 GameObject:
   m_ObjectHideFlags: 0
@@ -4543,7 +4543,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.moss.round_leaf
+  variantId: C1
 --- !u!1 &1795725467
 GameObject:
   m_ObjectHideFlags: 0
@@ -4856,7 +4856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.moss.layered_leaf
+  variantId: C3
 --- !u!114 &1906493592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4870,7 +4870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.moss.long_leaf
+  variantId: C2
 --- !u!114 &1906493593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4884,7 +4884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.moss.round_leaf
+  variantId: C1
 --- !u!1 &1948333035
 GameObject:
   m_ObjectHideFlags: 0
@@ -5077,7 +5077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.root.straight
+  variantId: B3
 --- !u!114 &2024260092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5091,7 +5091,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.root.forked
+  variantId: B1
 --- !u!114 &2024260093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5105,7 +5105,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.root.curled
+  variantId: B2
 --- !u!1 &2081678909
 GameObject:
   m_ObjectHideFlags: 0
@@ -5638,7 +5638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.seed.twin
+  variantId: E3
 --- !u!114 &2138872720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5652,7 +5652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.seed.oval
+  variantId: E2
 --- !u!114 &2138872721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5666,7 +5666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.IngredientSlot
   catalog: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
-  variantId: ingredient.seed.round
+  variantId: E1
 --- !u!1001 &2142400757
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5749,7 +5749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.moss.long_leaf
+  variantId: C2
 --- !u!1001 &2065903608482752201
 PrefabInstance:
   m_ObjectHideFlags: 0

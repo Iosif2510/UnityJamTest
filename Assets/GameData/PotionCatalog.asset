@@ -18,3 +18,5 @@ MonoBehaviour:
   prescriptionRules: {fileID: 11400000, guid: 5681fd10ba9b05e4f874730302488f7f, type: 2}
   tuning: {fileID: 11400000, guid: a6519a396b2079f4e88f52c383606c0c, type: 2}
   portraitColors: {fileID: 11400000, guid: 1b31e17fd28c8b94c943a78f807e642a, type: 2}
+  characterVoices: {fileID: 11400000, guid: 3ba67db5ce0838946bbfeb0f73f1c89c, type: 2}
+  fallbackDialogue: {fileID: 11400000, guid: 185e777194fef2845b34c473c18bc7d5, type: 2}

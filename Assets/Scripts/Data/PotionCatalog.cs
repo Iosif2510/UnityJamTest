@@ -25,6 +25,8 @@ namespace PotionShop.Data
         [SerializeField] private PrescriptionRules prescriptionRules;
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private PortraitColorCatalog portraitColors;
+        [SerializeField] private CharacterVoiceCatalog characterVoices;
+        [SerializeField] private DialogueCatalog fallbackDialogue;
 
         public CustomerCatalog Customers => customers;
         public DiseaseRecipeCatalog DiseasesAndRecipes => diseasesAndRecipes;
@@ -32,5 +34,7 @@ namespace PotionShop.Data
         public PrescriptionRules PrescriptionRules => prescriptionRules;
         public RoundTuning Tuning => tuning;
         public PortraitColorCatalog PortraitColors => portraitColors;
+        public CharacterVoiceCatalog CharacterVoices => characterVoices;
+        public DialogueCatalog FallbackDialogue => fallbackDialogue;
     }
 }

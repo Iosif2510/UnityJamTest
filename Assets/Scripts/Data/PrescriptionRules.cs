@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PotionShop.Data
@@ -30,11 +31,17 @@ namespace PotionShop.Data
     public sealed class InkRule
     {
         [SerializeField] private string id;
+        [SerializeField] private int order;
+        [SerializeField] private string conditionText;
+        [SerializeField] private string inkName;
         [SerializeField, Range(1, 6)] private int inkNumber = 1;
         [SerializeField] private List<AppearanceCondition> conditions = new();
         [SerializeField] private List<AppearanceCondition> exceptions = new();
 
         public string Id => id;
+        public int Order => order;
+        public string ConditionText => conditionText;
+        public string InkName => inkName;
         public int InkNumber => inkNumber;
         public IReadOnlyList<AppearanceCondition> Conditions => conditions;
         public IReadOnlyList<AppearanceCondition> Exceptions => exceptions;
@@ -65,6 +72,8 @@ namespace PotionShop.Data
 
         public IReadOnlyList<BottleMapping> Bottles => bottles;
         public IReadOnlyList<InkRule> Inks => inks;
+        // Legacy assets have order 0 throughout and retain their serialized priority.
+        public IEnumerable<InkRule> OrderedInks => inks.OrderBy(rule => rule?.Order ?? 0);
         public IReadOnlyList<ReactionDialogue> Reactions => reactions;
     }
 }

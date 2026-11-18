@@ -12,6 +12,13 @@ namespace PotionShop.Data
 
         public string Text => text;
         public bool IsSymptom => isSymptom;
+
+        public DialogueSegment() { }
+        internal DialogueSegment(string text, bool isSymptom)
+        {
+            this.text = text;
+            this.isSymptom = isSymptom;
+        }
     }
 
     [Serializable]
@@ -20,6 +27,9 @@ namespace PotionShop.Data
         [SerializeField] private List<DialogueSegment> segments = new();
 
         public IReadOnlyList<DialogueSegment> Segments => segments;
+
+        public DialogueOption() { }
+        internal DialogueOption(List<DialogueSegment> segments) => this.segments = segments;
     }
 
     [Serializable]
@@ -27,10 +37,24 @@ namespace PotionShop.Data
     {
         [SerializeField] private string displayName;
         [SerializeField] private string recipeId;
+        [SerializeField] private int order;
+        [SerializeField] private string[] symptomMeanings = Array.Empty<string>();
+        [SerializeField] private string[] docSymptoms = Array.Empty<string>();
+        [SerializeField] private string[] lineExamples = Array.Empty<string>();
+        [SerializeField] private string[] bannedWords = Array.Empty<string>();
+        [SerializeField, TextArea] private string lore;
+        [SerializeField] private Sprite docIllustration;
         [SerializeField] private List<DialogueOption> dialogue = new();
 
         public string DisplayName => displayName;
         public string RecipeId => recipeId;
+        public int Order => order;
+        public IReadOnlyList<string> SymptomMeanings => symptomMeanings;
+        public IReadOnlyList<string> DocSymptoms => docSymptoms;
+        public IReadOnlyList<string> LineExamples => lineExamples;
+        public IReadOnlyList<string> BannedWords => bannedWords;
+        public string Lore => lore;
+        public Sprite DocIllustration => docIllustration;
         public IReadOnlyList<DialogueOption> Dialogue => dialogue;
     }
 
@@ -40,9 +64,11 @@ namespace PotionShop.Data
         public const int RequiredIngredientKinds = 3;
 
         [SerializeField] private string potionName;
+        [SerializeField, TextArea] private string recipeText;
         [SerializeField] private List<string> ingredientVariantIds = new();
 
         public string PotionName => potionName;
+        public string RecipeText => recipeText;
         public IReadOnlyList<string> IngredientVariantIds => ingredientVariantIds;
     }
 

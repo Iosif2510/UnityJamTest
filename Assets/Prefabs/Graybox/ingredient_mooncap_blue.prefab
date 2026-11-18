@@ -400,4 +400,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6df99b90eac316f4aaea8715b44fa693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
-  variantId: ingredient.mooncap.blue
+  variantId: A1

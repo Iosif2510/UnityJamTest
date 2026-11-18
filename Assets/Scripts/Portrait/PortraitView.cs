@@ -23,8 +23,8 @@ namespace PotionShop.Portraits
             blink.Stop();
             rig?.Clear();
             layers.Compose(profile);
-            var hairTint = profile.HairTintOverride == AppearanceValue.Unspecified ? hair : profile.HairTintOverride;
-            colors.Apply(palette.Get(hairTint), palette.Get(eyes));
+            var hairTint = profile.UseAccessoryTint ? profile.AccessoryTint : palette.Get(PortraitSlot.Hair, hair);
+            colors.Apply(hairTint, palette.Get(PortraitSlot.Eyes, eyes));
             rig?.Load(profile.RigPrefab, profile.SpineRig);
             blink.BindSpine(rig != null ? rig.SpineRig : null);
             blink.Play();

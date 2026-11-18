@@ -22,3 +22,9 @@ MonoBehaviour:
   pointsPerBonusInterval: 5
   passingStampThreshold: 60
   perfectStampThreshold: 100
+  targetDiagnose: 20
+  targetGather: 60
+  targetLabel: 20
+  textSpeed: 23
+  lineLength: 200
+  reactionGap: 1.5

@@ -13,94 +13,239 @@ MonoBehaviour:
   m_Name: DiseasesAndRecipes
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.DiseaseRecipeCatalog
   diseases:
-  - id: disease.shadow_lag
+  - id: DIS_01
     status: 1
-    displayName: "\uC9C0\uC5F0 \uADF8\uB9BC\uC790\uBCD1"
-    recipeId: recipe.shadow_lag
-    dialogue:
-    - segments:
-      - text: "\uC624\uB298 \uC7A5\uC5D0 \uC0AC\uB78C\uB4E4\uC774 \uB9CE\uB354\uB77C\uACE0\uC694.
-          \uADF8\uB7F0\uB370 \uC694\uC998 "
-        isSymptom: 0
-      - text: "\uADF8\uB9BC\uC790\uAC00 \uBA87 \uAC78\uC74C \uB4A4\uC5D0 \uB530\uB77C\uC640\uC694."
-        isSymptom: 1
-  - id: disease.shadow_rush
+    displayName: "\uADF8\uB9BC\uC790 \uB291\uC7A5\uC99D"
+    recipeId: POT_01
+    order: 1
+    symptomMeanings:
+    - "\uADF8\uB9BC\uC790\uAC00 \uB2A6\uAC8C \uB530\uB77C\uC634"
+    - "\uD574 \uC9C8 \uB158\uC5D0 \uC2EC\uD574\uC9D0"
+    - "\uB3CC\uC544\uBCF4\uBA74 \uADF8\uB9BC\uC790\uAC00 \uC5C6\uC74C"
+    docSymptoms:
+    - "\uADF8\uB9BC\uC790 \uC9C0\uC5F0"
+    - "\uD574 \uC9C8 \uB158 \uC545\uD654"
+    - "\uB4A4\uB3CC\uC544\uBCF4\uBA74 \uADF8\uB9BC\uC790 \uC5C6\uC74C"
+    lineExamples:
+    - "\uAC78\uC5B4\uAC00\uBA74 \uADF8\uB9BC\uC790\uAC00 \uD55C\uCC38 \uC788\uB2E4\uAC00
+      \uB530\uB77C\uC640\uC694"
+    - "\uC800\uB141\uB9CC \uB418\uBA74 \uB354 \uC2EC\uD574\uC694"
+    - "\uB4A4\uB3CC\uC544\uBCF4\uBA74 \uBC14\uB2E5\uC5D0 \uC544\uBB34\uAC83\uB3C4
+      \uC5C6\uC5B4\uC694"
+    bannedWords:
+    - "\uB291\uC7A5"
+    - "\uC9C0\uC5F0"
+    - "\uC545\uD654"
+    lore: "\uD574 \uC9C8 \uB158\uC5D0 \uAE38\uC744 \uC11C\uB450\uB974\uB294 \uC0AC\uB78C\uC5D0\uAC8C
+      \uC798 \uC0DD\uAE34\uB2E4. \uADF8\uB9BC\uC790\uAC00 \uC8FC\uC778\uC758 \uAC78\uC74C\uC744
+      \uB530\uB77C\uAC00\uB2E4 \uC9C0\uCCD0\uC11C \uB4A4\uCC98\uC9C0\uB294 \uBCD1\uC774\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
+  - id: DIS_02
     status: 1
-    displayName: "\uC870\uAE09 \uADF8\uB9BC\uC790\uBCD1"
-    recipeId: recipe.shadow_rush
-    dialogue:
-    - segments:
-      - text: "\uC624\uB298 \uC7A5\uC5D0 \uC0AC\uB78C\uB4E4\uC774 \uB9CE\uB354\uB77C\uACE0\uC694.
-          \uADF8\uB7F0\uB370 \uC694\uC998 "
-        isSymptom: 0
-      - text: "\uADF8\uB9BC\uC790\uAC00 \uC81C\uAC00 \uC6C0\uC9C1\uC774\uAE30 \uC804\uC5D0
-          \uBA3C\uC800 \uB2EC\uB824\uAC00\uC694."
-        isSymptom: 1
-  - id: disease.ember_spots
+    displayName: "\uB418\uC6B8\uB9BC\uC99D"
+    recipeId: POT_02
+    order: 2
+    symptomMeanings:
+    - "\uB0B4\uAC00 \uD55C \uB9D0\uC758 \uB05D\uC774 \uB2E4\uC2DC \uB4E4\uB9BC"
+    - "\uC870\uC6A9\uD55C \uACF3\uC5D0\uC11C \uC2EC\uD574\uC9D0"
+    - "\uD63C\uC7A3\uB9D0\uB3C4 \uB418\uB3CC\uC544\uC634"
+    docSymptoms:
+    - "\uB9D0\uB05D \uBC18\uD5A5"
+    - "\uC870\uC6A9\uD560 \uB54C \uC545\uD654"
+    - "\uD63C\uC7A3\uB9D0\uB3C4 \uBC18\uD5A5"
+    lineExamples:
+    - "\uC81C\uAC00 \uD55C \uB9D0 \uB05D\uC774 \uB450 \uBC88\uC529 \uB3CC\uC544\uC640\uC694"
+    - "\uC870\uC6A9\uD55C \uB370 \uC788\uC73C\uBA74 \uB354 \uC798 \uB4E4\uB824\uC694"
+    - "\uD63C\uC7A3\uB9D0\uAE4C\uC9C0 \uB2E4 \uB418\uB3CC\uC544\uC640\uC694"
+    bannedWords:
+    - "\uB418\uC6B8\uB9BC"
+    - "\uBC18\uD5A5"
+    - "\uBA54\uC544\uB9AC"
+    - "\uC545\uD654"
+    lore: "\uAE4A\uC740 \uC6B0\uBB3C\uC774\uB098 \uB3D9\uAD74\uC5D0 \uB300\uACE0
+      \uC18C\uB9AC\uB97C \uC9C0\uB978 \uB4A4\uC5D0 \uC2DC\uC791\uB418\uB294 \uC77C\uC774
+      \uB9CE\uB2E4. \uADF8\uB54C \uB3CC\uC544\uC628 \uC18C\uB9AC\uAC00 \uBAB8\uC5D0
+      \uBD99\uC5B4 \uB530\uB77C\uB2E4\uB2CC\uB2E4\uACE0 \uD55C\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
+  - id: DIS_03
     status: 1
-    displayName: "\uBD88\uC528 \uBC18\uC810\uBCD1"
-    recipeId: recipe.ember_spots
-    dialogue:
-    - segments:
-      - text: "\uC544\uCE68\uBD80\uD130 \uC7A5\uC5D0 \uB2E4\uB140\uC624\uB290\uB77C
-          \uC815\uC2E0\uC774 \uC5C6\uC5C8\uC5B4\uC694. \uADF8\uB7F0\uB370\uC694, "
-        isSymptom: 0
-      - text: "\uD314\uC5D0 \uB09C \uBC18\uC810\uC774 \uC5F4\uC744 \uBC1B\uC73C\uBA74
-          \uBE68\uAC1B\uAC8C \uBE5B\uB098\uC694."
-        isSymptom: 1
-    - segments:
-      - text: "\uC624\uB298\uC740 \uB0A0\uC528\uAC00 \uCC38 \uBCC0\uB355\uC2A4\uB7FD\uB124\uC694.
-          \uC694 \uBA70\uCE60 "
-        isSymptom: 0
-      - text: "\uD314\uC5D0 \uB09C \uBC18\uC810\uC774 \uC5F4\uC744 \uBC1B\uC73C\uBA74
-          \uBE68\uAC1B\uAC8C \uBE5B\uB098\uC694."
-        isSymptom: 1
-  - id: disease.frost_spots
+    displayName: "\uB4E4\uB738\uC553\uC774"
+    recipeId: POT_03
+    order: 3
+    symptomMeanings:
+    - "\uBAB8\uC774 \uAC00\uBCBC\uC6CC\uC9D0"
+    - "\uBC1C\uC774 \uB545\uC5D0 \uB2FF\uC9C0 \uC54A\uC74C"
+    - "\uBC14\uB78C\uC774 \uBD88\uBA74 \uC2EC\uD574\uC9D0"
+    docSymptoms:
+    - "\uBB34\uAC8C\uAC10 \uC18C\uC2E4"
+    - "\uBC1C\uC774 \uB738"
+    - "\uBC14\uB78C \uBD88\uBA74 \uC545\uD654"
+    lineExamples:
+    - "\uCCB4\uC911\uACC4 \uBC14\uB298\uC774 \uAC70\uC758 \uC548 \uC6C0\uC9C1\uC5EC\uC694"
+    - "\uBC1C\uB4A4\uAFC8\uCE58\uAC00 \uBC14\uB2E5\uC5D0 \uC548 \uB2FF\uC544\uC694"
+    - "\uBC14\uB78C \uBD80\uB294 \uB0A0\uC5D4 \uBB38\uACE0\uB9AC\uB97C \uBD99\uC7A1\uACE0
+      \uC788\uC5B4\uC694"
+    bannedWords:
+    - "\uB4E4\uB738"
+    - "\uBB34\uAC8C\uAC10"
+    - "\uB738"
+    - "\uC545\uD654"
+    lore: "\uBD04\uBC14\uB78C\uC774 \uAC70\uC13C \uCCA0\uC5D0 \uB9CE\uC774 \uB3C8\uB2E4.
+      \uBAB8\uC758 \uBB34\uAC8C\uAC00 \uBC14\uB78C\uC5D0 \uC870\uAE08\uC529 \uC2E4\uB824
+      \uAC00\uB294 \uBCD1\uC774\uB77C, \uB2A6\uAC8C \uC624\uBA74 \uC9C0\uBD95\uAE4C\uC9C0
+      \uB5A0\uC624\uB974\uAE30\uB3C4 \uD55C\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
+  - id: DIS_04
     status: 1
-    displayName: "\uC11C\uB9AC \uBC18\uC810\uBCD1"
-    recipeId: recipe.frost_spots
-    dialogue:
-    - segments:
-      - text: "\uC544\uCE68\uBD80\uD130 \uC7A5\uC5D0 \uB2E4\uB140\uC624\uB290\uB77C
-          \uC815\uC2E0\uC774 \uC5C6\uC5C8\uC5B4\uC694. \uADF8\uB7F0\uB370\uC694, "
-        isSymptom: 0
-      - text: "\uD314\uC5D0 \uB09C \uBC18\uC810\uC774 \uCD94\uC6B8 \uB54C\uB9CC \uD558\uC597\uAC8C
-          \uBE5B\uB098\uC694."
-        isSymptom: 1
-    - segments:
-      - text: "\uC624\uB298\uC740 \uB0A0\uC528\uAC00 \uCC38 \uBCC0\uB355\uC2A4\uB7FD\uB124\uC694.
-          \uC694 \uBA70\uCE60 "
-        isSymptom: 0
-      - text: "\uD314\uC5D0 \uB09C \uBC18\uC810\uC774 \uCD94\uC6B8 \uB54C\uB9CC \uD558\uC597\uAC8C
-          \uBE5B\uB098\uC694."
-        isSymptom: 1
+    displayName: "\uAC70\uC6B8\uC7A0"
+    recipeId: POT_04
+    order: 4
+    symptomMeanings:
+    - "\uAC70\uC6B8 \uC18D \uB0B4\uAC00 \uC878\uC74C"
+    - "\uC815\uC791 \uB098\uB294 \uBC24\uC5D0 \uC7A0\uC744 \uBABB \uC7A0"
+    - "\uAC70\uC6B8 \uC18D \uB0B4\uAC00 \uD63C\uC790 \uD558\uD488\uD568"
+    docSymptoms:
+    - "\uAC70\uC6B8\uC0C1 \uC218\uBA74"
+    - "\uBC24\uC5D0 \uBD88\uBA74"
+    - "\uAC70\uC6B8\uC0C1\uB9CC \uD558\uD488"
+    lineExamples:
+    - "\uAC70\uC6B8 \uC18D \uC81C\uAC00 \uAFB8\uBC85\uAFB8\uBC85 \uC878\uACE0 \uC788\uC5B4\uC694"
+    - "\uC800\uB294 \uBC24\uC0C8 \uB208\uC774 \uB9D0\uB625\uB9D0\uB625\uD574\uC694"
+    - "\uAC70\uC6B8 \uC18D\uC5D0\uC11C \uD558\uD488\uC744 \uD574\uC694, \uC800\uB294
+      \uC548 \uD588\uB294\uB370\uC694"
+    bannedWords:
+    - "\uAC70\uC6B8\uC7A0"
+    - "\uAC70\uC6B8\uC0C1"
+    - "\uC218\uBA74"
+    - "\uBD88\uBA74"
+    lore: "\uCE68\uC2E4\uC5D0 \uC624\uB798\uB41C \uAC70\uC6B8\uC744 \uB450\uBA74
+      \uAC78\uB9B0\uB2E4. \uAC70\uC6B8 \uC18D \uBAA8\uC2B5\uC774 \uC8FC\uC778\uC758
+      \uC7A0\uC744 \uBAB0\uB798 \uAC00\uC838\uAC00 \uB300\uC2E0 \uC794\uB2E4. \uBC24\uC5D0
+      \uAC70\uC6B8\uC744 \uCC9C\uC73C\uB85C \uB36E\uC5B4 \uB450\uBA74 \uC870\uAE08
+      \uB2A6\uCD9C \uC218 \uC788\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
+  - id: DIS_05
+    status: 1
+    displayName: "\uBE57\uBB3C\uD600"
+    recipeId: POT_05
+    order: 5
+    symptomMeanings:
+    - "\uBB34\uC5C7\uC744 \uBA39\uC5B4\uB3C4 \uBE57\uBB3C \uB9DB\uC774 \uB0A8"
+    - "\uBE44 \uC624\uAE30 \uC804\uB0A0 \uD600\uAC00 \uC800\uB9BC"
+    - "\uC785 \uC548\uC5D0\uC11C \uBE44 \uC628 \uB4A4 \uD759\uB0C4\uC0C8\uAC00 \uB0A8"
+    docSymptoms:
+    - "\uBAA8\uB4E0 \uB9DB\uC774 \uBE57\uBB3C \uB9DB"
+    - "\uBE44 \uC624\uAE30 \uC804\uB0A0 \uD600 \uC800\uB9BC"
+    - "\uC785 \uC548 \uD759\uB0C4\uC0C8"
+    lineExamples:
+    - "\uAFC0\uC744 \uBA39\uC5B4\uB3C4 \uCC98\uB9C8 \uBC11\uC5D0 \uBC1B\uC544 \uB454
+      \uBB3C \uB9DB\uC774 \uB098\uC694"
+    - "\uB0A0\uC774 \uAFB8\uBB3C\uAFB8\uBB3C\uD558\uAE30 \uC804\uB0A0\uC5D4 \uD600\uB05D\uC774
+      \uCC0C\uB9BF\uCC0C\uB9BF\uD574\uC694"
+    - "\uC785 \uC548\uC5D0\uC11C \uBE44 \uC628 \uB4A4 \uB9C8\uB2F9 \uB0C4\uC0C8\uAC00
+      \uB098\uC694"
+    bannedWords:
+    - "\uBE57\uBB3C\uD600"
+    - "\uBE57\uBB3C \uB9DB"
+    - "\uC800\uB9BC"
+    lore: "\uC7A5\uB9C8\uAC00 \uAE38\uC5C8\uB358 \uD574\uC5D0 \uB9C8\uC744\uB9C8\uB2E4
+      \uB3CC\uC558\uB358 \uBCD1\uC774\uB2E4. \uD558\uB298\uC5D0\uC11C \uB0B4\uB9B0
+      \uBB3C\uC774 \uD600\uC5D0 \uB20C\uB7EC\uC549\uC544 \uB2E4\uB978 \uB9DB\uC744
+      \uBAA8\uB450 \uB36E\uC5B4 \uBC84\uB9B0\uB2E4. \uC694\uB9AC\uC0AC\uAC00 \uAC78\uB9AC\uBA74
+      \uAC00\uAC8C \uBB38\uC744 \uB2EB\uB294 \uC77C\uC774 \uB9CE\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
+  - id: DIS_06
+    status: 1
+    displayName: "\uC11C\uB9AC\uC190"
+    recipeId: POT_06
+    order: 6
+    symptomMeanings:
+    - "\uC190\uB05D\uC774 \uB298 \uCC28\uAC00\uC6C0"
+    - "\uC190\uC5D0 \uB2FF\uB294 \uBB3C\uAC74\uC774 \uC5BC\uC5B4\uBD99\uC74C"
+    - "\uC544\uCE68\uC5D0 \uB354 \uC2EC\uD574\uC9D0"
+    docSymptoms:
+    - "\uC190\uB05D \uB0C9\uAE30"
+    - "\uB2FF\uB294 \uBB3C\uAC74\uC5D0 \uC131\uC5D0"
+    - "\uC544\uCE68\uC5D0 \uC545\uD654"
+    lineExamples:
+    - "\uC7A1\uAE30\uB9CC \uD558\uBA74 \uB2EC\uAD70 \uC1E0\uAC00 \uAE08\uBC29 \uC2DD\uC5B4\uC694"
+    - "\uBB3C\uCEF5\uC744 \uB4E4\uBA74 \uAC89\uC5D0 \uD558\uC597\uAC8C \uC5BC\uC74C\uAF43\uC774
+      \uAEF4\uC694"
+    - "\uC544\uCE68\uC5D0 \uC77C\uC5B4\uB098\uBA74 \uC774\uBD88 \uB05D\uC774 \uBEE3\uBEE3\uD558\uAC8C
+      \uC5BC\uC5B4 \uC788\uC5B4\uC694"
+    bannedWords:
+    - "\uC11C\uB9AC\uC190"
+    - "\uB0C9\uAE30"
+    - "\uC131\uC5D0"
+    - "\uC545\uD654"
+    lore: "\uACA8\uC6B8 \uC694\uC815\uACFC \uC190\uC744 \uB9DE\uC7A1\uC73C\uBA74
+      \uAC78\uB9B0\uB2E4\uB294 \uC61B\uC774\uC57C\uAE30\uAC00 \uC788\uB2E4. \uC694\uC815\uC774
+      \uB0A8\uAE34 \uCD94\uC704\uAC00 \uC190\uB05D\uC5D0 \uBA38\uBB3C\uB7EC, \uD574\uAC00
+      \uB192\uC774 \uB728\uAE30 \uC804\uAE4C\uC9C0 \uAC00\uC7A5 \uC0AC\uB0A9\uB2E4."
+    docIllustration: {fileID: 0}
+    dialogue: []
   recipes:
-  - id: recipe.shadow_lag
+  - id: POT_01
     status: 1
-    potionName: "\uADF8\uB9BC\uC790 \uB3D9\uC870 \uD3EC\uC158"
+    potionName: "\uADF8\uB9BC\uC790 \uC7AC\uCD09\uC57D"
+    recipeText: "\uADF8\uB9BC\uC790\uB97C \uC8FC\uC778 \uBC1C\uBC11\uC73C\uB85C \uBD88\uB7EC\uB4E4\uC774\uB294
+      \uC57D. \uD574\uAC00 \uC9C0\uAE30 \uC804\uC5D0 \uB9C8\uC2DC\uAC8C \uD560 \uAC83."
     ingredientVariantIds:
-    - ingredient.mooncap.blue
-    - ingredient.root.curled
-    - ingredient.crystal.one_tip
-  - id: recipe.shadow_rush
+    - A1
+    - C2
+    - D3
+  - id: POT_02
     status: 1
-    potionName: "\uADF8\uB9BC\uC790 \uC9C4\uC815 \uD3EC\uC158"
+    potionName: "\uB9D0\uB05D \uB9E4\uB4ED\uC57D"
+    recipeText: "\uB3CC\uC544\uC624\uB294 \uB9D0\uB05D\uC744 \uBB36\uC5B4 \uB450\uB294
+      \uC57D. \uB9C8\uC2E0 \uB4A4 \uD55C\uB3D9\uC548\uC740 \uC18D\uC0AD\uC774\uB4EF
+      \uB9D0\uD558\uAC8C \uB41C\uB2E4."
     ingredientVariantIds:
-    - ingredient.moss.long_leaf
-    - ingredient.seed.oval
-    - ingredient.salt.medium_grain
-  - id: recipe.ember_spots
+    - C1
+    - D2
+    - F3
+  - id: POT_03
     status: 1
-    potionName: "\uBD88\uC528 \uC9C4\uC815 \uD3EC\uC158"
+    potionName: "\uBC1C\uBD99\uC784\uC57D"
+    recipeText: "\uBAB8\uC5D0 \uB545\uC758 \uBB34\uAC8C\uB97C \uB418\uB3CC\uB824
+      \uC8FC\uB294 \uC57D. \uB2E4 \uB9C8\uC2E4 \uB54C\uAE4C\uC9C0 \uBB38\uACE0\uB9AC\uB97C
+      \uB193\uC9C0 \uB9D0 \uAC83."
     ingredientVariantIds:
-    - ingredient.mooncap.red
-    - ingredient.moss.round_leaf
-    - ingredient.salt.large_grain
-  - id: recipe.frost_spots
+    - B3
+    - E1
+    - F2
+  - id: POT_04
     status: 1
-    potionName: "\uC11C\uB9AC \uC9C4\uC815 \uD3EC\uC158"
+    potionName: "\uAC70\uC6B8 \uAE68\uC6C0\uC57D"
+    recipeText: "\uAC70\uC6B8 \uC18D \uC7A0\uAFB8\uB7EC\uAE30\uB97C \uAE68\uC6CC
+      \uC7A0\uC744 \uB3CC\uB824\uBC1B\uB294 \uC57D. \uADF8\uB0A0 \uBC24\uC740 \uC77C\uCC0D
+      \uB215\uAC8C \uD560 \uAC83."
     ingredientVariantIds:
-    - ingredient.mooncap.white
-    - ingredient.moss.layered_leaf
-    - ingredient.salt.small_grain
+    - B2
+    - C3
+    - D1
+  - id: POT_05
+    status: 1
+    potionName: "\uC785\uB9DB \uAC1C\uB294 \uC57D"
+    recipeText: "\uD600\uC5D0 \uB080 \uBE44\uAD6C\uB984\uC744 \uAC77\uC5B4 \uB0B4\uB294
+      \uC57D. \uCCAB \uBAA8\uAE08\uC740 \uB180\uB784 \uB9CC\uD07C \uB2EC\uB2E4."
+    ingredientVariantIds:
+    - A2
+    - B1
+    - E3
+  - id: POT_06
+    status: 1
+    potionName: "\uC190\uB05D \uB179\uC784\uC57D"
+    recipeText: "\uC190\uB05D\uC5D0 \uB0A8\uC740 \uACA8\uC6B8\uC744 \uB179\uC774\uB294
+      \uC57D. \uC7A5\uAC11\uC744 \uBC97\uACE0 \uB450 \uC190\uC73C\uB85C \uAC10\uC2F8
+      \uC950\uACE0 \uB9C8\uC2E4 \uAC83."
+    ingredientVariantIds:
+    - A3
+    - E2
+    - F1
   customerDialogue: []

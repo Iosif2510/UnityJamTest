@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PotionShop.Data
@@ -55,6 +56,9 @@ namespace PotionShop.Data
         [Header("고정 인물 초상화 (신규 제작)")]
         [SerializeField] private bool fixedAppearance;
         [SerializeField] private string job;
+        [SerializeField] private string race;
+        [SerializeField] private string variation;
+        [SerializeField, TextArea] private string genNotes;
         [SerializeField] private AppearanceValue earType;
         [SerializeField] private bool hasFang;
         [SerializeField] private Sprite eyeClosed;
@@ -62,8 +66,11 @@ namespace PotionShop.Data
         [SerializeField] private Sprite hairBack;
         [SerializeField] private List<AppearanceValue> hairColors = new();
         [Tooltip("머리카락 팔레트와 별도로 장식 레이어에 적용할 색")]
-        [SerializeField] private AppearanceValue hairTintOverride;
+        [SerializeField] private bool useAccessoryTint;
+        [SerializeField] private Color accessoryTint = Color.white;
         [SerializeField] private List<AppearanceValue> eyeColors = new();
+        [SerializeField] private List<string> hairColorIds = new();
+        [SerializeField] private List<string> eyeColorIds = new();
         [Tooltip("원본 캔버스 좌하단 기준 0~1 사각형")]
         [SerializeField] private List<Rect> irisRegions = new();
         [SerializeField] private GameObject rigPrefab;
@@ -82,18 +89,26 @@ namespace PotionShop.Data
         public IReadOnlyList<PortraitPart> Parts => parts;
         public bool FixedAppearance => fixedAppearance;
         public string Job => job;
+        public string Race => race;
+        public string Variation => variation;
+        public string GenNotes => genNotes;
         public AppearanceValue EarType => earType;
         public bool HasFang => hasFang;
         public Sprite EyeClosed => eyeClosed;
         public Sprite HairFront => hairFront;
         public Sprite HairBack => hairBack;
-        public IReadOnlyList<AppearanceValue> HairColors => hairColors;
-        public IReadOnlyList<AppearanceValue> EyeColors => eyeColors;
+        public IReadOnlyList<string> HairColorIds => hairColorIds;
+        public IReadOnlyList<string> EyeColorIds => eyeColorIds;
+        public IReadOnlyList<AppearanceValue> HairColors => string.IsNullOrEmpty(race) ? hairColors
+            : hairColorIds.Select(id => PortraitColorCatalog.ResolveId(PortraitSlot.Hair, id)).ToArray();
+        public IReadOnlyList<AppearanceValue> EyeColors => string.IsNullOrEmpty(race) ? eyeColors
+            : eyeColorIds.Select(id => PortraitColorCatalog.ResolveId(PortraitSlot.Eyes, id)).ToArray();
         public IReadOnlyList<Rect> IrisRegions => irisRegions;
         public GameObject RigPrefab => rigPrefab;
         public TextAsset SpineRig => spineRig;
         public Sprite BakedIris => bakedIris;
-        public AppearanceValue HairTintOverride => hairTintOverride;
+        public bool UseAccessoryTint => useAccessoryTint;
+        public Color AccessoryTint => accessoryTint;
         public Sprite IrisMask => irisMask;
         public Sprite IrisVariantsMask => irisVariantsMask;
         public IrisDetailStyle IrisDetailStyle => irisDetailStyle;
