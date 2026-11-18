@@ -103,3 +103,4 @@ MonoBehaviour:
     - ingredient.mooncap.white
     - ingredient.moss.layered_leaf
     - ingredient.salt.small_grain
+  customerDialogue: []
