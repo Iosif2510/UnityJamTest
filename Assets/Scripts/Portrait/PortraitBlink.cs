@@ -12,14 +12,26 @@ namespace PotionShop.Portraits
         [SerializeField, Min(0.01f)] private float closedSeconds = 0.1f;
         private CancellationTokenSource cancellation;
         private readonly System.Random random = new();
+        private PortraitSpineRig spine;
+        private bool followSpine;
+
+        internal void BindSpine(PortraitSpineRig rig) => spine = rig;
+
         public void Play()
         {
             Stop();
+            if (spine != null)
+            {
+                followSpine = true;
+                SetClosed(spine.EyesClosed);
+                return;
+            }
             cancellation = new CancellationTokenSource();
             Run(cancellation.Token).Forget();
         }
         public void Stop()
         {
+            followSpine = false;
             cancellation?.Cancel(); cancellation?.Dispose(); cancellation = null;
             SetClosed(false);
         }
@@ -44,6 +56,14 @@ namespace PotionShop.Portraits
             }
             catch (OperationCanceledException) { }
         }
-        private void OnDisable() => Stop();
+        private void LateUpdate()
+        {
+            if (followSpine) SetClosed(spine.EyesClosed);
+        }
+        private void OnDisable()
+        {
+            if (followSpine) SetClosed(false);
+            else Stop();
+        }
     }
 }

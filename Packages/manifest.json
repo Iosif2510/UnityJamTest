@@ -2,6 +2,7 @@
   "dependencies": {
     "com.annulusgames.lit-motion": "https://github.com/annulusgames/LitMotion.git?path=src/LitMotion/Assets/LitMotion",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.esotericsoftware.spine.spine-csharp": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-csharp/src#4.3",
     "com.unity.2d.animation": "13.0.6",
     "com.unity.ai.assistant": "2.22.0-pre.1",
     "com.unity.ai.inference": "2.6.1",

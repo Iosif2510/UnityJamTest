@@ -54,6 +54,7 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -95,6 +96,7 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -140,6 +142,7 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -185,6 +188,7 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -206,6 +210,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -227,6 +232,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -248,6 +254,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -269,6 +276,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -290,6 +298,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -311,6 +320,7 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -332,6 +342,7 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -353,6 +364,7 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -374,6 +386,7 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -405,6 +418,7 @@ MonoBehaviour:
       width: 0.06591797
       height: 0.034179688
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: a164706550b77dc498729cd8cefb50fc, type: 3}
     irisMask: {fileID: 21300000, guid: 0026ce3a22f4514ea87c4df91780591c, type: 3}
     irisVariantsMask: {fileID: 21300000, guid: 9d235a5d3355532fbf9b435a58233ed0, type: 3}
     irisDetailStyle: 0
@@ -446,6 +460,7 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -467,6 +482,7 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -488,6 +504,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -509,6 +526,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -530,6 +548,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -551,6 +570,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -572,6 +592,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -593,6 +614,7 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -614,6 +636,7 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -635,6 +658,7 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -656,6 +680,7 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -677,6 +702,7 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    spineRig: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0

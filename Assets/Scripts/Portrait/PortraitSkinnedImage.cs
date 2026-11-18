@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Sprites;
 using UnityEngine.UI;
 using UnityEngine.U2D.Animation;
 
@@ -9,6 +10,7 @@ namespace PotionShop.Portraits
     public sealed class PortraitSkinnedImage : Image
     {
         private SpriteSkin source;
+        private PortraitSpineRig spine;
         private readonly List<Vector3> positions = new();
         public void Bind(SpriteSkin skin)
         {
@@ -20,9 +22,20 @@ namespace PotionShop.Portraits
             }
             SetVerticesDirty();
         }
-        private void LateUpdate() { if (source != null) SetVerticesDirty(); }
+        internal void BindSpine(PortraitSpineRig rig)
+        {
+            spine = rig;
+            SetVerticesDirty();
+        }
+
+        private void LateUpdate() { if (source != null || spine != null) SetVerticesDirty(); }
         protected override void OnPopulateMesh(VertexHelper vh)
         {
+            if (spine != null && sprite != null)
+            {
+                PopulateSpineMesh(vh);
+                return;
+            }
             if (source == null || sprite == null || source.GetComponent<SpriteRenderer>().sprite != sprite || !source.HasCurrentDeformedVertices())
             { base.OnPopulateMesh(vh); return; }
             positions.Clear();
@@ -37,6 +50,28 @@ namespace PotionShop.Portraits
                     rect.y + pixel.y / sprite.rect.height * rect.height), color, uv[i]);
             }
             for (int i = 0; i < triangles.Length; i += 3) vh.AddTriangle(triangles[i], triangles[i + 1], triangles[i + 2]);
+        }
+
+        private void PopulateSpineMesh(VertexHelper vh)
+        {
+            var rect = GetPixelAdjustedRect();
+            var bounds = spine.Bounds;
+            var uv = DataUtility.GetOuterUV(sprite);
+            var vertices = spine.Vertices;
+            var sourceUVs = spine.UVs;
+            var triangles = spine.Triangles;
+            vh.Clear();
+            for (int i = 0; i < vertices.Length; i += 2)
+            {
+                var position = new Vector3(
+                    rect.x + (vertices[i] - bounds.x) / bounds.width * rect.width,
+                    rect.y + (vertices[i + 1] - bounds.y) / bounds.height * rect.height);
+                var texCoord = new Vector2(Mathf.Lerp(uv.x, uv.z, sourceUVs[i]),
+                    Mathf.Lerp(uv.y, uv.w, 1f - sourceUVs[i + 1]));
+                vh.AddVert(position, color, texCoord);
+            }
+            for (int i = 0; i < triangles.Length; i += 3)
+                vh.AddTriangle(triangles[i], triangles[i + 1], triangles[i + 2]);
         }
     }
 }

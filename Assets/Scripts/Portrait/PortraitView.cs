@@ -20,8 +20,12 @@ namespace PotionShop.Portraits
             if ((hair != AppearanceValue.None && !profile.HairColors.Contains(hair)) ||
                 (hair == AppearanceValue.None && profile.HairColors.Count > 0) || !profile.EyeColors.Contains(eyes))
                 throw new InvalidOperationException($"{profile.Id}: unsupported portrait colors");
-            blink.Stop(); layers.Compose(profile); colors.Apply(palette.Get(hair), palette.Get(eyes));
-            if (rig != null) rig.Load(profile.RigPrefab);
+            blink.Stop();
+            rig?.Clear();
+            layers.Compose(profile);
+            colors.Apply(palette.Get(hair), palette.Get(eyes));
+            rig?.Load(profile.RigPrefab, profile.SpineRig);
+            blink.BindSpine(rig != null ? rig.SpineRig : null);
             blink.Play();
         }
         public void Show(GeneratedOrder order, PortraitColorCatalog palette) => Show(order.Customer,
@@ -32,6 +36,7 @@ namespace PotionShop.Portraits
         {
             if (sprite == null) throw new InvalidOperationException("Assign slime portrait in Customers.");
             blink.Stop();
+            blink.BindSpine(null);
             if (rig != null) rig.Clear();
             colors.Apply(Color.white, Color.white);
             foreach (var image in layers.All) image.enabled = false;
