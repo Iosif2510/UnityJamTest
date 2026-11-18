@@ -809,6 +809,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: OrderCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 953025655952288550, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3164116675340062184, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 4850212601384546257, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
