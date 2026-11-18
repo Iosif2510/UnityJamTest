@@ -1,3 +1,4 @@
+using System;
 using LitMotion;
 using UnityEngine;
 
@@ -43,11 +44,12 @@ namespace PotionShop
             TweenTo(anchor, Vector3.zero, Quaternion.identity, pickupDuration, restoreColliders: false);
         }
 
-        public void ReturnToShelf() =>
-            TweenTo(shelfSlot, shelfPosition, shelfRotation, returnDuration, restoreColliders: true);
+        public void ReturnToShelf(Action onArrived = null) =>
+            TweenTo(shelfSlot, shelfPosition, shelfRotation, returnDuration, restoreColliders: true,
+                onArrived: onArrived);
 
         private void TweenTo(Transform destination, Vector3 localPosition, Quaternion localRotation,
-            float duration, bool restoreColliders)
+            float duration, bool restoreColliders, Action onArrived = null)
         {
             transferMotion.TryCancel();
             transform.SetParent(destination, true);
@@ -61,6 +63,8 @@ namespace PotionShop
                     for (int i = 0; i < colliders.Length; i++)
                         colliders[i].enabled = enabledOnShelf[i];
                 }
+                if (isActiveAndEnabled)
+                    onArrived?.Invoke();
             }
 
             if (duration <= 0f || !isActiveAndEnabled)

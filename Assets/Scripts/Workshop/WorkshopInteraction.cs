@@ -20,6 +20,7 @@ namespace PotionShop
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private WorkshopHud hud;
         [SerializeField] private GameObject resultPanel;
+        [SerializeField] private WorkshopAudio workshopAudio;
 
         private readonly List<string> pocket = new();
         private readonly Collider[] originContacts = new Collider[16];
@@ -36,6 +37,8 @@ namespace PotionShop
         {
             if (player != null && player.TryHandleLookInput == TryRotateHeldIngredient)
                 player.TryHandleLookInput = null;
+            if (workshopAudio != null)
+                workshopAudio.UpdateCountdown(0d);
             wasLocked = false;
         }
 
@@ -58,10 +61,14 @@ namespace PotionShop
         {
             if (round != null)
             {
-                hud.UpdateTimer(round.RemainingSeconds, round.Tuning.TimeLimitSeconds);
+                double remainingSeconds = round.RemainingSeconds;
+                hud.UpdateTimer(remainingSeconds, round.Tuning.TimeLimitSeconds);
+                workshopAudio?.UpdateCountdown(remainingSeconds);
                 if (round.Phase is (RoundPhase.Ending or RoundPhase.Result) && !complete)
                 {
                     complete = true;
+                    if (round.Result?.TimedOut == true)
+                        workshopAudio?.PlayTimeExpired();
                     hud.SetCrosshairVisible(false);
                     player.enabled = false;
                     hud.ShowPrompt(action: "시간 초과");
@@ -122,10 +129,14 @@ namespace PotionShop
             hud.ShowIngredient(ingredient.VariantId,
                 hasSpace ? "집기" : "주머니가 가득 찼습니다. 가마솥으로 이동하세요",
                 hasSpace ? "E" : null);
+            Vector3 shelfPosition = ingredient.transform.position;
             if (hasSpace && (Keyboard.current?.eKey.wasPressedThisFrame == true ||
                 Mouse.current?.leftButton.wasPressedThisFrame == true) &&
                 shelf.TryTake(ingredient, heldItemAnchor))
+            {
                 SetHeldIngredient(ingredient);
+                workshopAudio?.PlayPickup(ingredient.VariantId, shelfPosition);
+            }
         }
 
         private void HandleHeldIngredient()
@@ -133,7 +144,12 @@ namespace PotionShop
             hud.ShowIngredient(held.VariantId, "주머니에 넣기  ·  R + 마우스로 돌리기  ·  우클릭으로 돌려놓기", "F");
             if (Mouse.current?.rightButton.wasPressedThisFrame == true)
             {
-                held.ReturnToShelf();
+                var returning = held;
+                returning.ReturnToShelf(() =>
+                {
+                    if (workshopAudio != null && workshopAudio.isActiveAndEnabled)
+                        workshopAudio.PlayReturn(returning.VariantId, returning.transform.position);
+                });
                 SetHeldIngredient(null);
             }
             else if (Keyboard.current?.fKey.wasPressedThisFrame == true && pocket.Count < tuning.PocketCapacity)
@@ -143,6 +159,7 @@ namespace PotionShop
                 stored.gameObject.SetActive(false);
                 SetHeldIngredient(null);
                 pocketModels.ShowIngredient(pocket.Count - 1, stored.transform);
+                workshopAudio?.PlayPocket();
             }
         }
 
