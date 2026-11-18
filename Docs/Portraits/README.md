@@ -24,6 +24,9 @@
 
 Unity에서 사용할 때는 표정 전환 코드 또는 데이터의 Sprite 필드에 연결합니다.
 
+## 공용 엔딩 슬라임
+
+합성본은 `manifest.json`의 `endingSlime`에 있습니다. 깜빡임을 적용할 때는 `endingSlimeLayers.base` 위에 `eyeOpen` 또는 `eyeClosed` 한 장을 표시합니다. 세 파츠는 1024×1536 투명 PNG이며 중앙 피벗을 공유합니다.
 ## Unity 연결
 
 ELF_M1, HUM_F3, BST_M2, GOL_G1의 `Customers` 항목에 베이스, 감은 눈, 머리 레이어, **Baked Iris**, **Spine Rig**가 연결되어 있습니다. `PortraitView`는 홍채 스프라이트에 선택된 눈색을 적용하고, 인물 폴더의 Spine JSON에서 `idle`을 반복 재생합니다. 머리카락은 뿌리에서 고개를 따라가고 끝으로 갈수록 움직입니다. GOL_G1의 이끼는 고정 장식 색으로 처리합니다.

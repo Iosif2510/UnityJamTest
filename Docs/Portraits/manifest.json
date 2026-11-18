@@ -172,5 +172,11 @@
         }
       }
     }
+  },
+  "endingSlime": "Assets/Arts/Portraits/SLIME/POR_SLIME_BASE.png",
+  "endingSlimeLayers": {
+    "base": "Assets/Arts/Portraits/SLIME/POR_SLIME_BODY.png",
+    "eyeOpen": "Assets/Arts/Portraits/SLIME/POR_SLIME_EYE_OPEN.png",
+    "eyeClosed": "Assets/Arts/Portraits/SLIME/POR_SLIME_EYE_CLOSED.png"
   }
 }
