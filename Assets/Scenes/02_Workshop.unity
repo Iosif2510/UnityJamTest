@@ -232,17 +232,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 55171611}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &71381873 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3623957619911145290, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
-  m_PrefabInstance: {fileID: 8976853946593895718}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
 --- !u!1001 &72206835
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -712,17 +701,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
   variantId: A1
---- !u!114 &213320304 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5414844730591620907, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
-  m_PrefabInstance: {fileID: 8976853946593895718}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
 --- !u!1 &308339277
 GameObject:
   m_ObjectHideFlags: 0
@@ -1919,12 +1897,8 @@ MonoBehaviour:
   armsAnimator: {fileID: 1977764399}
   heldRotationSensitivity: 0.35
   tuning: {fileID: 11400000, guid: a6519a396b2079f4e88f52c383606c0c, type: 2}
-  prompt: {fileID: 71381873}
-  pocketDisplay: {fileID: 213320304}
-  timerText: {fileID: 0}
-  crosshair: {fileID: 1474768284}
+  hud: {fileID: 8976853946593895719}
   resultPanel: {fileID: 947279109}
-  uiTheme: {fileID: 0}
 --- !u!1 &867296596
 GameObject:
   m_ObjectHideFlags: 0
@@ -3974,11 +3948,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
   variantId: B1
---- !u!1 &1474768284 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5349844330231742217, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
-  m_PrefabInstance: {fileID: 8976853946593895718}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1531260134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6370,6 +6339,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
+--- !u!114 &8976853946593895719 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1620026192692869848, guid: 81b09d6b7f39a674b97a0c7ee43b9dbb, type: 3}
+  m_PrefabInstance: {fileID: 8976853946593895718}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee320c9a6413af499c01cae80411b50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WorkshopHud
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

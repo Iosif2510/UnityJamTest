@@ -2,41 +2,32 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace PotionShop
 {
     internal sealed class PocketModelDisplay : IDisposable
     {
-        private const float SlotSize = 72f;
-        private const float SlotGap = 8f;
-        private const float LabelWidth = 76f;
         private const int TextureSize = 128;
 
         private sealed class Slot
         {
-            public Image Frame;
-            public RawImage Preview;
+            public UnityEngine.UI.RawImage Preview;
             public RenderTexture Texture;
         }
 
         private readonly Slot[] slots;
         private readonly Camera previewCamera;
         private readonly Vector3 previewPosition;
-        private readonly PotionShop.Art.UITheme theme;
 
-        public PocketModelDisplay(Text pocketLabel, Camera playerCamera, int capacity, PotionShop.Art.UITheme theme = null)
+        public PocketModelDisplay(UnityEngine.UI.RawImage[] previews, Camera playerCamera)
         {
-            this.theme = theme;
-            pocketLabel.text = "Pocket";
-            pocketLabel.alignment = TextAnchor.MiddleLeft;
-            pocketLabel.rectTransform.sizeDelta =
-                new Vector2(LabelWidth + capacity * (SlotSize + SlotGap) - SlotGap, SlotSize);
-
-            slots = new Slot[capacity];
+            slots = new Slot[previews.Length];
             for (int i = 0; i < slots.Length; i++)
-                slots[i] = CreateSlot(pocketLabel, i);
+            {
+                previews[i].enabled = false;
+                slots[i] = new Slot { Preview = previews[i] };
+            }
 
             // Keep the render-only mesh beyond the gameplay camera's far plane.
             previewPosition = playerCamera.transform.position + Vector3.down * (playerCamera.farClipPlane + 512f);
@@ -44,8 +35,7 @@ namespace PotionShop
             previewCamera.enabled = false;
             previewCamera.orthographic = true;
             previewCamera.clearFlags = CameraClearFlags.SolidColor;
-            previewCamera.backgroundColor = new Color32(24, 31, 32, 255);
-            if (theme != null) previewCamera.backgroundColor = theme.pocketBackground;
+            previewCamera.backgroundColor = new Color32(25, 15, 10, 255);
             previewCamera.allowHDR = false;
             previewCamera.useOcclusionCulling = false;
             var cameraData = previewCamera.GetUniversalAdditionalCameraData();
@@ -56,9 +46,6 @@ namespace PotionShop
         public void ShowIngredient(int index, Transform ingredient)
         {
             Slot slot = slots[index];
-            slot.Frame.color = new Color32(168, 217, 177, 255);
-            if (theme != null) slot.Frame.color = theme.pocketFilled;
-
             var model = new GameObject("PocketPreviewMesh");
             model.transform.position = previewPosition;
             model.transform.localScale = ingredient.localScale;
@@ -105,11 +92,7 @@ namespace PotionShop
         public void Clear()
         {
             foreach (var slot in slots)
-            {
                 ReleaseTexture(slot);
-                if (slot.Frame != null)
-                    slot.Frame.color = theme != null ? theme.pocketEmpty : new Color32(39, 49, 50, 255);
-            }
         }
 
         public void Dispose()
@@ -117,41 +100,6 @@ namespace PotionShop
             Clear();
             if (previewCamera != null)
                 Object.Destroy(previewCamera.gameObject);
-
-            foreach (var slot in slots)
-                if (slot.Frame != null)
-                    Object.Destroy(slot.Frame.gameObject);
-        }
-
-        private Slot CreateSlot(Text label, int index)
-        {
-            var frame = new GameObject($"PocketSlot_{index + 1}", typeof(RectTransform), typeof(Image))
-                .GetComponent<Image>();
-            var rect = frame.rectTransform;
-            rect.SetParent(label.rectTransform, false);
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 0.5f);
-            rect.sizeDelta = new Vector2(SlotSize, SlotSize);
-            rect.anchoredPosition = new Vector2(LabelWidth + index * (SlotSize + SlotGap), 0f);
-            frame.color = new Color32(39, 49, 50, 255);
-            if (theme != null) { frame.color = theme.pocketEmpty; frame.sprite = theme.pocketFrame; frame.type = Image.Type.Sliced; }
-            frame.raycastTarget = false;
-
-            var preview = new GameObject("Model", typeof(RectTransform), typeof(RawImage))
-                .GetComponent<RawImage>();
-            FitInside(preview.rectTransform, rect, 4f);
-            preview.raycastTarget = false;
-            preview.enabled = false;
-
-            return new Slot { Frame = frame, Preview = preview };
-        }
-
-        private static void FitInside(RectTransform rect, RectTransform parent, float padding)
-        {
-            rect.SetParent(parent, false);
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = new Vector2(padding, padding);
-            rect.offsetMax = -rect.offsetMin;
         }
 
         private static void CopyMeshes(Transform source, Transform clone, ref Bounds bounds, ref bool hasMesh)

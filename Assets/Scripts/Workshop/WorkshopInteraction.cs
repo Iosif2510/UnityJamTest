@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using PotionShop.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace PotionShop
 {
@@ -19,12 +18,8 @@ namespace PotionShop
         [SerializeField] private Animator armsAnimator;
         [SerializeField, Min(0f)] private float heldRotationSensitivity = 0.35f;
         [SerializeField] private RoundTuning tuning;
-        [SerializeField] private Text prompt;
-        [SerializeField] private Text pocketDisplay;
-        [SerializeField] private Text timerText;
-        [SerializeField] private GameObject crosshair;
+        [SerializeField] private WorkshopHud hud;
         [SerializeField] private GameObject resultPanel;
-        [SerializeField] private PotionShop.Art.UITheme uiTheme;
 
         private readonly List<string> pocket = new();
         private readonly Collider[] originContacts = new Collider[16];
@@ -49,16 +44,12 @@ namespace PotionShop
             // Free is a release clip. Start at its open-hand pose without playing a release on spawn.
             if (armsAnimator != null)
                 armsAnimator.Play("Base Layer.Free", 0, 1f);
-            pocketModels = new PocketModelDisplay(pocketDisplay, playerCamera, tuning.PocketCapacity, uiTheme);
+            pocketModels = hud.CreatePocketDisplay(playerCamera);
+            hud.ShowPrompt();
             var activeRound = RoundDirector.Instance;
             if (activeRound != null && activeRound.CurrentOrder != null)
-            {
                 round = activeRound;
-                if (timerText == null)
-                    timerText = CreateTimer();
-            }
-            if (timerText != null)
-                timerText.gameObject.SetActive(round != null);
+            hud.SetTimerVisible(round != null);
         }
 
         private void OnDestroy() => pocketModels?.Dispose();
@@ -67,13 +58,13 @@ namespace PotionShop
         {
             if (round != null)
             {
-                timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
+                hud.UpdateTimer(round.RemainingSeconds, round.Tuning.TimeLimitSeconds);
                 if (round.Phase is (RoundPhase.Ending or RoundPhase.Result) && !complete)
                 {
                     complete = true;
-                    crosshair.SetActive(false);
+                    hud.SetCrosshairVisible(false);
                     player.enabled = false;
-                    prompt.text = "Time expired";
+                    hud.ShowPrompt(action: "시간 초과");
                     return;
                 }
             }
@@ -89,10 +80,10 @@ namespace PotionShop
             bool locked = player.IsCursorLocked;
             bool canInteract = locked && wasLocked && player.InputEnabled;
             wasLocked = locked;
-            crosshair.SetActive(locked);
+            hud.SetCrosshairVisible(locked);
             if (!canInteract)
             {
-                prompt.text = locked ? string.Empty : "Click the game view to resume";
+                hud.ShowPrompt(action: locked ? "" : "게임 화면을 클릭해 계속하기");
                 return;
             }
 
@@ -102,16 +93,18 @@ namespace PotionShop
                 return;
             }
 
-            prompt.text = string.Empty;
             if (!TryGetInteractionHit(GetInteractionRay(), out var target, out _))
+            {
+                hud.ShowPrompt();
                 return;
+            }
 
             var cauldron = target.GetComponentInParent<WorkshopCauldron>();
             if (cauldron != null)
             {
                 bool hasIngredients = pocket.Count == tuning.PocketCapacity;
-                prompt.text = hasIngredients ? "[Left click] Add ingredients to cauldron" :
-                    $"Fill all {tuning.PocketCapacity} pocket slots first";
+                hud.ShowPrompt("가마솥", hasIngredients ? "좌클릭으로 재료 넣기" :
+                    $"재료 {tuning.PocketCapacity}개를 먼저 모으세요");
                 if (hasIngredients && Mouse.current?.leftButton.wasPressedThisFrame == true)
                     StartBrewing(cauldron);
                 return;
@@ -120,18 +113,24 @@ namespace PotionShop
             var shelf = target.GetComponentInParent<WorkshopShelf>();
             var ingredient = shelf != null ? shelf.FindStockedIngredient(target) : null;
             if (ingredient == null)
+            {
+                hud.ShowPrompt();
                 return;
+            }
 
             bool hasSpace = pocket.Count < tuning.PocketCapacity;
-            prompt.text = hasSpace ? "[Left click] Pick up" : "Pocket full. Bring ingredients to the cauldron.";
-            if (hasSpace && Mouse.current?.leftButton.wasPressedThisFrame == true &&
+            hud.ShowIngredient(ingredient.VariantId,
+                hasSpace ? "집기" : "주머니가 가득 찼습니다. 가마솥으로 이동하세요",
+                hasSpace ? "E" : null);
+            if (hasSpace && (Keyboard.current?.eKey.wasPressedThisFrame == true ||
+                Mouse.current?.leftButton.wasPressedThisFrame == true) &&
                 shelf.TryTake(ingredient, heldItemAnchor))
                 SetHeldIngredient(ingredient);
         }
 
         private void HandleHeldIngredient()
         {
-            prompt.text = "[Hold R + mouse] Rotate   [F] Put in pocket   [Right click] Return to shelf";
+            hud.ShowIngredient(held.VariantId, "주머니에 넣기  ·  R + 마우스로 돌리기  ·  우클릭으로 돌려놓기", "F");
             if (Mouse.current?.rightButton.wasPressedThisFrame == true)
             {
                 held.ReturnToShelf();
@@ -178,7 +177,7 @@ namespace PotionShop
             activeCauldron = cauldron;
             pocket.Clear();
             pocketModels.Clear();
-            crosshair.SetActive(false);
+            hud.SetCrosshairVisible(false);
             UpdateBrewing(cauldron);
         }
 
@@ -187,8 +186,8 @@ namespace PotionShop
             double remaining = cauldron.RemainingSeconds;
             if (remaining > 0d)
             {
-                string brewing = $"Brewing... {System.Math.Ceiling(remaining):0}s";
-                prompt.text = round == null ? brewing : brewing + " | Switch to the prescription manual.";
+                string brewing = $"제조 중 · {System.Math.Ceiling(remaining):0}초";
+                hud.ShowPrompt(brewing, round == null ? "" : "처방전 매뉴얼로 이동하세요");
                 return;
             }
 
@@ -196,7 +195,7 @@ namespace PotionShop
                 return;
 
             complete = true;
-            prompt.text = string.Empty;
+            hud.ShowPrompt();
             player.enabled = false;
             if (round == null)
                 resultPanel.SetActive(true);
@@ -241,24 +240,6 @@ namespace PotionShop
             target = hit.collider;
             hitPoint = hit.point;
             return true;
-        }
-
-        private Text CreateTimer()
-        {
-            var timer = new GameObject("RoundTimer", typeof(RectTransform), typeof(Text), typeof(Outline));
-            var rect = (RectTransform)timer.transform;
-            rect.SetParent(prompt.transform.parent, false);
-            rect.anchorMin = rect.anchorMax = new Vector2(0.86f, 0.89f);
-            rect.sizeDelta = new Vector2(160f, 56f);
-            rect.anchoredPosition = Vector2.zero;
-
-            var text = timer.GetComponent<Text>();
-            text.font = prompt.font;
-            text.fontSize = 30;
-            text.alignment = TextAnchor.MiddleCenter;
-            text.color = Color.white;
-            text.raycastTarget = false;
-            return text;
         }
 
 #if UNITY_EDITOR

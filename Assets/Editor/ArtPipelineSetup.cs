@@ -42,7 +42,7 @@ namespace PotionShop.Editor
                 CreateProfiles(customers);
                 var catalog = AssetDatabase.LoadAssetAtPath<PotionCatalog>("Assets/GameData/PotionCatalog.asset");
                 Set(catalog, "portraitColors", colors);
-                var theme = Asset<UITheme>("Assets/GameData/UITheme.asset");
+                Asset<UITheme>("Assets/GameData/UITheme.asset");
                 Asset<ArtTestSettings>("Assets/Editor/ArtTestSettings.asset");
                 var ingredients = catalog.Ingredients;
                 foreach (var variant in ingredients.Kinds.SelectMany(k => k.Variants)) NormalizeIngredient(variant);
@@ -59,7 +59,6 @@ namespace PotionShop.Editor
                     var so = new SerializedObject(slot); so.FindProperty("variantId").stringValue = item.VariantId; so.ApplyModifiedPropertiesWithoutUndo();
                     PrefabUtility.RecordPrefabInstancePropertyModifications(slot);
                 }
-                var interaction = Object.FindFirstObjectByType<WorkshopInteraction>(); Set(interaction, "uiTheme", theme);
                 ExtractCanvas(Object.FindFirstObjectByType<Canvas>().gameObject, "Assets/Prefabs/UI/WorkshopCanvas.prefab");
                 EditorSceneManager.SaveScene(workshop);
                 var order = EditorSceneManager.OpenScene("Assets/Scenes/01_Order.unity", OpenSceneMode.Single);
