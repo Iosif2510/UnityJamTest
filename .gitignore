@@ -113,3 +113,10 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local review output, diagnostics and backups
+/tmp/
+
+# Local API credentials (including Unity metadata)
+/Assets/OpenAI_API_DELEATE_ON_BUILD.txt
+/Assets/OpenAI_API_DELEATE_ON_BUILD.txt.meta
