@@ -55,11 +55,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Amount: 0.483
-    - _BubbleAmount: 0.5
-    - _BubbleScale: 6
+    - _Amount: 0.686
+    - _BubbleAmount: 0.4
+    - _BubbleScale: 4
     - _BubbleSize: 0.6
-    - _BubbleSpeed: 0.5
+    - _BubbleSpeed: 0.3
     - _FoamCutoff: 1
     - _FoamDensity: 10
     - _FoamScale: 0.39
@@ -75,6 +75,6 @@ Material:
     - _FoamColor: {r: 1, g: 0.91, b: 0.75, a: 1}
     - _Glow: {r: 0, g: 0, b: 0, a: 1}
     - _LiquidColor: {r: 0.15167013, g: 0.5849215, b: 0.10353109, a: 1}
-    - _LiquidTopColor: {r: 0.27860066, g: 3.9999998, b: 0, a: 1}
+    - _LiquidTopColor: {r: 0.13930035, g: 2, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

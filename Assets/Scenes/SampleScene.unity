@@ -445,6 +445,7 @@ GameObject:
   - component: {fileID: 988111961}
   - component: {fileID: 988111960}
   - component: {fileID: 988111959}
+  - component: {fileID: 988111964}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -563,6 +564,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &988111964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988111958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db6b6c560ac0b74facaef20cbe407a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.LiquidBubbleController
+  emissionRate: 4
+  riseSpeed: 0.22
+  surfaceLifetime: 0.2
+  surfaceFlattening: 0
+  randomSeed: 6174
+  rippleLifetime: 1.7
+  rippleSpeed: 0.2
+  rippleStrength: 0.15
+  subsurfaceVisibility: 0.714
+  previewInEditMode: 1
 --- !u!1 &1136875516
 GameObject:
   m_ObjectHideFlags: 0
