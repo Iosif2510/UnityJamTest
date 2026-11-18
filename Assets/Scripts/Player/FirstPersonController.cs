@@ -59,6 +59,18 @@ namespace PotionShop
         [Tooltip("How quickly the arms blend into motion and return to their rest pose.")]
         [SerializeField, Min(0f)] private float armJiggleSmoothing = 12f;
 
+        [Header("Held Item Wiggle")]
+        [SerializeField] private Transform heldItemAnchor;
+        [Tooltip("Maximum vertical offset in metres at full movement speed.")]
+        [SerializeField, Min(0f)] private float heldItemWiggleAmplitude = 0.015f;
+        [Tooltip("Vertical bob cycles per second at full movement speed, independent of arm timing.")]
+        [SerializeField, Min(0f)] private float heldItemWiggleFrequency = 2.5f;
+        [SerializeField, Min(0f)] private float heldItemWiggleSmoothing = 12f;
+
+        private Vector3 heldItemRestPosition;
+        private float heldItemWigglePhase;
+        private float heldItemWiggleWeight;
+
         [Header("Cursor")]
         [SerializeField] private bool lockCursorOnEnable = true;
 
@@ -99,6 +111,8 @@ namespace PotionShop
                 rightArmRestPosition = rightArm.localPosition;
                 rightArmRestRotation = rightArm.localRotation;
             }
+            if (heldItemAnchor != null)
+                heldItemRestPosition = heldItemAnchor.localPosition;
         }
 
         private void OnEnable()
@@ -115,6 +129,7 @@ namespace PotionShop
         private void OnDisable()
         {
             ResetArmJiggle();
+            ResetHeldItemWiggle();
             SetCursorLocked(false);
         }
 
@@ -127,7 +142,7 @@ namespace PotionShop
 
         private void LateUpdate()
         {
-            if (leftArm == null && rightArm == null)
+            if (leftArm == null && rightArm == null && heldItemAnchor == null)
                 return;
 
             // Use actual displacement so pushing into a wall does not keep the arms swinging.
@@ -135,6 +150,7 @@ namespace PotionShop
             velocity.y = 0f;
             float speedRatio = InputEnabled && characterController.isGrounded
                 ? Mathf.Clamp01(velocity.magnitude / Mathf.Max(walkSpeed, 0.001f)) : 0f;
+            UpdateHeldItemWiggle(speedRatio);
             float blend = 1f - Mathf.Exp(-armJiggleSmoothing * Time.deltaTime);
             armJiggleWeight = Mathf.Lerp(armJiggleWeight, speedRatio, blend);
             armJigglePhase = Mathf.Repeat(armJigglePhase + speedRatio * armJiggleFrequency
@@ -151,6 +167,34 @@ namespace PotionShop
             float jiggle = Mathf.Sin(armJigglePhase * 4f) * 0.15f;
             ApplyArmJiggle(leftArm, leftArmRestPosition, leftArmRestRotation, swing, bounce, jiggle);
             ApplyArmJiggle(rightArm, rightArmRestPosition, rightArmRestRotation, -swing, bounce, -jiggle);
+        }
+
+        private void UpdateHeldItemWiggle(float speedRatio)
+        {
+            if (heldItemAnchor == null)
+                return;
+
+            float blend = 1f - Mathf.Exp(-heldItemWiggleSmoothing * Time.deltaTime);
+            heldItemWiggleWeight = Mathf.Lerp(heldItemWiggleWeight, speedRatio, blend);
+            heldItemWigglePhase = Mathf.Repeat(heldItemWigglePhase + speedRatio
+                * heldItemWiggleFrequency * Mathf.PI * 2f * Time.deltaTime, Mathf.PI * 2f);
+
+            if (speedRatio == 0f && heldItemWiggleWeight < 0.001f)
+            {
+                ResetHeldItemWiggle();
+                return;
+            }
+
+            float offset = Mathf.Sin(heldItemWigglePhase) * heldItemWiggleAmplitude * heldItemWiggleWeight;
+            heldItemAnchor.localPosition = heldItemRestPosition + Vector3.up * offset;
+        }
+
+        private void ResetHeldItemWiggle()
+        {
+            heldItemWigglePhase = 0f;
+            heldItemWiggleWeight = 0f;
+            if (heldItemAnchor != null)
+                heldItemAnchor.localPosition = heldItemRestPosition;
         }
 
         private void ApplyArmJiggle(Transform arm, Vector3 restPosition, Quaternion restRotation,
