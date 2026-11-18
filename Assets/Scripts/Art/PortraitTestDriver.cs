@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using PotionShop.Data;
 using PotionShop.Portraits;
@@ -17,18 +18,44 @@ namespace PotionShop.Art
         public AppearanceValue eyes = AppearanceValue.Brown;
         public Color endingTint = new(0.5f, 1f, 0.5f);
         public string Status { get; private set; }
+        public CustomerProfile SelectedProfile => customers?.Profiles.FirstOrDefault(p => p != null && p.Id == customerId);
         private void Start() => Apply();
+
+        public static AppearanceValue ResolveColor(IReadOnlyList<AppearanceValue> choices, AppearanceValue value,
+            AppearanceValue emptyValue = AppearanceValue.Unspecified)
+        {
+            if (choices.Count == 0) return emptyValue;
+            return choices.Contains(value) ? value : choices[0];
+        }
 
         [ContextMenu("Apply Selected Portrait")]
         public void Apply()
         {
             if (!Application.isPlaying) return;
-            var profile = customers?.Profiles.FirstOrDefault(p => p.Id == customerId);
-            if (profile == null || view == null || palette == null) { Status = "인물/뷰/색 참조를 확인하세요."; return; }
+            if (customers == null || view == null || palette == null)
+            {
+                Status = "Customers, Palette, View 참조를 확인하세요.";
+                return;
+            }
+            var profile = SelectedProfile;
+            if (profile == null)
+            {
+                Status = $"Customers에 '{customerId}' 인물이 없습니다.";
+                return;
+            }
+            if (profile.EyeColors.Count == 0)
+            {
+                Status = $"{profile.Id}의 Eyes 목록이 비어 있습니다.";
+                return;
+            }
+            hair = ResolveColor(profile.HairColors, hair, AppearanceValue.None);
+            eyes = ResolveColor(profile.EyeColors, eyes);
             try
             {
                 view.Show(profile, hair, eyes, palette);
-                Status = profile.BasePortrait == null ? "BASE 미연결: Inspector에서 PNG를 연결하세요." : "SO 입력 적용 완료";
+                Status = profile.BasePortrait == null
+                    ? $"{profile.Id}의 Base Portrait가 미연결 상태입니다."
+                    : $"{profile.Id} / Hair {hair} / Eyes {eyes} 적용 완료";
             }
             catch (Exception e) { Status = e.Message; }
         }
