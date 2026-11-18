@@ -1,3 +1,4 @@
+using LitMotion;
 using UnityEngine;
 
 namespace PotionShop
@@ -23,7 +24,26 @@ namespace PotionShop
         private Vector3 previousVelocity;
         private Vector2 tilt;
         private Vector2 tiltVelocity;
+        private MotionHandle sloshMotion;
+        private float sloshTilt;
         private double previousTime;
+
+        public void PlaySlosh()
+        {
+            if (!isActiveAndEnabled)
+                return;
+
+            sloshMotion.TryCancel();
+            sloshMotion = LMotion.Create(0f, 1f, 0.65f)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(UpdateSlosh);
+        }
+
+        private void UpdateSlosh(float progress)
+        {
+            sloshTilt = Mathf.Sin(progress * 2f * Mathf.PI) * (1f - progress) * maximumTilt;
+            ApplyTilt();
+        }
 
         private void OnEnable()
         {
@@ -92,13 +112,16 @@ namespace PotionShop
         {
             if (liquidRenderer == null) return;
             liquidRenderer.GetPropertyBlock(properties);
-            properties.SetFloat(WobbleX, tilt.x);
-            properties.SetFloat(WobbleZ, tilt.y);
+            Vector2 combinedTilt = Vector2.ClampMagnitude(tilt + Vector2.right * sloshTilt, maximumTilt);
+            properties.SetFloat(WobbleX, combinedTilt.x);
+            properties.SetFloat(WobbleZ, combinedTilt.y);
             liquidRenderer.SetPropertyBlock(properties);
         }
 
         private void OnDisable()
         {
+            sloshMotion.TryCancel();
+            sloshTilt = 0f;
             tilt = Vector2.zero;
             ApplyTilt();
         }

@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WorkshopCauldron
   tuning: {fileID: 11400000, guid: a6519a396b2079f4e88f52c383606c0c, type: 2}
-  potionSurface: {fileID: 5929725342333652679}
+  liquidMotion: {fileID: 4945865546881080936}
 --- !u!1 &5929725342333652679
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,10 +740,36 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5498cf4688a165d4dbc7cf2645b4c66a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4945865546881080936}
   m_SourcePrefab: {fileID: 100100000, guid: 5498cf4688a165d4dbc7cf2645b4c66a, type: 3}
 --- !u!4 &1183978356891130541 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5498cf4688a165d4dbc7cf2645b4c66a, type: 3}
   m_PrefabInstance: {fileID: 1721764254467652934}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1956117662607032343 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5498cf4688a165d4dbc7cf2645b4c66a, type: 3}
+  m_PrefabInstance: {fileID: 1721764254467652934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4945865546881080936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956117662607032343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a6295c8112ba14fa3208c541c1118d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.LiquidMotion
+  movementResponse: 0.65
+  rotationResponse: 3
+  maximumTilt: 0.18
+  frequency: 2.2
+  damping: 3.5
+  teleportDistance: 2

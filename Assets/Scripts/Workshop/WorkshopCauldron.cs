@@ -8,12 +8,12 @@ namespace PotionShop
     public sealed class WorkshopCauldron : MonoBehaviour
     {
         [SerializeField] private RoundTuning tuning;
-        [SerializeField] private GameObject potionSurface;
+        [SerializeField] private LiquidMotion liquidMotion;
 
         private bool hasBatch;
         private double completesAt;
 
-        public bool CanStartBrewing => isActiveAndEnabled && !hasBatch && tuning != null && potionSurface != null;
+        public bool CanStartBrewing => isActiveAndEnabled && !hasBatch && tuning != null && liquidMotion != null;
 
         public double RemainingSeconds => hasBatch ? Math.Max(0d, completesAt - Time.unscaledTimeAsDouble) : 0d;
 
@@ -24,7 +24,7 @@ namespace PotionShop
 
             hasBatch = true;
             completesAt = Time.unscaledTimeAsDouble + tuning.BrewingSeconds;
-            potionSurface.SetActive(true);
+            liquidMotion.PlaySlosh();
             return true;
         }
     }
