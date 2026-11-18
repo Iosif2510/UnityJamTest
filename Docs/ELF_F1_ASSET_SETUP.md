@@ -37,7 +37,7 @@ Slime
 
 ## Spine 대기 루프
 
-`Customers`의 ELF_F1 **Spine Rig**에 `Assets/Arts/Portraits/ELF_F1/ELF_F1.spine.json`을 연결했다. 공유 `PortraitView`가 ELF_F1을 표시하면 설치된 `spine-csharp`로 4초 `idle`을 반복 재생한다. Spine의 가중치 메시로 베이스를 변형하고, 본의 움직임을 머리카락·감은 눈·홍채 마스크에 적용한다. 앞머리와 뒷머리는 고개 본을 기준으로 각각 약 3.2°, 4.4°까지 추가로 회전한다. 기존 초상화 스프라이트와 팔레트가 렌더링에 사용된다. 단독 렌더링용 아틀라스와 텍스처는 `Docs/Portraits/ELF_F1/Spine/`에 있다.
+`Customers`의 ELF_F1 **Spine Rig**에 `Assets/Arts/Portraits/ELF_F1/ELF_F1.spine.json`을 연결했다. 공유 `PortraitView`가 ELF_F1을 표시하면 설치된 `spine-csharp`로 4초 `idle`을 반복 재생한다. 베이스와 앞·뒷머리는 Spine 가중치 메시로 변형한다. 정수리와 두피에 붙은 부분은 고개 본을 따라가고, 머리카락 끝에 가까울수록 앞·뒷머리 본의 흔들림이 커진다. 감은 눈과 홍채 마스크도 고개 움직임을 따라간다. 기존 초상화 스프라이트와 팔레트가 렌더링에 사용된다. 단독 렌더링용 아틀라스와 텍스처는 `Docs/Portraits/ELF_F1/Spine/`에 있다.
 
 ## 확인 방법
 

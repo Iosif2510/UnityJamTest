@@ -8,12 +8,14 @@ namespace PotionShop.Portraits
         [SerializeField] private PortraitLayers layers;
         private Color hair = Color.white;
         private Color leftIris = Color.white, rightIris = Color.white;
+        private Color bakedIris = Color.white;
         private Color currentTint = Color.white;
         private MotionHandle tintMotion;
         public void Apply(Color hairColor, Color eyeColor)
         {
             tintMotion.TryCancel();
             hair = hairColor;
+            bakedIris = eyeColor;
             var material = layers.irisDetails != null
                 ? layers.irisDetails.GetHueMaterial(layers.ActiveIrisDetail, eyeColor)
                 : null;
@@ -39,6 +41,8 @@ namespace PotionShop.Portraits
             layers.hairBack.color = layers.hairFront.color = hair * tint;
             layers.irisLeft.color = leftIris * tint;
             layers.irisRight.color = rightIris * tint;
+            if (layers.irisMask != null)
+                layers.irisMask.color = layers.UsesBakedIris ? bakedIris * tint : Color.white;
             layers.baseImage.color = layers.eyeClosed.color = layers.slime.color = tint;
         }
         private void OnDisable() => tintMotion.TryCancel();

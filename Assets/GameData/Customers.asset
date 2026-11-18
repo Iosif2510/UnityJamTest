@@ -51,10 +51,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -93,10 +95,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -139,10 +143,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -185,10 +191,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -207,10 +215,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -229,10 +239,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -251,10 +263,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -273,10 +287,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -295,10 +311,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -307,20 +325,22 @@ MonoBehaviour:
     status: 1
     speciesId: species.human
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 8dfe8fb160cc54549a520d203f4b6c49, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC591\uBD09\uAC00"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: ddfe6d56fa775dde9e48412642258948, type: 3}
+    hairFront: {fileID: 21300000, guid: 685da72a7dc9552ea278e65afa602c5b, type: 3}
+    hairBack: {fileID: 21300000, guid: 6f6db4bbfbc95d3185597751b514e813, type: 3}
     hairColors: 020000000300000004000000
+    hairTintOverride: 0
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 1e8e237dccc0f8648bd80003a4c03cb4, type: 3}
+    bakedIris: {fileID: 21300000, guid: db344e32860859d7a8705ab2c9b6e7b0, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -329,20 +349,22 @@ MonoBehaviour:
     status: 1
     speciesId: species.elf
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: cc970a50c84f5c84a32d9024a827144b, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB5A0\uB3CC\uC774 \uC74C\uC720\uC2DC\uC778"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 538a4c6adf4a56d0b12406a1ac9332b6, type: 3}
+    hairFront: {fileID: 21300000, guid: a31ad37a275b5eb2a2e55725af7cfda9, type: 3}
+    hairBack: {fileID: 21300000, guid: faf704fbc5a25f5a95dc8cceea3c555c, type: 3}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: bfc4b79ab3d85d64c81dffd39e99ff4b, type: 3}
+    bakedIris: {fileID: 21300000, guid: 30b9a23f029651a99a869e65ef3aa7aa, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -361,10 +383,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -383,10 +407,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -405,6 +431,7 @@ MonoBehaviour:
     hairFront: {fileID: 21300000, guid: b3c2f0970352565ea94766ae1b301945, type: 3}
     hairBack: {fileID: 21300000, guid: b931dad91dd4555db4cf5f063ae51c80, type: 3}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions:
     - serializedVersion: 2
@@ -419,6 +446,7 @@ MonoBehaviour:
       height: 0.034179688
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 4900000, guid: a164706550b77dc498729cd8cefb50fc, type: 3}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 21300000, guid: 0026ce3a22f4514ea87c4df91780591c, type: 3}
     irisVariantsMask: {fileID: 21300000, guid: 9d235a5d3355532fbf9b435a58233ed0, type: 3}
     irisDetailStyle: 0
@@ -457,10 +485,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -479,10 +509,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 070000000800000002000000
+    hairTintOverride: 0
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -501,10 +533,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -513,20 +547,22 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 7e84e81a52485cb0a38a83b5f3517046, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uD589\uC0C1"
     earType: 20
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 82aeadea13295849bf7cd4d914236267, type: 3}
+    hairFront: {fileID: 21300000, guid: ceb06b47298c533293ca1b80da090a05, type: 3}
+    hairBack: {fileID: 21300000, guid: 70787c6a364055b3aa402b3d3feb1aee, type: 3}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: b46d9efcbeb3b764982e04e78323d33f, type: 3}
+    bakedIris: {fileID: 21300000, guid: e2151c2128825b2092f51754aa6cef51, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -545,10 +581,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -567,10 +605,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -589,10 +629,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -611,10 +653,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 030000000b00000004000000
+    hairTintOverride: 0
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -623,20 +667,22 @@ MonoBehaviour:
     status: 1
     speciesId: species.golem
     gender: 3
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: c7ac9b8fcf2553148621d20060a1cbb6, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC815\uC6D0\uC0AC"
     earType: 1
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 949983452e8f504e8d4b844991c1fe0b, type: 3}
+    hairFront: {fileID: 21300000, guid: 6a9fca233e4a5e9cb8d5ba366682f0c5, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 13
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: cfc47ee4ebe90ce47b4fa1c495de9add, type: 3}
+    bakedIris: {fileID: 21300000, guid: c195fd6d7fbd5399be17945565613891, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -655,10 +701,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -677,10 +725,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -699,10 +749,12 @@ MonoBehaviour:
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
+    hairTintOverride: 0
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
+    bakedIris: {fileID: 0}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0

@@ -23,7 +23,8 @@ namespace PotionShop.Portraits
             blink.Stop();
             rig?.Clear();
             layers.Compose(profile);
-            colors.Apply(palette.Get(hair), palette.Get(eyes));
+            var hairTint = profile.HairTintOverride == AppearanceValue.Unspecified ? hair : profile.HairTintOverride;
+            colors.Apply(palette.Get(hairTint), palette.Get(eyes));
             rig?.Load(profile.RigPrefab, profile.SpineRig);
             blink.BindSpine(rig != null ? rig.SpineRig : null);
             blink.Play();
@@ -40,6 +41,7 @@ namespace PotionShop.Portraits
             if (rig != null) rig.Clear();
             colors.Apply(Color.white, Color.white);
             foreach (var image in layers.All) image.enabled = false;
+            if (layers.irisMask != null) layers.irisMask.enabled = false;
             layers.slime.sprite = sprite; layers.slime.color = Color.white; layers.slime.enabled = true;
         }
     }

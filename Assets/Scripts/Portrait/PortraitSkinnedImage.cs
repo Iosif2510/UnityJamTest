@@ -6,11 +6,11 @@ using UnityEngine.U2D.Animation;
 
 namespace PotionShop.Portraits
 {
-    // SpriteSkin owns deformation; UI owns clipping, tint and drawing.
+    // SpriteSkin or Spine supplies deformation; UI supplies clipping, tint and drawing.
     public sealed class PortraitSkinnedImage : Image
     {
         private SpriteSkin source;
-        private PortraitSpineRig spine;
+        private PortraitSpineRig.MeshBinding spine;
         private readonly List<Vector3> positions = new();
         public void Bind(SpriteSkin skin)
         {
@@ -22,9 +22,9 @@ namespace PotionShop.Portraits
             }
             SetVerticesDirty();
         }
-        internal void BindSpine(PortraitSpineRig rig)
+        internal void BindSpine(PortraitSpineRig.MeshBinding mesh)
         {
-            spine = rig;
+            spine = mesh;
             SetVerticesDirty();
         }
 

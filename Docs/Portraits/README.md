@@ -15,3 +15,14 @@
 레이어는 전부 1024×1536 RGBA이며, 중앙 피벗과 동일한 위치로 쌓습니다. 머리가 움직이면 홍채 단색, 베이스, 감은 눈이 함께 움직이게 합니다. 눈색이 바뀌어도 베이스에 구운 동공과 음영이 유지됩니다.
 
 게임 리소스는 `Assets/Arts/Portraits/`에 있고, 합성 참고 이미지는 `Docs/Portraits/Previews/`에 있습니다. `manifest.json`의 경로는 저장소 루트 기준입니다. Unity Catalog에 베이스와 파츠를 연결하고 기존 단색 홍채 오브젝트에 눈색을 적용합니다.
+
+## Unity 연결
+
+ELF_M1, HUM_F3, BST_M2, GOL_G1의 `Customers` 항목에 베이스, 감은 눈, 머리 레이어, **Baked Iris**, **Spine Rig**가 연결되어 있습니다. `PortraitView`는 홍채 스프라이트에 선택된 눈색을 적용하고, 인물 폴더의 Spine JSON에서 `idle`을 반복 재생합니다. 머리카락은 뿌리에서 고개를 따라가고 끝으로 갈수록 움직입니다. GOL_G1의 이끼는 고정 장식 색으로 처리합니다.
+
+| PortraitTest 인물 | 헤어 | 눈 | 대기 루프 |
+| --- | --- | --- | ---: |
+| ELF_M1 | Silver | Purple | 4.3초 |
+| HUM_F3 | Red | Green | 4.0초 |
+| BST_M2 | Red | Yellow | 3.7초 |
+| GOL_G1 | None | Orange | 5.2초 |

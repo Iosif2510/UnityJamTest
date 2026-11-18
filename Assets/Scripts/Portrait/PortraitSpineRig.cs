@@ -9,16 +9,12 @@ namespace PotionShop.Portraits
     {
         private readonly Skeleton skeleton;
         private readonly Spine.AnimationState animation;
-        private readonly Slot baseSlot;
         private readonly Slot blinkSlot;
-        private readonly MeshAttachment baseMesh;
         private readonly PortraitSkinnedImage baseImage;
+        private readonly MeshBinding[] meshes;
         private readonly BoneFollower[] followers;
 
-        public Rect Bounds { get; }
-        public float[] Vertices { get; }
-        public float[] UVs => baseMesh.RegionUVs;
-        public int[] Triangles => baseMesh.Triangles;
+        private Rect Bounds { get; }
         public bool EyesClosed => blinkSlot.AppliedPose.Attachment != null;
 
         public PortraitSpineRig(TextAsset json, PortraitLayers layers)
@@ -36,15 +32,15 @@ namespace PotionShop.Portraits
             Bounds = new Rect(data.X, data.Y, data.Width, data.Height);
             skeleton = new Skeleton(data);
             skeleton.UpdateWorldTransform(Spine.Physics.None);
-            baseSlot = RequireSlot("base");
-            baseMesh = baseSlot.AppliedPose.Attachment as MeshAttachment
+            var baseSlot = RequireSlot("base");
+            var baseMesh = baseSlot.AppliedPose.Attachment as MeshAttachment
                 ?? throw new InvalidDataException("Spine slot 'base' requires a setup mesh.");
             blinkSlot = RequireSlot("eye_closed");
-            Vertices = new float[baseMesh.WorldVerticesLength];
             var irisBone = RequireSlot("iris").Bone;
+            var meshList = new List<MeshBinding>(3) { new(baseImage, baseSlot, baseMesh, Bounds) };
             var followersList = new List<BoneFollower>(4);
-            AddFollower(followersList, layers.hairBack, RequireSlot("hair_back").Bone);
-            AddFollower(followersList, layers.hairFront, RequireSlot("hair_front").Bone);
+            AddHair(meshList, followersList, layers.hairBack, RequireSlot("hair_back"));
+            AddHair(meshList, followersList, layers.hairFront, RequireSlot("hair_front"));
             AddFollower(followersList, layers.eyeClosed, blinkSlot.Bone);
             if (layers.irisMask != null)
                 AddFollower(followersList, layers.irisMask, irisBone);
@@ -53,17 +49,33 @@ namespace PotionShop.Portraits
                 AddFollower(followersList, layers.irisLeft, irisBone);
                 AddFollower(followersList, layers.irisRight, irisBone);
             }
+            meshes = meshList.ToArray();
             followers = followersList.ToArray();
 
             animation = new Spine.AnimationState(new AnimationStateData(data));
             animation.SetAnimation(0, idle, true);
             Advance(0f);
-            baseImage.BindSpine(this);
+            foreach (var mesh in meshes)
+                mesh.Image.BindSpine(mesh);
             UpdateFollowers();
         }
 
         private Slot RequireSlot(string name) => skeleton.FindSlot(name)
             ?? throw new InvalidDataException($"Missing Spine slot '{name}'.");
+
+        private void AddHair(List<MeshBinding> meshList, List<BoneFollower> followersList,
+            UnityEngine.UI.Image image, Slot slot)
+        {
+            if (image == null) return;
+            if (slot.AppliedPose.Attachment is MeshAttachment mesh)
+            {
+                if (image is not PortraitSkinnedImage skinnedImage)
+                    throw new InvalidDataException($"Spine slot '{slot.Data.Name}' requires a PortraitSkinnedImage.");
+                meshList.Add(new MeshBinding(skinnedImage, slot, mesh, Bounds));
+            }
+            else
+                AddFollower(followersList, image, slot.Bone);
+        }
 
         private static void AddFollower(List<BoneFollower> followersList,
             UnityEngine.UI.Image image, Bone bone)
@@ -77,7 +89,8 @@ namespace PotionShop.Portraits
             animation.Update(deltaTime);
             animation.Apply(skeleton);
             skeleton.UpdateWorldTransform(Spine.Physics.None);
-            baseMesh.ComputeWorldVertices(skeleton, baseSlot, Vertices);
+            foreach (var mesh in meshes)
+                mesh.UpdateVertices(skeleton);
         }
 
         public void UpdateFollowers()
@@ -92,10 +105,34 @@ namespace PotionShop.Portraits
 
         public void Clear()
         {
-            if (baseImage != null)
-                baseImage.BindSpine(null);
+            foreach (var mesh in meshes)
+                if (mesh.Image != null)
+                    mesh.Image.BindSpine(null);
             foreach (var follower in followers)
                 follower.Restore();
+        }
+
+        internal sealed class MeshBinding
+        {
+            private readonly Slot slot;
+            private readonly MeshAttachment mesh;
+
+            public PortraitSkinnedImage Image { get; }
+            public Rect Bounds { get; }
+            public float[] Vertices { get; }
+            public float[] UVs => mesh.RegionUVs;
+            public int[] Triangles => mesh.Triangles;
+
+            public MeshBinding(PortraitSkinnedImage image, Slot slot, MeshAttachment mesh, Rect bounds)
+            {
+                Image = image;
+                this.slot = slot;
+                this.mesh = mesh;
+                Bounds = bounds;
+                Vertices = new float[mesh.WorldVerticesLength];
+            }
+
+            public void UpdateVertices(Skeleton skeleton) => mesh.ComputeWorldVertices(skeleton, slot, Vertices);
         }
 
         private readonly struct BoneFollower

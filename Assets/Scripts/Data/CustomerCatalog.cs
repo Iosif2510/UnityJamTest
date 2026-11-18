@@ -61,6 +61,8 @@ namespace PotionShop.Data
         [SerializeField] private Sprite hairFront;
         [SerializeField] private Sprite hairBack;
         [SerializeField] private List<AppearanceValue> hairColors = new();
+        [Tooltip("머리카락 팔레트와 별도로 장식 레이어에 적용할 색")]
+        [SerializeField] private AppearanceValue hairTintOverride;
         [SerializeField] private List<AppearanceValue> eyeColors = new();
         [Tooltip("원본 캔버스 좌하단 기준 0~1 사각형")]
         [SerializeField] private List<Rect> irisRegions = new();
@@ -68,6 +70,7 @@ namespace PotionShop.Data
         [Tooltip("Spine 4.3 Portrait 스켈레톤 JSON (idle 애니메이션)")]
         [SerializeField] private TextAsset spineRig;
         [Header("선택형 홍채 마스크·디테일")]
+        [SerializeField] private Sprite bakedIris;
         [SerializeField] private Sprite irisMask;
         [SerializeField] private Sprite irisVariantsMask;
         [SerializeField] private IrisDetailStyle irisDetailStyle;
@@ -89,6 +92,8 @@ namespace PotionShop.Data
         public IReadOnlyList<Rect> IrisRegions => irisRegions;
         public GameObject RigPrefab => rigPrefab;
         public TextAsset SpineRig => spineRig;
+        public Sprite BakedIris => bakedIris;
+        public AppearanceValue HairTintOverride => hairTintOverride;
         public Sprite IrisMask => irisMask;
         public Sprite IrisVariantsMask => irisVariantsMask;
         public IrisDetailStyle IrisDetailStyle => irisDetailStyle;

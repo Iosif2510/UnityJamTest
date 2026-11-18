@@ -47,7 +47,10 @@ namespace PotionShop.Art
             var images = view.Layers.All.Take(6).ToArray();
             if (index < 0) { Apply(); return; }
             view.Blink.Stop();
-            for (int i = 0; i < images.Length; i++) images[i].enabled = i == index && (i == 1 || i == 2 || images[i].sprite != null);
+            bool bakedIris = view.Layers.UsesBakedIris;
+            for (int i = 0; i < images.Length; i++)
+                images[i].enabled = i == index && (images[i].sprite != null || (!bakedIris && (i == 1 || i == 2)));
+            if (bakedIris) view.Layers.irisMask.enabled = index == 1 || index == 2;
             view.Layers.slime.enabled = false;
         }
         public void PlayRig()

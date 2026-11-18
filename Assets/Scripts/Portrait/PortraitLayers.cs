@@ -17,6 +17,7 @@ namespace PotionShop.Portraits
         public Image irisMask;
         public PortraitIrisDetails irisDetails;
         public IrisDetailPair ActiveIrisDetail { get; private set; }
+        public bool UsesBakedIris { get; private set; }
         public IEnumerable<Image> All => new[] { hairBack, irisLeft, irisRight, baseImage, eyeClosed, hairFront, slime };
 
         public void Compose(CustomerProfile profile)
@@ -25,6 +26,16 @@ namespace PotionShop.Portraits
             Set(eyeClosed, profile.EyeClosed); Set(hairFront, profile.HairFront);
             eyeClosed.enabled = false;
             slime.enabled = false;
+            UsesBakedIris = irisMask != null && profile.BakedIris != null;
+            if (UsesBakedIris)
+            {
+                ActiveIrisDetail = null;
+                Set(irisLeft, null);
+                Set(irisRight, null);
+                irisMask.GetComponent<Mask>().enabled = false;
+                Set(irisMask, profile.BakedIris);
+                return;
+            }
             PlaceIris(irisLeft, profile.IrisRegions, 0);
             PlaceIris(irisRight, profile.IrisRegions, 1);
             ActiveIrisDetail = irisDetails != null ? irisDetails.Resolve(profile) : null;
