@@ -34,7 +34,8 @@ namespace PotionShop.Data
 
     public static class OrderGenerator
     {
-        public static GeneratedOrder Generate(LoadedCatalog catalog, int seed, string previousDiseaseId = null)
+        public static GeneratedOrder Generate(LoadedCatalog catalog, int seed, string previousDiseaseId = null,
+            string customerId = null, AppearanceValue? hairColor = null, AppearanceValue? eyeColor = null)
         {
             if (catalog == null)
                 throw new ArgumentNullException(nameof(catalog));
@@ -47,10 +48,21 @@ namespace PotionShop.Data
             var profiles = Choose(profilesBySpecies, random)
                 .OrderBy(customer => customer.Id, StringComparer.Ordinal)
                 .ToArray();
-            var profile = Choose(profiles, random);
-            var portrait = Enum.GetValues(typeof(PortraitSlot)).Cast<PortraitSlot>()
-                .Select(slot => Choose(PartsFor(profile, slot), random))
-                .ToArray();
+            var profile = customerId == null ? Choose(profiles, random) : catalog.Customers[customerId];
+            PortraitPart[] portrait;
+            if (profile.FixedAppearance)
+            {
+                var hair = profile.HairColors.Count == 0 ? AppearanceValue.None :
+                    hairColor ?? Choose(profile.HairColors, random);
+                var eyes = eyeColor ?? Choose(profile.EyeColors, random);
+                if ((hair != AppearanceValue.None && !profile.HairColors.Contains(hair)) ||
+                    (hair == AppearanceValue.None && profile.HairColors.Count != 0) || !profile.EyeColors.Contains(eyes))
+                    throw new InvalidOperationException($"{profile.Id}: color is not allowed.");
+                portrait = profile.Describe(hair, eyes);
+            }
+            else
+                portrait = Enum.GetValues(typeof(PortraitSlot)).Cast<PortraitSlot>()
+                    .Select(slot => Choose(PartsFor(profile, slot), random)).ToArray();
 
             var diseases = catalog.Diseases.Values
                 .Where(disease => catalog.Diseases.Count == 1 ||
@@ -64,12 +76,26 @@ namespace PotionShop.Data
             var recipe = catalog.Recipes[disease.RecipeId];
             var bottle = ResolveBottle(catalog.PrescriptionRules, profile.Gender);
             var ink = ResolveInk(catalog.PrescriptionRules, portrait);
+            var dialogueOverride = catalog.CustomerDialogue?.FirstOrDefault(d => d.customerId == profile.Id && d.diseaseId == disease.Id);
+            IReadOnlyList<DialogueOption> dialogues = dialogueOverride != null ? dialogueOverride.dialogue : disease.Dialogue;
             return new GeneratedOrder(seed, previousDiseaseId, profile, portrait, disease,
-                Choose(disease.Dialogue, random), recipe, bottle, ink);
+                Choose(dialogues, random), recipe, bottle, ink);
         }
 
         public static PortraitPart[] PartsFor(CustomerProfile profile, PortraitSlot slot)
         {
+            if (profile.FixedAppearance)
+            {
+                var values = slot switch
+                {
+                    PortraitSlot.Hair => profile.HairColors.Count == 0 ? new[] { AppearanceValue.None } : profile.HairColors.ToArray(),
+                    PortraitSlot.Eyes => profile.EyeColors.ToArray(),
+                    PortraitSlot.Mouth => new[] { profile.HasFang ? AppearanceValue.Fangs : AppearanceValue.Normal },
+                    _ => new[] { profile.EarType }
+                };
+                if (values.Length == 0) throw new InvalidOperationException($"{profile.Id}: no values for {slot}");
+                return values.Select(v => new PortraitPart(slot, v)).ToArray();
+            }
             var options = profile.Parts
                 .Where(part => part != null && part.Slot == slot && part.Appearance != AppearanceValue.Unspecified)
                 .OrderBy(part => part.Id, StringComparer.Ordinal)

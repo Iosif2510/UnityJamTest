@@ -24,11 +24,13 @@ namespace PotionShop.Data
         [SerializeField] private IngredientCatalog ingredients;
         [SerializeField] private PrescriptionRules prescriptionRules;
         [SerializeField] private RoundTuning tuning;
+        [SerializeField] private PortraitColorCatalog portraitColors;
 
         public CustomerCatalog Customers => customers;
         public DiseaseRecipeCatalog DiseasesAndRecipes => diseasesAndRecipes;
         public IngredientCatalog Ingredients => ingredients;
         public PrescriptionRules PrescriptionRules => prescriptionRules;
         public RoundTuning Tuning => tuning;
+        public PortraitColorCatalog PortraitColors => portraitColors;
     }
 }

@@ -26,13 +26,22 @@ namespace PotionShop
         public GeneratedOrder CurrentOrder { get; private set; }
         public IReadOnlyList<string> SubmittedIngredients { get; private set; }
         public RoundResult Result { get; private set; }
+#if UNITY_EDITOR
+        public static Func<LoadedCatalog, string, GeneratedOrder> EditorOrderFactory;
+#endif
 
         public double RemainingSeconds => HasDeadline ? Math.Max(0d, deadline - Time.unscaledTimeAsDouble) : 0d;
 
         private bool HasDeadline => Phase is RoundPhase.Consult or RoundPhase.Storage or RoundPhase.Prescribe;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetInstance() => Instance = null;
+        private static void ResetInstance()
+        {
+            Instance = null;
+#if UNITY_EDITOR
+            EditorOrderFactory = null;
+#endif
+        }
 
         private void Awake()
         {
@@ -65,7 +74,13 @@ namespace PotionShop
                 return false;
 
             loadedCatalog ??= CatalogLoader.Load(catalog);
-            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), CurrentOrder?.Disease.Id);
+            string previous = CurrentOrder?.Disease.Id;
+#if UNITY_EDITOR
+            CurrentOrder = EditorOrderFactory != null ? EditorOrderFactory(loadedCatalog, previous) :
+                OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previous);
+#else
+            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previous);
+#endif
             SubmittedIngredients = null;
             Result = null;
             deadline = Time.unscaledTimeAsDouble + loadedCatalog.Tuning.TimeLimitSeconds;

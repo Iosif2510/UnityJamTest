@@ -164,11 +164,13 @@ Sprite Atlas는 정렬을 자동으로 해결하거나 인물별 로드를 보�
 
 ## 6. 움직임과 uGUI 연결
 
+구현 갱신: 2D Animation 13.0.6을 추가하고 PortraitSkinnedImage·PortraitRigModule·PortraitRigDefinition을 구현했다. 임시 단일 본 SpriteSkin으로 CPU 변형 정점과 홍채 추종이 같은 양만큼 이동함을 Play에서 확인했다. 아래 초기 기술 검토 시점의 미설치·미검증 설명은 도입 배경이며, 현재 사용법과 실제 아트 미연결 범위는 [아티스트 가이드](ARTIST_GUIDE.md)를 따른다. 인물별 실제 리깅·시각 검수는 아직 완료되지 않았다.
+
 깜빡임 간격은 3~5초, 닫힌 눈 표시는 0.1초를 초기값으로 둔다. `RoundTuning`에 간격 최소·최대, 닫힘 시간, 호흡·고개·헤어 세기를 둔다. 깜빡임 난수는 주문 생성 난수와 분리한다. 접객과 처방에서 같은 손님을 복원하고, 숨김·교체 시 깜빡임 상태와 타이머를 정리한다.
 
 본 움직임은 작업지시서대로 **Unity 2D Animation**을 사용한다. 공통 리그는 Root → Body → Head와 HairFront/HairBack 분기를 갖고 인물별 위치·웨이트를 저작한다. BASE는 호흡·고개 기울임, 헤어는 고개 추종과 약한 추가 흔들림을 가진다. 홍채 면은 Head 본에 귀속하고 EYE_CLOSED는 BASE 눈 주변과 동일한 변형을 따라야 한다. 움직이는 동안 눈과 귀를 가리거나 홍채 색이 새지 않아야 한다.
 
-**기술 연결 방식:** `SpriteSkin`은 일반 uGUI `Image`를 자동으로 변형하지 않는다. 현재 프로젝트에는 `com.unity.2d.animation` 직접 의존성도 없다. 따라서 본 구현 단계에서 패키지와 버전을 확인하고, 2D Animation 변형 메시를 uGUI에 전달하는 `PortraitSkinnedImage : Image` 어댑터를 만든다. 이 어댑터는 변형 위치·UV와 Image의 색을 UI 메시로 전달하고, 색 처리에는 기본 UI 렌더링과 `Image.color`를 유지한다. Atlas UV, 마스킹, 갱신 시점도 어댑터의 확인 범위다. 특정 패키지 API의 존재나 호환성은 아직 검증하지 않았다.
+**기술 연결 방식:** `SpriteSkin`은 일반 uGUI `Image`를 자동으로 변형하지 않는다. 2D Animation 13.0.6과 `PortraitSkinnedImage : Image` 어댑터를 도입해 CPU 변형 위치·UV와 Image의 색을 UI 메시로 전달한다. 색 처리에는 기본 UI 렌더링과 `Image.color`를 유지한다. 단일 본 진단에서 API와 메시 갱신을 확인했으며, 실제 인물 리그·Atlas UV·복잡한 마스킹의 호환성은 별도 검수 대상이다.
 
 정적 Image 조립을 먼저 완료한 뒤 샘플 한 명으로 BASE·감은 눈·홍채·헤어의 본 추종을 확인하는 것을 본 제작의 선행 조건으로 둔다. 어댑터가 성립하지 않으면 해당 기술 실패를 보고하고 렌더링 경계를 재결정한다. 전체 이미지를 단순 흔들기만 한 상태를 Unity 2D Animation 본 작업 완료로 처리하지 않는다. 이 위험 때문에 22명 리깅을 먼저 진행하지 않는다.
 
@@ -204,4 +206,4 @@ Sprite Atlas는 정렬을 자동으로 해결하거나 인물별 로드를 보�
 
 후속 구현에서 변경할 대상은 CustomerCatalog/CustomerProfile/PortraitPart, CatalogLoader의 인물 ID 검사·조회, OrderGenerator/GeneratedOrder, PrescriptionRules 조건 접근, CatalogValidationMenu의 조합 순회, OrderSceneView와 초상화 뷰, RoundTuning, PotionCatalog 색 참조, Customers 및 신규 색 에셋이다. 대사 override는 DiseaseRecipeCatalog에 추가한다. 기존 테스트용 인물 ID를 새 호출코드로 바꾸는 명시적 대응표를 만들고 참조·프리뷰 입력을 함께 갱신한다. 이름만 바꿔 기존 직렬화 파츠를 새 스키마로 읽었다고 간주하지 않는다.
 
-이 계획 작성에서는 문서만 변경한다. 런타임 코드·씬·에셋·패키지 설치·Play Mode·빌드 검증은 수행하지 않았다. 후속 구현 시 기존 Editor 사용에 관한 AGENTS.md와 프로젝트 검증 범위를 따른다.
+초기 계획 작성 이후 런타임 코드·씬·에셋·패키지와 아트 적용 도구를 구현했다. 현재 사용법·완료한 검증·미완료 아트 검수는 [아티스트 가이드](ARTIST_GUIDE.md)를 기준으로 확인한다. 추가 구현 시 기존 Editor 사용에 관한 AGENTS.md와 프로젝트 검증 범위를 따른다.

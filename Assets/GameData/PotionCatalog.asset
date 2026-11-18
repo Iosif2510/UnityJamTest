@@ -17,3 +17,4 @@ MonoBehaviour:
   ingredients: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
   prescriptionRules: {fileID: 11400000, guid: 5681fd10ba9b05e4f874730302488f7f, type: 2}
   tuning: {fileID: 11400000, guid: a6519a396b2079f4e88f52c383606c0c, type: 2}
+  portraitColors: {fileID: 11400000, guid: 1b31e17fd28c8b94c943a78f807e642a, type: 2}

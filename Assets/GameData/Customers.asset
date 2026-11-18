@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
   profiles:
   - id: customer.elf.female
-    status: 1
+    status: 2
     speciesId: species.elf
     gender: 2
     basePortrait: {fileID: 0}
@@ -43,8 +43,19 @@ MonoBehaviour:
       slot: 3
       appearance: 19
       sprite: {fileID: 0}
+    fixedAppearance: 0
+    job: 
+    earType: 0
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 
+    irisRegions: []
+    rigPrefab: {fileID: 0}
   - id: customer.golem.genderless
-    status: 1
+    status: 2
     speciesId: species.golem
     gender: 3
     basePortrait: {fileID: 0}
@@ -69,8 +80,19 @@ MonoBehaviour:
       slot: 3
       appearance: 1
       sprite: {fileID: 0}
+    fixedAppearance: 0
+    job: 
+    earType: 0
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 
+    irisRegions: []
+    rigPrefab: {fileID: 0}
   - id: customer.human.male
-    status: 1
+    status: 2
     speciesId: species.human
     gender: 1
     basePortrait: {fileID: 0}
@@ -99,8 +121,19 @@ MonoBehaviour:
       slot: 3
       appearance: 18
       sprite: {fileID: 0}
+    fixedAppearance: 0
+    job: 
+    earType: 0
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 
+    irisRegions: []
+    rigPrefab: {fileID: 0}
   - id: customer.beastfolk.male
-    status: 1
+    status: 2
     speciesId: species.beastfolk
     gender: 1
     basePortrait: {fileID: 0}
@@ -129,3 +162,389 @@ MonoBehaviour:
       slot: 3
       appearance: 20
       sprite: {fileID: 0}
+    fixedAppearance: 0
+    job: 
+    earType: 0
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_M1
+    status: 1
+    speciesId: species.human
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB300\uC7A5\uAC04 \uACAC\uC2B5\uC0DD"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_M2
+    status: 1
+    speciesId: species.human
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB4F1\uBD88\uC9C0\uAE30"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_M3
+    status: 1
+    speciesId: species.human
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uBC43\uC0AC\uACF5"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_F1
+    status: 1
+    speciesId: species.human
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB3C4\uC11C\uAD00 \uC0AC\uC11C"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_F2
+    status: 1
+    speciesId: species.human
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uD30C\uC774 \uAC00\uAC8C \uC8FC\uC778"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: HUM_F3
+    status: 1
+    speciesId: species.human
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC591\uBD09\uAC00"
+    earType: 18
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 020000000300000004000000
+    eyeColors: 030000000600000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_M1
+    status: 1
+    speciesId: species.elf
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB5A0\uB3CC\uC774 \uC74C\uC720\uC2DC\uC778"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_M2
+    status: 1
+    speciesId: species.elf
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC2DC\uACC4\uACF5"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_M3
+    status: 1
+    speciesId: species.elf
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC232\uC9C0\uAE30"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_F1
+    status: 1
+    speciesId: species.elf
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uAF43\uC9D1 \uC9C1\uC6D0"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_F2
+    status: 1
+    speciesId: species.elf
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC7AC\uB2E8\uC0AC"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: ELF_F3
+    status: 1
+    speciesId: species.elf
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB9C8\uBD80"
+    earType: 19
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 070000000800000002000000
+    eyeColors: 06000000050000000a000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_M1
+    status: 1
+    speciesId: species.beastfolk
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC6B0\uD3B8\uBC30\uB2EC\uBD80"
+    earType: 20
+    hasFang: 1
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_M2
+    status: 1
+    speciesId: species.beastfolk
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uD589\uC0C1"
+    earType: 20
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_M3
+    status: 1
+    speciesId: species.beastfolk
+    gender: 1
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uBAA9\uC218"
+    earType: 20
+    hasFang: 1
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_F1
+    status: 1
+    speciesId: species.beastfolk
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uCC3B\uC9D1 \uC9C1\uC6D0"
+    earType: 20
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_F2
+    status: 1
+    speciesId: species.beastfolk
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uBE75\uC9D1 \uC8FC\uC778"
+    earType: 20
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: BST_F3
+    status: 1
+    speciesId: species.beastfolk
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uACBD\uBE44\uB300\uC6D0"
+    earType: 20
+    hasFang: 1
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 030000000b00000004000000
+    eyeColors: 0900000005000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: GOL_G1
+    status: 1
+    speciesId: species.golem
+    gender: 3
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC815\uC6D0\uC0AC"
+    earType: 1
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 060000000c000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: GOL_G2
+    status: 1
+    speciesId: species.golem
+    gender: 3
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uB2E4\uB9AC \uC9C0\uD0B4\uC774"
+    earType: 1
+    hasFang: 1
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 060000000c000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: GOL_G3
+    status: 1
+    speciesId: species.golem
+    gender: 3
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uAD11\uC0B0 \uAE38\uC7A1\uC774"
+    earType: 1
+    hasFang: 0
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 060000000c000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  - id: GOL_G4
+    status: 1
+    speciesId: species.golem
+    gender: 3
+    basePortrait: {fileID: 0}
+    parts: []
+    fixedAppearance: 1
+    job: "\uC9D0\uAFBC"
+    earType: 1
+    hasFang: 1
+    eyeClosed: {fileID: 0}
+    hairFront: {fileID: 0}
+    hairBack: {fileID: 0}
+    hairColors: 
+    eyeColors: 060000000c000000
+    irisRegions: []
+    rigPrefab: {fileID: 0}
+  slimePortrait: {fileID: 0}

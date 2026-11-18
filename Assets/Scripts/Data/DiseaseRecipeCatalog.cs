@@ -51,8 +51,18 @@ namespace PotionShop.Data
     {
         [SerializeField] private List<DiseaseEntry> diseases = new();
         [SerializeField] private List<RecipeEntry> recipes = new();
+        [SerializeField] private List<CustomerDialogueOverride> customerDialogue = new();
 
         public IReadOnlyList<DiseaseEntry> Diseases => diseases;
         public IReadOnlyList<RecipeEntry> Recipes => recipes;
+        public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue => customerDialogue;
+    }
+
+    [Serializable]
+    public sealed class CustomerDialogueOverride
+    {
+        public string customerId;
+        public string diseaseId;
+        public List<DialogueOption> dialogue = new();
     }
 }

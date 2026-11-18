@@ -24,9 +24,11 @@ namespace PotionShop
         private readonly Slot[] slots;
         private readonly Camera previewCamera;
         private readonly Vector3 previewPosition;
+        private readonly PotionShop.Art.UITheme theme;
 
-        public PocketModelDisplay(Text pocketLabel, Camera playerCamera, int capacity)
+        public PocketModelDisplay(Text pocketLabel, Camera playerCamera, int capacity, PotionShop.Art.UITheme theme = null)
         {
+            this.theme = theme;
             pocketLabel.text = "Pocket";
             pocketLabel.alignment = TextAnchor.MiddleLeft;
             pocketLabel.rectTransform.sizeDelta =
@@ -43,6 +45,7 @@ namespace PotionShop
             previewCamera.orthographic = true;
             previewCamera.clearFlags = CameraClearFlags.SolidColor;
             previewCamera.backgroundColor = new Color32(24, 31, 32, 255);
+            if (theme != null) previewCamera.backgroundColor = theme.pocketBackground;
             previewCamera.allowHDR = false;
             previewCamera.useOcclusionCulling = false;
             var cameraData = previewCamera.GetUniversalAdditionalCameraData();
@@ -54,6 +57,7 @@ namespace PotionShop
         {
             Slot slot = slots[index];
             slot.Frame.color = new Color32(168, 217, 177, 255);
+            if (theme != null) slot.Frame.color = theme.pocketFilled;
 
             var model = new GameObject("PocketPreviewMesh");
             model.transform.position = previewPosition;
@@ -104,7 +108,7 @@ namespace PotionShop
             {
                 ReleaseTexture(slot);
                 if (slot.Frame != null)
-                    slot.Frame.color = new Color32(39, 49, 50, 255);
+                    slot.Frame.color = theme != null ? theme.pocketEmpty : new Color32(39, 49, 50, 255);
             }
         }
 
@@ -119,7 +123,7 @@ namespace PotionShop
                     Object.Destroy(slot.Frame.gameObject);
         }
 
-        private static Slot CreateSlot(Text label, int index)
+        private Slot CreateSlot(Text label, int index)
         {
             var frame = new GameObject($"PocketSlot_{index + 1}", typeof(RectTransform), typeof(Image))
                 .GetComponent<Image>();
@@ -129,6 +133,7 @@ namespace PotionShop
             rect.sizeDelta = new Vector2(SlotSize, SlotSize);
             rect.anchoredPosition = new Vector2(LabelWidth + index * (SlotSize + SlotGap), 0f);
             frame.color = new Color32(39, 49, 50, 255);
+            if (theme != null) { frame.color = theme.pocketEmpty; frame.sprite = theme.pocketFrame; frame.type = Image.Type.Sliced; }
             frame.raycastTarget = false;
 
             var preview = new GameObject("Model", typeof(RectTransform), typeof(RawImage))

@@ -25,6 +25,14 @@ namespace PotionShop.Data
         public PortraitSlot Slot => slot;
         public AppearanceValue Appearance => appearance;
         public Sprite Sprite => sprite;
+
+        public PortraitPart() { }
+        public PortraitPart(PortraitSlot slot, AppearanceValue appearance)
+        {
+            this.slot = slot;
+            this.appearance = appearance;
+            id = $"appearance.{slot}.{appearance}";
+        }
     }
 
     [Serializable]
@@ -34,18 +42,51 @@ namespace PotionShop.Data
         [SerializeField] private CustomerGender gender;
         [SerializeField] private Sprite basePortrait;
         [SerializeField] private List<PortraitPart> parts = new();
+        [Header("고정 인물 초상화 (신규 제작)")]
+        [SerializeField] private bool fixedAppearance;
+        [SerializeField] private string job;
+        [SerializeField] private AppearanceValue earType;
+        [SerializeField] private bool hasFang;
+        [SerializeField] private Sprite eyeClosed;
+        [SerializeField] private Sprite hairFront;
+        [SerializeField] private Sprite hairBack;
+        [SerializeField] private List<AppearanceValue> hairColors = new();
+        [SerializeField] private List<AppearanceValue> eyeColors = new();
+        [Tooltip("원본 캔버스 좌하단 기준 0~1 사각형")]
+        [SerializeField] private List<Rect> irisRegions = new();
+        [SerializeField] private GameObject rigPrefab;
 
         public string SpeciesId => speciesId;
         public CustomerGender Gender => gender;
         public Sprite BasePortrait => basePortrait;
         public IReadOnlyList<PortraitPart> Parts => parts;
+        public bool FixedAppearance => fixedAppearance;
+        public string Job => job;
+        public AppearanceValue EarType => earType;
+        public bool HasFang => hasFang;
+        public Sprite EyeClosed => eyeClosed;
+        public Sprite HairFront => hairFront;
+        public Sprite HairBack => hairBack;
+        public IReadOnlyList<AppearanceValue> HairColors => hairColors;
+        public IReadOnlyList<AppearanceValue> EyeColors => eyeColors;
+        public IReadOnlyList<Rect> IrisRegions => irisRegions;
+        public GameObject RigPrefab => rigPrefab;
+
+        public PortraitPart[] Describe(AppearanceValue hair, AppearanceValue eyes) => new[]
+        {
+            new PortraitPart(PortraitSlot.Hair, hair), new PortraitPart(PortraitSlot.Eyes, eyes),
+            new PortraitPart(PortraitSlot.Mouth, hasFang ? AppearanceValue.Fangs : AppearanceValue.Normal),
+            new PortraitPart(PortraitSlot.Ears, earType)
+        };
     }
 
     [CreateAssetMenu(menuName = "Potion Shop/Data/Customers")]
     public sealed class CustomerCatalog : ScriptableObject
     {
         [SerializeField] private List<CustomerProfile> profiles = new();
+        [SerializeField] private Sprite slimePortrait;
 
         public IReadOnlyList<CustomerProfile> Profiles => profiles;
+        public Sprite SlimePortrait => slimePortrait;
     }
 }

@@ -55,6 +55,13 @@ namespace PotionShop.Editor
                     Error($"{variant.Id}: assign a prefab for storage.");
                 if (variant.Icon == null)
                     Warn($"{variant.Id}: pocket icon is not assigned.");
+                if (variant.Prefab != null)
+                {
+                    var ingredient = variant.Prefab.GetComponent<WarehouseIngredient>();
+                    if (ingredient == null || ingredient.VariantId != variant.Id) Error($"{variant.Id}: prefab WarehouseIngredient/ID mismatch.");
+                    if (variant.Prefab.GetComponentInChildren<SkinnedMeshRenderer>(true) != null) Warn($"{variant.Id}: pocket preview does not support SkinnedMeshRenderer.");
+                    if (variant.Prefab.GetComponentsInChildren<Collider>(true).Length == 0) Error($"{variant.Id}: no interaction colliders.");
+                }
             }
 
             var tuning = catalog.Tuning;
@@ -110,6 +117,15 @@ namespace PotionShop.Editor
             {
                 if (profile.BasePortrait == null)
                     warn($"{profile.Id}: base portrait is not assigned.");
+                if (profile.FixedAppearance && profile.BasePortrait != null)
+                {
+                    if (profile.EyeClosed == null) warn($"{profile.Id}: closed-eye sprite missing.");
+                    if (profile.Gender != CustomerGender.Genderless && profile.HairFront == null) warn($"{profile.Id}: front hair sprite missing.");
+                    if (profile.IrisRegions.Count is < 1 or > 2 || profile.IrisRegions.Any(r => r.width <= 0 || r.height <= 0 || r.xMin < 0 || r.yMin < 0 || r.xMax > 1 || r.yMax > 1))
+                        error($"{profile.Id}: specify 1-2 iris rectangles within 0..1.");
+                    foreach (var sprite in new[] {profile.BasePortrait, profile.EyeClosed, profile.HairFront, profile.HairBack}.Where(s => s != null))
+                        if (sprite.rect.width != 1024 || sprite.rect.height != 1536) warn($"{profile.Id}: {sprite.name} must use 1024x1536 canvas.");
+                }
                 if (profile.Parts.Any(part => part == null ||
                     (part.Appearance != AppearanceValue.None && part.Sprite == null)))
                     warn($"{profile.Id}: one or more portrait parts lack a sprite.");

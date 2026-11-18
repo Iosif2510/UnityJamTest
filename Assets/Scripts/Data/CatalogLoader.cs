@@ -35,6 +35,7 @@ namespace PotionShop.Data
         public IReadOnlyDictionary<string, IngredientKind> KindsByVariant { get; }
         public PrescriptionRules PrescriptionRules { get; }
         public RoundTuning Tuning { get; }
+        public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue { get; internal set; }
     }
 
     public static class CatalogLoader
@@ -99,8 +100,15 @@ namespace PotionShop.Data
             if (customers.Count == 0 || diseases.Count == 0)
                 throw new InvalidOperationException($"{catalog.name}: at least one active customer and disease are required.");
 
+            var dialogueKeys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var dialogue in catalog.DiseasesAndRecipes.CustomerDialogue)
+            {
+                if (dialogue == null || !customers.ContainsKey(dialogue.customerId ?? "") || !diseases.ContainsKey(dialogue.diseaseId ?? "") ||
+                    !dialogueKeys.Add(dialogue.customerId + "/" + dialogue.diseaseId) || dialogue.dialogue == null || dialogue.dialogue.Count == 0)
+                    throw new InvalidOperationException("Invalid/duplicate customer dialogue reference.");
+            }
             return new LoadedCatalog(customers, diseases, recipes, kinds, variants, kindsByVariant,
-                catalog.PrescriptionRules, catalog.Tuning);
+                catalog.PrescriptionRules, catalog.Tuning) { CustomerDialogue = catalog.DiseasesAndRecipes.CustomerDialogue };
         }
 
         private static void CheckRecipe(RecipeEntry recipe, Dictionary<string, IngredientKind> kindsByVariant)
@@ -130,7 +138,14 @@ namespace PotionShop.Data
             foreach (var entry in entries)
             {
                 string id = entry?.Id;
-                RequireId(id, prefix, prefix);
+                if (prefix == "customer" && entry is CustomerProfile profile && profile.FixedAppearance)
+                {
+                    if (string.IsNullOrEmpty(id) || !Regex.IsMatch(id, @"\A(?:(?:HUM|ELF|BST)_[MF][1-3]|GOL_G[1-4])\z"))
+                        throw new InvalidOperationException($"Invalid customer code: {id}");
+                    if (profile.Status == ContentStatus.Active && profile.EyeColors.Count == 0)
+                        throw new InvalidOperationException($"{id}: eye colors are required.");
+                }
+                else RequireId(id, prefix, prefix);
                 if (!allIds.Add(id))
                     throw new InvalidOperationException($"Duplicate {prefix} ID '{id}'.");
 

@@ -24,6 +24,8 @@ namespace PotionShop
         [SerializeField] private GameObject resultPanel;
         [SerializeField] private Text resultSummary;
         [SerializeField] private Button nextOrderButton;
+        [SerializeField] private PotionShop.Portraits.PortraitView portraitView;
+        [SerializeField] private PortraitColorCatalog portraitColors;
 
         private RoundDirector round;
         private RoundPhase? shownPhase;
@@ -124,7 +126,12 @@ namespace PotionShop
             phaseLabel.text = result ? "Result" : prescribe ? "Prescription" : "Orders";
 
             if (consult || prescribe)
+            {
                 customerClues.text = DescribeCustomer(round.CurrentOrder);
+                if (portraitView != null && portraitColors != null && round.CurrentOrder.Customer.FixedAppearance)
+                    portraitView.Show(round.CurrentOrder, portraitColors);
+            }
+            if (portraitView != null) portraitView.gameObject.SetActive(consult || prescribe);
 
             if (consult)
             {

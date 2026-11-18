@@ -21,6 +21,7 @@ namespace PotionShop
         [SerializeField] private Text timerText;
         [SerializeField] private GameObject crosshair;
         [SerializeField] private GameObject resultPanel;
+        [SerializeField] private PotionShop.Art.UITheme uiTheme;
 
         private readonly List<string> pocket = new();
         private readonly Collider[] originContacts = new Collider[16];
@@ -33,7 +34,7 @@ namespace PotionShop
 
         private void Start()
         {
-            pocketModels = new PocketModelDisplay(pocketDisplay, playerCamera, tuning.PocketCapacity);
+            pocketModels = new PocketModelDisplay(pocketDisplay, playerCamera, tuning.PocketCapacity, uiTheme);
             var activeRound = RoundDirector.Instance;
             if (activeRound != null && activeRound.CurrentOrder != null)
             {
