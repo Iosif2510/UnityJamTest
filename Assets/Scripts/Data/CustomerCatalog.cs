@@ -6,6 +6,16 @@ namespace PotionShop.Data
 {
     public enum CustomerGender { Unspecified, Male, Female, Genderless }
     public enum PortraitSlot { Hair, Eyes, Mouth, Ears }
+    public enum IrisDetailStyle { Clear, Glow, Oblique, Slit, Soft }
+    [Serializable]
+    public sealed class IrisDetailPair
+    {
+        public IrisDetailStyle style;
+        public Sprite left;
+        public Sprite right;
+        [Range(0f, 360f), Tooltip("원본 홍채의 기준 HSV 색상각 (도)")]
+        public float sourceHueDegrees;
+    }
     public enum AppearanceValue
     {
         Unspecified, None, Black, Brown, Red, Green, Blue, Gold, Silver,
@@ -55,6 +65,11 @@ namespace PotionShop.Data
         [Tooltip("원본 캔버스 좌하단 기준 0~1 사각형")]
         [SerializeField] private List<Rect> irisRegions = new();
         [SerializeField] private GameObject rigPrefab;
+        [Header("선택형 홍채 마스크·디테일")]
+        [SerializeField] private Sprite irisMask;
+        [SerializeField] private Sprite irisVariantsMask;
+        [SerializeField] private IrisDetailStyle irisDetailStyle;
+        [SerializeField] private List<IrisDetailPair> irisDetails = new();
 
         public string SpeciesId => speciesId;
         public CustomerGender Gender => gender;
@@ -71,6 +86,10 @@ namespace PotionShop.Data
         public IReadOnlyList<AppearanceValue> EyeColors => eyeColors;
         public IReadOnlyList<Rect> IrisRegions => irisRegions;
         public GameObject RigPrefab => rigPrefab;
+        public Sprite IrisMask => irisMask;
+        public Sprite IrisVariantsMask => irisVariantsMask;
+        public IrisDetailStyle IrisDetailStyle => irisDetailStyle;
+        public IReadOnlyList<IrisDetailPair> IrisDetails => irisDetails;
 
         public PortraitPart[] Describe(AppearanceValue hair, AppearanceValue eyes) => new[]
         {

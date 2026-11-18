@@ -54,6 +54,10 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: customer.golem.genderless
     status: 2
     speciesId: species.golem
@@ -91,6 +95,10 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: customer.human.male
     status: 2
     speciesId: species.human
@@ -132,6 +140,10 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: customer.beastfolk.male
     status: 2
     speciesId: species.beastfolk
@@ -173,6 +185,10 @@ MonoBehaviour:
     eyeColors: 
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_M1
     status: 1
     speciesId: species.human
@@ -190,6 +206,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_M2
     status: 1
     speciesId: species.human
@@ -207,6 +227,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_M3
     status: 1
     speciesId: species.human
@@ -224,6 +248,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_F1
     status: 1
     speciesId: species.human
@@ -241,6 +269,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_F2
     status: 1
     speciesId: species.human
@@ -258,6 +290,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: HUM_F3
     status: 1
     speciesId: species.human
@@ -275,6 +311,10 @@ MonoBehaviour:
     eyeColors: 030000000600000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: ELF_M1
     status: 1
     speciesId: species.elf
@@ -292,6 +332,10 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: ELF_M2
     status: 1
     speciesId: species.elf
@@ -309,6 +353,10 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: ELF_M3
     status: 1
     speciesId: species.elf
@@ -326,23 +374,61 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: ELF_F1
     status: 1
     speciesId: species.elf
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 78b8a9bc7541523789ca8076177f8fb3, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uAF43\uC9D1 \uC9C1\uC6D0"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: b7ecec968a0151ffb3e9d4e52ea0987e, type: 3}
+    hairFront: {fileID: 21300000, guid: b3c2f0970352565ea94766ae1b301945, type: 3}
+    hairBack: {fileID: 21300000, guid: b931dad91dd4555db4cf5f063ae51c80, type: 3}
     hairColors: 070000000800000002000000
     eyeColors: 06000000050000000a000000
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.4140625
+      y: 0.6699219
+      width: 0.05859375
+      height: 0.03125
+    - serializedVersion: 2
+      x: 0.5280762
+      y: 0.6954753
+      width: 0.06591797
+      height: 0.034179688
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 0026ce3a22f4514ea87c4df91780591c, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 9d235a5d3355532fbf9b435a58233ed0, type: 3}
+    irisDetailStyle: 0
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: ELF_F2
     status: 1
     speciesId: species.elf
@@ -360,6 +446,10 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: ELF_F3
     status: 1
     speciesId: species.elf
@@ -377,6 +467,10 @@ MonoBehaviour:
     eyeColors: 06000000050000000a000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_M1
     status: 1
     speciesId: species.beastfolk
@@ -394,6 +488,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_M2
     status: 1
     speciesId: species.beastfolk
@@ -411,6 +509,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_M3
     status: 1
     speciesId: species.beastfolk
@@ -428,6 +530,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_F1
     status: 1
     speciesId: species.beastfolk
@@ -445,6 +551,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_F2
     status: 1
     speciesId: species.beastfolk
@@ -462,6 +572,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: BST_F3
     status: 1
     speciesId: species.beastfolk
@@ -479,6 +593,10 @@ MonoBehaviour:
     eyeColors: 0900000005000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: GOL_G1
     status: 1
     speciesId: species.golem
@@ -496,6 +614,10 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: GOL_G2
     status: 1
     speciesId: species.golem
@@ -513,6 +635,10 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: GOL_G3
     status: 1
     speciesId: species.golem
@@ -530,6 +656,10 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   - id: GOL_G4
     status: 1
     speciesId: species.golem
@@ -547,4 +677,8 @@ MonoBehaviour:
     eyeColors: 060000000c000000
     irisRegions: []
     rigPrefab: {fileID: 0}
+    irisMask: {fileID: 0}
+    irisVariantsMask: {fileID: 0}
+    irisDetailStyle: 0
+    irisDetails: []
   slimePortrait: {fileID: 0}

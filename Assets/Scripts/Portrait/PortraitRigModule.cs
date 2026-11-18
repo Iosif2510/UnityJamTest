@@ -29,8 +29,8 @@ namespace PotionShop.Portraits
         public void Clear()
         {
             Bind(layers.baseImage, null); Bind(layers.eyeClosed, null); Bind(layers.hairFront, null); Bind(layers.hairBack, null);
-            foreach (var image in new[] { layers.irisLeft, layers.irisRight })
-            { image.rectTransform.anchoredPosition = Vector2.zero; image.rectTransform.localRotation = Quaternion.identity; image.rectTransform.localScale = Vector3.one; }
+            foreach (var image in new[] { layers.irisLeft, layers.irisRight, layers.irisMask })
+            { if (image == null) continue; image.rectTransform.anchoredPosition = Vector2.zero; image.rectTransform.localRotation = Quaternion.identity; image.rectTransform.localScale = Vector3.one; }
             if (instance != null) { instance.SetActive(false); Destroy(instance); }
             instance = null; rig = null;
         }
@@ -39,7 +39,7 @@ namespace PotionShop.Portraits
             if (rig == null || rig.headBone == null || layers.baseImage.sprite == null) return;
             var delta = rig.transform.worldToLocalMatrix * rig.headBone.localToWorldMatrix * headBindInverse;
             var sprite = layers.baseImage.sprite;
-            foreach (var image in new[] { layers.irisLeft, layers.irisRight })
+            foreach (var image in IrisTargets())
             {
                 var rt = image.rectTransform; var anchor = (rt.anchorMin + rt.anchorMax) * .5f;
                 var point = (Vector2.Scale(anchor, sprite.rect.size) - sprite.pivot) / sprite.pixelsPerUnit;
@@ -50,6 +50,8 @@ namespace PotionShop.Portraits
             }
         }
         private void OnDisable() => Stop();
+        private Image[] IrisTargets() => layers.irisMask != null && layers.irisMask.GetComponent<UnityEngine.UI.Mask>().enabled
+            ? new[] { layers.irisMask } : new[] { layers.irisLeft, layers.irisRight };
         private void OnDestroy() { if (instance != null) Destroy(instance); }
     }
 }
