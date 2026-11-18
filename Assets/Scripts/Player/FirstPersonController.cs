@@ -47,8 +47,27 @@ namespace PotionShop
         [SerializeField] private bool invertY;
         [SerializeField, Range(0f, 90f)] private float maxPitch = 85f;
 
+        [Header("Arm Jiggle")]
+        [SerializeField] private Transform leftArm;
+        [SerializeField] private Transform rightArm;
+        [Tooltip("Local side, vertical and forward movement in metres at full movement speed.")]
+        [SerializeField] private Vector3 armPositionAmplitude = new Vector3(0.008f, 0.012f, 0.018f);
+        [Tooltip("Local pitch, yaw and roll wobble in degrees.")]
+        [SerializeField] private Vector3 armRotationAmplitude = new Vector3(2f, 1f, 2f);
+        [Tooltip("Full arm-swing cycles per second at full movement speed.")]
+        [SerializeField, Min(0f)] private float armJiggleFrequency = 1.8f;
+        [Tooltip("How quickly the arms blend into motion and return to their rest pose.")]
+        [SerializeField, Min(0f)] private float armJiggleSmoothing = 12f;
+
         [Header("Cursor")]
         [SerializeField] private bool lockCursorOnEnable = true;
+
+        private Vector3 leftArmRestPosition;
+        private Vector3 rightArmRestPosition;
+        private Quaternion leftArmRestRotation;
+        private Quaternion rightArmRestRotation;
+        private float armJigglePhase;
+        private float armJiggleWeight;
 
         private CharacterController characterController;
         private Vector3 horizontalVelocity;
@@ -69,6 +88,17 @@ namespace PotionShop
                 Debug.LogError("FirstPersonController: Camera Target is not assigned.", this);
             else
                 pitch = NormalizeAngle(cameraTarget.localEulerAngles.x);
+
+            if (leftArm != null)
+            {
+                leftArmRestPosition = leftArm.localPosition;
+                leftArmRestRotation = leftArm.localRotation;
+            }
+            if (rightArm != null)
+            {
+                rightArmRestPosition = rightArm.localPosition;
+                rightArmRestRotation = rightArm.localRotation;
+            }
         }
 
         private void OnEnable()
@@ -84,6 +114,7 @@ namespace PotionShop
 
         private void OnDisable()
         {
+            ResetArmJiggle();
             SetCursorLocked(false);
         }
 
@@ -92,6 +123,64 @@ namespace PotionShop
             HandleCursor();
             HandleLook();
             HandleMovement();
+        }
+
+        private void LateUpdate()
+        {
+            if (leftArm == null && rightArm == null)
+                return;
+
+            // Use actual displacement so pushing into a wall does not keep the arms swinging.
+            Vector3 velocity = characterController.velocity;
+            velocity.y = 0f;
+            float speedRatio = InputEnabled && characterController.isGrounded
+                ? Mathf.Clamp01(velocity.magnitude / Mathf.Max(walkSpeed, 0.001f)) : 0f;
+            float blend = 1f - Mathf.Exp(-armJiggleSmoothing * Time.deltaTime);
+            armJiggleWeight = Mathf.Lerp(armJiggleWeight, speedRatio, blend);
+            armJigglePhase = Mathf.Repeat(armJigglePhase + speedRatio * armJiggleFrequency
+                * Mathf.PI * 2f * Time.deltaTime, Mathf.PI * 2f);
+
+            if (speedRatio == 0f && armJiggleWeight < 0.001f)
+            {
+                ResetArmJiggle();
+                return;
+            }
+
+            float swing = Mathf.Sin(armJigglePhase);
+            float bounce = Mathf.Sin(armJigglePhase * 2f);
+            float jiggle = Mathf.Sin(armJigglePhase * 4f) * 0.15f;
+            ApplyArmJiggle(leftArm, leftArmRestPosition, leftArmRestRotation, swing, bounce, jiggle);
+            ApplyArmJiggle(rightArm, rightArmRestPosition, rightArmRestRotation, -swing, bounce, -jiggle);
+        }
+
+        private void ApplyArmJiggle(Transform arm, Vector3 restPosition, Quaternion restRotation,
+            float swing, float bounce, float jiggle)
+        {
+            if (arm == null)
+                return;
+
+            Vector3 offset = Vector3.Scale(armPositionAmplitude,
+                new Vector3(swing, bounce + jiggle, swing)) * armJiggleWeight;
+            Vector3 rotation = Vector3.Scale(armRotationAmplitude,
+                new Vector3(swing + jiggle, swing, swing)) * armJiggleWeight;
+            arm.localPosition = restPosition + offset;
+            arm.localRotation = restRotation * Quaternion.Euler(rotation);
+        }
+
+        private void ResetArmJiggle()
+        {
+            armJiggleWeight = 0f;
+            armJigglePhase = 0f;
+            if (leftArm != null)
+            {
+                leftArm.localPosition = leftArmRestPosition;
+                leftArm.localRotation = leftArmRestRotation;
+            }
+            if (rightArm != null)
+            {
+                rightArm.localPosition = rightArmRestPosition;
+                rightArm.localRotation = rightArmRestRotation;
+            }
         }
 
         public void SetCursorLocked(bool locked)
