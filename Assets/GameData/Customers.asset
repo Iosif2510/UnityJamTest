@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12c334b2ea2fda74f89f464312289d98, type: 3}
+  m_Name: Customers
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
+  profiles:
+  - id: customer.elf.female
+    status: 1
+    speciesId: species.elf
+    gender: 2
+    basePortrait: {fileID: 0}
+    parts:
+    - id: portrait.elf.female.gold_hair
+      slot: 0
+      appearance: 7
+      sprite: {fileID: 0}
+    - id: portrait.elf.female.silver_hair
+      slot: 0
+      appearance: 8
+      sprite: {fileID: 0}
+    - id: portrait.elf.female.blue_eyes
+      slot: 1
+      appearance: 6
+      sprite: {fileID: 0}
+    - id: portrait.elf.female.green_eyes
+      slot: 1
+      appearance: 5
+      sprite: {fileID: 0}
+    - id: portrait.elf.female.smile
+      slot: 2
+      appearance: 16
+      sprite: {fileID: 0}
+    - id: portrait.elf.female.pointed_ears
+      slot: 3
+      appearance: 19
+      sprite: {fileID: 0}
+  - id: customer.golem.genderless
+    status: 1
+    speciesId: species.golem
+    gender: 3
+    basePortrait: {fileID: 0}
+    parts:
+    - id: portrait.golem.genderless.bare_head
+      slot: 0
+      appearance: 1
+      sprite: {fileID: 0}
+    - id: portrait.golem.genderless.moss_hair
+      slot: 0
+      appearance: 13
+      sprite: {fileID: 0}
+    - id: portrait.golem.genderless.orange_eyes
+      slot: 1
+      appearance: 12
+      sprite: {fileID: 0}
+    - id: portrait.golem.genderless.rock_mouth
+      slot: 2
+      appearance: 21
+      sprite: {fileID: 0}
+    - id: portrait.golem.genderless.no_ears
+      slot: 3
+      appearance: 1
+      sprite: {fileID: 0}

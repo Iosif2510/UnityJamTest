@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef22e570de1fdd478eb2526fd4de2a7, type: 3}
+  m_Name: Ingredients
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.IngredientCatalog
+  kinds:
+  - id: kind.mooncap
+    status: 1
+    displayName: "\uB2EC\uBE5B\uBC84\uC12F"
+    variants:
+    - id: ingredient.mooncap.blue
+      displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uD30C\uB780 \uC904\uAE30)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.mooncap.white
+      displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uD770 \uC904\uAE30)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.mooncap.red
+      displayName: "\uB2EC\uBE5B\uBC84\uC12F (\uBD89\uC740 \uC904\uAE30)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+  - id: kind.root
+    status: 1
+    displayName: "\uD65C\uB825\uBFCC\uB9AC"
+    variants:
+    - id: ingredient.root.curled
+      displayName: "\uD65C\uB825\uBFCC\uB9AC (\uB465\uAE00\uAC8C \uB9D0\uB9B0 \uB05D)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.root.forked
+      displayName: "\uD65C\uB825\uBFCC\uB9AC (\uB450 \uAC08\uB798 \uB05D)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.root.straight
+      displayName: "\uD65C\uB825\uBFCC\uB9AC (\uACE7\uC740 \uB05D)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+  - id: kind.crystal
+    status: 1
+    displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815"
+    variants:
+    - id: ingredient.crystal.one_tip
+      displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uD558\uB098)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.crystal.two_tips
+      displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uB458)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}
+    - id: ingredient.crystal.three_tips
+      displayName: "\uBCC4\uAC00\uB8E8\uACB0\uC815 (\uBFB0\uC871\uD55C \uB05D \uC14B)"
+      prefab: {fileID: 0}
+      icon: {fileID: 0}

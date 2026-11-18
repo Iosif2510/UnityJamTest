@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c444b0f1c96ff64abf7ce31f2b72da6, type: 3}
+  m_Name: PotionCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.PotionCatalog
+  customers: {fileID: 11400000, guid: 4ea1eb59c15e1834083d1c7cc268aabe, type: 2}
+  diseasesAndRecipes: {fileID: 11400000, guid: b72da448b2e04694d8606e765097c803, type: 2}
+  ingredients: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
+  prescriptionRules: {fileID: 11400000, guid: 5681fd10ba9b05e4f874730302488f7f, type: 2}
+  tuning: {fileID: 11400000, guid: a6519a396b2079f4e88f52c383606c0c, type: 2}

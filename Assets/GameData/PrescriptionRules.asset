@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e18b0ef27d7c2f544a8ad2d52a7a9035, type: 3}
+  m_Name: PrescriptionRules
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.PrescriptionRules
+  bottles:
+  - gender: 1
+    bottle: 1
+  - gender: 2
+    bottle: 2
+  - gender: 3
+    bottle: 3
+  inks:
+  - id: ink.forest
+    inkNumber: 1
+    conditions:
+    - slot: 1
+      anyOf: 05000000
+    exceptions: []
+  - id: ink.starlight
+    inkNumber: 2
+    conditions:
+    - slot: 1
+      anyOf: 06000000
+    - slot: 3
+      anyOf: 13000000
+    exceptions: []
+  - id: ink.flame
+    inkNumber: 3
+    conditions:
+    - slot: 0
+      anyOf: 0400000002000000
+    exceptions:
+    - slot: 2
+      anyOf: 11000000
+  - id: ink.beast
+    inkNumber: 4
+    conditions:
+    - slot: 2
+      anyOf: 11000000
+    exceptions: []
+  - id: ink.stone
+    inkNumber: 5
+    conditions:
+    - slot: 3
+      anyOf: 01000000
+    exceptions: []
+  - id: ink.common
+    inkNumber: 6
+    conditions: []
+    exceptions: []
+  reactions:
+  - kind: 0
+    lines:
+    - "\uC774 \uBCD1\uC774 \uB9DE\uB098\uC694?"
+  - kind: 1
+    lines:
+    - "\uC774\uAC74 \uBB34\uC2A8 \uC5B8\uC5B4\uC8E0?"
+  - kind: 2
+    lines:
+    - "\uC774\uC81C \uC880 \uAD1C\uCC2E\uB124\uC694. \uACE0\uB9D9\uC2B5\uB2C8\uB2E4!"
+  - kind: 3
+    lines:
+    - "\uB9DB\uC774 \uC880 \uC774\uC0C1\uD55C\uB370\uC694?"
+  - kind: 4
+    lines:
+    - "\uC7A0\uAE50, \uC81C\uAC00 \uC65C \uC774\uB807\uAC8C \uB410\uC8E0?"
+  - kind: 5
+    lines:
+    - "\uC2DC\uAC04\uC774 \uB108\uBB34 \uC624\uB798 \uAC78\uB838\uC5B4\uC694. \uADF8\uB0E5
+      \uAC08\uAC8C\uC694."
