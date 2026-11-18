@@ -143,7 +143,8 @@ namespace PotionShop
             resultPanel.SetActive(result);
             timerText.gameObject.SetActive(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-            phaseLabel.text = result ? "Result" : ending ? "Reaction" : prescribe ? "Prescription" : "Orders";
+            phaseLabel.gameObject.SetActive(prescribe || result);
+            phaseLabel.text = result ? "조제 결과" : "처방전";
 
             if (portraitView != null)
             {

@@ -1318,7 +1318,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 4ff13d4f7c2dd7a4f8fb3af85df56260, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1618,16 +1618,32 @@ PrefabInstance:
       value: OrderCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 953025655952288550, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_lineSpacing
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 953025655952288550, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3164116675340062184, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291819007
       objectReference: {fileID: 0}
     - target: {fileID: 3164116675340062184, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
-    - target: {fileID: 3736633296938983753, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
-      propertyPath: m_Color.a
-      value: 0.5803922
+    - target: {fileID: 3462372863086051171, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 141.5111
+      objectReference: {fileID: 0}
+    - target: {fileID: 3462372863086051171, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 59.0985
+      objectReference: {fileID: 0}
+    - target: {fileID: 3462372863086051171, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -16.5
       objectReference: {fileID: 0}
     - target: {fileID: 4850212601384546257, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_Pivot.x
@@ -1708,6 +1724,10 @@ PrefabInstance:
     - target: {fileID: 4850212601384546257, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8793744968110052997, guid: c2e804c41c6103341be08364dc09e7c1, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -32,7 +32,7 @@ namespace PotionShop
         private bool revealing;
         private bool finalFrameDrawn;
 
-        public void SetSpeaker(string name) => speaker.text = name;
+        public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
 
         public void ShowMessage(string message)
         {

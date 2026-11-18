@@ -115,19 +115,19 @@ namespace PotionShop
                 {
                     if (cue.EchoTail)
                         return new Pose(Key(age / 2.6f, (0, 0), (.15f, .65f), (.38f, .1f), (.55f, .45f), (.78f, .06f), (1, .28f)),
-                            new Color(.9f, .77f, 1f));
+                            new Color(.37f, .19f, .48f));
                     if (cue.Effect == SymptomEffect.Drift)
                     {
                         float t = Mathf.Repeat((age + phase * .12f) / 3.2f, 1);
                         float lift = Mathf.Sin(t * Mathf.PI) * 6;
-                        return new Pose(1, new Color(.66f, .86f, 1f),
+                        return new Pose(1, new Color(.13f, .32f, .45f),
                             new Vector2(Mathf.Sin(t * Mathf.PI * 2) * 2.5f, lift), Mathf.Sin(t * Mathf.PI * 2) * 3);
                     }
                     if (cue.Effect == SymptomEffect.Frost)
                     {
                         float cold = Mathf.Clamp01(age / 1.4f);
                         float t = (age / .22f + jitter) * Mathf.PI * 2;
-                        return new Pose(1, Color.Lerp(new Color(.94f, .95f, .93f), new Color(.60f, .87f, 1f), cold),
+                        return new Pose(1, Color.Lerp(new Color(.29f, .18f, .11f), new Color(.12f, .31f, .48f), cold),
                             new Vector2(Mathf.Sin(t) * .5f, Mathf.Cos(t) * .25f));
                     }
                     return new Pose(1);
