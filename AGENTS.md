@@ -1,5 +1,12 @@
 # UnityJamTest 작업 지침
 
+## 프로젝트 전반의 구현 원칙
+
+- 컴포넌트 모듈화를 우선시하고, 지나친 스크립트 통합을 지양한다.
+- 스크립트 단에서 간단한 애니메이션을 적용할 때는 LitMotion 사용을 우선시한다.
+- 비동기 동작을 구현할 때는 UniTask 사용을 우선시한다.
+- 이 원칙은 프로젝트 전체의 신규 구현과 기존 코드 수정에 적용한다.
+
 ## 열려 있는 Unity Editor 사용
 
 - 씬이나 에셋을 수정하기 전에 `unity status --project-path C:/Development/UnityJamTest --format json`으로 이 프로젝트의 기존 Editor를 확인한다.
