@@ -1598,7 +1598,7 @@ GameObject:
   - component: {fileID: 246194128}
   - component: {fileID: 246194127}
   - component: {fileID: 246194126}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2239,7 +2239,7 @@ GameObject:
   - component: {fileID: 420612590}
   - component: {fileID: 420612589}
   - component: {fileID: 420612588}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Rim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6137,7 +6137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1270865444}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GrayboxCauldron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7217,7 +7217,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1638237266}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cauldron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7531,7 +7531,7 @@ GameObject:
   - component: {fileID: 1710172184}
   - component: {fileID: 1710172183}
   - component: {fileID: 1710172182}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Stand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7906,7 +7906,7 @@ GameObject:
   - component: {fileID: 1953654706}
   - component: {fileID: 1953654708}
   - component: {fileID: 1953654707}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PotionSurface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8380,7 +8380,7 @@ GameObject:
   - component: {fileID: 2103080079}
   - component: {fileID: 2103080081}
   - component: {fileID: 2103080080}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}

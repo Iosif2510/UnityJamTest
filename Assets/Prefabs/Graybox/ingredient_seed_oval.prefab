@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3701307456607651387}
   - component: {fileID: 6260187598241955328}
   - component: {fileID: 4250206805067507368}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Seed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4612199790341444807}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_seed_oval
   m_TagString: Untagged
   m_Icon: {fileID: 0}

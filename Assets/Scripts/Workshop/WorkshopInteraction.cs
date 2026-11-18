@@ -12,6 +12,8 @@ namespace PotionShop
     {
         private enum Stage { Collecting, Brewing, Complete }
 
+        private const float RayOriginRadius = 0.001f;
+
         [SerializeField] private FirstPersonController player;
         [SerializeField] private Camera playerCamera;
         [SerializeField] private Transform heldItemAnchor;
@@ -25,6 +27,7 @@ namespace PotionShop
         [SerializeField] private GameObject resultPanel;
 
         private readonly List<string> pocket = new();
+        private readonly Collider[] originContacts = new Collider[16];
         private WarehouseIngredient held;
         private Stage stage;
         private bool wasLocked;
@@ -88,10 +91,10 @@ namespace PotionShop
             }
 
             prompt.text = string.Empty;
-            if (!TryGetInteractionHit(GetInteractionRay(), out var hit))
+            if (!TryGetInteractionHit(GetInteractionRay(), out var target, out _))
                 return;
 
-            if (hit.transform.IsChildOf(cauldron))
+            if (target.transform.IsChildOf(cauldron))
             {
                 bool ready = pocket.Count == tuning.PocketCapacity;
                 prompt.text = ready ? "[Left click] Add ingredients to cauldron" :
@@ -101,7 +104,7 @@ namespace PotionShop
                 return;
             }
 
-            var ingredient = hit.collider.GetComponentInParent<WarehouseIngredient>();
+            var ingredient = target.GetComponentInParent<WarehouseIngredient>();
             if (ingredient == null)
                 return;
 
@@ -113,7 +116,6 @@ namespace PotionShop
                 held.Hold(heldItemAnchor);
             }
         }
-
         private void HandleHeldIngredient()
         {
             prompt.text = "[F] Put in pocket   [Right click] Return to shelf";
@@ -172,9 +174,40 @@ namespace PotionShop
             return new Ray(cameraTransform.position, cameraTransform.forward);
         }
 
-        private bool TryGetInteractionHit(Ray ray, out RaycastHit hit) =>
-            Physics.Raycast(ray, out hit, tuning.PickupDistance,
-                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+        private bool TryGetInteractionHit(Ray ray, out Collider target, out Vector3 hitPoint)
+        {
+            target = null;
+            hitPoint = ray.origin;
+            int layer = LayerMask.NameToLayer("Interactable");
+            if (layer < 0)
+                return false;
+
+            int mask = 1 << layer;
+            // A ray starting inside a collider cannot return that collider.
+            int count = Physics.OverlapSphereNonAlloc(ray.origin, RayOriginRadius, originContacts,
+                mask, QueryTriggerInteraction.Ignore);
+            float nearestCenter = float.PositiveInfinity;
+            for (int i = 0; i < count; i++)
+            {
+                var contact = originContacts[i];
+                originContacts[i] = null;
+                float distance = (contact.bounds.center - ray.origin).sqrMagnitude;
+                if (distance < nearestCenter)
+                {
+                    target = contact;
+                    nearestCenter = distance;
+                }
+            }
+            if (target != null)
+                return true;
+
+            if (!Physics.Raycast(ray, out var hit, tuning.PickupDistance, mask, QueryTriggerInteraction.Ignore))
+                return false;
+
+            target = hit.collider;
+            hitPoint = hit.point;
+            return true;
+        }
 
         private Text CreateTimer()
         {
@@ -195,23 +228,24 @@ namespace PotionShop
         }
 
 #if UNITY_EDITOR
-        public bool TryGetRayGizmo(out Ray ray, out Vector3 end, out RaycastHit hit, out Color color)
+        public bool TryGetRayGizmo(out Ray ray, out Vector3 end, out Collider target, out Vector3 hitPoint, out Color color)
         {
             ray = default;
             end = default;
-            hit = default;
+            target = null;
+            hitPoint = default;
             color = Color.cyan;
             if (playerCamera == null || tuning == null)
                 return false;
 
             ray = GetInteractionRay();
             end = ray.GetPoint(tuning.PickupDistance);
-            if (TryGetInteractionHit(ray, out hit))
+            if (TryGetInteractionHit(ray, out target, out hitPoint))
             {
-                if (cauldron != null && hit.transform.IsChildOf(cauldron))
+                if (cauldron != null && target.transform.IsChildOf(cauldron))
                     color = Color.yellow;
                 else
-                    color = hit.collider.GetComponentInParent<WarehouseIngredient>() != null
+                    color = target.GetComponentInParent<WarehouseIngredient>() != null
                         ? Color.green : Color.red;
             }
 

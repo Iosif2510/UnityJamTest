@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1832412669937458419}
   - component: {fileID: 7611722836335775230}
   - component: {fileID: 2724122599111322844}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Stem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 4098535370331129148}
   - component: {fileID: 8519955617214166753}
   - component: {fileID: 9014574628453619367}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3042439677997384711}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_mooncap_red
   m_TagString: Untagged
   m_Icon: {fileID: 0}

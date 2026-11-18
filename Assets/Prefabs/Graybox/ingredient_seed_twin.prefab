@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7998740185449343349}
   - component: {fileID: 547450421923640194}
   - component: {fileID: 8961068954442203203}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TwinSeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7313662266759047540}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_seed_twin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 6518191874242971530}
   - component: {fileID: 567817534048825498}
   - component: {fileID: 2167695049721928758}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Seed
   m_TagString: Untagged
   m_Icon: {fileID: 0}

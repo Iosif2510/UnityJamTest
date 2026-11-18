@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8955904365434656737}
   - component: {fileID: 7535027476768183781}
   - component: {fileID: 8031115013431994333}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grain_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7700212870474297249}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_salt_medium_grain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +158,7 @@ GameObject:
   - component: {fileID: 267058148781730488}
   - component: {fileID: 2638996040813254292}
   - component: {fileID: 7888199203465376668}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grain_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 6316681100156495974}
   - component: {fileID: 8204526366446358659}
   - component: {fileID: 6608844561617323349}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: SaltBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}

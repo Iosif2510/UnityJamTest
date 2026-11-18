@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1825523831504547337}
   - component: {fileID: 792501879266258914}
   - component: {fileID: 1161080555542855281}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MossBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 7707176107981361399}
   - component: {fileID: 7071982886972982033}
   - component: {fileID: 4179530094609391397}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leaf_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +233,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4511967872065866976}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_moss_long_leaf
   m_TagString: Untagged
   m_Icon: {fileID: 0}

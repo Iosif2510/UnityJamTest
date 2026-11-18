@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6493667134143046749}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ingredient_crystal_one_tip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 5582442431015111946}
   - component: {fileID: 4159917300052874984}
   - component: {fileID: 1142473934828874769}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CrystalBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 8524965509549709210}
   - component: {fileID: 4672519288659768298}
   - component: {fileID: 8530053784684419560}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tip_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
