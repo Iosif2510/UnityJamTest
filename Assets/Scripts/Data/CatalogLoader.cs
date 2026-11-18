@@ -16,7 +16,8 @@ namespace PotionShop.Data
             Dictionary<string, IngredientVariant> variants,
             Dictionary<string, IngredientKind> kindsByVariant,
             PrescriptionRules prescriptionRules,
-            RoundTuning tuning)
+            RoundTuning tuning,
+            HashSet<string> spawnCustomerIds)
         {
             Customers = new ReadOnlyDictionary<string, CustomerProfile>(customers);
             Diseases = new ReadOnlyDictionary<string, DiseaseEntry>(diseases);
@@ -26,7 +27,7 @@ namespace PotionShop.Data
             KindsByVariant = new ReadOnlyDictionary<string, IngredientKind>(kindsByVariant);
             PrescriptionRules = prescriptionRules;
             Tuning = tuning;
-            Appearances = new AppearanceBuckets(customers.Values, prescriptionRules);
+            Appearances = new AppearanceBuckets(customers.Values, prescriptionRules, spawnCustomerIds);
         }
 
         public IReadOnlyDictionary<string, CustomerProfile> Customers { get; }
@@ -123,8 +124,10 @@ namespace PotionShop.Data
                     !dialogueKeys.Add(dialogue.customerId + "/" + dialogue.diseaseId) || dialogue.dialogue == null || dialogue.dialogue.Count == 0)
                     throw new InvalidOperationException("Invalid/duplicate customer dialogue reference.");
             }
+            var spawnCustomerIds = ResolveSpawnCustomerIds(catalog.Customers, customers);
             var loaded = new LoadedCatalog(customers, diseases, recipes, kinds, variants, kindsByVariant,
-                catalog.PrescriptionRules, catalog.Tuning) { CustomerDialogue = catalog.DiseasesAndRecipes.CustomerDialogue };
+                catalog.PrescriptionRules, catalog.Tuning, spawnCustomerIds)
+            { CustomerDialogue = catalog.DiseasesAndRecipes.CustomerDialogue };
             if (catalog.CharacterVoices != null)
                 foreach (var voice in catalog.CharacterVoices.Voices)
                     if (voice == null || string.IsNullOrWhiteSpace(voice.Code) ||
@@ -166,6 +169,26 @@ namespace PotionShop.Data
                 (loaded.ReactionLines == null || customers.Keys.Any(id => !loaded.Voices.ContainsKey(id))))
                 throw new InvalidOperationException("MVP requires reaction fallbacks and a voice for every active customer.");
             return loaded;
+        }
+
+        private static HashSet<string> ResolveSpawnCustomerIds(CustomerCatalog catalog,
+            Dictionary<string, CustomerProfile> activeCustomers)
+        {
+            if (catalog.AllowAllCustomers)
+                return null;
+
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string id in catalog.SpawnPool)
+            {
+                if (string.IsNullOrWhiteSpace(id) || !activeCustomers.ContainsKey(id))
+                    throw new InvalidOperationException($"{catalog.name}: Spawn Pool entry '{id}' must be an active customer ID.");
+                ids.Add(id);
+            }
+
+            if (ids.Count == 0)
+                throw new InvalidOperationException($"{catalog.name}: add at least one customer to Spawn Pool or enable Allow All Customers.");
+
+            return ids;
         }
 
         private static void CheckRecipe(RecipeEntry recipe, Dictionary<string, IngredientKind> kindsByVariant)

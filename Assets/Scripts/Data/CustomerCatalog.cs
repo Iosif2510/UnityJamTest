@@ -125,9 +125,17 @@ namespace PotionShop.Data
     [CreateAssetMenu(menuName = "Potion Shop/Data/Customers")]
     public sealed class CustomerCatalog : ScriptableObject
     {
+        [Header("Customer Spawning")]
+        [SerializeField, Tooltip("Allow every active customer profile to appear, including profiles without a portrait.")]
+        private bool allowAllCustomers;
+        [SerializeField, Tooltip("IDs of active profiles allowed to appear when Allow All Customers is off.")]
+        private List<string> spawnPool = new();
+
         [SerializeField] private List<CustomerProfile> profiles = new();
         [SerializeField] private Sprite slimePortrait;
 
+        public bool AllowAllCustomers => allowAllCustomers;
+        public IReadOnlyList<string> SpawnPool => spawnPool;
         public IReadOnlyList<CustomerProfile> Profiles => profiles;
         public Sprite SlimePortrait => slimePortrait;
     }

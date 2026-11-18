@@ -9,6 +9,8 @@ namespace PotionShop.Data
         internal const int InkCount = 6;
         private readonly List<Candidate>[] buckets = Enumerable.Range(0, InkCount)
             .Select(_ => new List<Candidate>()).ToArray();
+        private readonly List<Candidate>[] spawnBuckets;
+        private readonly List<Candidate>[] availableSpawnBuckets;
 
         internal sealed class Candidate
         {
@@ -26,7 +28,8 @@ namespace PotionShop.Data
             }
         }
 
-        internal AppearanceBuckets(IEnumerable<CustomerProfile> customers, PrescriptionRules rules)
+        internal AppearanceBuckets(IEnumerable<CustomerProfile> customers, PrescriptionRules rules,
+            HashSet<string> spawnCustomerIds)
         {
             var slots = (PortraitSlot[])Enum.GetValues(typeof(PortraitSlot));
             foreach (var customer in customers.OrderBy(profile => profile.Id, StringComparer.Ordinal))
@@ -56,13 +59,17 @@ namespace PotionShop.Data
             for (int index = 0; index < buckets.Length; index++)
                 if (buckets[index].Count == 0)
                     throw new InvalidOperationException($"Ink {index + 1} has no valid active customer appearance.");
+
+            spawnBuckets = spawnCustomerIds == null ? buckets : buckets.Select(bucket =>
+                bucket.Where(candidate => spawnCustomerIds.Contains(candidate.Customer.Id)).ToList()).ToArray();
+            availableSpawnBuckets = spawnBuckets.Where(bucket => bucket.Count > 0).ToArray();
         }
 
-        internal int Count(int inkNumber) => buckets[inkNumber - 1].Count;
+        internal int Count(int inkNumber) => spawnBuckets[inkNumber - 1].Count;
 
         internal Candidate Choose(Random random)
         {
-            var bucket = buckets[random.Next(InkCount)];
+            var bucket = availableSpawnBuckets[random.Next(availableSpawnBuckets.Length)];
             return bucket[random.Next(bucket.Count)];
         }
 

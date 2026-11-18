@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12c334b2ea2fda74f89f464312289d98, type: 3}
   m_Name: Customers
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
+  allowAllCustomers: 0
+  spawnPool:
+  - HUM_F3
+  - ELF_M1
+  - ELF_F1
+  - BST_M2
+  - GOL_G1
   profiles:
   - id: HUM_M1
     status: 1
