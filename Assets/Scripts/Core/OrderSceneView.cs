@@ -28,12 +28,14 @@ namespace PotionShop
         [SerializeField] private PortraitView portraitView;
         [SerializeField] private PortraitColorCatalog portraitColors;
         [SerializeField] private CounterCurtain curtain;
+        [SerializeField] private GameObject waitingPanel;
         [SerializeField] private Button receiveCustomerButton;
         [SerializeField] private TMP_Text curtainWaitingLabel;
         private RoundDirector round;
         private Art.UiTypography typography;
         private OrderHudMotion hudMotion;
         private OrderEntrance entrance;
+        private Material disabledServeMaterial;
         private CanvasGroup portraitOpacity;
         private RoundResultView resultView;
         private PortraitView resultPortrait;
@@ -59,6 +61,7 @@ namespace PotionShop
             if (curtainWaitingLabel != null &&
                 (orderCanvas == null || !curtainWaitingLabel.transform.IsChildOf(orderCanvas.transform)))
                 typography.Apply(curtainWaitingLabel);
+            disabledServeMaterial = serveButton.image.material;
             if (portraitView != null)
                 portraitOpacity = GetOrAddCanvasGroup(portraitView);
             resultView = resultPanel.GetComponent<RoundResultView>();
@@ -233,7 +236,8 @@ namespace PotionShop
             bool result = phase == RoundPhase.Result;
             shownPhase = phase;
             endingReady = false;
-            receiveCustomerButton.gameObject.SetActive(waiting);
+            if (waitingPanel != null) waitingPanel.SetActive(waiting);
+            else receiveCustomerButton.gameObject.SetActive(waiting);
             if (waiting) receiveCustomerButton.interactable = customerPlayback == null;
             hudMotion.HighlightWorkshop(false);
             if (phase == RoundPhase.Storage) return;
@@ -410,10 +414,17 @@ namespace PotionShop
             for (int i = 0; i < inkButtons.Length; i++)
                 SetChoiceHighlight(inkButtons[i], chosenInk == i + 1);
 
-            serveButton.interactable = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
+            bool readyToServe = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
+            serveButton.interactable = readyToServe;
+            serveButton.image.material = readyToServe ? null : disabledServeMaterial;
         }
 
-        private static void SetChoiceHighlight(Button button, bool selected) =>
+        private static void SetChoiceHighlight(Button button, bool selected)
+        {
             button.GetComponent<UnityEngine.UI.Outline>().enabled = selected;
+            var glow = button.transform.Find("SelectionGlow");
+            if (glow != null)
+                glow.gameObject.SetActive(selected);
+        }
     }
 }
