@@ -93,6 +93,8 @@ namespace PotionShop
 
         private void OnDisable() => transferMotion.TryComplete();
 
+        internal void StopTransfer() => transferMotion.TryCancel();
+
         internal void RotateInHand(Transform view, Vector2 angles)
         {
             if (transferMotion.IsActive())

@@ -95,6 +95,12 @@ namespace PotionShop
                 ReleaseTexture(slot);
         }
 
+        public void SetSlotVisible(int index, bool visible)
+        {
+            Slot slot = slots[index];
+            if (slot.Preview != null) slot.Preview.enabled = visible && slot.Texture != null;
+        }
+
         public void Dispose()
         {
             Clear();

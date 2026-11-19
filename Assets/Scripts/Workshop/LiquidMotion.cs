@@ -17,6 +17,7 @@ namespace PotionShop
 
         private static readonly int WobbleX = Shader.PropertyToID("_WobbleX");
         private static readonly int WobbleZ = Shader.PropertyToID("_WobbleZ");
+        private static readonly int Amount = Shader.PropertyToID("_Amount");
         private Renderer liquidRenderer;
         private MaterialPropertyBlock properties;
         private Vector3 previousPosition;
@@ -25,8 +26,66 @@ namespace PotionShop
         private Vector2 tilt;
         private Vector2 tiltVelocity;
         private MotionHandle sloshMotion;
+        private MotionHandle fillMotion;
+        private MotionHandle impactMotion;
         private float sloshTilt;
+        private float impactTilt;
+        private float initialFill;
+        private float fullFill;
+        private float fill;
+        private bool controlsFill;
         private double previousTime;
+
+        internal Vector3 SurfaceCenter(float filledFraction)
+        {
+            var bounds = liquidRenderer.bounds;
+            float level = Mathf.Lerp(initialFill, fullFill, filledFraction);
+            float surface = controlsFill ? transform.position.y + (level - .5f) * HeightScale : bounds.center.y;
+            return new Vector3(bounds.center.x, Mathf.Clamp(surface, bounds.min.y, bounds.max.y), bounds.center.z);
+        }
+
+        private float HeightScale => Mathf.Max(.0001f, transform.TransformVector(Vector3.up).magnitude);
+
+        internal void PrepareFill()
+        {
+            if (liquidRenderer == null || liquidRenderer.sharedMaterial == null ||
+                !liquidRenderer.sharedMaterial.HasProperty(Amount)) return;
+            var bounds = liquidRenderer.bounds;
+            float bottom = (bounds.min.y - transform.position.y) / HeightScale + .5f;
+            float top = (bounds.max.y - transform.position.y) / HeightScale + .5f;
+            fullFill = Mathf.Clamp(liquidRenderer.sharedMaterial.GetFloat(Amount),
+                Mathf.Lerp(bottom, top, .55f), Mathf.Lerp(bottom, top, .86f));
+            initialFill = Mathf.Max(Mathf.Lerp(bottom, top, .12f), fullFill - (top - bottom) * .48f);
+            controlsFill = true;
+            ResetFill();
+        }
+
+        internal void AddIngredient(int landed, int count)
+        {
+            fillMotion.TryCancel();
+            impactMotion.TryCancel();
+            if (controlsFill)
+            {
+                float target = Mathf.Lerp(initialFill, fullFill, landed / (float)count);
+                fillMotion = LMotion.Create(fill, target, .15f).WithEase(Ease.OutQuad)
+                    .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).Bind(value =>
+                    {
+                        fill = value;
+                        ApplyTilt();
+                    });
+            }
+            impactMotion = LMotion.Create(0f, 1f, .24f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(t => impactTilt = Mathf.Sin(t * 2f * Mathf.PI) * (1f - t) * maximumTilt * .7f);
+        }
+
+        internal void ResetFill()
+        {
+            fillMotion.TryCancel();
+            impactMotion.TryCancel();
+            impactTilt = 0;
+            fill = initialFill;
+            ApplyTilt();
+        }
 
         public void StartSloshing()
         {
@@ -120,15 +179,17 @@ namespace PotionShop
         {
             if (liquidRenderer == null) return;
             liquidRenderer.GetPropertyBlock(properties);
-            Vector2 combinedTilt = Vector2.ClampMagnitude(tilt + Vector2.right * sloshTilt, maximumTilt);
+            Vector2 combinedTilt = Vector2.ClampMagnitude(tilt + new Vector2(sloshTilt, impactTilt), maximumTilt);
             properties.SetFloat(WobbleX, combinedTilt.x);
             properties.SetFloat(WobbleZ, combinedTilt.y);
+            if (controlsFill) properties.SetFloat(Amount, fill);
             liquidRenderer.SetPropertyBlock(properties);
         }
 
         private void OnDisable()
         {
             tilt = Vector2.zero;
+            ResetFill();
             StopSloshing();
         }
     }

@@ -17,25 +17,43 @@ namespace PotionShop
         [SerializeField] private AudioSource brewingAudio;
 
         private bool hasBatch;
+        private bool pouring;
         private bool brewingEffectsPlaying;
         private double completesAt;
         private float brewingVolume;
 
-        public bool CanStartBrewing => isActiveAndEnabled && !hasBatch && tuning != null && liquidMotion != null;
+        public bool CanStartBrewing => isActiveAndEnabled && !hasBatch && !pouring && tuning != null && liquidMotion != null;
 
         public double RemainingSeconds => hasBatch ? Math.Max(0d, completesAt - Time.unscaledTimeAsDouble) : 0d;
 
-        public bool TryStartBrewing()
-        {
-            if (!CanStartBrewing)
-                return false;
+        internal Vector3 LiquidImpactPoint(int previouslyLanded, int count) =>
+            liquidMotion.SurfaceCenter(previouslyLanded / (float)count);
 
-            hasBatch = true;
-            completesAt = Time.unscaledTimeAsDouble + tuning.BrewingSeconds;
+        private void Start() => liquidMotion?.PrepareFill();
+
+        internal void BeginPour() => pouring = true;
+
+        internal void AddIngredient(int landed, int count)
+        {
+            liquidMotion.AddIngredient(landed, count);
             if (ingredientDropAudio != null)
                 ingredientDropAudio.Play();
+        }
+
+        internal void StartBrewing()
+        {
+            pouring = false;
+            hasBatch = true;
+            completesAt = Time.unscaledTimeAsDouble + tuning.BrewingSeconds;
             SetBrewingEffects(RemainingSeconds > 0d);
-            return true;
+        }
+
+        internal void CancelPour()
+        {
+            if (!pouring) return;
+            pouring = false;
+            if (liquidMotion != null) liquidMotion.ResetFill();
+            if (ingredientDropAudio != null) ingredientDropAudio.Stop();
         }
 
         private void OnEnable() => SetBrewingEffects(RemainingSeconds > 0d);
@@ -54,6 +72,7 @@ namespace PotionShop
 
         private void OnDisable()
         {
+            CancelPour();
             SetBrewingEffects(false);
             if (ingredientDropAudio != null)
                 ingredientDropAudio.Stop();
@@ -77,7 +96,7 @@ namespace PotionShop
             }
             else
             {
-                liquidMotion.StopSloshing();
+                if (liquidMotion != null) liquidMotion.StopSloshing();
                 brewingSteam?.Stop();
                 if (brewingAudio != null)
                 {

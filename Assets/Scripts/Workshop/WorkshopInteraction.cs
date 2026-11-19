@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using PotionShop.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,7 +23,7 @@ namespace PotionShop
         [SerializeField] private WorkshopHud hud;
         [SerializeField] private WorkshopAudio workshopAudio;
 
-        private readonly List<string> pocket = new();
+        private readonly List<WarehouseIngredient> pocket = new();
         private readonly Collider[] originContacts = new Collider[16];
         private WarehouseIngredient held;
         private WorkshopCauldron activeCauldron;
@@ -29,11 +31,13 @@ namespace PotionShop
         private bool wasLocked;
         private RoundDirector round;
         private PocketModelDisplay pocketModels;
+        private CancellationTokenSource transfer;
 
         private void OnEnable() => player.TryHandleLookInput = TryRotateHeldIngredient;
 
         private void OnDisable()
         {
+            transfer?.Cancel();
             if (player != null && player.TryHandleLookInput == TryRotateHeldIngredient)
                 player.TryHandleLookInput = null;
             if (workshopAudio != null)
@@ -66,6 +70,7 @@ namespace PotionShop
                 if (round.Phase is (RoundPhase.Ending or RoundPhase.Result) && !complete)
                 {
                     complete = true;
+                    transfer?.Cancel();
                     if (round.Result?.TimedOut == true)
                         workshopAudio?.PlayTimeExpired();
                     hud.SetCrosshairVisible(false);
@@ -76,6 +81,8 @@ namespace PotionShop
             }
 
             if (complete)
+                return;
+            if (transfer != null)
                 return;
             if (activeCauldron != null)
             {
@@ -109,10 +116,10 @@ namespace PotionShop
             if (cauldron != null)
             {
                 bool hasIngredients = pocket.Count == tuning.PocketCapacity;
-                hud.ShowPrompt("가마솥", hasIngredients ? "좌클릭으로 재료 넣기" :
-                    $"재료 {tuning.PocketCapacity}개를 먼저 모으세요");
+                if (hasIngredients) hud.ShowPrompt("가마솥", "재료 넣기", "좌클릭");
+                else hud.ShowPrompt("가마솥", $"재료 {tuning.PocketCapacity}개를 먼저 모으세요");
                 if (hasIngredients && Mouse.current?.leftButton.wasPressedThisFrame == true)
-                    StartBrewing(cauldron);
+                    BeginPour(cauldron);
                 return;
             }
 
@@ -121,6 +128,13 @@ namespace PotionShop
             if (ingredient == null)
             {
                 hud.ShowPrompt();
+                return;
+            }
+
+            foreach (var stored in pocket)
+            {
+                if (stored.VariantId != ingredient.VariantId) continue;
+                hud.ShowIngredient(ingredient.VariantId, "이미 주머니에 넣었습니다");
                 return;
             }
 
@@ -140,7 +154,7 @@ namespace PotionShop
 
         private void HandleHeldIngredient()
         {
-            hud.ShowIngredient(held.VariantId, "주머니에 넣기  ·  R + 마우스로 돌리기  ·  우클릭으로 돌려놓기", "F");
+            hud.ShowHeldIngredient(held.VariantId);
             if (Mouse.current?.rightButton.wasPressedThisFrame == true)
             {
                 var returning = held;
@@ -153,13 +167,24 @@ namespace PotionShop
             }
             else if (Keyboard.current?.fKey.wasPressedThisFrame == true && pocket.Count < tuning.PocketCapacity)
             {
-                var stored = held;
-                pocket.Add(stored.VariantId);
-                stored.gameObject.SetActive(false);
-                SetHeldIngredient(null);
-                pocketModels.ShowIngredient(pocket.Count - 1, stored.transform);
-                workshopAudio?.PlayPocket();
+                transfer = new CancellationTokenSource();
+                hud.ShowPrompt(action: "주머니에 넣는 중");
+                StoreIngredient(held, transfer).Forget();
             }
+        }
+
+        private async UniTask StoreIngredient(WarehouseIngredient ingredient, CancellationTokenSource operation)
+        {
+            try
+            {
+                await WorkshopIngredientMotion.Store(ingredient, playerCamera, operation.Token);
+                ingredient.transform.SetParent(null, true);
+                pocket.Add(ingredient);
+                SetHeldIngredient(null);
+                pocketModels.ShowIngredient(pocket.Count - 1, ingredient.transform);
+                if (workshopAudio != null) workshopAudio.PlayPocket();
+            }
+            finally { FinishTransfer(operation); }
         }
 
         private void SetHeldIngredient(WarehouseIngredient ingredient)
@@ -172,7 +197,7 @@ namespace PotionShop
         private bool TryRotateHeldIngredient()
         {
             var mouse = Mouse.current;
-            if (!wasLocked || complete || held == null || mouse == null ||
+            if (!wasLocked || complete || transfer != null || held == null || mouse == null ||
                 Keyboard.current?.rKey.isPressed != true ||
                 (round != null && round.Phase is (RoundPhase.Ending or RoundPhase.Result)))
                 return false;
@@ -183,18 +208,72 @@ namespace PotionShop
             return true;
         }
 
-        private void StartBrewing(WorkshopCauldron cauldron)
+        private void BeginPour(WorkshopCauldron cauldron)
         {
-            if (!cauldron.CanStartBrewing || (round != null && !round.TrySubmitIngredients(pocket)))
-                return;
-            if (!cauldron.TryStartBrewing())
-                return;
-
-            activeCauldron = cauldron;
-            pocket.Clear();
-            pocketModels.Clear();
+            if (!cauldron.CanStartBrewing) return;
+            cauldron.BeginPour();
+            transfer = new CancellationTokenSource();
             hud.SetCrosshairVisible(false);
-            UpdateBrewing(cauldron);
+            hud.ShowPrompt("가마솥", "재료 넣는 중");
+            PourIngredients(cauldron, transfer).Forget();
+        }
+
+        private async UniTask PourIngredients(WorkshopCauldron cauldron, CancellationTokenSource operation)
+        {
+            bool brewing = false;
+            try
+            {
+                int count = pocket.Count;
+                var pours = new UniTask[count];
+                var ingredientIds = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    ingredientIds[i] = pocket[i].VariantId;
+                    pours[i] = ThrowIngredient(i, pocket[i], count, cauldron, operation.Token);
+                }
+
+                await UniTask.WhenAll(pours);
+                operation.Token.ThrowIfCancellationRequested();
+                if (cauldron == null || !cauldron.isActiveAndEnabled ||
+                    (round != null && !round.TrySubmitIngredients(ingredientIds))) return;
+
+                cauldron.StartBrewing();
+                brewing = true;
+                activeCauldron = cauldron;
+                pocket.Clear();
+                pocketModels.Clear();
+                UpdateBrewing(cauldron);
+            }
+            finally
+            {
+                if (!brewing)
+                {
+                    operation.Cancel();
+                    if (cauldron != null) cauldron.CancelPour();
+                    for (int i = 0; i < pocket.Count; i++) pocketModels.SetSlotVisible(i, true);
+                }
+                FinishTransfer(operation);
+            }
+        }
+
+        private async UniTask ThrowIngredient(int slot, WarehouseIngredient ingredient, int count,
+            WorkshopCauldron cauldron, CancellationToken token)
+        {
+            if (slot > 0)
+                await UniTask.Delay(System.TimeSpan.FromSeconds(WorkshopIngredientMotion.ThrowInterval * slot),
+                    ignoreTimeScale: true, cancellationToken: token);
+            if (cauldron == null || !cauldron.isActiveAndEnabled) throw new System.OperationCanceledException();
+            await WorkshopIngredientMotion.Throw(ingredient, playerCamera, cauldron.LiquidImpactPoint(slot, count), token);
+            token.ThrowIfCancellationRequested();
+            if (cauldron == null || !cauldron.isActiveAndEnabled) throw new System.OperationCanceledException();
+            pocketModels.SetSlotVisible(slot, false);
+            cauldron.AddIngredient(slot + 1, count);
+        }
+
+        private void FinishTransfer(CancellationTokenSource operation)
+        {
+            if (transfer == operation) transfer = null;
+            operation.Dispose();
         }
 
         private void UpdateBrewing(WorkshopCauldron cauldron)
