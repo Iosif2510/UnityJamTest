@@ -17,7 +17,9 @@ namespace PotionShop
         [SerializeField] private TMP_Text total;
         [SerializeField] private GameObject passableStamp;
         [SerializeField] private GameObject fineBrewStamp;
-        [SerializeField] private TMP_Text otherOutcome;
+        [SerializeField] private UnityEngine.UI.Image otherStamp;
+        [SerializeField] private Sprite failureStamp;
+        [SerializeField] private Sprite timeoutStamp;
 
         public void Show(RoundResult result)
         {
@@ -34,8 +36,8 @@ namespace PotionShop
             bool fine = result.Stamp == RoundResult.FineBrewStamp;
             passableStamp.SetActive(passable);
             fineBrewStamp.SetActive(fine);
-            otherOutcome.gameObject.SetActive(!passable && !fine);
-            otherOutcome.text = result.TimedOut ? "시간 초과" : "조제 실패";
+            otherStamp.sprite = result.TimedOut ? timeoutStamp : failureStamp;
+            otherStamp.gameObject.SetActive(!passable && !fine);
         }
 
         private static string MatchLabel(bool correct, bool timedOut) =>
