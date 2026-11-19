@@ -25,12 +25,12 @@ namespace PotionShop
         [SerializeField] private Text choiceSummary;
         [SerializeField] private Button serveButton;
         [SerializeField] private GameObject resultPanel;
-        [SerializeField] private Text resultSummary;
         [SerializeField] private Button nextOrderButton;
         [SerializeField] private PortraitView portraitView;
         [SerializeField] private PortraitColorCatalog portraitColors;
 
         private RoundDirector round;
+        private RoundResultView resultView;
         private PortraitView resultPortrait;
         private RoundPhase? shownPhase;
         private CancellationTokenSource dialoguePlayback;
@@ -41,6 +41,7 @@ namespace PotionShop
         private void Start()
         {
             round = RoundDirector.Instance;
+            resultView = resultPanel.GetComponent<RoundResultView>();
             resultPortrait = resultPanel.GetComponentInChildren<PortraitView>(true);
             enterWorkshopButton.onClick.AddListener(AdvanceDialogue);
             squareBottle.onClick.AddListener(() => SelectBottle(BottleShape.Square));
@@ -49,6 +50,8 @@ namespace PotionShop
             for (int i = 0; i < inkButtons.Length; i++)
             {
                 int ink = i + 1;
+                if (round != null)
+                    inkButtons[i].GetComponentInChildren<Text>(true).text = InkLabel(ink);
                 inkButtons[i].onClick.AddListener(() => SelectInk(ink));
             }
             serveButton.onClick.AddListener(Serve);
@@ -143,8 +146,8 @@ namespace PotionShop
             resultPanel.SetActive(result);
             timerText.gameObject.SetActive(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-            phaseLabel.gameObject.SetActive(prescribe || result);
-            phaseLabel.text = result ? "조제 결과" : "처방전";
+            phaseLabel.gameObject.SetActive(prescribe);
+            phaseLabel.text = "처방전";
 
             if (portraitView != null)
             {
@@ -180,14 +183,8 @@ namespace PotionShop
                 PlayEnding(round.CurrentOrder, round.Result, dialoguePlayback.Token).Forget();
             else if (result)
             {
-                RoundResult score = round.Result;
-                ShowResultPortrait(score);
-                resultSummary.text = score.TimedOut
-                    ? "Time expired\nThe customer left without a potion.\n\nTotal: 0"
-                    : $"Ingredients: {score.CorrectIngredients}/{RecipeEntry.RequiredIngredientKinds} (+{score.IngredientPoints})\n" +
-                      $"Bottle: {(score.BottleCorrect ? "Correct" : "Wrong")} (+{score.BottlePoints})\n" +
-                      $"Ink: {(score.InkCorrect ? "Correct" : "Wrong")} (+{score.InkPoints})\n" +
-                      $"Time bonus: +{score.TimeBonus}\n\nTotal: {score.Total}   |   {score.Stamp}";
+                resultView.Show(round.Result);
+                ShowResultPortrait(round.Result);
             }
         }
 
@@ -279,11 +276,18 @@ namespace PotionShop
 
         private void RefreshChoices()
         {
-            string bottle = chosenBottle == BottleShape.Unspecified ? "-" : chosenBottle.ToString();
-            string ink = chosenInk == 0 ? "-" : chosenInk.ToString();
-            choiceSummary.text = $"Bottle: {bottle}   |   Ink: {ink}";
+            string bottle = chosenBottle switch
+            {
+                BottleShape.Square => "사각형",
+                BottleShape.Heart => "하트형",
+                BottleShape.Round => "원형",
+                _ => "-"
+            };
+            string ink = chosenInk == 0 ? "-" : InkLabel(chosenInk);
+            choiceSummary.text = $"물약병: {bottle}   |   잉크: {ink}";
             serveButton.interactable = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
         }
 
+        private string InkLabel(int number) => round.GetInkName(number) ?? "미지정";
     }
 }

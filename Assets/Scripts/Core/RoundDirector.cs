@@ -34,6 +34,7 @@ namespace PotionShop
         public RoundResult Result { get; private set; }
         public RoundTuning Tuning => loadedCatalog?.Tuning;
         public Sprite SlimePortrait => catalog.Customers.SlimePortrait;
+        internal string GetInkName(int number) => catalog.PrescriptionRules.GetInkName(number);
 #if UNITY_EDITOR
         public static Func<LoadedCatalog, string, GeneratedOrder> EditorOrderFactory;
 #endif

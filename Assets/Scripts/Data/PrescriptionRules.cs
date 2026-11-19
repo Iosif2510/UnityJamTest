@@ -75,5 +75,7 @@ namespace PotionShop.Data
         // Legacy assets have order 0 throughout and retain their serialized priority.
         public IEnumerable<InkRule> OrderedInks => inks.OrderBy(rule => rule?.Order ?? 0);
         public IReadOnlyList<ReactionDialogue> Reactions => reactions;
+
+        public string GetInkName(int number) => inks.Find(rule => rule?.InkNumber == number)?.InkName;
     }
 }
