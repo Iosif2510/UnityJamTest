@@ -14,6 +14,11 @@ namespace PotionShop.Portraits
         public bool Ready => SpineRig != null || (rig != null && rig.baseSkin != null &&
             rig.animator != null && rig.animator.runtimeAnimatorController != null);
 
+        internal void SetGesture(float landingProgress, float speaking)
+        {
+            SpineRig?.SetGesture(landingProgress, speaking);
+        }
+
         internal void Load(GameObject prefab, TextAsset spineJson)
         {
             if (spineJson != null)

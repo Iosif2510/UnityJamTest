@@ -15,6 +15,14 @@ namespace PotionShop.Portraits
         private readonly PortraitSkinnedImage baseImage;
         private readonly MeshBinding[] meshes;
         private readonly BoneFollower[] followers;
+        private float landingProgress = 1f;
+        private float speaking;
+
+        internal void SetGesture(float landingProgress, float speaking)
+        {
+            this.landingProgress = landingProgress;
+            this.speaking = speaking;
+        }
 
         private Rect Bounds { get; }
 
@@ -97,6 +105,13 @@ namespace PotionShop.Portraits
                 pose.X = Mathf.LerpUnclamped(setup.X, pose.X, IdleMotionMultiplier);
                 pose.Y = Mathf.LerpUnclamped(setup.Y, pose.Y, IdleMotionMultiplier);
                 pose.Rotation = Mathf.LerpUnclamped(setup.Rotation, pose.Rotation, IdleMotionMultiplier);
+                string name = bone.Data.Name;
+                if (name.Contains("hair", System.StringComparison.OrdinalIgnoreCase))
+                    pose.Rotation += PortraitView.LandingSwing(landingProgress, .26f) * -21f + speaking * -8f;
+                else if (name.Contains("head", System.StringComparison.OrdinalIgnoreCase))
+                    pose.Rotation += PortraitView.LandingSwing(landingProgress, .12f) * 18f + speaking * 13f;
+                else if (name == "root" || name.Contains("body", System.StringComparison.OrdinalIgnoreCase))
+                    pose.Rotation += PortraitView.LandingSwing(landingProgress, 0) * 9f + speaking * 8f;
             }
             skeleton.UpdateWorldTransform(Spine.Physics.None);
             foreach (var mesh in meshes)

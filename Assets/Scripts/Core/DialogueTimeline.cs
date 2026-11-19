@@ -44,6 +44,7 @@ namespace PotionShop
         internal bool HasDrops { get; }
         internal bool HasEffects { get; }
         internal double LastAccentEnd { get; }
+        internal IReadOnlyList<double> AccentTimes { get; }
 
         internal DialogueTimeline(DialogueOption line, SymptomEffect inheritedEffect, int speed, DialogueRevealMode mode)
             : this(line.Segments, line.DefaultSymptomEffect == SymptomEffect.Inherit ? inheritedEffect :
@@ -62,6 +63,10 @@ namespace PotionShop
             AssignTimes(text, flags, starts, Duration, mode);
             var accented = new bool[text.Length];
             var (accent, lastAccent) = DialogueEmphasis.Select(text, flags, starts, reactionKey, accented);
+            var beats = new List<double>();
+            for (int i = 0; i < accented.Length; i++)
+                if (accented[i] && (i == 0 || !accented[i - 1])) beats.Add(starts[i]);
+            AccentTimes = beats;
             int lastAccentEnd = lastAccent;
             while (lastAccentEnd >= 0 && lastAccentEnd < text.Length && accented[lastAccentEnd]) lastAccentEnd++;
             LastAccentEnd = lastAccent < 0 ? 0 : starts[lastAccentEnd - 1] + DialogueEmphasis.PulseSeconds;

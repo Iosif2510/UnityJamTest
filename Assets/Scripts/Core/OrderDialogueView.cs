@@ -36,6 +36,11 @@ namespace PotionShop
         private TMP_FontAsset lastFont;
         private bool revealing;
         private bool finalFrameDrawn;
+        private int speechBeat;
+        private bool skipBeatPlayed;
+
+        internal event Action<float> SpeechBeat;
+        internal TMP_FontAsset SpeakerFont => speaker.font;
 
         public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
 
@@ -116,6 +121,9 @@ namespace PotionShop
                 rain.gameObject.SetActive(true);
             }
             startedAt = Time.unscaledTimeAsDouble;
+            speechBeat = 0;
+            skipBeatPlayed = false;
+            SpeechBeat?.Invoke(.68f);
 
             try
             {
@@ -179,6 +187,17 @@ namespace PotionShop
 
         private void Draw(double elapsed)
         {
+            var beats = activeLine.AccentTimes;
+            if (elapsed >= skippedAt && !skipBeatPlayed)
+            {
+                skipBeatPlayed = true;
+                SpeechBeat?.Invoke(1f);
+            }
+            else if (elapsed < skippedAt && speechBeat < beats.Count && elapsed >= beats[speechBeat])
+            {
+                if (beats[speechBeat] >= .12f) SpeechBeat?.Invoke(1f);
+                speechBeat++;
+            }
             mainLayer.Render(elapsed, skippedAt);
             if (activeLine.HasGlyphCopies) firstCopy.Render(elapsed, skippedAt);
             if (activeLine.HasDoubleEcho) secondCopy.Render(elapsed, skippedAt);
