@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace PotionShop
 {
@@ -21,8 +20,7 @@ namespace PotionShop
                 return;
             }
 
-            isLoading = true;
-            SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Single);
+            isLoading = SceneDimmer.Instance.TryLoad(nextSceneName);
         }
     }
 }

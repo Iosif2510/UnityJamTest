@@ -23,7 +23,6 @@ namespace PotionShop
         private readonly System.Random seedSource = new();
         private LoadedCatalog loadedCatalog;
         private string previousDiseaseId;
-        private AsyncOperation sceneLoad;
         private double deadline;
         private CancellationTokenSource dialoguePreparation;
         private OpenAiDialogueProvider onlineDialogue;
@@ -236,13 +235,14 @@ namespace PotionShop
 
         private bool LoadSceneIfNeeded(string sceneName)
         {
-            if (sceneLoad != null && !sceneLoad.isDone)
-                return false;
             if (SceneManager.GetActiveScene().name == sceneName)
                 return true;
 
-            sceneLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
-            return sceneLoad != null;
+            return SceneDimmer.Instance.TryLoad(sceneName, () =>
+            {
+                ExpireIfNeeded();
+                return Phase is RoundPhase.Ending or RoundPhase.Result ? CounterScene : sceneName;
+            });
         }
     }
 }
