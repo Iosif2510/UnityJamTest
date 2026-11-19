@@ -31,7 +31,15 @@ namespace PotionShop
             fade = fadeSeconds;
             original = null;
             text.maxVisibleCharacters = int.MaxValue;
-            text.text = line.Text;
+            text.text = line.DisplayText;
+            text.ForceMeshUpdate();
+        }
+
+        internal void Reflow(double time, double skipTime)
+        {
+            elapsed = time;
+            skippedAt = skipTime;
+            text.text = timeline.DisplayText;
             text.ForceMeshUpdate();
         }
 

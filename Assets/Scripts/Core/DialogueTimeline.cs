@@ -30,7 +30,9 @@ namespace PotionShop
 
         private static readonly Regex EchoLetters = new("[^가-힣A-Za-z0-9]");
         private readonly Dictionary<int, Cue> glyphs = new();
+        internal DialogueLineLayout Layout { private get; set; }
         internal string Text { get; }
+        internal string DisplayText => Layout?.Text ?? Text;
         internal double Duration { get; }
         internal bool HasGlyphCopies { get; }
         internal bool HasDoubleEcho { get; }
@@ -91,7 +93,8 @@ namespace PotionShop
             Text = rich.ToString();
         }
 
-        internal bool TryGetCue(int sourceIndex, out Cue cue) => glyphs.TryGetValue(sourceIndex, out cue);
+        internal bool TryGetCue(int displayIndex, out Cue cue) =>
+            glyphs.TryGetValue(Layout?.SourceIndex(displayIndex) ?? displayIndex, out cue);
 
         private static void AssignTimes(string text, bool[] flags, double[] starts, double duration, DialogueRevealMode mode)
         {

@@ -12,7 +12,7 @@ namespace PotionShop
     [DisallowMultipleComponent]
     public sealed class OrderDialogueView : MonoBehaviour, IPointerClickHandler
     {
-        private const float BottomPadding = 16f;
+        private const float BottomPadding = 22f;
 
         [SerializeField] private TMP_Text speaker;
         [SerializeField] private TMP_Text body;
@@ -21,6 +21,7 @@ namespace PotionShop
         [SerializeField] private DialogueRevealMode revealMode;
 
         private DialogueTimeline activeLine;
+        private string message;
         private DialogueGlyphLayer mainLayer;
         private DialogueGlyphLayer firstCopy;
         private DialogueGlyphLayer secondCopy;
@@ -31,6 +32,8 @@ namespace PotionShop
         private double skippedAt;
         private int lastScrolledIndex;
         private Vector2 lastViewportSize;
+        private float lastWrapWidth;
+        private TMP_FontAsset lastFont;
         private bool revealing;
         private bool finalFrameDrawn;
 
@@ -39,8 +42,9 @@ namespace PotionShop
         public void ShowMessage(string message)
         {
             ClearLine();
-            body.text = message;
+            this.message = message?.Replace('<', '‹').Replace('>', '›') ?? string.Empty;
             body.maxVisibleCharacters = int.MaxValue;
+            body.text = Layout(this.message).Text;
             FitContent();
             if (scroll != null) scroll.verticalNormalizedPosition = 1;
         }
@@ -51,6 +55,15 @@ namespace PotionShop
 
         public UniTask PlayReaction(string line, int charactersPerSecond, CancellationToken token) =>
             Reveal(new DialogueTimeline(line, charactersPerSecond, revealMode), token);
+
+        private void Awake()
+        {
+            body.textWrappingMode = TextWrappingModes.NoWrap;
+            var margin = body.margin;
+            // Keep the strongest motion inside the clipped viewport.
+            body.margin = new Vector4(Mathf.Max(20f, margin.x), Mathf.Max(12f, margin.y),
+                Mathf.Max(36f, margin.z), margin.w);
+        }
 
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -64,13 +77,13 @@ namespace PotionShop
             token.ThrowIfCancellationRequested();
             ClearLine();
             activeLine = line;
-            startedAt = Time.unscaledTimeAsDouble;
             skippedAt = double.PositiveInfinity;
             lastScrolledIndex = -1;
             finalFrameDrawn = false;
             revealing = true;
 
             mainLayer ??= new DialogueGlyphLayer(body);
+            line.Layout = Layout(line.Text);
             float fade = revealMode == DialogueRevealMode.Character ? 0f : fadeSeconds;
             mainLayer.SetLine(line, fade);
             FitContent();
@@ -102,6 +115,7 @@ namespace PotionShop
                 }
                 rain.gameObject.SetActive(true);
             }
+            startedAt = Time.unscaledTimeAsDouble;
 
             try
             {
@@ -120,15 +134,44 @@ namespace PotionShop
 
         private void LateUpdate()
         {
-            if (activeLine == null) return;
+            if (activeLine == null && message == null) return;
+            bool reflow = lastWrapWidth != WrapWidth || lastFont != body.font;
             bool resized = scroll != null && lastViewportSize != scroll.viewport.rect.size;
-            if (resized)
-                FitContent();
+            if (activeLine == null)
+            {
+                if (reflow) body.text = Layout(message).Text;
+                if (reflow || resized) FitContent();
+                return;
+            }
+
             double elapsed = Time.unscaledTimeAsDouble - startedAt;
-            if (resized || !finalFrameDrawn || activeLine.HasEffects)
+            if (reflow)
+            {
+                activeLine.Layout = Layout(activeLine.Text);
+                mainLayer.Reflow(elapsed, skippedAt);
+                if (activeLine.HasGlyphCopies) ReflowCopy(firstCopy, firstCopyText, elapsed);
+                if (activeLine.HasDoubleEcho) ReflowCopy(secondCopy, secondCopyText, elapsed);
+            }
+            if (reflow || resized) FitContent();
+            if (reflow || resized || !finalFrameDrawn || activeLine.HasEffects)
                 Draw(elapsed);
             if (!revealing && elapsed >= Math.Min(activeLine.Duration + fadeSeconds, skippedAt))
                 finalFrameDrawn = true;
+        }
+
+        private float WrapWidth => Mathf.Max(1f, body.rectTransform.rect.width - body.margin.x - body.margin.z);
+
+        private DialogueLineLayout Layout(string source)
+        {
+            lastWrapWidth = WrapWidth;
+            lastFont = body.font;
+            return DialogueLineLayout.Create(source, body, lastWrapWidth);
+        }
+
+        private void ReflowCopy(DialogueGlyphLayer layer, TMP_Text copy, double elapsed)
+        {
+            MatchBodyLayout(copy);
+            layer.Reflow(elapsed, skippedAt);
         }
 
         private void Draw(double elapsed)
@@ -144,10 +187,8 @@ namespace PotionShop
         {
             if (scroll == null) return;
             lastViewportSize = scroll.viewport.rect.size;
-            // TMP measures wrapping against the supplied width before adding its text margins.
-            float wrapWidth = Mathf.Max(1f, body.rectTransform.rect.width - body.margin.x - body.margin.z);
             float height = Mathf.Max(lastViewportSize.y,
-                body.GetPreferredValues(body.text, wrapWidth, 0).y + BottomPadding);
+                body.GetPreferredValues(body.text, WrapWidth, 0).y + BottomPadding);
             scroll.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
             body.ForceMeshUpdate();
             lastScrolledIndex = -1;
@@ -183,19 +224,32 @@ namespace PotionShop
         private TextMeshProUGUI CreateCopy(string layerName)
         {
             var copy = NewLayer(layerName).gameObject.AddComponent<TextMeshProUGUI>();
+            MatchBodyLayout(copy);
+            copy.raycastTarget = false;
+            return copy;
+        }
+
+        private void MatchBodyLayout(TMP_Text copy)
+        {
             copy.font = body.font;
-            copy.fontSharedMaterial = body.fontSharedMaterial;
+            // The moving afterimages already act as shadows.
+            copy.fontSharedMaterial = body.font.material;
             copy.fontSize = body.fontSize;
             copy.fontStyle = body.fontStyle;
+            copy.fontWeight = body.fontWeight;
+            copy.fontFeatures = body.fontFeatures;
+            copy.styleSheet = body.styleSheet;
+            copy.textStyle = body.textStyle;
             copy.alignment = body.alignment;
             copy.color = body.color;
             copy.lineSpacing = body.lineSpacing;
             copy.characterSpacing = body.characterSpacing;
+            copy.characterHorizontalScale = body.characterHorizontalScale;
+            copy.wordSpacing = body.wordSpacing;
+            copy.paragraphSpacing = body.paragraphSpacing;
             copy.margin = body.margin;
             copy.textWrappingMode = body.textWrappingMode;
             copy.overflowMode = body.overflowMode;
-            copy.raycastTarget = false;
-            return copy;
         }
 
         private RectTransform NewLayer(string layerName)
@@ -214,6 +268,7 @@ namespace PotionShop
         private void ClearLine()
         {
             activeLine = null;
+            message = null;
             revealing = false;
             mainLayer?.Clear();
             firstCopy?.Clear();
