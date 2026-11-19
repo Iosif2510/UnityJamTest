@@ -1,0 +1,17 @@
+{
+  "result": "pass",
+  "canvas": [
+    1729,
+    910
+  ],
+  "colorPngs": 9,
+  "openGLNormalPngs": 9,
+  "directXNormalPngs": 9,
+  "allNormalSizesAndAlphaMatch": true,
+  "allBottlesSourcePixelsPreserved": true,
+  "allBottlesScale": [
+    1,
+    1
+  ],
+  "oraLayerCount": 9
+}

@@ -1,0 +1,196 @@
+{
+  "width": 1729,
+  "height": 910,
+  "revision": 3,
+  "clearancePx": 0,
+  "fitMethod": "Bottles extracted 1:1 inside the newly generated fitted cavities. No rescale or projection.",
+  "normalConvention": "OpenGL +Y / DirectX -Y; 2D inferred relief, not 3D mesh bake",
+  "cabinet": "color/00-cabinet.png",
+  "cabinetNormal": "normal/opengl/00-cabinet.png",
+  "items": [
+    {
+      "id": "01-bottle-circle",
+      "name": "동그라미 병",
+      "x": 321,
+      "y": 341,
+      "width": 253,
+      "height": 244,
+      "image": "color/01-bottle-circle.png",
+      "normal": "normal/opengl/01-bottle-circle.png",
+      "normalDirectX": "normal/directx/01-bottle-circle.png",
+      "mask": "mask/01-bottle-circle.png",
+      "sourceBox": [
+        310,
+        340,
+        590,
+        589
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "02-bottle-square",
+      "name": "네모 병",
+      "x": 620,
+      "y": 342,
+      "width": 247,
+      "height": 246,
+      "image": "color/02-bottle-square.png",
+      "normal": "normal/opengl/02-bottle-square.png",
+      "normalDirectX": "normal/directx/02-bottle-square.png",
+      "mask": "mask/02-bottle-square.png",
+      "sourceBox": [
+        611,
+        340,
+        880,
+        589
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "03-bottle-heart",
+      "name": "하트 병",
+      "x": 903,
+      "y": 342,
+      "width": 263,
+      "height": 245,
+      "image": "color/03-bottle-heart.png",
+      "normal": "normal/opengl/03-bottle-heart.png",
+      "normalDirectX": "normal/directx/03-bottle-heart.png",
+      "mask": "mask/03-bottle-heart.png",
+      "sourceBox": [
+        892,
+        340,
+        1180,
+        590
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "04-ink-green",
+      "name": "초록 · 잎",
+      "x": 250,
+      "y": 586,
+      "width": 180,
+      "height": 177,
+      "image": "color/04-ink-green.png",
+      "normal": "normal/opengl/04-ink-green.png",
+      "normalDirectX": "normal/directx/04-ink-green.png",
+      "mask": "mask/04-ink-green.png",
+      "sourceBox": [
+        242,
+        584,
+        439,
+        771
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "05-ink-blue",
+      "name": "파랑 · 별",
+      "x": 458,
+      "y": 586,
+      "width": 175,
+      "height": 176,
+      "image": "color/05-ink-blue.png",
+      "normal": "normal/opengl/05-ink-blue.png",
+      "normalDirectX": "normal/directx/05-ink-blue.png",
+      "mask": "mask/05-ink-blue.png",
+      "sourceBox": [
+        445,
+        584,
+        640,
+        771
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "06-ink-red",
+      "name": "빨강 · 불꽃",
+      "x": 659,
+      "y": 587,
+      "width": 177,
+      "height": 175,
+      "image": "color/06-ink-red.png",
+      "normal": "normal/opengl/06-ink-red.png",
+      "normalDirectX": "normal/directx/06-ink-red.png",
+      "mask": "mask/06-ink-red.png",
+      "sourceBox": [
+        647,
+        584,
+        842,
+        771
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "07-ink-yellow",
+      "name": "노랑 · 송곳니",
+      "x": 863,
+      "y": 586,
+      "width": 180,
+      "height": 177,
+      "image": "color/07-ink-yellow.png",
+      "normal": "normal/opengl/07-ink-yellow.png",
+      "normalDirectX": "normal/directx/07-ink-yellow.png",
+      "mask": "mask/07-ink-yellow.png",
+      "sourceBox": [
+        849,
+        584,
+        1049,
+        771
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    },
+    {
+      "id": "08-ink-purple",
+      "name": "보라 · 돌",
+      "x": 1067,
+      "y": 586,
+      "width": 185,
+      "height": 176,
+      "image": "color/08-ink-purple.png",
+      "normal": "normal/opengl/08-ink-purple.png",
+      "normalDirectX": "normal/directx/08-ink-purple.png",
+      "mask": "mask/08-ink-purple.png",
+      "sourceBox": [
+        1057,
+        584,
+        1258,
+        771
+      ],
+      "sourceScale": [
+        1,
+        1
+      ],
+      "pixelAligned": true
+    }
+  ]
+}
