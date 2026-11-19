@@ -210,7 +210,7 @@ namespace PotionShop
             {
                 await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token);
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
-                ApplyEffect(result.Effect);
+                await ApplyEffectAsync(result.Effect, token);
                 await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token);
             }
             if (round.Phase != RoundPhase.Ending || round.Result != result) return;
@@ -250,14 +250,11 @@ namespace PotionShop
                 resultPortrait.SetTint(OddPotionTint);
         }
 
-        private void ApplyEffect(CustomerEffect effect)
+        private async UniTask ApplyEffectAsync(CustomerEffect effect, CancellationToken token)
         {
             if (portraitView == null) return;
             if (effect == CustomerEffect.Slime && round.SlimePortrait != null)
-            {
-                portraitView.gameObject.SetActive(true);
-                portraitView.ShowSlime(round.SlimePortrait);
-            }
+                await portraitView.TransformIntoSlime(round.SlimePortrait, token);
             else if (effect == CustomerEffect.OddTint && portraitView.isActiveAndEnabled)
                 portraitView.Tint(OddPotionTint);
         }

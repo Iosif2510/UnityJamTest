@@ -1,3 +1,5 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using LitMotion;
 
@@ -30,10 +32,23 @@ namespace PotionShop.Portraits
             image.material = hasHueShift ? material : null;
             return hasHueShift ? new Color(1f, 1f, 1f, eyeColor.a) : eyeColor;
         }
-        public void AnimateTint(Color tint)
+        public void AnimateTint(Color tint) => StartTint(tint, .35f, MotionScheduler.Update);
+
+        internal UniTask FadeTint(Color tint, float duration, CancellationToken token)
         {
-            tintMotion.TryCancel(); var initial = currentTint;
-            tintMotion = LMotion.Create(0f, 1f, .35f).WithEase(Ease.OutQuad).Bind(t => SetTint(Color.Lerp(initial, tint, t)));
+            token.ThrowIfCancellationRequested();
+            return StartTint(tint, duration, MotionScheduler.UpdateIgnoreTimeScale).ToUniTask(token);
+        }
+
+        private MotionHandle StartTint(Color tint, float duration, IMotionScheduler scheduler)
+        {
+            tintMotion.TryCancel();
+            Color initial = currentTint;
+            tintMotion = LMotion.Create(0f, 1f, duration)
+                .WithScheduler(scheduler)
+                .WithEase(Ease.OutQuad)
+                .Bind(t => SetTint(Color.Lerp(initial, tint, t)));
+            return tintMotion;
         }
         public void SetTint(Color tint)
         {

@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using PotionShop.Data;
 using UnityEngine;
 
@@ -7,6 +9,10 @@ namespace PotionShop.Portraits
 {
     public sealed class PortraitView : MonoBehaviour
     {
+        private static readonly Color SlimeTransitionTint = new(0.49f, 1f, 0.53f);
+        private const float SlimeTintInSeconds = .28f;
+        private const float SlimeTintOutSeconds = .36f;
+
         [SerializeField] private PortraitLayers layers;
         [SerializeField] private PortraitColorModule colors;
         [SerializeField] private PortraitBlink blink;
@@ -42,6 +48,30 @@ namespace PotionShop.Portraits
             order.Portrait.First(p => p.Slot == PortraitSlot.Eyes).Appearance, palette, expression);
         public void Tint(Color tint) => colors.AnimateTint(tint);
         public void SetTint(Color tint) => colors.SetTint(tint);
+
+        internal async UniTask TransformIntoSlime(Sprite sprite, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            bool hadVisiblePortrait = isActiveAndEnabled;
+            gameObject.SetActive(true);
+
+            try
+            {
+                if (hadVisiblePortrait)
+                    await colors.FadeTint(SlimeTransitionTint, SlimeTintInSeconds, token);
+
+                token.ThrowIfCancellationRequested();
+                ShowSlime(sprite);
+                colors.SetTint(SlimeTransitionTint);
+                await colors.FadeTint(Color.white, SlimeTintOutSeconds, token);
+            }
+            finally
+            {
+                if (colors != null)
+                    colors.SetTint(Color.white);
+            }
+        }
+
         public void ShowSlime(Sprite sprite)
         {
             if (sprite == null) throw new InvalidOperationException("Assign slime portrait in Customers.");
