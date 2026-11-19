@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3896683612052261151}
   - component: {fileID: 4194407826270359921}
   - component: {fileID: 5162799265145759113}
+  - component: {fileID: 47862230062407404}
   m_Layer: 0
   m_Name: Point Light
   m_TagString: Untagged
@@ -127,6 +128,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &47862230062407404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186703145423474561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4274208ec5cdb8343a3159bc5a5822f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.LanternLightSway
+  amplitude: 0.22
+  period: 2.1
 --- !u!1001 &3122235671909742193
 PrefabInstance:
   m_ObjectHideFlags: 0
