@@ -1,0 +1,57 @@
+{
+  "result": "pass",
+  "canvas": [
+    1729,
+    910
+  ],
+  "items": [
+    {
+      "id": "01-bottle-circle",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "02-bottle-square",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "03-bottle-heart",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "04-ink-green",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "05-ink-blue",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "06-ink-red",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "07-ink-yellow",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "08-ink-purple",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    }
+  ]
+}
