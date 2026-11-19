@@ -22,6 +22,7 @@ namespace PotionShop
 
         private readonly System.Random seedSource = new();
         private LoadedCatalog loadedCatalog;
+        private string previousDiseaseId;
         private AsyncOperation sceneLoad;
         private double deadline;
         private CancellationTokenSource dialoguePreparation;
@@ -34,7 +35,7 @@ namespace PotionShop
         public RoundResult Result { get; private set; }
         public RoundTuning Tuning => loadedCatalog?.Tuning;
         public Sprite SlimePortrait => catalog.Customers.SlimePortrait;
-        internal string GetInkName(int number) => catalog.PrescriptionRules.GetInkName(number);
+        internal bool UsesDialogueApi => useDialogueApi;
 #if UNITY_EDITOR
         public static Func<LoadedCatalog, string, GeneratedOrder> EditorOrderFactory;
 #endif
@@ -81,19 +82,17 @@ namespace PotionShop
 
         public bool BeginOrder()
         {
-            if (Phase is not (RoundPhase.Waiting or RoundPhase.Result))
+            if (Phase != RoundPhase.Waiting)
                 return false;
 
             loadedCatalog ??= CatalogLoader.Load(catalog);
-            string previous = CurrentOrder?.Disease.Id;
 #if UNITY_EDITOR
-            CurrentOrder = EditorOrderFactory != null ? EditorOrderFactory(loadedCatalog, previous) :
-                OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previous);
+            CurrentOrder = EditorOrderFactory != null ? EditorOrderFactory(loadedCatalog, previousDiseaseId) :
+                OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId);
 #else
-            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previous);
+            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId);
 #endif
-            SubmittedIngredients = null;
-            Result = null;
+            previousDiseaseId = CurrentOrder.Disease.Id;
             if (useDialogueApi && CurrentOrder.Voice != null)
             {
                 Phase = RoundPhase.Preparing;
@@ -205,6 +204,18 @@ namespace PotionShop
         {
             if (Phase == RoundPhase.Ending && Result == result)
                 Phase = RoundPhase.Result;
+        }
+
+        internal bool DismissResult()
+        {
+            if (Phase != RoundPhase.Result)
+                return false;
+
+            CurrentOrder = null;
+            SubmittedIngredients = null;
+            Result = null;
+            Phase = RoundPhase.Waiting;
+            return true;
         }
 
         public static string FormatClock(double seconds)

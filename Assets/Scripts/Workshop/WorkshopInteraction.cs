@@ -19,7 +19,6 @@ namespace PotionShop
         [SerializeField, Min(0f)] private float heldRotationSensitivity = 0.35f;
         [SerializeField] private RoundTuning tuning;
         [SerializeField] private WorkshopHud hud;
-        [SerializeField] private GameObject resultPanel;
         [SerializeField] private WorkshopAudio workshopAudio;
 
         private readonly List<string> pocket = new();
@@ -203,8 +202,7 @@ namespace PotionShop
             double remaining = cauldron.RemainingSeconds;
             if (remaining > 0d)
             {
-                string brewing = $"제조 중 · {System.Math.Ceiling(remaining):0}초";
-                hud.ShowPrompt(brewing, round == null ? "" : "처방전 매뉴얼로 이동하세요");
+                hud.ShowPrompt($"제조 중 · {System.Math.Ceiling(remaining):0}초");
                 return;
             }
 
@@ -214,8 +212,6 @@ namespace PotionShop
             complete = true;
             hud.ShowPrompt();
             player.enabled = false;
-            if (round == null)
-                resultPanel.SetActive(true);
         }
 
         private Ray GetInteractionRay()

@@ -24,6 +24,6 @@ MonoBehaviour:
   targetDiagnose: 20
   targetGather: 60
   targetLabel: 20
-  textSpeed: 23
+  textSpeed: 12
   lineLength: 200
   reactionGap: 1.5

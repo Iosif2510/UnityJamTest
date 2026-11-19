@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using LitMotion;
 using PotionShop.Data;
 using PotionShop.Portraits;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,25 +17,30 @@ namespace PotionShop
 
         [SerializeField] private OrderDialogueView dialogueView;
         [SerializeField] private Button enterWorkshopButton;
-        [SerializeField] private Text phaseLabel;
         [SerializeField] private Text timerText;
         [SerializeField] private GameObject prescriptionPanel;
         [SerializeField] private Button squareBottle;
         [SerializeField] private Button heartBottle;
         [SerializeField] private Button roundBottle;
         [SerializeField] private Button[] inkButtons;
-        [SerializeField] private Text choiceSummary;
         [SerializeField] private Button serveButton;
         [SerializeField] private GameObject resultPanel;
         [SerializeField] private Button nextOrderButton;
         [SerializeField] private PortraitView portraitView;
         [SerializeField] private PortraitColorCatalog portraitColors;
+        [SerializeField] private CounterCurtain curtain;
+        [SerializeField] private Button receiveCustomerButton;
+        [SerializeField] private TMP_Text curtainWaitingLabel;
+        [SerializeField, Min(0f)] private float customerEntryDelay = 0.8f;
+        [SerializeField, Min(0f)] private float customerFadeDuration = 0.45f;
 
         private RoundDirector round;
+        private CanvasGroup dialogueOpacity;
+        private CanvasGroup portraitOpacity;
         private RoundResultView resultView;
         private PortraitView resultPortrait;
         private RoundPhase? shownPhase;
-        private CancellationTokenSource dialoguePlayback;
+        private CancellationTokenSource phasePlayback;
         private BottleShape chosenBottle;
         private int chosenInk;
         private bool endingReady;
@@ -41,6 +48,9 @@ namespace PotionShop
         private void Start()
         {
             round = RoundDirector.Instance;
+            dialogueOpacity = GetOrAddCanvasGroup(dialogueView);
+            if (portraitView != null)
+                portraitOpacity = GetOrAddCanvasGroup(portraitView);
             resultView = resultPanel.GetComponent<RoundResultView>();
             resultPortrait = resultPanel.GetComponentInChildren<PortraitView>(true);
             enterWorkshopButton.onClick.AddListener(AdvanceDialogue);
@@ -50,17 +60,20 @@ namespace PotionShop
             for (int i = 0; i < inkButtons.Length; i++)
             {
                 int ink = i + 1;
-                if (round != null)
-                    inkButtons[i].GetComponentInChildren<Text>(true).text = InkLabel(ink);
                 inkButtons[i].onClick.AddListener(() => SelectInk(ink));
             }
             serveButton.onClick.AddListener(Serve);
-            nextOrderButton.onClick.AddListener(StartNewOrder);
+            nextOrderButton.onClick.AddListener(DismissResult);
+            receiveCustomerButton.onClick.AddListener(ReceiveCustomer);
 
-            if (round == null || round.Phase == RoundPhase.Waiting)
-                StartNewOrder();
-            else
-                RefreshPhase();
+            if (round == null)
+            {
+                Debug.LogError("No RoundDirector is present in the order scene.", this);
+                receiveCustomerButton.interactable = false;
+                return;
+            }
+
+            RefreshPhase();
         }
 
         private void Update()
@@ -79,34 +92,65 @@ namespace PotionShop
 
         private void OnDisable()
         {
-            StopDialogue();
+            StopPhasePlayback();
             if (dialogueView != null) dialogueView.StopPresentation();
         }
 
-        private void StopDialogue()
+        private void StopPhasePlayback()
         {
-            if (dialoguePlayback == null) return;
-            dialoguePlayback.Cancel();
-            dialoguePlayback.Dispose();
-            dialoguePlayback = null;
+            if (phasePlayback == null) return;
+            phasePlayback.Cancel();
+            phasePlayback.Dispose();
+            phasePlayback = null;
         }
 
-        private void StartNewOrder()
+        private CancellationToken StartPhasePlayback()
+        {
+            phasePlayback = new CancellationTokenSource();
+            return phasePlayback.Token;
+        }
+
+        private void ReceiveCustomer()
+        {
+            if (round.Phase != RoundPhase.Waiting || !receiveCustomerButton.gameObject.activeInHierarchy)
+                return;
+
+            receiveCustomerButton.gameObject.SetActive(false);
+            dialogueView.gameObject.SetActive(false);
+            BeginCustomerEntry(StartPhasePlayback()).Forget();
+        }
+
+        private async UniTask BeginCustomerEntry(CancellationToken token)
         {
             try
             {
-                if (round == null)
-                    throw new InvalidOperationException("No RoundDirector is present in the order scene.");
+                if (!round.UsesDialogueApi)
+                {
+                    await curtain.FadeTo(false, token);
+                    if (customerEntryDelay > 0f)
+                        await UniTask.Delay(TimeSpan.FromSeconds(customerEntryDelay), ignoreTimeScale: true,
+                            cancellationToken: token);
+                }
 
+                token.ThrowIfCancellationRequested();
                 if (round.BeginOrder())
                     RefreshPhase();
             }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
             catch (Exception exception)
             {
+                RefreshPhase();
+                dialogueView.gameObject.SetActive(true);
+                dialogueView.SetSpeaker(string.Empty);
                 dialogueView.ShowMessage("대사를 불러오지 못했습니다.");
-                enterWorkshopButton.interactable = false;
                 Debug.LogException(exception, this);
             }
+        }
+
+        private void DismissResult()
+        {
+            if (resultPanel.activeInHierarchy && round.DismissResult())
+                RefreshPhase();
         }
 
         private void AdvanceDialogue()
@@ -129,25 +173,32 @@ namespace PotionShop
 
         private void RefreshPhase()
         {
-            StopDialogue();
+            StopPhasePlayback();
             RoundPhase phase = round.Phase;
-            shownPhase = phase;
-            bool consult = phase == RoundPhase.Consult;
+            bool waiting = phase == RoundPhase.Waiting;
             bool preparing = phase == RoundPhase.Preparing;
+            bool consult = phase == RoundPhase.Consult;
+            bool customerEntering = consult && shownPhase is RoundPhase.Waiting or RoundPhase.Preparing;
+            bool fadeIn = customerEntering && customerFadeDuration > 0f;
             bool prescribe = phase == RoundPhase.Prescribe;
             bool ending = phase == RoundPhase.Ending;
             bool result = phase == RoundPhase.Result;
+            shownPhase = phase;
             endingReady = false;
 
-            dialogueView.gameObject.SetActive(preparing || consult || ending);
+            if (!result && !customerEntering)
+                curtain.SetClosed(waiting || preparing);
+            receiveCustomerButton.gameObject.SetActive(waiting);
+            if (curtainWaitingLabel != null)
+                curtainWaitingLabel.gameObject.SetActive(preparing);
+            SetPresentationOpacity(fadeIn ? 0f : 1f);
+            dialogueView.gameObject.SetActive(consult || ending);
             enterWorkshopButton.gameObject.SetActive(consult);
             enterWorkshopButton.interactable = false;
             prescriptionPanel.SetActive(prescribe);
-            resultPanel.SetActive(result);
+            resultPanel.SetActive(false);
             timerText.gameObject.SetActive(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
-            phaseLabel.gameObject.SetActive(prescribe);
-            phaseLabel.text = "처방전";
 
             if (portraitView != null)
             {
@@ -158,20 +209,12 @@ namespace PotionShop
             }
 
             if (consult || ending)
-            {
                 dialogueView.SetSpeaker(round.CurrentOrder.Voice?.DisplayName ?? string.Empty);
-                dialoguePlayback = new CancellationTokenSource();
-            }
 
-            if (preparing)
-            {
-                dialogueView.SetSpeaker(string.Empty);
-                dialogueView.ShowMessage("손님이 오고 있어요.");
-            }
-            else if (consult)
+            if (consult)
             {
                 SetAdvanceLabel("창고로");
-                PlayConsult(round.CurrentOrder, dialoguePlayback.Token).Forget();
+                PlayConsult(round.CurrentOrder, customerEntering, fadeIn, StartPhasePlayback()).Forget();
             }
             else if (prescribe)
             {
@@ -180,20 +223,49 @@ namespace PotionShop
                 RefreshChoices();
             }
             else if (ending)
-                PlayEnding(round.CurrentOrder, round.Result, dialoguePlayback.Token).Forget();
+                PlayEnding(round.CurrentOrder, round.Result, StartPhasePlayback()).Forget();
             else if (result)
-            {
-                resultView.Show(round.Result);
-                ShowResultPortrait(round.Result);
-            }
+                CloseForResult(round.Result, StartPhasePlayback()).Forget();
         }
 
-        private async UniTask PlayConsult(GeneratedOrder order, CancellationToken token)
+        private static CanvasGroup GetOrAddCanvasGroup(Component view) =>
+            view.TryGetComponent<CanvasGroup>(out var group) ? group : view.gameObject.AddComponent<CanvasGroup>();
+
+        private void SetPresentationOpacity(float opacity)
         {
-            await dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
+            dialogueOpacity.alpha = opacity;
+            if (portraitOpacity != null)
+                portraitOpacity.alpha = opacity;
+        }
+
+        private async UniTask CloseForResult(RoundResult result, CancellationToken token)
+        {
+            await curtain.FadeTo(true, token);
+            token.ThrowIfCancellationRequested();
+            resultPanel.SetActive(true);
+            resultView.Show(result);
+            ShowResultPortrait(result);
+        }
+
+        private async UniTask PlayConsult(GeneratedOrder order, bool customerEntering, bool fadeIn, CancellationToken token)
+        {
+            var dialogue = dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
+            if (customerEntering)
+                await UniTask.WhenAll(dialogue, curtain.FadeTo(false, token), FadeCustomerIn(fadeIn, token));
+            else
+                await dialogue;
+
             if (round.Phase == RoundPhase.Consult && round.CurrentOrder == order)
                 enterWorkshopButton.interactable = true;
         }
+
+        private UniTask FadeCustomerIn(bool fadeIn, CancellationToken token) => fadeIn
+            ? LMotion.Create(0f, 1f, customerFadeDuration)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithEase(Ease.OutSine)
+                .Bind(SetPresentationOpacity)
+                .ToUniTask(token)
+            : UniTask.CompletedTask;
 
         private async UniTask PlayEnding(GeneratedOrder order, RoundResult result, CancellationToken token)
         {
@@ -273,18 +345,16 @@ namespace PotionShop
 
         private void RefreshChoices()
         {
-            string bottle = chosenBottle switch
-            {
-                BottleShape.Square => "사각형",
-                BottleShape.Heart => "하트형",
-                BottleShape.Round => "원형",
-                _ => "-"
-            };
-            string ink = chosenInk == 0 ? "-" : InkLabel(chosenInk);
-            choiceSummary.text = $"물약병: {bottle}   |   잉크: {ink}";
+            SetChoiceHighlight(squareBottle, chosenBottle == BottleShape.Square);
+            SetChoiceHighlight(heartBottle, chosenBottle == BottleShape.Heart);
+            SetChoiceHighlight(roundBottle, chosenBottle == BottleShape.Round);
+            for (int i = 0; i < inkButtons.Length; i++)
+                SetChoiceHighlight(inkButtons[i], chosenInk == i + 1);
+
             serveButton.interactable = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
         }
 
-        private string InkLabel(int number) => round.GetInkName(number) ?? "미지정";
+        private static void SetChoiceHighlight(Button button, bool selected) =>
+            button.GetComponent<UnityEngine.UI.Outline>().enabled = selected;
     }
 }
