@@ -18,9 +18,10 @@ namespace PotionShop
         {
             targetLight = GetComponent<Light2D>();
             baseIntensity = targetLight.intensity;
+            float variation = targetLight.lightType == Light2D.LightType.Global ? Mathf.Min(amplitude, .10f) : amplitude;
             motion = LMotion.Create(0f, 2f * Mathf.PI, period)
                 .WithLoops(-1)
-                .Bind(phase => targetLight.intensity = baseIntensity * (1f + amplitude * Mathf.Sin(phase)));
+                .Bind(phase => targetLight.intensity = baseIntensity * (1f + variation * Mathf.Sin(phase)));
         }
 
         private void OnDisable()
