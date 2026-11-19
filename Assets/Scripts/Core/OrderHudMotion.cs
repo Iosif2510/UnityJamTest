@@ -32,27 +32,38 @@ namespace PotionShop
         internal void SetTimer(bool visible)
         {
             timerMotion.TryCancel();
-            timer.rectTransform.localRotation = Quaternion.identity;
+            if (timer == null) return;
+            var rect = timer.rectTransform;
+            if (rect == null) return;
+            rect.localRotation = Quaternion.identity;
             timer.gameObject.SetActive(visible);
             if (!visible) return;
-            timerMotion = SwayTimer(timer.rectTransform);
+            timerMotion = SwayTimer(rect);
         }
 
         internal static MotionHandle SwayTimer(RectTransform rect) => LMotion.Create(0f, 2 * Mathf.PI, 2f)
             .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).WithLoops(-1)
-            .Bind(phase => rect.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(phase) * 2));
+            .Bind(phase =>
+            {
+                if (rect != null) rect.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(phase) * 2);
+            });
 
         internal void HighlightWorkshop(bool highlighted)
         {
             buttonMotion.TryCancel();
-            label.color = highlighted ? new Color(.20f, .105f, .055f, labelColor.a) : labelColor;
+            if (label != null) label.color = highlighted ? new Color(.20f, .105f, .055f, labelColor.a) : labelColor;
+            if (background == null) return;
             background.color = backgroundColor;
             if (!highlighted) return;
             // Existing art may already have a white tint, so pulse between warm and full brightness.
             var low = backgroundColor * new Color(.79f, .69f, .53f, 1);
             buttonMotion = LMotion.Create(0f, 2 * Mathf.PI, 1.65f)
                 .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).WithLoops(-1)
-                .Bind(phase => background.color = Color.Lerp(low, backgroundColor, .5f + .5f * Mathf.Cos(phase)));
+                .Bind(phase =>
+                {
+                    if (background != null)
+                        background.color = Color.Lerp(low, backgroundColor, .5f + .5f * Mathf.Cos(phase));
+                });
         }
 
         internal void Stop()
