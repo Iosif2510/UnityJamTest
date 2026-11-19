@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using LitMotion;
 using PotionShop.Data;
 using PotionShop.Portraits;
 using TMPro;
@@ -31,12 +30,10 @@ namespace PotionShop
         [SerializeField] private CounterCurtain curtain;
         [SerializeField] private Button receiveCustomerButton;
         [SerializeField] private TMP_Text curtainWaitingLabel;
-        [SerializeField, Min(0f)] private float customerEntryDelay = 0.8f;
-        [SerializeField, Min(0f)] private float customerFadeDuration = 0.45f;
-
         private RoundDirector round;
         private Art.UiTypography typography;
-        private CanvasGroup dialogueOpacity;
+        private OrderHudMotion hudMotion;
+        private OrderEntrance entrance;
         private CanvasGroup portraitOpacity;
         private RoundResultView resultView;
         private PortraitView resultPortrait;
@@ -51,11 +48,16 @@ namespace PotionShop
             round = RoundDirector.Instance;
             typography = new Art.UiTypography();
             var orderCanvas = dialogueView.GetComponentInParent<Canvas>(true);
-            if (orderCanvas != null) typography.Apply(orderCanvas.transform);
+            if (orderCanvas != null)
+            {
+                typography.Apply(orderCanvas.transform);
+                entrance = new OrderEntrance(orderCanvas, dialogueView.SpeakerFont, typography);
+            }
+            hudMotion = new OrderHudMotion(timerText, enterWorkshopButton);
+            dialogueView.SpeechBeat += OnSpeechBeat;
             if (curtainWaitingLabel != null &&
                 (orderCanvas == null || !curtainWaitingLabel.transform.IsChildOf(orderCanvas.transform)))
                 typography.Apply(curtainWaitingLabel);
-            dialogueOpacity = GetOrAddCanvasGroup(dialogueView);
             if (portraitView != null)
                 portraitOpacity = GetOrAddCanvasGroup(portraitView);
             resultView = resultPanel.GetComponent<RoundResultView>();
@@ -97,11 +99,16 @@ namespace PotionShop
 
         private void OnEnable() => shownPhase = null;
 
-        private void OnDestroy() => typography?.Dispose();
+        private void OnDestroy()
+        {
+            if (dialogueView != null) dialogueView.SpeechBeat -= OnSpeechBeat;
+            typography?.Dispose();
+        }
 
         private void OnDisable()
         {
             StopPhasePlayback();
+            hudMotion?.Stop();
             if (dialogueView != null) dialogueView.StopPresentation();
         }
 
@@ -126,26 +133,11 @@ namespace PotionShop
 
             receiveCustomerButton.gameObject.SetActive(false);
             dialogueView.gameObject.SetActive(false);
-            BeginCustomerEntry(StartPhasePlayback()).Forget();
-        }
-
-        private async UniTask BeginCustomerEntry(CancellationToken token)
-        {
             try
             {
-                if (!round.UsesDialogueApi)
-                {
-                    await curtain.FadeTo(false, token);
-                    if (customerEntryDelay > 0f)
-                        await UniTask.Delay(TimeSpan.FromSeconds(customerEntryDelay), ignoreTimeScale: true,
-                            cancellationToken: token);
-                }
-
-                token.ThrowIfCancellationRequested();
-                if (round.BeginOrder())
-                    RefreshPhase();
+                round.BeginOrder();
+                RefreshPhase();
             }
-            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
             catch (Exception exception)
             {
                 RefreshPhase();
@@ -158,7 +150,7 @@ namespace PotionShop
 
         private void DismissResult()
         {
-            if (resultPanel.activeInHierarchy && round.DismissResult())
+            if (resultPanel.activeInHierarchy && nextOrderButton.interactable && round.DismissResult())
                 RefreshPhase();
         }
 
@@ -171,7 +163,10 @@ namespace PotionShop
                 RefreshPhase();
             }
             else if (enterWorkshopButton.interactable && round.TryEnterStorage())
+            {
                 enterWorkshopButton.interactable = false;
+                hudMotion.HighlightWorkshop(false);
+            }
         }
 
         private void Serve()
@@ -188,25 +183,34 @@ namespace PotionShop
             bool preparing = phase == RoundPhase.Preparing;
             bool consult = phase == RoundPhase.Consult;
             bool customerEntering = consult && shownPhase is RoundPhase.Waiting or RoundPhase.Preparing;
-            bool fadeIn = customerEntering && customerFadeDuration > 0f;
             bool prescribe = phase == RoundPhase.Prescribe;
             bool ending = phase == RoundPhase.Ending;
             bool result = phase == RoundPhase.Result;
             shownPhase = phase;
             endingReady = false;
+            hudMotion.HighlightWorkshop(false);
+            if (phase == RoundPhase.Storage) return;
 
-            if (!result && !customerEntering)
+            if (result)
+            {
+                hudMotion.SetTimer(false);
+                enterWorkshopButton.interactable = false;
+                CloseForResult(round.Result, StartPhasePlayback()).Forget();
+                return;
+            }
+
+            if (!customerEntering)
                 curtain.SetClosed(waiting || preparing);
             receiveCustomerButton.gameObject.SetActive(waiting);
             if (curtainWaitingLabel != null)
                 curtainWaitingLabel.gameObject.SetActive(preparing);
-            SetPresentationOpacity(fadeIn ? 0f : 1f);
-            dialogueView.gameObject.SetActive(consult || ending);
-            enterWorkshopButton.gameObject.SetActive(consult);
+            if (portraitOpacity != null) portraitOpacity.alpha = customerEntering ? 0f : 1f;
+            dialogueView.gameObject.SetActive((consult && !customerEntering) || ending);
+            enterWorkshopButton.gameObject.SetActive(consult && !customerEntering);
             enterWorkshopButton.interactable = false;
             prescriptionPanel.SetActive(prescribe);
             resultPanel.SetActive(false);
-            timerText.gameObject.SetActive(consult || prescribe);
+            hudMotion.SetTimer(consult || prescribe);
             timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
 
             if (portraitView != null)
@@ -223,7 +227,7 @@ namespace PotionShop
             if (consult)
             {
                 SetAdvanceLabel("창고로");
-                PlayConsult(round.CurrentOrder, customerEntering, fadeIn, StartPhasePlayback()).Forget();
+                PlayConsult(round.CurrentOrder, customerEntering, StartPhasePlayback()).Forget();
             }
             else if (prescribe)
             {
@@ -233,48 +237,59 @@ namespace PotionShop
             }
             else if (ending)
                 PlayEnding(round.CurrentOrder, round.Result, StartPhasePlayback()).Forget();
-            else if (result)
-                CloseForResult(round.Result, StartPhasePlayback()).Forget();
         }
 
         private static CanvasGroup GetOrAddCanvasGroup(Component view) =>
             view.TryGetComponent<CanvasGroup>(out var group) ? group : view.gameObject.AddComponent<CanvasGroup>();
 
-        private void SetPresentationOpacity(float opacity)
-        {
-            dialogueOpacity.alpha = opacity;
-            if (portraitOpacity != null)
-                portraitOpacity.alpha = opacity;
-        }
-
         private async UniTask CloseForResult(RoundResult result, CancellationToken token)
         {
-            await curtain.FadeTo(true, token);
-            token.ThrowIfCancellationRequested();
-            resultPanel.SetActive(true);
-            resultView.Show(result);
-            ShowResultPortrait(result);
+            nextOrderButton.interactable = false;
+            await curtain.FadeTo(true, token, () =>
+            {
+                dialogueView.gameObject.SetActive(false);
+                enterWorkshopButton.gameObject.SetActive(false);
+                if (portraitView != null) portraitView.gameObject.SetActive(false);
+                resultPanel.SetActive(true);
+                resultView.Prepare();
+                ShowResultPortrait(result);
+            });
+            var portraitCanvas = portraitView != null ? portraitView.GetComponentInParent<Canvas>(true) : null;
+            await resultView.Play(result, portraitCanvas != null ? portraitCanvas.worldCamera : Camera.main, token);
+            nextOrderButton.interactable = true;
         }
 
-        private async UniTask PlayConsult(GeneratedOrder order, bool customerEntering, bool fadeIn, CancellationToken token)
+        private async UniTask PlayConsult(GeneratedOrder order, bool customerEntering, CancellationToken token)
         {
-            var dialogue = dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
             if (customerEntering)
-                await UniTask.WhenAll(dialogue, curtain.FadeTo(false, token), FadeCustomerIn(fadeIn, token));
+            {
+                await curtain.FadeTo(false, token);
+                await UniTask.WhenAll(entrance?.Play(token) ?? UniTask.CompletedTask, SlideAndSpeak());
+            }
             else
-                await dialogue;
+                await SlideAndSpeak();
 
             if (round.Phase == RoundPhase.Consult && round.CurrentOrder == order)
+            {
                 enterWorkshopButton.interactable = true;
+                hudMotion.HighlightWorkshop(true);
+            }
+
+            async UniTask SlideAndSpeak()
+            {
+                if (customerEntering && portraitView != null && portraitView.isActiveAndEnabled)
+                    await portraitView.SlideIn(portraitOpacity, token);
+                token.ThrowIfCancellationRequested();
+                dialogueView.gameObject.SetActive(true);
+                enterWorkshopButton.gameObject.SetActive(true);
+                await dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
+            }
         }
 
-        private UniTask FadeCustomerIn(bool fadeIn, CancellationToken token) => fadeIn
-            ? LMotion.Create(0f, 1f, customerFadeDuration)
-                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                .WithEase(Ease.OutSine)
-                .Bind(SetPresentationOpacity)
-                .ToUniTask(token)
-            : UniTask.CompletedTask;
+        private void OnSpeechBeat(float strength)
+        {
+            if (portraitView != null && portraitView.isActiveAndEnabled) portraitView.Speak(strength);
+        }
 
         private async UniTask PlayEnding(GeneratedOrder order, RoundResult result, CancellationToken token)
         {

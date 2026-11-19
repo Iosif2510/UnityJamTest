@@ -34,7 +34,6 @@ namespace PotionShop
         public RoundResult Result { get; private set; }
         public RoundTuning Tuning => loadedCatalog?.Tuning;
         public Sprite SlimePortrait => catalog.Customers.SlimePortrait;
-        internal bool UsesDialogueApi => useDialogueApi;
 #if UNITY_EDITOR
         public static Func<LoadedCatalog, string, GeneratedOrder> EditorOrderFactory;
 #endif
