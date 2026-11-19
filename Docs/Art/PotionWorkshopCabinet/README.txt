@@ -1,5 +1,10 @@
 포션공방 새 생성본 파츠 패키지 v3
 
+병 8개의 컬러 이미지만 받을 때: Bottles_Color_PNG_8.zip
+이 ZIP에는 실제 투명 컬러 PNG 8개만 들어 있습니다. Bottles_Color_Preview.jpg로 확인하세요.
+color/ 폴더가 실제 컬러 파츠입니다. mask/ 폴더의 흰 실루엣은 마스크 데이터이며 컬러 이미지가 아닙니다.
+remote-color-verification.json은 GitHub LFS에서 다시 받은 파일을 원본과 비교한 결과입니다.
+
 color/ : 빈 서랍장 1개 + 병 8개, 총 9개 투명 PNG
 normal/opengl/ : 각 컬러 PNG와 동일 크기 및 투명 영역, +Y
 normal/directx/ : 위 맵의 녹색 채널을 반전한 -Y 버전

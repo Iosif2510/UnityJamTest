@@ -1,0 +1,92 @@
+[
+  {
+    "file": "00-cabinet.png",
+    "bytes": 1195466,
+    "dimensions": [
+      1729,
+      910
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 965149
+  },
+  {
+    "file": "01-bottle-circle.png",
+    "bytes": 52569,
+    "dimensions": [
+      253,
+      244
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 33530
+  },
+  {
+    "file": "02-bottle-square.png",
+    "bytes": 54888,
+    "dimensions": [
+      247,
+      246
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 39453
+  },
+  {
+    "file": "03-bottle-heart.png",
+    "bytes": 53947,
+    "dimensions": [
+      263,
+      245
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 32099
+  },
+  {
+    "file": "04-ink-green.png",
+    "bytes": 32486,
+    "dimensions": [
+      180,
+      177
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 16582
+  },
+  {
+    "file": "05-ink-blue.png",
+    "bytes": 31437,
+    "dimensions": [
+      175,
+      176
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 18151
+  },
+  {
+    "file": "06-ink-red.png",
+    "bytes": 31826,
+    "dimensions": [
+      177,
+      175
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 18838
+  },
+  {
+    "file": "07-ink-yellow.png",
+    "bytes": 31586,
+    "dimensions": [
+      180,
+      177
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 19064
+  },
+  {
+    "file": "08-ink-purple.png",
+    "bytes": 33272,
+    "dimensions": [
+      185,
+      176
+    ],
+    "sourceHashMatches": true,
+    "colorPixels": 18892
+  }
+]
