@@ -154,8 +154,11 @@ namespace PotionShop
 
         private void HandleHeldIngredient()
         {
-            hud.ShowHeldIngredient(held.VariantId);
-            if (Mouse.current?.rightButton.wasPressedThisFrame == true)
+            var mouse = Mouse.current;
+            if (IsRotatingHeldIngredient(mouse)) hud.ShowPrompt();
+            else hud.ShowHeldIngredient(held.VariantId);
+
+            if (mouse?.rightButton.wasPressedThisFrame == true)
             {
                 var returning = held;
                 returning.ReturnToShelf(() =>
@@ -197,9 +200,7 @@ namespace PotionShop
         private bool TryRotateHeldIngredient()
         {
             var mouse = Mouse.current;
-            if (!wasLocked || complete || transfer != null || held == null || mouse == null ||
-                Keyboard.current?.rKey.isPressed != true ||
-                (round != null && round.Phase is (RoundPhase.Ending or RoundPhase.Result)))
+            if (!IsRotatingHeldIngredient(mouse))
                 return false;
 
             Vector2 angles = mouse.delta.ReadValue() * heldRotationSensitivity;
@@ -207,6 +208,11 @@ namespace PotionShop
                 held.RotateInHand(playerCamera.transform, angles);
             return true;
         }
+
+        private bool IsRotatingHeldIngredient(Mouse mouse) =>
+            wasLocked && !complete && transfer == null && held != null && mouse != null &&
+            Keyboard.current?.rKey.isPressed == true &&
+            (round == null || round.Phase is not (RoundPhase.Ending or RoundPhase.Result));
 
         private void BeginPour(WorkshopCauldron cauldron)
         {
