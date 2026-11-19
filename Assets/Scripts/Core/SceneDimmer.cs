@@ -9,6 +9,7 @@ namespace PotionShop
 {
     internal sealed class SceneDimmer : MonoBehaviour
     {
+        internal const int SortingOrder = 32760;
         private static SceneDimmer instance;
         private UnityEngine.UI.Image overlay;
         private bool busy;
@@ -22,7 +23,7 @@ namespace PotionShop
                 DontDestroyOnLoad(root);
                 var canvas = root.GetComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.sortingOrder = 32760;
+                canvas.sortingOrder = SortingOrder;
                 instance = root.AddComponent<SceneDimmer>();
                 var image = new GameObject("Dim", typeof(RectTransform), typeof(UnityEngine.UI.Image));
                 instance.overlay = image.GetComponent<UnityEngine.UI.Image>();
@@ -44,17 +45,26 @@ namespace PotionShop
             return true;
         }
 
-        internal async UniTask Cut(Action change, CancellationToken token)
+        internal UniTask Cut(Action change, CancellationToken token) => WhileDimmed(.87f, () =>
+        {
+            change();
+            return UniTask.CompletedTask;
+        }, token);
+
+        internal UniTask DuringEntrance(Func<UniTask> play, CancellationToken token) => WhileDimmed(.96f, play, token);
+
+        private async UniTask WhileDimmed(float opacity, Func<UniTask> play, CancellationToken token)
         {
             while (busy) await UniTask.Yield(PlayerLoopTiming.Update, token);
             token.ThrowIfCancellationRequested();
             busy = true;
             try
             {
-                await Fade(0, .87f, .12f, token);
+                await Fade(0, opacity, .12f, token);
                 token.ThrowIfCancellationRequested();
-                change();
-                await Fade(.87f, 0, .18f, token);
+                await play();
+                token.ThrowIfCancellationRequested();
+                await Fade(opacity, 0, .18f, token);
             }
             finally { Release(); }
         }

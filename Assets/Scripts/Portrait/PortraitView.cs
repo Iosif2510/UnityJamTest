@@ -68,7 +68,7 @@ namespace PotionShop.Portraits
             opacity.alpha = 1f;
             try
             {
-                await LMotion.Create(distance, 0f, .35f).WithEase(Ease.InCubic)
+                await LMotion.Create(distance, 0f, .52f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                     .Bind(x => rect.anchoredPosition = rest + Vector2.right * x).ToUniTask(token);
                 CaptureRotation();
