@@ -1,8 +1,8 @@
 {
   "result": "pass",
   "canvas": [
-    1729,
-    910
+    1672,
+    941
   ],
   "items": [
     {
@@ -49,6 +49,12 @@
     },
     {
       "id": "08-ink-purple",
+      "pixelsOutsideRecess": 0,
+      "noRescale": true,
+      "matchingNormalAlpha": true
+    },
+    {
+      "id": "09-ink-black",
       "pixelsOutsideRecess": 0,
       "noRescale": true,
       "matchingNormalAlpha": true

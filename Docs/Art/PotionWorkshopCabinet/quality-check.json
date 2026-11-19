@@ -1,17 +1,81 @@
 {
   "result": "pass",
-  "canvas": [
-    1729,
-    910
-  ],
-  "colorPngs": 9,
-  "openGLNormalPngs": 9,
-  "directXNormalPngs": 9,
-  "allNormalSizesAndAlphaMatch": true,
-  "allBottlesSourcePixelsPreserved": true,
-  "allBottlesScale": [
-    1,
-    1
-  ],
-  "oraLayerCount": 9
+  "parts": 10,
+  "bottles": 9,
+  "inkBottles": 6,
+  "nativeSize": true,
+  "allExtractedBottleRGBMatchesMaster": true,
+  "normalMaps": "10 OpenGL + 10 DirectX, matching size and alpha",
+  "files": [
+    {
+      "file": "color\\00-cabinet.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "16a8731a97d7852cb1feec84657043313a23c7c5d1af261238321f258cc9307d",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\01-bottle-circle.png",
+      "width": 240,
+      "height": 227,
+      "sha256": "8174e770d22e574e2a0905fe1282546d23c77f7422c792ceab85aa1ed7a4282c",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\02-bottle-square.png",
+      "width": 243,
+      "height": 231,
+      "sha256": "7e7664de2e9a38b4bf9d82e657a6007fb69719c54eaf3097bbcdd946b4cee254",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\03-bottle-heart.png",
+      "width": 253,
+      "height": 231,
+      "sha256": "9ea34b390c00cf78dca83f443ff29a772c45bd4a38e9795b564182fe5e7421a6",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\04-ink-green.png",
+      "width": 166,
+      "height": 168,
+      "sha256": "e5a3804dbdd4dc4c6fc4865e5d76f8f03e0f7b9b40dadf8fe53e12fdb7930ebe",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\05-ink-blue.png",
+      "width": 161,
+      "height": 166,
+      "sha256": "9141c2b81d5e9e0dfd509ec677b770a945595afbbe92794fde591224bc6c1ab9",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\06-ink-red.png",
+      "width": 162,
+      "height": 166,
+      "sha256": "71d69bc3f72fc84975ddeb1441d9b8f6da0356425f94425274992fba30809ab2",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\07-ink-yellow.png",
+      "width": 163,
+      "height": 166,
+      "sha256": "df3f7ef802edaddf982306c3f2273542b9198354ea29d6c7e17f6b8d8a6af867",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\08-ink-purple.png",
+      "width": 166,
+      "height": 166,
+      "sha256": "7519d2869988777e53da64478253c8df49f7c75213399f140c69f4aec1bcc666",
+      "alphaMatchesBothNormals": true
+    },
+    {
+      "file": "color\\09-ink-black.png",
+      "width": 172,
+      "height": 168,
+      "sha256": "98bfe83098f8224783024f3d16e486d48b29a0841b7a875918b1faa180d8464c",
+      "alphaMatchesBothNormals": true
+    }
+  ]
 }
