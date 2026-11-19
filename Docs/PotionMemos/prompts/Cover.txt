@@ -1,37 +1,54 @@
-A flat scan of a real, hurried note that a young woman who runs a small apothecary shop scribbled for a friend who is minding the shop while she steps out. It lies on top of her pile of working notes. It is NOT a designed document, NOT a form, NOT a poster, NOT an infographic, NOT a book cover. Nobody laid it out.
+A flat scan of a real handwritten handover note that a young woman who runs a small apothecary shop wrote for a friend who will mind the shop while she steps out. It lies on top of her pile of working notes. It is handwritten and personal, NOT a designed document, NOT a printed form, NOT a poster, NOT an infographic.
 
-Portrait sheet. Black pen only on plain white paper. No color, no gray wash, no paper tint, no desk or background around the sheet, no border, no frames, no boxes, no stamp, no printed lettering, no decorative ornaments.
+Portrait sheet. Black pen only on plain white paper. No color, no gray wash, no paper tint, no desk or background around the sheet, no outer border, no printed lettering, no decorative ornaments.
 
 HOW IT LOOKS:
-- Much emptier than her other notes: it was written in one minute. Plenty of bare paper, but the writing is still uneven, not centered, not aligned, no numbered list, no columns.
-- The first line is written BIG and bold, pressed hard, gone over twice, slightly tilted. Everything else is clearly smaller.
-- Lines drift up or down. Writing size changes with haste.
-- All sketches are SMALL and VERY ROUGH: careless doodles done in a few seconds each, wobbly single outlines, lopsided, no shading, no polish.
-- Some notes are tied to each other or to a doodle with quick uneven hand-drawn arrows.
-- One word crossed out with a single line and rewritten next to it. One note added later with a thinner pen stroke. Underlines pressed twice. Exclamation marks.
-- Wear on the paper: one fold crease across the middle, a couple of ink drops, a small ring stain from a cup.
+- Unlike her other chaotic notes, she wrote this one CAREFULLY so that a stranger can follow it at a glance: the writing is larger and clearer than usual, well spaced, and the page reads top to bottom in clear blocks. It must be easy to read in ten seconds.
+- Still obviously handwritten: lines drift slightly, sizes vary a little, underlines are wobbly and pressed twice, hand-drawn circles around the step numbers are lopsided.
+- The title is BIG and bold, gone over twice.
+- The two role blocks sit side by side under the title, each inside a rough hand-drawn wobbly loop (not a ruled box), with a tiny rough doodle on top of each.
+- The four steps go down the page, each starting with a hand-drawn circled digit (1, 2, 3, 4). Under each step, its tip is written smaller, indented, starting with a little hand-drawn arrow.
+- The last line at the bottom is the second most prominent thing on the page: large, with a hand-drawn wobbly loop around it and a star doodle next to it.
+- All sketches are SMALL and VERY ROUGH doodles done in a few seconds, wobbly single outlines, no shading.
+- Wear on the paper: one fold crease across the middle, one or two ink drops. Keep the paper otherwise clean.
 
-HANDWRITING: all writing is in KOREAN, in the small, round, cute handwriting of a young woman, like a personal diary or a student's notebook: rounded letters, casual, bouncy baseline, quick. Every Korean phrase below must appear, copied EXACTLY character for character, digits included, clearly legible. Do not add any other words in any language.
+HANDWRITING: all writing is in KOREAN, in the round, cute handwriting of a young woman, like a tidy page of a personal diary. Every Korean phrase below must appear, copied EXACTLY character for character, digits and punctuation included, clearly legible. Do not add any other words in any language.
 
-CONTENT.
+CONTENT, top to bottom.
 
-Upper part, BIG, underlined twice with a wobbly line: "가게 잠깐 봐 줘!"
-Right under it, smaller: "금방 올게. 진짜 금방"
+Title, BIG, underlined twice: "가게 잠깐 봐 줘!"
+Small, next to the title: "금방 올게"
 
-Upper middle, underlined, with two exclamation marks drawn heavily: "이 메모는 너만 보기"
-Next to it, with an arrow from a tiny rough doodle of an eye that is crossed out with an X: "화면 보면 안 됨. 말로만!"
+LEFT role block. Tiny doodle on top: a stick figure holding a sheet of paper.
+"너 = 위층"
+"이 메모 뭉치 담당"
+"화면 보면 안 됨!"
 
-Middle of the sheet, four short notes going down the page in a loose, crooked chain, joined by wobbly arrows (not numbered, not aligned):
-"손님이 어디가 아픈지 듣기"
-"증상 맞는 메모 찾기"
-"재료 세 개, 생김새를 말로 알려 주기"
-"다 넣었으면 '건넬 때' 메모 보기"
+RIGHT role block. Tiny doodle on top: a stick figure standing behind a shop counter.
+"친구 = 아래층"
+"손님 받고 재료 집어 옴"
+"메모 보면 안 됨!"
 
-To the side of the chain, squeezed in at an angle: "창고에 이름표 없음. 이름 말해 봤자 소용없음"
-Near a tiny rough doodle of an hourglass: "손님은 3분밖에 안 기다림"
-Near a tiny rough doodle of a bubbling pot: "솥은 건드리지 말고 넣기만"
+Between or just under the two blocks, underlined twice, with a little double-headed arrow linking the two blocks: "둘이 말로만!"
 
-Lower part, added later with a thinner pen: "모르겠으면 서로 계속 물어보기"
+Step 1: "친구가 손님 말을 전해 줌"
+tip: "잡담은 버려! 굵은 글씨 세 군데만 읽어 달라고 해"
 
-Bottom corner: a tiny rough doodle of a sleeping cat, with an arrow and the note: "밥 주지 마. 이미 먹었음"
-Opposite bottom corner: a tiny doodle of a door key and a small heart.
+Step 2: "그 증상이 적힌 메모 한 장 찾기"
+tip: "약마다 한 장. 맨 윗부분만 훑으면 됨"
+
+Step 3: "거기 그려진 재료 세 개를 말로 알려 주기"
+tip: "선반에 비슷한 게 세 개씩 있음. 아무거나 집으면 꽝!"
+tip: "색, 무늬, 모양 중 두 가지는 말해 줘야 하나만 남음"
+
+IMPORTANT, to the RIGHT of step 3, clearly visible and a bit larger than the other doodles (about one fifth of the page width): a rough doodle of ONE wooden shelf rack seen from the front, a simple open wooden frame with one board, and standing on that board THREE mushrooms side by side that are the same kind but clearly differ from each other: the first has dots on its cap, the second has a pointed cap, the third has a dark stem. A hand-drawn arrow points from the tip lines of step 3 to this shelf. Written right under the shelf doodle, two short lines:
+"선반은 여섯 개"
+"한 선반에 같은 종류 세 개"
+
+Step 4, underlined twice with a wobbly pressed line, ending with an exclamation mark: "다 넣었으면 맨 뒷장 '건넬 때' 메모 보기!"
+
+To the right side, next to a tiny rough doodle of an hourglass: "손님은 3분밖에 안 기다림"
+
+Bottom, large, inside a wobbly hand-drawn loop, with a star doodle: "여기까지 다 읽었으면 아래층 친구한테 손님 받으라 해!"
+
+Bottom corner, very small: a tiny rough doodle of a sleeping cat with the note "밥 주지 마. 이미 먹었음" 

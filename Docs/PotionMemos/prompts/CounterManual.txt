@@ -1,9 +1,15 @@
 A flat scan of a real, messy working note that a young woman who runs a small apothecary shop scribbled for herself, because she keeps forgetting which bottle and which label ink to use when she hands a medicine to a customer. It is NOT a designed document, NOT a form, NOT a poster, NOT an infographic, NOT a table. Nobody laid it out. Real people's memo sheets are chaotic, and this one is too.
 
-Portrait sheet. Black pen only on plain white paper. No color, no gray wash, no paper tint, no desk or background around the sheet, no border, no frames, no boxes, no stamp, no title lettering, no decorative ornaments.
+Portrait sheet. Black pen only on plain white paper. No color, no gray wash, no paper tint, no desk or background around the sheet, no border, no frames, no boxes, no stamp, no decorative ornaments.
 
-HOW MESSY IT IS (all of this must be visible):
-- NOT left-aligned, no columns, no table, no numbered list, no flowchart. Notes sit at different heights and angles, some squeezed into gaps, one block tilted. The page is used all over, unevenly.
+THE ONLY ORDER ON THE PAGE: three things are written clearly bigger and bolder than everything else, pressed hard and gone over twice, so the eye lands on them first:
+- the title at the very top: "건넬 때"
+- heading A, at the start of the top quarter, with a hand-drawn lopsided circled digit 1 in front, underlined twice: "병은 성별 보고"
+- heading B, right below the bottle area and above everything about inks, with a hand-drawn lopsided circled digit 2 in front, underlined twice: "라벨 잉크는 생김새 보고"
+Everything else on the page is small, casual and chaotic as described below.
+
+HOW MESSY THE REST IS (all of this must be visible):
+- NOT left-aligned, no columns, no table, no numbered list other than the two circled digits above, no flowchart. Notes sit at different heights and angles, some squeezed into gaps, one block tilted. The page is used all over, unevenly.
 - Lines drift up or down. Writing size changes with haste.
 - All sketches are SMALL and VERY ROUGH: careless doodles done in a few seconds each, wobbly single outlines, a bit of scribble, lopsided, no shading, no polish.
 - Side notes are scattered around and tied to what they belong to with quick uneven hand-drawn arrows.
@@ -12,12 +18,11 @@ HOW MESSY IT IS (all of this must be visible):
 
 HANDWRITING: all writing is in KOREAN, in the small, round, cute handwriting of a young woman, like a personal diary or a student's notebook: rounded letters, casual, bouncy baseline, quick. Every Korean phrase below must appear, copied EXACTLY character for character, digits included, clearly legible. Do not add any other words in any language.
 
-CONTENT. It is a lot of writing, so the handwriting is small and the sheet is nearly full.
+CONTENT. It is a lot of writing, so the small handwriting is small and the sheet is nearly full.
 
-Near the top, small, underlined with a wavy line: "건넬 때 (자꾸 까먹음)"
+Very top: the title "건넬 때", and next to it, small: "(자꾸 까먹음)"
 
-TOP QUARTER of the sheet: the bottles. Three tiny rough doodles of empty corked bottles side by side at uneven heights: one with a square body, one with a heart-shaped body, one with a round ball body. Around them, scattered with arrows:
-"병은 손님 보고 고르기"
+TOP QUARTER of the sheet: heading A "병은 성별 보고" (with the circled 1), then the bottles. Three tiny rough doodles of empty corked bottles side by side at uneven heights: one with a square body, one with a heart-shaped body, one with a round ball body. Around them, scattered with arrows:
 "남자 손님 → 네모 병" (arrow to the square bottle)
 "여자 손님 → 하트 병" (arrow to the heart bottle)
 "어느 쪽도 아닌 분 → 동그란 병" (arrow to the round bottle)
@@ -25,7 +30,9 @@ TOP QUARTER of the sheet: the bottles. Three tiny rough doodles of empty corked 
 "하트 병은 씻기 귀찮음"
 "동그란 병은 굴러감. 꼭 잡기"
 
-Somewhere in the middle of the sheet: a tiny rough doodle of a face seen from the front, with four short arrows pointing at the eye, the ear, the mouth and the hair, labelled:
+Below the bottles: heading B "라벨 잉크는 생김새 보고" (with the circled 2).
+
+Right next to or just under heading B: a tiny rough doodle of a face seen from the front, with four short arrows pointing at the eye, the ear, the mouth and the hair, labelled:
 "눈 색?"
 "귀 모양?"
 "송곳니?"
