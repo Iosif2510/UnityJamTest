@@ -35,6 +35,7 @@ namespace PotionShop
         [SerializeField, Min(0f)] private float customerFadeDuration = 0.45f;
 
         private RoundDirector round;
+        private Art.UiTypography typography;
         private CanvasGroup dialogueOpacity;
         private CanvasGroup portraitOpacity;
         private RoundResultView resultView;
@@ -48,6 +49,12 @@ namespace PotionShop
         private void Start()
         {
             round = RoundDirector.Instance;
+            typography = new Art.UiTypography();
+            var orderCanvas = dialogueView.GetComponentInParent<Canvas>(true);
+            if (orderCanvas != null) typography.Apply(orderCanvas.transform);
+            if (curtainWaitingLabel != null &&
+                (orderCanvas == null || !curtainWaitingLabel.transform.IsChildOf(orderCanvas.transform)))
+                typography.Apply(curtainWaitingLabel);
             dialogueOpacity = GetOrAddCanvasGroup(dialogueView);
             if (portraitView != null)
                 portraitOpacity = GetOrAddCanvasGroup(portraitView);
@@ -89,6 +96,8 @@ namespace PotionShop
         }
 
         private void OnEnable() => shownPhase = null;
+
+        private void OnDestroy() => typography?.Dispose();
 
         private void OnDisable()
         {

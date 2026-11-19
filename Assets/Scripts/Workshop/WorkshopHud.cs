@@ -21,10 +21,13 @@ namespace PotionShop
         [SerializeField] private IngredientCatalog ingredients;
 
         private readonly Dictionary<string, string> kindNamesByVariant = new(StringComparer.Ordinal);
+        private Art.UiTypography typography;
         private int displayedSeconds = -1;
 
         private void Awake()
         {
+            typography = new Art.UiTypography();
+            typography.Apply(transform);
             foreach (var kind in ingredients.Kinds)
             {
                 if (kind.Status != ContentStatus.Active)
@@ -34,6 +37,8 @@ namespace PotionShop
                     kindNamesByVariant.Add(variant.Id, kind.DisplayName);
             }
         }
+
+        private void OnDestroy() => typography?.Dispose();
 
         internal PocketModelDisplay CreatePocketDisplay(Camera playerCamera)
         {
