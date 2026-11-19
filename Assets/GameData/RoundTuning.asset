@@ -18,8 +18,7 @@ MonoBehaviour:
   pointsPerIngredient: 20
   bottlePoints: 20
   inkPoints: 20
-  bonusIntervalSeconds: 10
-  pointsPerBonusInterval: 5
+  timeBonusMultiplier: 0.1
   passingStampThreshold: 60
   perfectStampThreshold: 100
   targetDiagnose: 20

@@ -8,6 +8,10 @@ namespace PotionShop
 
     public sealed class RoundResult
     {
+        internal const string FineBrewStamp = "Fine Brew";
+        internal const string PassableStamp = "Passable";
+        internal const string SlimeStamp = "Slime";
+
         internal RoundResult(bool timedOut, int correctIngredients, bool bottleCorrect, bool inkCorrect,
             int ingredientPoints, int bottlePoints, int inkPoints, int timeBonus, string stamp)
         {
@@ -56,7 +60,7 @@ namespace PotionShop
             _ => null
         };
 
-        internal static RoundResult TimeExpired() => new(true, 0, false, false, 0, 0, 0, 0, "Slime");
+        internal static RoundResult TimeExpired() => new(true, 0, false, false, 0, 0, 0, 0, SlimeStamp);
     }
 
     public static class RoundJudge
@@ -75,11 +79,10 @@ namespace PotionShop
             int ingredientPoints = correctIngredients * tuning.PointsPerIngredient;
             int bottlePoints = bottleCorrect ? tuning.BottlePoints : 0;
             int inkPoints = inkCorrect ? tuning.InkPoints : 0;
-            int timeBonus = (int)Math.Floor(Math.Max(0d, remainingSeconds) / tuning.BonusIntervalSeconds) *
-                tuning.PointsPerBonusInterval;
+            int timeBonus = (int)Math.Floor(Math.Max(0d, remainingSeconds) * tuning.TimeBonusMultiplier);
             int total = ingredientPoints + bottlePoints + inkPoints + timeBonus;
-            string stamp = total >= tuning.PerfectStampThreshold ? "Fine Brew" :
-                total >= tuning.PassingStampThreshold ? "Passable" : "Slime";
+            string stamp = total >= tuning.PerfectStampThreshold ? RoundResult.FineBrewStamp :
+                total >= tuning.PassingStampThreshold ? RoundResult.PassableStamp : RoundResult.SlimeStamp;
 
             return new RoundResult(false, correctIngredients, bottleCorrect, inkCorrect,
                 ingredientPoints, bottlePoints, inkPoints, timeBonus, stamp);

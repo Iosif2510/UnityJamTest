@@ -68,7 +68,8 @@ namespace PotionShop.Data
                 throw new InvalidOperationException($"{catalog.name}: assign all five data assets.");
             }
 
-            if (catalog.Tuning.TimeLimitSeconds <= 0 || catalog.Tuning.BonusIntervalSeconds <= 0 ||
+            if (catalog.Tuning.TimeLimitSeconds <= 0 ||
+                !(catalog.Tuning.TimeBonusMultiplier >= 0d) || double.IsInfinity(catalog.Tuning.TimeBonusMultiplier) ||
                 catalog.Tuning.TextSpeed <= 0 || catalog.Tuning.LineLength <= 0 ||
                 !(catalog.Tuning.ReactionGap >= 0f) || float.IsInfinity(catalog.Tuning.ReactionGap))
                 throw new InvalidOperationException($"{catalog.name}: check the round and dialogue timing values.");

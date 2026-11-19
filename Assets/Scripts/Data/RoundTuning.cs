@@ -11,8 +11,7 @@ namespace PotionShop.Data
         [SerializeField, Min(0)] private int pointsPerIngredient = 20;
         [SerializeField, Min(0)] private int bottlePoints = 20;
         [SerializeField, Min(0)] private int inkPoints = 20;
-        [SerializeField, Min(1)] private int bonusIntervalSeconds = 10;
-        [SerializeField, Min(0)] private int pointsPerBonusInterval = 5;
+        [SerializeField, Min(0f)] private double timeBonusMultiplier = 0.1d;
         [SerializeField, Min(0)] private int passingStampThreshold = 60;
         [SerializeField, Min(0)] private int perfectStampThreshold = 100;
         [SerializeField, Min(0)] private int targetDiagnose = 20;
@@ -29,8 +28,7 @@ namespace PotionShop.Data
         public int PointsPerIngredient => pointsPerIngredient;
         public int BottlePoints => bottlePoints;
         public int InkPoints => inkPoints;
-        public int BonusIntervalSeconds => bonusIntervalSeconds;
-        public int PointsPerBonusInterval => pointsPerBonusInterval;
+        public double TimeBonusMultiplier => timeBonusMultiplier;
         public int PassingStampThreshold => passingStampThreshold;
         public int PerfectStampThreshold => perfectStampThreshold;
         public int TargetDiagnose => targetDiagnose;

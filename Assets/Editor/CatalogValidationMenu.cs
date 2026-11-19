@@ -69,9 +69,10 @@ namespace PotionShop.Editor
 
             var tuning = catalog.Tuning;
             if (tuning.TimeLimitSeconds <= 0 || !(tuning.PickupDistance > 0f) ||
-                !(tuning.BrewingSeconds >= 0f) || tuning.BonusIntervalSeconds <= 0 ||
+                !(tuning.BrewingSeconds >= 0f) || !(tuning.TimeBonusMultiplier >= 0d) ||
+                double.IsInfinity(tuning.TimeBonusMultiplier) ||
                 tuning.PointsPerIngredient < 0 || tuning.BottlePoints < 0 || tuning.InkPoints < 0 ||
-                tuning.PointsPerBonusInterval < 0 || tuning.PassingStampThreshold < 0 ||
+                tuning.PassingStampThreshold < 0 ||
                 tuning.PerfectStampThreshold < tuning.PassingStampThreshold)
             {
                 Error("RoundTuning: invalid time, distance, points or stamp threshold.");
