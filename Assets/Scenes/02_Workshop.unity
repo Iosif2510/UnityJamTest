@@ -15,9 +15,9 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.32354707, g: 0.19824672, b: 0.3820755, a: 1}
+  m_FogColor: {r: 0.45359048, g: 0.26125845, b: 0.5377358, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.075
+  m_FogDensity: 0.047
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.08018869, g: 0.0759334, b: 0.07451496, a: 1}
@@ -7557,6 +7557,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1588675762}
+  - {fileID: 1269385459}
   - {fileID: 2086894519}
   - {fileID: 55171612}
   - {fileID: 694067605}
@@ -13399,6 +13400,72 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8433090883213165646, guid: 143b9c90bb33dbf40842d21a3a460367, type: 3}
   m_PrefabInstance: {fileID: 1266312373}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1269385458
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 792345592}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_Name
+      value: GableRoof_18m
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+--- !u!4 &1269385459 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 847d98b9b3fc36341adb61daaf73de3f, type: 3}
+  m_PrefabInstance: {fileID: 1269385458}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1270476725
 GameObject:
   m_ObjectHideFlags: 0
@@ -16528,6 +16595,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7c0a32cc36f8dfb45be457721bf978bc, type: 3}
       propertyPath: m_Name
       value: GableRoof
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c0a32cc36f8dfb45be457721bf978bc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1413363745911671514, guid: 7c0a32cc36f8dfb45be457721bf978bc, type: 3}
       propertyPath: m_CastShadows

@@ -771,6 +771,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PotionBottle_01
       objectReference: {fileID: 0}
+    - target: {fileID: 726532710092113205, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1785567987105323003, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4528826587823057885, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.89
@@ -823,6 +831,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5666281101352044036, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8710025716097939391, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -844,6 +860,14 @@ PrefabInstance:
     - target: {fileID: 726532710092113205, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
       propertyPath: m_Name
       value: PotionBottle_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 726532710092113205, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1785567987105323003, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4528826587823057885, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
       propertyPath: m_LocalScale.x
@@ -896,6 +920,14 @@ PrefabInstance:
     - target: {fileID: 4528826587823057885, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5666281101352044036, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8710025716097939391, guid: d858df4f53084234f8c5adf9073bef49, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
