@@ -15,7 +15,6 @@ namespace PotionShop
         [SerializeField] private UnityEngine.UI.Image timerFill;
         [SerializeField] private TextMeshProUGUI promptTitle;
         [SerializeField] private TextMeshProUGUI promptAction;
-        [SerializeField] private GameObject keycap;
         [SerializeField] private TextMeshProUGUI keyText;
         [SerializeField] private GameObject crosshair;
         [SerializeField] private UnityEngine.UI.RawImage[] pocketPreviews;
@@ -23,11 +22,13 @@ namespace PotionShop
 
         private readonly Dictionary<string, string> kindNamesByVariant = new(StringComparer.Ordinal);
         private Art.UiTypography typography;
+        private WorkshopPromptRows promptRows;
         private MotionHandle timerSway;
         private int displayedSeconds = -1;
 
         private void Awake()
         {
+            promptRows = new WorkshopPromptRows(promptAction, keyText);
             typography = new Art.UiTypography();
             typography.Apply(transform);
             foreach (var kind in ingredients.Kinds)
@@ -88,12 +89,20 @@ namespace PotionShop
 
         internal void ShowPrompt(string title = "", string action = "", string key = "")
         {
+            SetPromptTitle(title);
+            promptRows.Show(action, key);
+        }
+
+        internal void ShowHeldIngredient(string variantId)
+        {
+            SetPromptTitle(kindNamesByVariant.GetValueOrDefault(variantId, "재료"));
+            promptRows.ShowHeld();
+        }
+
+        private void SetPromptTitle(string title)
+        {
             promptTitle.text = title ?? "";
-            promptAction.text = action ?? "";
-            keyText.text = key ?? "";
             promptTitle.gameObject.SetActive(!string.IsNullOrEmpty(title));
-            promptAction.gameObject.SetActive(!string.IsNullOrEmpty(action));
-            keycap.SetActive(!string.IsNullOrEmpty(key));
         }
     }
 }
