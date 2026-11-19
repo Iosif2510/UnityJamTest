@@ -34,22 +34,23 @@ namespace PotionShop
                     continue;
                 float age = (float)(elapsed - System.Math.Min(cue.Start, skippedAt));
                 if (age < 0) continue;
-                float delayed = (cue.PhaseIndex * 37 % 17) / 17f;
-                float cycle = Mathf.Repeat(age / 2.8f + delayed, 1);
-                if (cycle <= .7f) continue;
-                float fall = Mathf.InverseLerp(.76f, 1, cycle);
-                float alpha = cycle < .76f ? Mathf.InverseLerp(.7f, .76f, cycle) : 1 - fall;
+                float delay = (cue.PhaseIndex * 37 % 17) * .016f;
+                if (age < delay) continue;
+                float cycle = Mathf.Repeat(age - delay, 1.18f);
+                if (cycle > .62f) continue;
+                float fall = Mathf.InverseLerp(.11f, .62f, cycle);
+                float alpha = cycle < .11f ? Mathf.InverseLerp(0, .11f, cycle) : 1 - fall;
                 float size = ch.pointSize;
                 var center = new Vector2((ch.bottomLeft.x + ch.bottomRight.x) * .5f,
-                    ch.baseLine - fall * fall * size * .75f);
-                var tint = (Color32)new Color(.40f, .76f, 1, alpha * .85f);
+                    ch.baseLine - fall * fall * size * .86f);
+                var tint = (Color32)new Color(.12f, .49f, .81f, alpha);
                 int start = vertices.currentVertCount;
                 vertices.AddVert(center, tint, Vector2.zero);
                 const int sides = 8;
                 for (int k = 0; k < sides; k++)
                 {
                     float angle = k * Mathf.PI * 2 / sides;
-                    var offset = new Vector2(Mathf.Sin(angle) * .075f, Mathf.Cos(angle) * .11f) * size;
+                    var offset = new Vector2(Mathf.Sin(angle) * .105f, Mathf.Cos(angle) * .145f) * size;
                     vertices.AddVert(center + offset, tint, Vector2.zero);
                     vertices.AddTriangle(start, start + k + 1, start + (k + 1) % sides + 1);
                 }

@@ -273,17 +273,19 @@ namespace PotionShop
             int speed = round.Tuning.TextSpeed;
             if (result.TimedOut)
             {
-                await dialogueView.PlayReaction(order.GetReactionLine("timeout"), speed, token);
+                await dialogueView.PlayReaction(order.GetReactionLine("timeout"), speed, token, "timeout");
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
                 round.CompleteEnding(result);
                 return;
             }
             else
             {
-                await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token);
+                await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token,
+                    result.ReceiveDialogueKey);
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
                 await ApplyEffectAsync(result.Effect, token);
-                await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token);
+                await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token,
+                    result.DrinkDialogueKey);
             }
             if (round.Phase != RoundPhase.Ending || round.Result != result) return;
             endingReady = true;

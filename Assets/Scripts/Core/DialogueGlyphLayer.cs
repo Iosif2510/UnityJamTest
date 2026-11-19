@@ -80,6 +80,11 @@ namespace PotionShop
                 float opacity = age < 0 ? 0 : elapsed >= skippedAt || fade <= 0 ? 1 :
                     EaseUtility.Evaluate(Mathf.Clamp01(age / fade), Ease.OutQuad);
                 var pose = Pose.Evaluate(cue, Mathf.Max(0, age), copy);
+                if (copy == 0 && cue.Accent != DialogueAccent.None)
+                {
+                    double accentStart = elapsed < skippedAt ? cue.Start : cue.LastAccent ? skippedAt : double.PositiveInfinity;
+                    pose = pose.Accentuate(cue.Accent, (float)(elapsed - accentStart));
+                }
                 var midpoint = (baseline.vertices[vertex] + baseline.vertices[vertex + 2]) * .5f;
                 var rotation = Quaternion.Euler(0, 0, pose.Angle);
                 for (int j = vertex; j < vertex + 4; j++)
@@ -88,7 +93,7 @@ namespace PotionShop
                     point.x *= pose.Scale.x;
                     point.y *= pose.Scale.y;
                     mesh.vertices[j] = midpoint + rotation * point + (Vector3)(pose.Offset * (ch.pointSize / 22f));
-                    Color color = pose.Tint ?? (Color)baseline.colors32[j];
+                    Color color = pose.GetColor(baseline.colors32[j]);
                     color.a = baseline.colors32[j].a / 255f * opacity * pose.Opacity;
                     mesh.colors32[j] = color;
                 }
@@ -104,15 +109,42 @@ namespace PotionShop
             internal readonly float Angle;
             internal readonly Color? Tint;
             internal readonly float Opacity;
+            private readonly Color accentTint;
+            private readonly float accentMix;
 
             private Pose(float opacity, Color? tint = null, Vector2 offset = default, float angle = 0,
-                Vector2? scale = null)
+                Vector2? scale = null, Color accentTint = default, float accentMix = 0f)
             {
                 Opacity = opacity;
                 Tint = tint;
                 Offset = offset;
                 Angle = angle;
                 Scale = scale ?? Vector2.one;
+                this.accentTint = accentTint;
+                this.accentMix = accentMix;
+            }
+
+            internal Color GetColor(Color source)
+            {
+                Color color = Tint ?? source;
+                return accentMix > 0 ? Color.Lerp(color, accentTint, accentMix) : color;
+            }
+
+            internal Pose Accentuate(DialogueAccent accent, float age)
+            {
+                if (age < 0 || age >= DialogueEmphasis.PulseSeconds) return this;
+                float progress = age / DialogueEmphasis.PulseSeconds;
+                float pulse = Key(progress, (0, .65f), (.22f, 1f), (.58f, .54f), (1f, 0f));
+                Color color = accent switch
+                {
+                    DialogueAccent.Relief => new Color(.09f, .43f, .26f),
+                    DialogueAccent.Concern => new Color(.52f, .22f, .10f),
+                    DialogueAccent.Alarm => new Color(.61f, .12f, .19f),
+                    _ => new Color(.43f, .13f, .52f)
+                };
+                float shake = accent == DialogueAccent.Alarm ? Mathf.Sin(progress * Mathf.PI * 6f) * 2.5f : 0;
+                return new Pose(Opacity, Tint, Offset + new Vector2(shake, 3f) * pulse, Angle,
+                    Scale * (1 + pulse * .17f), color, pulse * .82f);
             }
 
             internal static Pose Evaluate(DialogueTimeline.Cue cue, float age, int copy)
@@ -127,16 +159,16 @@ namespace PotionShop
                     if (cue.Effect == SymptomEffect.Drift)
                     {
                         float t = Mathf.Repeat((age + phase * .12f) / 3.2f, 1);
-                        float lift = Mathf.Sin(t * Mathf.PI) * 6;
+                        float lift = Mathf.Sin(t * Mathf.PI) * 9;
                         return new Pose(1, new Color(.13f, .32f, .45f),
-                            new Vector2(Mathf.Sin(t * Mathf.PI * 2) * 2.5f, lift), Mathf.Sin(t * Mathf.PI * 2) * 3);
+                            new Vector2(Mathf.Sin(t * Mathf.PI * 2) * 4, lift), Mathf.Sin(t * Mathf.PI * 2) * 4.5f);
                     }
                     if (cue.Effect == SymptomEffect.Frost)
                     {
-                        float cold = Mathf.Clamp01(age / 1.4f);
+                        float cold = Mathf.Clamp01(age / .62f);
                         float t = (age / .22f + jitter) * Mathf.PI * 2;
                         return new Pose(1, Color.Lerp(new Color(.29f, .18f, .11f), new Color(.12f, .31f, .48f), cold),
-                            new Vector2(Mathf.Sin(t) * .5f, Mathf.Cos(t) * .25f));
+                            new Vector2(Mathf.Sin(t) * 1.35f, Mathf.Cos(t) * .65f));
                     }
                     return new Pose(1);
                 }
@@ -146,28 +178,29 @@ namespace PotionShop
                     switch (cue.Effect)
                     {
                         case SymptomEffect.ShadowLag when copy == 1:
-                            if (age < 1.6f)
+                            if (age < .72f)
                             {
-                                float t = EaseUtility.Evaluate(Mathf.InverseLerp(.48f, 1.6f, age), Ease.OutQuad);
-                                return new Pose(t * .52f, new Color(.13f, .05f, .22f),
-                                    new Vector2(Mathf.Lerp(-18, 3, t), -3));
+                                float t = EaseUtility.Evaluate(Mathf.InverseLerp(.07f, .72f, age), Ease.OutQuad);
+                                return new Pose(t * .73f, new Color(.20f, .09f, .30f),
+                                    new Vector2(Mathf.Lerp(-23, 6, t), -4.5f));
                             }
-                            float loop = Mathf.Repeat((age - 1.6f) / 3.4f, 1);
-                            return new Pose(Key(loop, (0, .52f), (.35f, .32f), (.55f, 0), (.75f, 0), (1, .52f)),
-                                new Color(.13f, .05f, .22f), new Vector2(Key(loop, (0, 3), (.35f, -10), (.55f, -10), (.75f, 3), (1, 3)), -3));
+                            float loop = Mathf.Repeat((age - .72f) / 2.4f, 1);
+                            return new Pose(Key(loop, (0, .73f), (.35f, .46f), (.55f, 0), (.75f, 0), (1, .73f)),
+                                new Color(.20f, .09f, .30f),
+                                new Vector2(Key(loop, (0, 6), (.35f, -15), (.55f, -15), (.75f, 6), (1, 6)), -4.5f));
                         case SymptomEffect.Echo:
-                            float delayed = age - phase * .045f;
-                            float echo = Mathf.Repeat(delayed / 1.8f, 1);
-                            return new Pose(delayed < 0 ? 0 : Key(echo, (0, 0), (.15f, .46f), (.6f, .12f), (.85f, .04f), (1, 0)) / copy,
-                                new Color(.83f, .65f, 1f), new Vector2(echo * 14 * copy, 0));
+                            float delayed = age - (copy - 1) * .09f - phase % 6 * .025f;
+                            float echo = Mathf.Repeat(delayed / 1.25f, 1);
+                            return new Pose(delayed < 0 ? 0 : Key(echo, (0, 0), (.13f, .74f), (.50f, .27f), (.78f, .05f), (1, 0)) / copy,
+                                new Color(.57f, .26f, .78f), new Vector2(echo * 20 * copy, 2.5f * copy));
                         case SymptomEffect.MirrorDoze when copy == 1:
-                            float doze = Mathf.Repeat(Mathf.Max(0f, age - phase * .06f) / 3.4f, 1);
-                            return new Pose(.45f, new Color(.52f, .73f, .96f), new Vector2(2, -2),
-                                Key(doze, (0, 0), (.45f, 0), (.58f, 18), (.66f, 4), (.78f, 15), (1, 0)),
+                            float doze = Mathf.Repeat(Mathf.Max(0f, age - phase % 6 * .035f) / 2.2f, 1);
+                            return new Pose(.64f, new Color(.26f, .52f, .80f), new Vector2(4, -4),
+                                Key(doze, (0, 3), (.12f, 27), (.29f, 7), (.48f, 20), (.76f, 2), (1, 3)),
                                 new Vector2(-1, 1));
                         case SymptomEffect.Frost when copy == 1:
-                            return new Pose(Mathf.Clamp01(age / 1.4f) * .24f, new Color(.64f, .87f, 1),
-                                scale: new Vector2(1.19f, 1.14f));
+                            return new Pose(Mathf.Clamp01(age / .58f) * .5f, new Color(.31f, .70f, .96f),
+                                scale: new Vector2(1.28f, 1.21f));
                     }
                 }
                 return new Pose(0);

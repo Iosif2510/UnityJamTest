@@ -53,8 +53,8 @@ namespace PotionShop
             CancellationToken token) =>
             Reveal(new DialogueTimeline(line, defaultEffect, charactersPerSecond, revealMode), token);
 
-        public UniTask PlayReaction(string line, int charactersPerSecond, CancellationToken token) =>
-            Reveal(new DialogueTimeline(line, charactersPerSecond, revealMode), token);
+        public UniTask PlayReaction(string line, int charactersPerSecond, CancellationToken token, string reactionKey = "") =>
+            Reveal(new DialogueTimeline(line, reactionKey, charactersPerSecond, revealMode), token);
 
         private void Awake()
         {
@@ -155,7 +155,10 @@ namespace PotionShop
             if (reflow || resized) FitContent();
             if (reflow || resized || !finalFrameDrawn || activeLine.HasEffects)
                 Draw(elapsed);
-            if (!revealing && elapsed >= Math.Min(activeLine.Duration + fadeSeconds, skippedAt))
+            double visualEnd = double.IsPositiveInfinity(skippedAt)
+                ? Math.Max(activeLine.Duration + fadeSeconds, activeLine.LastAccentEnd)
+                : skippedAt + DialogueEmphasis.PulseSeconds;
+            if (!revealing && elapsed >= visualEnd)
                 finalFrameDrawn = true;
         }
 

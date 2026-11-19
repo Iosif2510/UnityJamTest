@@ -18,13 +18,18 @@ namespace PotionShop
             internal readonly SymptomEffect Effect;
             internal readonly int PhaseIndex;
             internal readonly bool EchoTail;
+            internal readonly DialogueAccent Accent;
+            internal readonly bool LastAccent;
 
-            internal Cue(double start, SymptomEffect effect, int phaseIndex, bool echoTail)
+            internal Cue(double start, SymptomEffect effect, int phaseIndex, bool echoTail,
+                DialogueAccent accent = DialogueAccent.None, bool lastAccent = false)
             {
                 Start = start;
                 Effect = effect;
                 PhaseIndex = phaseIndex;
                 EchoTail = echoTail;
+                Accent = accent;
+                LastAccent = lastAccent;
             }
         }
 
@@ -38,22 +43,28 @@ namespace PotionShop
         internal bool HasDoubleEcho { get; }
         internal bool HasDrops { get; }
         internal bool HasEffects { get; }
+        internal double LastAccentEnd { get; }
 
         internal DialogueTimeline(DialogueOption line, SymptomEffect inheritedEffect, int speed, DialogueRevealMode mode)
             : this(line.Segments, line.DefaultSymptomEffect == SymptomEffect.Inherit ? inheritedEffect :
                 line.DefaultSymptomEffect, speed, mode) { }
 
-        internal DialogueTimeline(string line, int speed, DialogueRevealMode mode)
-            : this(new[] { new DialogueSegment(line, false) }, SymptomEffect.None, speed, mode) { }
+        internal DialogueTimeline(string line, string reactionKey, int speed, DialogueRevealMode mode)
+            : this(new[] { new DialogueSegment(line, false) }, SymptomEffect.None, speed, mode, reactionKey) { }
 
         private DialogueTimeline(IReadOnlyList<DialogueSegment> segments, SymptomEffect inheritedEffect,
-            int speed, DialogueRevealMode mode)
+            int speed, DialogueRevealMode mode, string reactionKey = null)
         {
             var text = string.Concat(segments.Select(s => s.Text));
             var flags = segments.SelectMany(s => Enumerable.Repeat(s.IsSymptom, s.Text.Length)).ToArray();
             var starts = new double[text.Length];
             Duration = new StringInfo(text).LengthInTextElements / (double)Math.Max(1, speed);
             AssignTimes(text, flags, starts, Duration, mode);
+            var accented = new bool[text.Length];
+            var (accent, lastAccent) = DialogueEmphasis.Select(text, flags, starts, reactionKey, accented);
+            int lastAccentEnd = lastAccent;
+            while (lastAccentEnd >= 0 && lastAccentEnd < text.Length && accented[lastAccentEnd]) lastAccentEnd++;
+            LastAccentEnd = lastAccent < 0 ? 0 : starts[lastAccentEnd - 1] + DialogueEmphasis.PulseSeconds;
             var rich = new StringBuilder();
             int source = 0;
             foreach (var segment in segments)
@@ -70,7 +81,9 @@ namespace PotionShop
                 if (segment.IsSymptom) rich.Append("<b>");
                 foreach (char ch in segment.Text)
                 {
-                    glyphs.Add(rich.Length, new Cue(starts[source++], effect, phase++, false));
+                    glyphs.Add(rich.Length, new Cue(starts[source], effect, phase++, false,
+                        accented[source] ? accent : DialogueAccent.None, source >= lastAccent && source < lastAccentEnd));
+                    source++;
                     rich.Append(ch == '<' ? '‹' : ch == '>' ? '›' : ch);
                 }
                 if (segment.IsSymptom) rich.Append("</b>");
