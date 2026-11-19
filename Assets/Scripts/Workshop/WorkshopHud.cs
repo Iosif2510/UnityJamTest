@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LitMotion;
 using PotionShop.Data;
 using TMPro;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace PotionShop
 
         private readonly Dictionary<string, string> kindNamesByVariant = new(StringComparer.Ordinal);
         private Art.UiTypography typography;
+        private MotionHandle timerSway;
         private int displayedSeconds = -1;
 
         private void Awake()
@@ -45,7 +47,25 @@ namespace PotionShop
             return new PocketModelDisplay(pocketPreviews, playerCamera);
         }
 
-        internal void SetTimerVisible(bool visible) => timer.SetActive(visible);
+        internal void SetTimerVisible(bool visible)
+        {
+            timer.SetActive(visible);
+            RefreshTimerSway();
+        }
+
+        private void OnEnable() => RefreshTimerSway();
+
+        private void OnDisable()
+        {
+            timerSway.TryCancel();
+            if (timer != null) timer.transform.localRotation = Quaternion.identity;
+        }
+
+        private void RefreshTimerSway()
+        {
+            timerSway.TryCancel();
+            if (timer.activeInHierarchy && isActiveAndEnabled) timerSway = OrderHudMotion.SwayTimer((RectTransform)timer.transform);
+        }
 
         internal void UpdateTimer(double remainingSeconds, int timeLimit)
         {
