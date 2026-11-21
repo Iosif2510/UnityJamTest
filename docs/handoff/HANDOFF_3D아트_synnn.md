@@ -10,7 +10,8 @@
 - 지붕 — `GableRoof/GableRoof.fbx`, `GableRoof/GableRoof_18m_RefinedFraming.fbx`, `GableRoof_18m/GableRoof_18m.fbx`.
 - 가마솥과 소품 — `Cauldron/Cauldron.fbx`, `Cauldron/Cauldron_boolean.fbx`, `Cauldron/Cauldron_Interior_Volume.fbx`, `PotionBottle/PotionBottle/PotionBottle.fbx`, `Lantern/Lantern/Lantern.fbx`, `Candle/Candle.fbx`, `Campfire/Campfire.fbx`.
 - 식생 — `Mushrooms/GreenMushroom/GreenMushroom.fbx`, `Mushrooms/PinkMushroom/PinkMushroom.fbx`, `Mushrooms/SmallMushroom/SmallMushroom.fbx`, `MossPatch/MossPatch.fbx`, `Ivy/HangingIvy/HangingIvy.fbx`, `Ivy/IvyVine/IvyVine.fbx`.
-- 오디오 — `Soundeffect/`에 `bgm.wav`, `boilingsound.wav`, `paper.mp3`, `splash.wav`, `zipper.wav`.- 1인칭 팔 — `Assets/Arts/Models/first-person-arms-rigged.fbx`.
+- 오디오 — `Soundeffect/`에 `bgm.wav`, `boilingsound.wav`, `paper.mp3`, `splash.wav`, `zipper.wav`.
+- 1인칭 팔 — `Assets/Arts/Models/first-person-arms-rigged.fbx`.
 
 ## 2. 소스 코드 구조
 
