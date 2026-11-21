@@ -10,8 +10,7 @@
 - 지붕 — `GableRoof/GableRoof.fbx`, `GableRoof/GableRoof_18m_RefinedFraming.fbx`, `GableRoof_18m/GableRoof_18m.fbx`.
 - 가마솥과 소품 — `Cauldron/Cauldron.fbx`, `Cauldron/Cauldron_boolean.fbx`, `Cauldron/Cauldron_Interior_Volume.fbx`, `PotionBottle/PotionBottle/PotionBottle.fbx`, `Lantern/Lantern/Lantern.fbx`, `Candle/Candle.fbx`, `Campfire/Campfire.fbx`.
 - 식생 — `Mushrooms/GreenMushroom/GreenMushroom.fbx`, `Mushrooms/PinkMushroom/PinkMushroom.fbx`, `Mushrooms/SmallMushroom/SmallMushroom.fbx`, `MossPatch/MossPatch.fbx`, `Ivy/HangingIvy/HangingIvy.fbx`, `Ivy/IvyVine/IvyVine.fbx`.
-- 오디오 — `Soundeffect/`에 `bgm.wav`, `boilingsound.wav`, `paper.mp3`, `splash.wav`, `zipper.wav`.
-- 1인칭 팔 — `Assets/Arts/Models/first-person-arms-rigged.fbx`. 약초 잡기·놓기는 별도 제작물이다. `first_person_arms_herb_motion.glb`에 2.4초 `Herb_Grab_Release` 클립이 있고, `herb_grab_release.blend`에 1인칭 카메라와 예시 약초가 있다. 작업 기록의 부착·분리 시점은 각각 0.77초와 1.67초이며 오른손 소켓은 `HerbSocket.R`이다. 이 클립의 Unity 연결 상태는 확인 필요.
+- 오디오 — `Soundeffect/`에 `bgm.wav`, `boilingsound.wav`, `paper.mp3`, `splash.wav`, `zipper.wav`.- 1인칭 팔 — `Assets/Arts/Models/first-person-arms-rigged.fbx`.
 
 ## 2. 소스 코드 구조
 
@@ -26,7 +25,7 @@
 
 ## 4. 아트 파이프라인
 
-1. OpenAI 이미지 생성으로 약초창고 쿼터뷰와 개별 소품 시안을 만들고 Meshy.ai에서 사용할 참고 이미지로 준비했다. Meshy에서 생성한 GLB를 Blender로 가져온 뒤 메시와 재질을 수정했다. 선반은 기둥과 돌출부, 지붕은 트러스와 서까래, 장작은 그을음과 나뭇결을 다듬었다.
+1. ChatGPT에서 약초창고 쿼터뷰와 개별 소품 참고 이미지를 생성했다. Meshy.ai에 이미지와 아래 공통 프롬프트를 함께 넣어 일반 에셋은 폴리곤 1,000개, 크거나 구조가 복잡한 에셋은 2,000개를 목표로 메쉬를 생성했다. Meshy에서 생성한 GLB를 Blender로 가져온 뒤 메시와 재질을 수정했다. 선반은 기둥과 돌출부, 지붕은 트러스와 서까래, 장작은 그을음과 나뭇결을 다듬었다.
 2. 가마솥은 몸체에 `Boolean Difference`의 `Exact` 연산을 적용하고 손잡이를 몸체의 하위 오브젝트로 분리했다. `Interior Volume - Boolean Cutter`는 내부 체적을 확인하는 별도 메시이며, 체적 FBX는 몸체와 같은 원점으로 맞췄다. 편집 파일명은 `Cauldron_Procedural_Boolean.blend`다. 바닥 재질은 반복 석재 타일 위에 바닥 전체용 얼룩 오버레이를 한 번 얹는 구조다. 편집 파일명은 `Natural_Plum_Slate.blend`다.
 3. 담당자 설명에 따르면 Blender에서 GLB를 임포트해 수정한 후 기본 FBX 내보내기 설정으로 익스포트했다. 별도로 보존된 가마솥과 팔의 자동 내보내기 스크립트에는 전방 `-Z`, 상방 `Y`, 단위 스케일 적용, `add_leaf_bones=False`, `bake_anim=False`가 기록돼 있다. 이 값은 해당 스크립트 작업의 설정이다.
 4. Unity 쪽에서는 FBX와 `BaseColor`, `Normal`, `MetallicSmoothness` PNG를 모델 폴더에서 함께 확인한다. 포션병과 벽등의 유리 파츠는 각 폴더의 전용 `.mat`과 `.shader`를 사용하며 두 머티리얼의 렌더 큐는 `3000`이다. 바닥 제작 기록에는 텍스처 `Wrap Mode = Repeat`, 노멀 `Texture Type = Normal Map`을 적용하도록 안내돼 있다. 저장소에서 개별 FBX의 임포트 `.meta`를 확인할 수 없는 경우 실제 리그·스케일·머티리얼 슬롯 설정은 확인 필요. 편집 원본의 팀 공유 위치도 확인 필요.
@@ -35,7 +34,7 @@
 
 - 약초창고 콘셉트 — “전체모습은 쿼터뷰로 뽑아줘. 스타일은 로우폴리 3D 스타일로” 요청했다. 배치도에서 연갈색은 선반, 주황색은 카운터, 검은 원은 가마솥으로 지정했다. 파스텔톤, 어두운 석재 바닥, 이끼·버섯, 덩굴과 촛불을 포함했다.
 - 모닥불 이미지 — 이미지 생성 프롬프트 첫 문장은 “Make ONE isolated compact campfire prop for Meshy image-to-3D, in the warm hand-painted low-poly fantasy style of the supplied herb storeroom.”이다. 후속 요청에서는 불꽃을 제거하고 중앙의 검은 그을음과 껍질의 갈라짐을 남겼다.
-- Meshy에서 에셋별로 입력한 프롬프트 원문은 확인 필요.
+- Meshy.ai 공통 프롬프트 — Stylized low-poly cartoon game asset, simple geometric shapes, clean topology, flat shading, vibrant but harmonious colors, hand-painted appearance, optimized for real-time game engines, no background, isolated 3D object.
 
 ## 5. 에디터 설정
 
