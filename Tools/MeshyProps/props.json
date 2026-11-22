@@ -1,0 +1,21 @@
+{
+  "style": "Stylized low-poly cartoon game asset, simple geometric shapes, clean topology, flat shading, vibrant but harmonious colors, hand-painted appearance, optimized for real-time game engines, no background, isolated 3D object.",
+  "polycount": 2000,
+  "props": {
+    "Hourglass": {
+      "prompt": "A single desk hourglass: two rounded glass bulbs joined at a narrow neck, pale sand in the lower bulb, held between a round dark wooden top plate and base plate by three thin turned wooden posts with small brass caps. Warm fantasy apothecary style."
+    },
+    "DeskBell": {
+      "prompt": "A single small brass call bell hanging from a short curved wooden bracket on a square wooden base, with a short pull cord ending in a wooden bead. Warm fantasy apothecary style, slightly worn brass."
+    },
+    "InkwellQuill": {
+      "prompt": "A single squat dark glass inkwell with a brass collar, with one long white feather quill standing in it, on a small round wooden coaster. Warm fantasy apothecary style."
+    },
+    "CandleHolder": {
+      "prompt": "A single brass chamberstick candle holder: a shallow round dish with a ring handle, holding one short cream wax candle with drips and a small flame. Warm fantasy apothecary style."
+    },
+    "NoteBasket": {
+      "prompt": "A single small woven wicker basket hanging on a rope with a simple wooden pulley hook at the top, as used to haul notes between floors, with one folded paper note inside. Warm fantasy apothecary style."
+    }
+  }
+}

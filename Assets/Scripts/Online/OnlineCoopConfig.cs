@@ -18,6 +18,17 @@ namespace PotionShop.Online
         [SerializeField] private string[] memoLabels =
             { "표지", "메모 1", "메모 2", "메모 3", "메모 4", "메모 5", "메모 6", "접객 매뉴얼" };
 
+        [Header("Shared look")]
+        [SerializeField, Tooltip("The painted loft desk the narrator's sheets lie on.")]
+        private Sprite deskBackground;
+        [SerializeField, Tooltip("The parchment panel used by the counter scenes.")]
+        private Sprite parchmentPanel;
+        [SerializeField, Tooltip("The yellow wooden button used by the counter scenes.")]
+        private Sprite woodButton;
+
+        public Sprite DeskBackground => deskBackground;
+        public Sprite ParchmentPanel => parchmentPanel;
+        public Sprite WoodButton => woodButton;
         public Font BodyFont => bodyFont;
         public Font BoldFont => boldFont != null ? boldFont : bodyFont;
         public Sprite[] MemoSheets => memoSheets;

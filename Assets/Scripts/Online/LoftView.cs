@@ -1,39 +1,42 @@
 using Cysharp.Threading.Tasks;
 using LitMotion;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PotionShop.Online
 {
     /// <summary>
-    /// The narrator's upstairs workshop: the memo sheets on a desk, and a side board that follows the maker's
-    /// progress downstairs. The narrator never sees the customer, the storage room, or the answers.
+    /// The narrator's upstairs workshop: a painted desk with the memo sheets lying on it, in the same hand-painted
+    /// look as the counter downstairs. A sheet is picked up to be read and put back afterwards, and a parchment
+    /// note follows the maker's progress. The narrator never sees the customer, the storage room, or the answers.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LoftView : MonoBehaviour
     {
         private static readonly string[] StepNames = { "접객", "재료 탐색", "처방", "결과" };
+        private const float PictureAspect = 16f / 9f;
 
         private OnlineCoopConfig config;
         private OnlineSession session;
+        private DeskSheets deskSheets;
+        private GameObject reading;
+        private CanvasGroup readingGroup;
         private Image sheet;
         private SheetPanZoom panZoom;
         private SheetMarks marks;
-        private LoftDesk desk;
-        private GameObject reading;
-        private Text deskHint;
-        private Text mode;
-        private Text wholeLabel;
-        private bool shownEasy;
-        private Image[] thumbnailFrames;
         private Text[] steps;
         private Text timer;
         private Text guidance;
         private Text connection;
         private Text voice;
         private Text result;
+        private Text mode;
+        private Text wholeLabel;
+        private Text deskHint;
         private int shownSheet = -1;
+        private bool shownEasy;
         private string shownGuidance;
 
         private void Start()
@@ -41,162 +44,161 @@ namespace PotionShop.Online
             config = OnlineCoopConfig.Load();
             session = OnlineSession.Instance;
             Build();
-            ShowSheet(0);
         }
 
         private void Build()
         {
             var root = OnlineUi.Canvas("LoftCanvas", 0, transform).transform;
-            // With a 3D desk in the scene the sheets are picked up there; otherwise this screen lists them itself.
-            desk = FindAnyObjectByType<LoftDesk>();
-            if (desk == null)
-                OnlineUi.Fill(OnlineUi.Rect("Desk", root, Vector2.zero, Vector2.one), OnlineUi.Wood, false);
+            OnlineUi.Fill(OnlineUi.Rect("Backdrop", root, Vector2.zero, Vector2.one), OnlineUi.Wood, false);
+
+            // The desk picture covers the screen; everything placed "on the desk" is positioned inside this rect so
+            // it stays on the same spot of the painting whatever the screen shape.
+            var picture = OnlineUi.Rect("Desk", root, Vector2.zero, Vector2.one);
+            var fitter = picture.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = PictureAspect;
+            var painting = OnlineUi.Fill(picture, Color.white, false);
+            painting.sprite = config.DeskBackground;
+            if (config.DeskBackground == null)
+                painting.color = OnlineUi.WoodLight;
+
+            deskSheets = picture.gameObject.AddComponent<DeskSheets>();
+            deskSheets.Build(picture, config.MemoSheets);
+            deskSheets.Picked += PickUp;
+
+            // The clock sits beside the painted hourglass.
+            timer = OnlineUi.Label(OnlineUi.Rect("Timer", picture, new Vector2(0.280f, 0.745f), new Vector2(0.368f, 0.845f)),
+                "--:--", 54, config.BoldFont, OnlineUi.Parchment);
+            timer.gameObject.AddComponent<Shadow>().effectColor = new Color(0f, 0f, 0f, 0.6f);
+            deskHint = OnlineUi.Label(OnlineUi.Rect("DeskHint", picture, new Vector2(0.05f, 0.015f), new Vector2(0.62f, 0.075f)),
+                string.Empty, 26, config.BoldFont, OnlineUi.Parchment);
+
+            BuildBoard(root);
+            BuildReading(root);
+        }
+
+        /// <summary>The parchment note that tells the narrator what is happening downstairs.</summary>
+        private void BuildBoard(Transform root)
+        {
+            var board = OnlineUi.Box("Board", root, new Vector2(1f, 0.5f), new Vector2(-28f, -20f), new Vector2(430f, 840f));
+            var paper = OnlineUi.Fill(board, config.ParchmentPanel != null ? Color.white : OnlineUi.Parchment, false);
+            paper.sprite = config.ParchmentPanel;
+
+            OnlineUi.Label(Line(board, 70f, 52f), "위층 공방", 36, config.BoldFont, OnlineUi.Ink);
+            steps = new Text[StepNames.Length];
+            for (int i = 0; i < steps.Length; i++)
+                steps[i] = OnlineUi.Label(Line(board, 140f + i * 46f, 42f), StepNames[i], 27, config.BoldFont,
+                    OnlineUi.Faded, TextAnchor.MiddleLeft);
+
+            guidance = OnlineUi.Label(Line(board, 340f, 170f), string.Empty, 24, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.UpperLeft);
+            result = OnlineUi.Label(Line(board, 520f, 130f), string.Empty, 22, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.UpperLeft);
+
+            mode = OnlineUi.Label(Foot(board, 196f, 26f), string.Empty, 17, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.MiddleLeft);
+            voice = OnlineUi.Label(Foot(board, 168f, 26f), string.Empty, 17, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.MiddleLeft);
+            connection = OnlineUi.Label(Foot(board, 140f, 26f), string.Empty, 17, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.MiddleLeft);
+            OnlineUi.Wooden(OnlineUi.Button(OnlineUi.Box("Leave", board, new Vector2(0.5f, 0f), new Vector2(0f, 64f),
+                new Vector2(300f, 62f)), "공방에서 나가기", 23, config.BoldFont, () => Leave().Forget(), OnlineUi.WoodLight),
+                config.WoodButton);
+        }
+
+        /// <summary>The sheet in the narrator's hands. Hidden while every sheet is on the desk.</summary>
+        private void BuildReading(Transform root)
+        {
             reading = OnlineUi.Rect("Reading", root, Vector2.zero, Vector2.one).gameObject;
+            readingGroup = reading.AddComponent<CanvasGroup>();
+            // Dims the desk; clicking beside the sheet puts it back.
+            var dim = OnlineUi.Fill(OnlineUi.Rect("Dim", reading.transform, Vector2.zero, Vector2.one),
+                new Color(0.05f, 0.03f, 0.02f, 0.78f));
+            var dimButton = dim.gameObject.AddComponent<Button>();
+            dimButton.transition = Selectable.Transition.None;
+            dimButton.onClick.AddListener(PutDown);
 
-            // Left: every sheet is always on the desk, as the printed stack was. One narrow column that divides
-            // the full height, so no sheet can fall off the bottom of the screen.
-            var sprites = config.MemoSheets;
-            thumbnailFrames = new Image[desk == null ? sprites.Length : 0];
-            RectTransform shelf = null;
-            if (desk == null)
-            {
-                shelf = OnlineUi.Rect("Sheets", root, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(24f, 24f),
-                    new Vector2(224f, -24f));
-                OnlineUi.Fill(shelf, OnlineUi.WoodLight, false);
-            }
-            for (int i = 0; i < thumbnailFrames.Length; i++)
-            {
-                int index = i;
-                var cell = OnlineUi.Rect("Sheet" + i, shelf, new Vector2(0f, 1f - (i + 1f) / sprites.Length),
-                    new Vector2(1f, 1f - (float)i / sprites.Length), new Vector2(8f, 4f), new Vector2(-8f, -4f));
-                thumbnailFrames[i] = OnlineUi.Fill(cell, OnlineUi.Parchment);
-                var button = cell.gameObject.AddComponent<Button>();
-                button.targetGraphic = thumbnailFrames[i];
-                button.onClick.AddListener(() => ShowSheet(index));
-                var picture = OnlineUi.Fill(OnlineUi.Rect("Picture", cell, Vector2.zero, new Vector2(0.4f, 1f),
-                    new Vector2(6f, 6f), new Vector2(0f, -6f)), Color.white, false);
-                picture.sprite = sprites[i];
-                picture.preserveAspect = true;
-                OnlineUi.Label(OnlineUi.Rect("Name", cell, new Vector2(0.4f, 0f), Vector2.one, new Vector2(4f, 0f),
-                    new Vector2(-4f, 0f)), config.MemoLabels[i], 22, config.BoldFont, OnlineUi.Ink);
-            }
-
-            // Centre: the sheet being read, as wide as the space allows. Wheel moves down the page, drag pans.
-            var viewport = OnlineUi.Rect("Viewport", reading.transform, new Vector2(0f, 0f), new Vector2(1f, 1f),
-                new Vector2(desk == null ? 248f : 24f, 24f), new Vector2(-448f, -24f));
-            OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, desk == null ? 0.25f : 0.72f));
+            var viewport = OnlineUi.Rect("Viewport", reading.transform, Vector2.zero, Vector2.one,
+                new Vector2(120f, 20f), new Vector2(-560f, -20f));
+            OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, 0f));
             viewport.gameObject.AddComponent<RectMask2D>();
             var content = OnlineUi.Rect("Sheet", viewport, Vector2.zero, Vector2.zero);
             sheet = OnlineUi.Fill(content, Color.white, false);
             sheet.preserveAspect = true;
             panZoom = viewport.gameObject.AddComponent<SheetPanZoom>();
-            var first = sprites[0];
+            var first = config.MemoSheets[0];
             panZoom.Bind(viewport, content, first.rect.width / first.rect.height);
             marks = content.gameObject.AddComponent<SheetMarks>();
             marks.Bind(content);
 
-            // Zoom controls stay on the corner of the viewport, outside the masked sheet.
-            var tools = OnlineUi.Box("Zoom", reading.transform, new Vector2(1f, 0f), new Vector2(-464f, 40f),
-                new Vector2(244f, 56f));
-            OnlineUi.Button(OnlineUi.Rect("ZoomOut", tools, new Vector2(0f, 0f), new Vector2(0.24f, 1f)), "−", 34,
+            var tools = OnlineUi.Box("Tools", reading.transform, new Vector2(1f, 0f), new Vector2(-28f, 20f),
+                new Vector2(430f, 60f));
+            OnlineUi.Wooden(OnlineUi.Button(OnlineUi.Rect("PutDown", tools, new Vector2(0f, 0f), new Vector2(0.40f, 1f)),
+                "내려놓기", 23, config.BoldFont, PutDown, OnlineUi.WoodLight), config.WoodButton);
+            OnlineUi.Button(OnlineUi.Rect("ZoomOut", tools, new Vector2(0.43f, 0f), new Vector2(0.56f, 1f)), "−", 32,
                 config.BoldFont, () => panZoom.ZoomOut(), OnlineUi.WoodLight);
-            OnlineUi.Button(OnlineUi.Rect("ZoomIn", tools, new Vector2(0.26f, 0f), new Vector2(0.5f, 1f)), "+", 34,
+            OnlineUi.Button(OnlineUi.Rect("ZoomIn", tools, new Vector2(0.58f, 0f), new Vector2(0.71f, 1f)), "+", 32,
                 config.BoldFont, () => panZoom.ZoomIn(), OnlineUi.WoodLight);
-            var whole = OnlineUi.Button(OnlineUi.Rect("Whole", tools, new Vector2(0.52f, 0f), new Vector2(1f, 1f)),
-                string.Empty, 22, config.BoldFont, () => panZoom.ToggleWholeSheet(), OnlineUi.WoodLight);
+            var whole = OnlineUi.Button(OnlineUi.Rect("Whole", tools, new Vector2(0.73f, 0f), new Vector2(1f, 1f)),
+                string.Empty, 20, config.BoldFont, () => panZoom.ToggleWholeSheet(), OnlineUi.WoodLight);
             wholeLabel = OnlineUi.Label(OnlineUi.Rect("Label", whole.transform, Vector2.zero, Vector2.one), string.Empty,
-                22, config.BoldFont, Color.white);
+                20, config.BoldFont, Color.white);
 
-            if (desk != null)
-            {
-                OnlineUi.Button(OnlineUi.Box("PutDown", reading.transform, new Vector2(0f, 0f), new Vector2(40f, 40f),
-                    new Vector2(220f, 56f)), "내려놓기", 24, config.BoldFont, () => desk.Release(), OnlineUi.WoodLight);
-                deskHint = OnlineUi.Label(OnlineUi.Box("DeskHint", root, new Vector2(0.5f, 0f), new Vector2(-210f, 36f),
-                    new Vector2(900f, 44f)), string.Empty, 26, config.BoldFont, OnlineUi.Parchment);
-                desk.PickedUp += OnSheetPickedUp;
-                desk.PutDown += OnSheetPutDown;
-                reading.SetActive(false);
-            }
-
-            // Right: what is happening downstairs.
-            var board = OnlineUi.Rect("Board", root, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-424f, 24f),
-                new Vector2(-24f, -24f));
-            OnlineUi.Fill(board, OnlineUi.Parchment, false);
-            OnlineUi.Label(Line(board, 24f, 56f), "위층 공방", 36, config.BoldFont, OnlineUi.Ink);
-            timer = OnlineUi.Label(Line(board, 90f, 110f), "--:--", 84, config.BoldFont, OnlineUi.Accent);
-
-            steps = new Text[StepNames.Length];
-            for (int i = 0; i < steps.Length; i++)
-                steps[i] = OnlineUi.Label(Line(board, 220f + i * 52f, 48f), StepNames[i], 28, config.BoldFont,
-                    OnlineUi.Faded, TextAnchor.MiddleLeft);
-
-            guidance = OnlineUi.Label(Line(board, 450f, 190f), string.Empty, 25, config.BodyFont, OnlineUi.Ink,
-                TextAnchor.UpperLeft);
-            result = OnlineUi.Label(Line(board, 655f, 135f), string.Empty, 23, config.BodyFont, OnlineUi.Ink,
-                TextAnchor.UpperLeft);
-            OnlineUi.Label(Foot(board, 142f, 28f), "휠: 아래로 넘기기 · 끌기: 옮기기", 18, config.BodyFont,
-                OnlineUi.Faded, TextAnchor.MiddleLeft);
-            mode = OnlineUi.Label(Foot(board, 172f, 30f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
-                TextAnchor.MiddleLeft);
-            voice = OnlineUi.Label(Foot(board, 108f, 28f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
-                TextAnchor.MiddleLeft);
-            connection = OnlineUi.Label(Foot(board, 76f, 28f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
-                TextAnchor.MiddleLeft);
-            OnlineUi.Button(OnlineUi.Box("Leave", board, new Vector2(0.5f, 0f), new Vector2(0f, 16f),
-                new Vector2(340f, 50f)), "공방에서 나가기", 24, config.BoldFont, () => Leave().Forget(), OnlineUi.WoodLight);
+            // The status note stays readable above the dimmed desk.
+            reading.transform.SetSiblingIndex(reading.transform.GetSiblingIndex() - 1);
+            reading.SetActive(false);
         }
 
         private static RectTransform Line(RectTransform parent, float top, float height) =>
-            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -top - height),
-                new Vector2(-24f, -top));
-
-        private void OnSheetPickedUp(int index)
-        {
-            reading.SetActive(true);
-            shownSheet = -1;
-            ShowSheet(index);
-        }
-
-        private void OnSheetPutDown() => reading.SetActive(false);
-
-        private void OnDestroy()
-        {
-            if (desk == null)
-                return;
-            desk.PickedUp -= OnSheetPickedUp;
-            desk.PutDown -= OnSheetPutDown;
-        }
+            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(54f, -top - height),
+                new Vector2(-48f, -top));
 
         /// <summary>A line measured up from the bottom of the board, so it never slides under the leave button.</summary>
         private static RectTransform Foot(RectTransform parent, float bottom, float height) =>
-            OnlineUi.Rect("Foot", parent, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, bottom),
-                new Vector2(-24f, bottom + height));
+            OnlineUi.Rect("Foot", parent, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(54f, bottom),
+                new Vector2(-48f, bottom + height));
 
-        private void ShowSheet(int index)
+        private void PickUp(int index)
         {
-            if (index == shownSheet || index < 0 || index >= config.MemoSheets.Length)
+            if (index < 0 || index >= config.MemoSheets.Length)
                 return;
             shownSheet = index;
             sheet.sprite = config.MemoSheets[index];
+            reading.SetActive(true);
             panZoom.ResetView();
             marks.Show(index, shownEasy);
-            for (int i = 0; i < thumbnailFrames.Length; i++)
-                thumbnailFrames[i].color = i == index ? OnlineUi.Accent : OnlineUi.Parchment;
+            readingGroup.alpha = 0f;
+            LMotion.Create(0f, 1f, 0.18f).WithEase(Ease.OutQuad).Bind(alpha => readingGroup.alpha = alpha)
+                .AddTo(reading);
+        }
+
+        private void PutDown()
+        {
+            shownSheet = -1;
+            reading.SetActive(false);
         }
 
         private void Update()
         {
+            bool holding = reading.activeSelf;
+            if (holding && (Mouse.current?.rightButton.wasPressedThisFrame == true ||
+                            Keyboard.current?.escapeKey.wasPressedThisFrame == true))
+            {
+                PutDown();
+                holding = false;
+            }
+
             if (session.EasyMode != shownEasy)
             {
                 shownEasy = session.EasyMode;
-                marks.Show(shownSheet, shownEasy);
+                if (holding)
+                    marks.Show(shownSheet, shownEasy);
             }
             wholeLabel.text = panZoom.ShowsWholeSheet ? "크게 보기" : "전체 보기";
-            if (deskHint != null)
-                deskHint.text = desk.Held >= 0 ? string.Empty : desk.Hovered >= 0
-                    ? config.MemoLabels[desk.Hovered] + " · 눌러서 집기"
-                    : "책상 위 종이를 눌러서 집어 보세요";
-            mode.text = shownEasy ? "쉬움 모드 · 노랑은 증상, 초록은 재료 구별점" : string.Empty;
+            deskHint.text = holding ? string.Empty : deskSheets.Hovered >= 0
+                ? config.MemoLabels[deskSheets.Hovered] + " · 눌러서 집기"
+                : "책상 위 종이를 눌러서 집어 보세요";
+            mode.text = shownEasy ? "쉬움 모드 · 노랑은 증상, 초록은 구별점" : string.Empty;
 
             var sync = session.Sync;
             bool live = session.Role == OnlineRole.Narrator && session.PeerConnected && sync.HasSnapshot;

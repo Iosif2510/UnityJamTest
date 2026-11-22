@@ -92,6 +92,20 @@ namespace PotionShop.Online
             return button;
         }
 
+        /// <summary>Dresses a plain button in the game's wooden button art, with ink-coloured text.</summary>
+        internal static Button Wooden(Button button, Sprite sprite)
+        {
+            if (sprite == null)
+                return button;
+            var image = (Image)button.targetGraphic;
+            image.sprite = sprite;
+            image.color = Color.white;
+            var label = button.GetComponentInChildren<Text>();
+            if (label != null)
+                label.color = Ink;
+            return button;
+        }
+
         internal static InputField Input(RectTransform rect, string placeholder, int size, Font font, int limit)
         {
             Fill(rect, Color.white);
