@@ -6,8 +6,8 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// Adds the online co-op entry to the title screen at runtime. The existing start button keeps starting the
-    /// maker's game, so offline play is unchanged.
+    /// Adds the online co-op entry at runtime to the screen the game waits on: the title, or the counter while its
+    /// curtain is closed. The existing buttons keep starting the maker's game, so offline play is unchanged.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TitleOnlinePanel : MonoBehaviour
@@ -20,6 +20,7 @@ namespace PotionShop.Online
         private InputField codeInput;
         private InputField addressInput;
         private Button leaveButton;
+        private GameObject openButton;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -30,7 +31,8 @@ namespace PotionShop.Online
 
         private static void Attach(Scene scene)
         {
-            if (scene.name != OnlineCoopConfig.TitleScene || FindAnyObjectByType<TitleOnlinePanel>() != null)
+            if (scene.name != OnlineCoopConfig.TitleScene && scene.name != OnlineCoopConfig.CounterScene ||
+                FindAnyObjectByType<TitleOnlinePanel>() != null)
                 return;
             if (OnlineCoopConfig.Load() == null)
             {
@@ -46,8 +48,8 @@ namespace PotionShop.Online
             var canvas = OnlineUi.Canvas("OnlineCanvas", 50, transform);
             var root = canvas.transform;
 
-            OnlineUi.Button(OnlineUi.Box("OpenOnline", root, new Vector2(1f, 0f), new Vector2(-40f, 40f),
-                new Vector2(300f, 76f)), "온라인 협동", 32, config.BoldFont, () => panel.SetActive(true));
+            openButton = OnlineUi.Button(OnlineUi.Box("OpenOnline", root, new Vector2(1f, 0f), new Vector2(-40f, 40f),
+                new Vector2(300f, 76f)), "온라인 협동", 32, config.BoldFont, () => panel.SetActive(true)).gameObject;
 
             panel = OnlineUi.Rect("Panel", root, Vector2.zero, Vector2.one).gameObject;
             OnlineUi.Fill((RectTransform)panel.transform, new Color(0f, 0f, 0f, 0.6f));
@@ -96,6 +98,17 @@ namespace PotionShop.Online
                 Finish(OnlineSession.Instance.HostLan());
             else if (auto == "join" && OnlineSession.CurrentRole == OnlineRole.Offline)
                 Finish(OnlineSession.Instance.JoinLan(OnlineSession.CommandLineValue("-onlineAddress")));
+        }
+
+        private void Update()
+        {
+            // On the counter the entry only belongs to the closed-curtain wait between customers.
+            var round = RoundDirector.Instance;
+            bool waiting = round == null || round.Phase == RoundPhase.Waiting;
+            if (openButton.activeSelf != waiting)
+                openButton.SetActive(waiting);
+            if (!waiting && panel.activeSelf)
+                panel.SetActive(false);
         }
 
         private void OnDestroy()

@@ -8,6 +8,7 @@ namespace PotionShop.Online
     {
         public const string ResourcePath = "OnlineCoopConfig";
         public const string TitleScene = "00_Title";
+        public const string CounterScene = "01_Order";
         public const string LoftScene = "03_Loft";
 
         [SerializeField] private Font bodyFont;

@@ -187,7 +187,8 @@ namespace PotionShop.Online
         private async UniTaskVoid Leave()
         {
             await session.LeaveAsync();
-            SceneManager.LoadScene(OnlineCoopConfig.TitleScene);
+            // Build index 0 is whichever screen the game starts on (title or counter).
+            SceneManager.LoadScene(0);
         }
     }
 }
