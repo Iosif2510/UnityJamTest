@@ -20,6 +20,9 @@ namespace PotionShop.Online
         private Image sheet;
         private SheetPanZoom panZoom;
         private SheetMarks marks;
+        private LoftDesk desk;
+        private GameObject reading;
+        private Text deskHint;
         private Text mode;
         private Text wholeLabel;
         private bool shownEasy;
@@ -44,16 +47,24 @@ namespace PotionShop.Online
         private void Build()
         {
             var root = OnlineUi.Canvas("LoftCanvas", 0, transform).transform;
-            OnlineUi.Fill(OnlineUi.Rect("Desk", root, Vector2.zero, Vector2.one), OnlineUi.Wood, false);
+            // With a 3D desk in the scene the sheets are picked up there; otherwise this screen lists them itself.
+            desk = FindAnyObjectByType<LoftDesk>();
+            if (desk == null)
+                OnlineUi.Fill(OnlineUi.Rect("Desk", root, Vector2.zero, Vector2.one), OnlineUi.Wood, false);
+            reading = OnlineUi.Rect("Reading", root, Vector2.zero, Vector2.one).gameObject;
 
             // Left: every sheet is always on the desk, as the printed stack was. One narrow column that divides
             // the full height, so no sheet can fall off the bottom of the screen.
-            var shelf = OnlineUi.Rect("Sheets", root, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(24f, 24f),
-                new Vector2(224f, -24f));
-            OnlineUi.Fill(shelf, OnlineUi.WoodLight, false);
             var sprites = config.MemoSheets;
-            thumbnailFrames = new Image[sprites.Length];
-            for (int i = 0; i < sprites.Length; i++)
+            thumbnailFrames = new Image[desk == null ? sprites.Length : 0];
+            RectTransform shelf = null;
+            if (desk == null)
+            {
+                shelf = OnlineUi.Rect("Sheets", root, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(24f, 24f),
+                    new Vector2(224f, -24f));
+                OnlineUi.Fill(shelf, OnlineUi.WoodLight, false);
+            }
+            for (int i = 0; i < thumbnailFrames.Length; i++)
             {
                 int index = i;
                 var cell = OnlineUi.Rect("Sheet" + i, shelf, new Vector2(0f, 1f - (i + 1f) / sprites.Length),
@@ -71,9 +82,9 @@ namespace PotionShop.Online
             }
 
             // Centre: the sheet being read, as wide as the space allows. Wheel moves down the page, drag pans.
-            var viewport = OnlineUi.Rect("Viewport", root, new Vector2(0f, 0f), new Vector2(1f, 1f),
-                new Vector2(248f, 24f), new Vector2(-448f, -24f));
-            OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, 0.25f));
+            var viewport = OnlineUi.Rect("Viewport", reading.transform, new Vector2(0f, 0f), new Vector2(1f, 1f),
+                new Vector2(desk == null ? 248f : 24f, 24f), new Vector2(-448f, -24f));
+            OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, desk == null ? 0.25f : 0.72f));
             viewport.gameObject.AddComponent<RectMask2D>();
             var content = OnlineUi.Rect("Sheet", viewport, Vector2.zero, Vector2.zero);
             sheet = OnlineUi.Fill(content, Color.white, false);
@@ -85,7 +96,8 @@ namespace PotionShop.Online
             marks.Bind(content);
 
             // Zoom controls stay on the corner of the viewport, outside the masked sheet.
-            var tools = OnlineUi.Box("Zoom", root, new Vector2(1f, 0f), new Vector2(-464f, 40f), new Vector2(244f, 56f));
+            var tools = OnlineUi.Box("Zoom", reading.transform, new Vector2(1f, 0f), new Vector2(-464f, 40f),
+                new Vector2(244f, 56f));
             OnlineUi.Button(OnlineUi.Rect("ZoomOut", tools, new Vector2(0f, 0f), new Vector2(0.24f, 1f)), "−", 34,
                 config.BoldFont, () => panZoom.ZoomOut(), OnlineUi.WoodLight);
             OnlineUi.Button(OnlineUi.Rect("ZoomIn", tools, new Vector2(0.26f, 0f), new Vector2(0.5f, 1f)), "+", 34,
@@ -94,6 +106,17 @@ namespace PotionShop.Online
                 string.Empty, 22, config.BoldFont, () => panZoom.ToggleWholeSheet(), OnlineUi.WoodLight);
             wholeLabel = OnlineUi.Label(OnlineUi.Rect("Label", whole.transform, Vector2.zero, Vector2.one), string.Empty,
                 22, config.BoldFont, Color.white);
+
+            if (desk != null)
+            {
+                OnlineUi.Button(OnlineUi.Box("PutDown", reading.transform, new Vector2(0f, 0f), new Vector2(40f, 40f),
+                    new Vector2(220f, 56f)), "내려놓기", 24, config.BoldFont, () => desk.Release(), OnlineUi.WoodLight);
+                deskHint = OnlineUi.Label(OnlineUi.Box("DeskHint", root, new Vector2(0.5f, 0f), new Vector2(-210f, 36f),
+                    new Vector2(900f, 44f)), string.Empty, 26, config.BoldFont, OnlineUi.Parchment);
+                desk.PickedUp += OnSheetPickedUp;
+                desk.PutDown += OnSheetPutDown;
+                reading.SetActive(false);
+            }
 
             // Right: what is happening downstairs.
             var board = OnlineUi.Rect("Board", root, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-424f, 24f),
@@ -127,6 +150,23 @@ namespace PotionShop.Online
             OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -top - height),
                 new Vector2(-24f, -top));
 
+        private void OnSheetPickedUp(int index)
+        {
+            reading.SetActive(true);
+            shownSheet = -1;
+            ShowSheet(index);
+        }
+
+        private void OnSheetPutDown() => reading.SetActive(false);
+
+        private void OnDestroy()
+        {
+            if (desk == null)
+                return;
+            desk.PickedUp -= OnSheetPickedUp;
+            desk.PutDown -= OnSheetPutDown;
+        }
+
         /// <summary>A line measured up from the bottom of the board, so it never slides under the leave button.</summary>
         private static RectTransform Foot(RectTransform parent, float bottom, float height) =>
             OnlineUi.Rect("Foot", parent, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, bottom),
@@ -152,6 +192,10 @@ namespace PotionShop.Online
                 marks.Show(shownSheet, shownEasy);
             }
             wholeLabel.text = panZoom.ShowsWholeSheet ? "크게 보기" : "전체 보기";
+            if (deskHint != null)
+                deskHint.text = desk.Held >= 0 ? string.Empty : desk.Hovered >= 0
+                    ? config.MemoLabels[desk.Hovered] + " · 눌러서 집기"
+                    : "책상 위 종이를 눌러서 집어 보세요";
             mode.text = shownEasy ? "쉬움 모드 · 노랑은 증상, 초록은 재료 구별점" : string.Empty;
 
             var sync = session.Sync;
