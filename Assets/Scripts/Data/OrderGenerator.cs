@@ -94,8 +94,11 @@ namespace PotionShop.Data
                 FallbackLine.IsValidSymptom(d, disease)).ToArray();
             IReadOnlyList<DialogueOption> dialogues = overrides is { Length: > 0 } ? overrides : diseaseDialogue;
             catalog.Voices.TryGetValue(profile.Id, out var voice);
-            return new GeneratedOrder(seed, previousDiseaseId, profile, candidate.Portrait, disease,
+            var order = new GeneratedOrder(seed, previousDiseaseId, profile, candidate.Portrait, disease,
                 Choose(dialogues, random), recipe, candidate.Bottle, candidate.Ink, voice, catalog.ReactionLines);
+            // Lines written for this customer and disease replace the shared fallback ones when the table has them.
+            catalog.DialogueTable?.Apply(order);
+            return order;
         }
 
         public static PortraitPart[] PartsFor(CustomerProfile profile, PortraitSlot slot)

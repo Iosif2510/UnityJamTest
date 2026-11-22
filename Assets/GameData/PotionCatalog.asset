@@ -20,3 +20,4 @@ MonoBehaviour:
   portraitColors: {fileID: 11400000, guid: 1b31e17fd28c8b94c943a78f807e642a, type: 2}
   characterVoices: {fileID: 11400000, guid: 3ba67db5ce0838946bbfeb0f73f1c89c, type: 2}
   fallbackDialogue: {fileID: 11400000, guid: 185e777194fef2845b34c473c18bc7d5, type: 2}
+  dialogueTable: {fileID: 4900000, guid: b90ae62eb60176b4e83138c31bd18e25, type: 3}

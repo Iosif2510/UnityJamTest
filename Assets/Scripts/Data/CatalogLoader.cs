@@ -44,6 +44,7 @@ namespace PotionShop.Data
         internal Dictionary<string, DialogueOption> SymptomFallbacks { get; } = new(StringComparer.Ordinal);
         internal IReadOnlyDictionary<string, string> ReactionLines { get; set; }
         internal Dictionary<string, CharacterVoice> Voices { get; } = new(StringComparer.Ordinal);
+        internal DialogueTable DialogueTable { get; set; }
 
         public IReadOnlyList<DialogueOption> GetDiseaseDialogue(DiseaseEntry disease)
         {
@@ -169,6 +170,7 @@ namespace PotionShop.Data
             if (diseases.Keys.Any(id => id.StartsWith("DIS_", StringComparison.Ordinal)) &&
                 (loaded.ReactionLines == null || customers.Keys.Any(id => !loaded.Voices.ContainsKey(id))))
                 throw new InvalidOperationException("MVP requires reaction fallbacks and a voice for every active customer.");
+            loaded.DialogueTable = DialogueTable.Load(catalog.DialogueTable, loaded.Customers, loaded.Diseases);
             return loaded;
         }
 
