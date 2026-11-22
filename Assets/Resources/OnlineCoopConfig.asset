@@ -35,3 +35,13 @@ MonoBehaviour:
   deskBackground: {fileID: 21300000, guid: d9198c8ac76fb0943b448139c4530d1f, type: 3}
   parchmentPanel: {fileID: 21300000, guid: edda685630694d69aeafbaeff657c40c, type: 3}
   woodButton: {fileID: 21300000, guid: 3d2777483cb94ff3a87f653b8e2dc0ec, type: 3}
+  noteSlip: {fileID: 21300000, guid: 746908297e964bd4dba3e2ed348be07c, type: 3}
+  noteCard: {fileID: 21300000, guid: 76413c2b77e27554ab259c1717506776, type: 3}
+  namePlate: {fileID: 21300000, guid: a3c4b0dc25924b49b881bcce1fe803c9, type: 3}
+  timerFrame: {fileID: 21300000, guid: 2e991d82713c44caad9c70ae167af676, type: 3}
+  timerFill: {fileID: 21300000, guid: 2ea47d36a7a549ffabe82e2ddac6cc0c, type: 3}
+  timerHourglass: {fileID: 21300000, guid: 5d5ac6c2cd254e96a52ce22b01cd0097, type: 3}
+  stampGreat: {fileID: 21300000, guid: be670a36dbfb4fba96f4b85daa67568b, type: 3}
+  stampOkay: {fileID: 21300000, guid: 90dbccdb8efd4610b30668dd419af0c7, type: 3}
+  stampSlime: {fileID: 21300000, guid: f3d169c8e0d64942b3b61a36f3e87a73, type: 3}
+  stampSlow: {fileID: 21300000, guid: 537abb88910e42bbac4e2c7a4089aa77, type: 3}

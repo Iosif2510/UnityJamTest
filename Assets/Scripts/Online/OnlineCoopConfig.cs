@@ -26,6 +26,31 @@ namespace PotionShop.Online
         [SerializeField, Tooltip("The yellow wooden button used by the counter scenes.")]
         private Sprite woodButton;
 
+        [SerializeField, Tooltip("A long slip of aged paper: the note that comes up from downstairs.")]
+        private Sprite noteSlip;
+        [SerializeField, Tooltip("A small card of aged paper: the result note and the pause menu.")]
+        private Sprite noteCard;
+
+        [Header("Shared with the counter and workshop screens")]
+        [SerializeField] private Sprite namePlate;
+        [SerializeField] private Sprite timerFrame;
+        [SerializeField] private Sprite timerFill;
+        [SerializeField] private Sprite timerHourglass;
+        [SerializeField] private Sprite stampGreat;
+        [SerializeField] private Sprite stampOkay;
+        [SerializeField] private Sprite stampSlime;
+        [SerializeField] private Sprite stampSlow;
+
+        public Sprite NamePlate => namePlate;
+        public Sprite TimerFrame => timerFrame;
+        public Sprite TimerFill => timerFill;
+        public Sprite TimerHourglass => timerHourglass;
+        public Sprite StampGreat => stampGreat;
+        public Sprite StampOkay => stampOkay;
+        public Sprite StampSlime => stampSlime;
+        public Sprite StampSlow => stampSlow;
+        public Sprite NoteSlip => noteSlip;
+        public Sprite NoteCard => noteCard;
         public Sprite DeskBackground => deskBackground;
         public Sprite ParchmentPanel => parchmentPanel;
         public Sprite WoodButton => woodButton;
