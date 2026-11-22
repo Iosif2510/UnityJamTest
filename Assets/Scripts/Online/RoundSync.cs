@@ -137,7 +137,7 @@ namespace PotionShop.Online
             if (registeredOn != network)
                 Register(network);
 
-            if (session.Role != OnlineRole.Maker || !network.IsServer || network.ConnectedClientsIds.Count < 2)
+            if (session.Role != OnlineRole.Maker || !session.PeerConnected)
             {
                 lastSentAt = float.NegativeInfinity;
                 return;
@@ -150,7 +150,11 @@ namespace PotionShop.Online
             using var writer = new FastBufferWriter(32, Allocator.Temp);
             var buffer = writer;
             snapshot.Write(ref buffer);
-            network.CustomMessagingManager.SendNamedMessageToAll(MessageName, buffer);
+            // The maker may be either end of the connection.
+            if (network.IsServer)
+                network.CustomMessagingManager.SendNamedMessageToAll(MessageName, buffer);
+            else
+                network.CustomMessagingManager.SendNamedMessage(MessageName, NetworkManager.ServerClientId, buffer);
             lastSent = snapshot;
             lastSentAt = Time.unscaledTime;
         }

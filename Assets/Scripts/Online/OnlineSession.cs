@@ -9,11 +9,13 @@ using UnityEngine;
 
 namespace PotionShop.Online
 {
-    public enum OnlineRole { Offline, Maker, Narrator }
+    /// <summary>Undecided: connected, but the two players have not yet picked who goes upstairs.</summary>
+    public enum OnlineRole { Offline, Undecided, Maker, Narrator }
 
     /// <summary>
-    /// Owns the two-player connection. The maker hosts and plays the existing scenes; the narrator joins and stays
-    /// in the loft. Nothing here is required for offline play.
+    /// Owns the two-player connection. Either player may host; who plays the maker (existing scenes) and who plays
+    /// the narrator (the loft) is agreed afterwards through <see cref="RoleLobby"/>. Nothing here is required for
+    /// offline play.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class OnlineSession : MonoBehaviour
@@ -34,6 +36,7 @@ namespace PotionShop.Online
                     DontDestroyOnLoad(root);
                     instance = root.AddComponent<OnlineSession>();
                     root.AddComponent<RoundSync>();
+                    root.AddComponent<RoleLobby>();
                     root.AddComponent<VoiceChat>();
                 }
                 return instance;
@@ -44,6 +47,12 @@ namespace PotionShop.Online
         public static OnlineRole CurrentRole => instance != null ? instance.Role : OnlineRole.Offline;
 
         public OnlineRole Role { get; private set; }
+        /// <summary>True on the player who opened the room. Independent of the role played.</summary>
+        public bool IsHost { get; private set; }
+        /// <summary>Easy mode marks the useful notes on the narrator's sheets. Agreed in the lobby.</summary>
+        public bool EasyMode { get; private set; }
+        /// <summary>True once this player has finished the walk to their floor after the roles were picked.</summary>
+        public bool Arrived { get; private set; }
         public string JoinCode { get; private set; }
         public bool UsesCloud { get; private set; }
         public bool PeerConnected { get; private set; }
@@ -51,6 +60,7 @@ namespace PotionShop.Online
         public NetworkManager Network { get; private set; }
         public RoundSync Sync => GetComponent<RoundSync>();
         public VoiceChat Voice => GetComponent<VoiceChat>();
+        public RoleLobby Lobby => GetComponent<RoleLobby>();
 
         /// <summary>Raised whenever role, code, or peer connection changes.</summary>
         public event Action Changed;
@@ -72,7 +82,7 @@ namespace PotionShop.Online
                 EnsureNetwork();
                 var options = new SessionOptions { MaxPlayers = 2 }.WithRelayNetwork();
                 cloudSession = await MultiplayerService.Instance.CreateSessionAsync(options);
-                Begin(OnlineRole.Maker, cloudSession.Code, true);
+                Begin(true, cloudSession.Code, true);
                 Voice.JoinAsync(cloudSession.Code).Forget();
             });
         }
@@ -87,7 +97,7 @@ namespace PotionShop.Online
                 await SignInAsync();
                 EnsureNetwork();
                 cloudSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code);
-                Begin(OnlineRole.Narrator, cloudSession.Code, true);
+                Begin(false, cloudSession.Code, true);
                 Voice.JoinAsync(cloudSession.Code).Forget();
             });
         }
@@ -100,7 +110,7 @@ namespace PotionShop.Online
             Transport.SetConnectionData("127.0.0.1", LanPort, "0.0.0.0");
             if (!Network.StartHost())
                 return "방을 열지 못했습니다. 포트 7777이 사용 중인지 확인하세요.";
-            Begin(OnlineRole.Maker, null, false);
+            Begin(true, null, false);
             return null;
         }
 
@@ -112,7 +122,7 @@ namespace PotionShop.Online
             Transport.SetConnectionData(address, LanPort);
             if (!Network.StartClient())
                 return "연결을 시작하지 못했습니다.";
-            Begin(OnlineRole.Narrator, null, false);
+            Begin(false, null, false);
             return null;
         }
 
@@ -129,9 +139,36 @@ namespace PotionShop.Online
                 catch (Exception exception) { Debug.LogWarning($"[Online] Leave failed: {exception.Message}"); }
             }
             Role = OnlineRole.Offline;
+            IsHost = false;
+            EasyMode = false;
+            Arrived = false;
             JoinCode = null;
             UsesCloud = false;
             PeerConnected = false;
+            Changed?.Invoke();
+        }
+
+        /// <summary>Called by <see cref="RoleLobby"/> once the two players have agreed who goes upstairs.</summary>
+        internal void AssignRole(OnlineRole role)
+        {
+            if (Role == OnlineRole.Offline || Role == role || role is not (OnlineRole.Maker or OnlineRole.Narrator))
+                return;
+            Role = role;
+            Debug.Log($"[Online] Role assigned: {role}.");
+            Changed?.Invoke();
+        }
+
+        internal void MarkArrived()
+        {
+            Arrived = true;
+            Changed?.Invoke();
+        }
+
+        internal void SetEasyMode(bool easy)
+        {
+            if (EasyMode == easy)
+                return;
+            EasyMode = easy;
             Changed?.Invoke();
         }
 
@@ -193,7 +230,7 @@ namespace PotionShop.Online
             root.SetActive(false);
             var transport = root.AddComponent<UnityTransport>();
             Network = root.AddComponent<NetworkManager>();
-            // The maker changes scenes alone; the narrator never follows, so Netcode must not sync scenes.
+            // The two players are in different scenes for most of a round, so Netcode must not sync scenes.
             Network.NetworkConfig = new NetworkConfig { NetworkTransport = transport, EnableSceneManagement = false };
             root.SetActive(true);
             DontDestroyOnLoad(root);
@@ -202,9 +239,12 @@ namespace PotionShop.Online
             Network.OnClientDisconnectCallback += _ => RefreshPeer();
         }
 
-        private void Begin(OnlineRole role, string code, bool cloud)
+        private void Begin(bool host, string code, bool cloud)
         {
-            Role = role;
+            Role = OnlineRole.Undecided;
+            IsHost = host;
+            EasyMode = false;
+            Arrived = false;
             JoinCode = code;
             UsesCloud = cloud;
             RefreshPeer();
@@ -213,18 +253,18 @@ namespace PotionShop.Online
         private void RefreshPeer()
         {
             if (Network == null) return;
-            PeerConnected = Role == OnlineRole.Maker
-                ? Network.IsListening && Network.ConnectedClientsIds.Count > 1
-                : Network.IsConnectedClient;
+            PeerConnected = IsPeerConnected();
             Changed?.Invoke();
         }
+
+        private bool IsPeerConnected() => IsHost
+            ? Network.IsListening && Network.ConnectedClientsIds.Count > 1
+            : Network.IsConnectedClient;
 
         private void Update()
         {
             if (Role == OnlineRole.Offline || Network == null) return;
-            bool connected = Role == OnlineRole.Maker
-                ? Network.IsListening && Network.ConnectedClientsIds.Count > 1
-                : Network.IsConnectedClient;
+            bool connected = IsPeerConnected();
             if (connected != PeerConnected)
             {
                 PeerConnected = connected;

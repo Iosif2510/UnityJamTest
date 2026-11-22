@@ -19,6 +19,9 @@ namespace PotionShop.Online
         private OnlineSession session;
         private Image sheet;
         private SheetPanZoom panZoom;
+        private SheetMarks marks;
+        private Text mode;
+        private bool shownEasy;
         private Image[] thumbnailFrames;
         private Text[] steps;
         private Text timer;
@@ -75,6 +78,8 @@ namespace PotionShop.Online
             sheet.preserveAspect = true;
             panZoom = viewport.gameObject.AddComponent<SheetPanZoom>();
             panZoom.Bind(viewport, content);
+            marks = content.gameObject.AddComponent<SheetMarks>();
+            marks.Bind(content);
 
             // Right: what is happening downstairs.
             var board = OnlineUi.Rect("Board", root, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-480f, 30f),
@@ -92,6 +97,8 @@ namespace PotionShop.Online
                 TextAnchor.UpperLeft);
             result = OnlineUi.Label(Line(board, 650f, 210f), string.Empty, 26, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.UpperLeft);
+            mode = OnlineUi.Label(Line(board, 832f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
+                TextAnchor.MiddleLeft);
             voice = OnlineUi.Label(Line(board, 870f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.MiddleLeft);
             connection = OnlineUi.Label(Line(board, 908f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
@@ -111,12 +118,20 @@ namespace PotionShop.Online
             shownSheet = index;
             sheet.sprite = config.MemoSheets[index];
             panZoom.ResetView();
+            marks.Show(index, shownEasy);
             for (int i = 0; i < thumbnailFrames.Length; i++)
                 thumbnailFrames[i].color = i == index ? OnlineUi.Accent : OnlineUi.Parchment;
         }
 
         private void Update()
         {
+            if (session.EasyMode != shownEasy)
+            {
+                shownEasy = session.EasyMode;
+                marks.Show(shownSheet, shownEasy);
+            }
+            mode.text = shownEasy ? "쉬움 모드 · 노랑은 증상, 초록은 재료 구별점" : string.Empty;
+
             var sync = session.Sync;
             bool live = session.Role == OnlineRole.Narrator && session.PeerConnected && sync.HasSnapshot;
             var snapshot = live ? sync.Latest : default;
