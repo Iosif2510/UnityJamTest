@@ -14,11 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
   allowAllCustomers: 0
   spawnPool:
+  - HUM_M1
+  - HUM_M2
+  - HUM_M3
+  - HUM_F1
+  - HUM_F2
   - HUM_F3
   - ELF_M1
+  - ELF_M2
+  - ELF_M3
   - ELF_F1
+  - ELF_F2
+  - ELF_F3
+  - BST_M1
   - BST_M2
+  - BST_M3
+  - BST_F1
+  - BST_F2
+  - BST_F3
   - GOL_G1
+  - GOL_G2
+  - GOL_G3
+  - GOL_G4
   profiles:
   - id: HUM_M1
     status: 1

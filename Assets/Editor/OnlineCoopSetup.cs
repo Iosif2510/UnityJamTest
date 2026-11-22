@@ -51,6 +51,13 @@ namespace PotionShop.Editor
             Debug.Log("[Online] Co-op assets rebuilt.");
         }
 
+        /// <summary>Batch-mode entry: rebuilds the co-op assets, then runs the catalog validator so its findings reach the log.</summary>
+        public static void RebuildAndValidate()
+        {
+            Rebuild();
+            EditorApplication.ExecuteMenuItem("Potion Shop/Data/Validate Catalog");
+        }
+
         private static Sprite ImportMemo(string name)
         {
             string path = $"{MemoFolder}/{name}.png";
