@@ -92,8 +92,7 @@ MVP 구현에 쓰는 데이터다. 표의 칸을 직접 채우고, 다 채우면
 | scoreIngredient | 재료 점수 | 60 | 점 | 재료 1개당 20점, 3개 모두 맞으면 60점 |
 | scoreBottle | 병 점수 | 20 | 점 |  |
 | scoreInk | 잉크 점수 | 20 | 점 |  |
-| timeBonusStep | 남은 시간 보너스 단위 | 10 | 초 | 이 시간마다 |
-| timeBonusPoint | 남은 시간 보너스 점수 | 5 | 점 |  |
+| timeBonusMultiplier | 남은 시간 보너스 배율 | 0.1 | 점/초 | 남은 초에 곱하고 소수점은 버린다. 게임의 RoundTuning 값과 같다 |
 | stampGreat | 명약 도장 기준 | 100 | 점 | 이상 |
 | stampOkay | 그럭저럭 도장 기준 | 60 | 점 | 이상, 그 아래는 슬라임 |
 | reactionGap | 반응 대사 간격 | 1.5 | 초 | 엔딩 반응 단계 사이 |
