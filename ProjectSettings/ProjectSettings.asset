@@ -934,11 +934,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 6d5cf243-4e94-40f5-b45b-2f4fca67e748
+  cloudProjectId: 9feeaa66-1da7-4e96-93b7-d5856d0d468c
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: UnityJamTest
-  organizationId: gpotatok
+  projectName: Jiudev
+  organizationId: jiu
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
