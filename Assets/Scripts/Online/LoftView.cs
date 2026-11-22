@@ -21,6 +21,7 @@ namespace PotionShop.Online
         private SheetPanZoom panZoom;
         private SheetMarks marks;
         private Text mode;
+        private Text wholeLabel;
         private bool shownEasy;
         private Image[] thumbnailFrames;
         private Text[] steps;
@@ -45,71 +46,91 @@ namespace PotionShop.Online
             var root = OnlineUi.Canvas("LoftCanvas", 0, transform).transform;
             OnlineUi.Fill(OnlineUi.Rect("Desk", root, Vector2.zero, Vector2.one), OnlineUi.Wood, false);
 
-            // Left: every sheet is always on the desk, as the printed stack was.
-            var shelf = OnlineUi.Rect("Sheets", root, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(30f, 30f),
-                new Vector2(330f, -30f));
+            // Left: every sheet is always on the desk, as the printed stack was. One narrow column that divides
+            // the full height, so no sheet can fall off the bottom of the screen.
+            var shelf = OnlineUi.Rect("Sheets", root, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(24f, 24f),
+                new Vector2(224f, -24f));
             OnlineUi.Fill(shelf, OnlineUi.WoodLight, false);
             var sprites = config.MemoSheets;
             thumbnailFrames = new Image[sprites.Length];
             for (int i = 0; i < sprites.Length; i++)
             {
                 int index = i;
-                var cell = OnlineUi.Box("Sheet" + i, shelf, new Vector2(0f, 1f),
-                    new Vector2(16f + i % 2 * 138f, -16f - i / 2 * 250f), new Vector2(130f, 240f));
+                var cell = OnlineUi.Rect("Sheet" + i, shelf, new Vector2(0f, 1f - (i + 1f) / sprites.Length),
+                    new Vector2(1f, 1f - (float)i / sprites.Length), new Vector2(8f, 4f), new Vector2(-8f, -4f));
                 thumbnailFrames[i] = OnlineUi.Fill(cell, OnlineUi.Parchment);
                 var button = cell.gameObject.AddComponent<Button>();
                 button.targetGraphic = thumbnailFrames[i];
                 button.onClick.AddListener(() => ShowSheet(index));
-                var picture = OnlineUi.Fill(OnlineUi.Rect("Picture", cell, Vector2.zero, Vector2.one,
-                    new Vector2(8f, 44f), new Vector2(-8f, -8f)), Color.white, false);
+                var picture = OnlineUi.Fill(OnlineUi.Rect("Picture", cell, Vector2.zero, new Vector2(0.4f, 1f),
+                    new Vector2(6f, 6f), new Vector2(0f, -6f)), Color.white, false);
                 picture.sprite = sprites[i];
                 picture.preserveAspect = true;
-                OnlineUi.Label(OnlineUi.Rect("Name", cell, Vector2.zero, new Vector2(1f, 0f), Vector2.zero,
-                    new Vector2(0f, 44f)), config.MemoLabels[i], 20, config.BoldFont, OnlineUi.Ink);
+                OnlineUi.Label(OnlineUi.Rect("Name", cell, new Vector2(0.4f, 0f), Vector2.one, new Vector2(4f, 0f),
+                    new Vector2(-4f, 0f)), config.MemoLabels[i], 22, config.BoldFont, OnlineUi.Ink);
             }
 
-            // Centre: the sheet being read. Wheel zooms, drag pans.
+            // Centre: the sheet being read, as wide as the space allows. Wheel moves down the page, drag pans.
             var viewport = OnlineUi.Rect("Viewport", root, new Vector2(0f, 0f), new Vector2(1f, 1f),
-                new Vector2(360f, 30f), new Vector2(-510f, -30f));
+                new Vector2(248f, 24f), new Vector2(-448f, -24f));
             OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, 0.25f));
             viewport.gameObject.AddComponent<RectMask2D>();
-            var content = OnlineUi.Rect("Sheet", viewport, Vector2.zero, Vector2.one);
+            var content = OnlineUi.Rect("Sheet", viewport, Vector2.zero, Vector2.zero);
             sheet = OnlineUi.Fill(content, Color.white, false);
             sheet.preserveAspect = true;
             panZoom = viewport.gameObject.AddComponent<SheetPanZoom>();
-            panZoom.Bind(viewport, content);
+            var first = sprites[0];
+            panZoom.Bind(viewport, content, first.rect.width / first.rect.height);
             marks = content.gameObject.AddComponent<SheetMarks>();
             marks.Bind(content);
 
+            // Zoom controls stay on the corner of the viewport, outside the masked sheet.
+            var tools = OnlineUi.Box("Zoom", root, new Vector2(1f, 0f), new Vector2(-464f, 40f), new Vector2(244f, 56f));
+            OnlineUi.Button(OnlineUi.Rect("ZoomOut", tools, new Vector2(0f, 0f), new Vector2(0.24f, 1f)), "−", 34,
+                config.BoldFont, () => panZoom.ZoomOut(), OnlineUi.WoodLight);
+            OnlineUi.Button(OnlineUi.Rect("ZoomIn", tools, new Vector2(0.26f, 0f), new Vector2(0.5f, 1f)), "+", 34,
+                config.BoldFont, () => panZoom.ZoomIn(), OnlineUi.WoodLight);
+            var whole = OnlineUi.Button(OnlineUi.Rect("Whole", tools, new Vector2(0.52f, 0f), new Vector2(1f, 1f)),
+                string.Empty, 22, config.BoldFont, () => panZoom.ToggleWholeSheet(), OnlineUi.WoodLight);
+            wholeLabel = OnlineUi.Label(OnlineUi.Rect("Label", whole.transform, Vector2.zero, Vector2.one), string.Empty,
+                22, config.BoldFont, Color.white);
+
             // Right: what is happening downstairs.
-            var board = OnlineUi.Rect("Board", root, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-480f, 30f),
-                new Vector2(-30f, -30f));
+            var board = OnlineUi.Rect("Board", root, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-424f, 24f),
+                new Vector2(-24f, -24f));
             OnlineUi.Fill(board, OnlineUi.Parchment, false);
-            OnlineUi.Label(Line(board, 24f, 56f), "위층 공방", 40, config.BoldFont, OnlineUi.Ink);
-            timer = OnlineUi.Label(Line(board, 90f, 110f), "--:--", 92, config.BoldFont, OnlineUi.Accent);
+            OnlineUi.Label(Line(board, 24f, 56f), "위층 공방", 36, config.BoldFont, OnlineUi.Ink);
+            timer = OnlineUi.Label(Line(board, 90f, 110f), "--:--", 84, config.BoldFont, OnlineUi.Accent);
 
             steps = new Text[StepNames.Length];
             for (int i = 0; i < steps.Length; i++)
-                steps[i] = OnlineUi.Label(Line(board, 220f + i * 52f, 48f), StepNames[i], 30, config.BoldFont,
+                steps[i] = OnlineUi.Label(Line(board, 220f + i * 52f, 48f), StepNames[i], 28, config.BoldFont,
                     OnlineUi.Faded, TextAnchor.MiddleLeft);
 
-            guidance = OnlineUi.Label(Line(board, 450f, 190f), string.Empty, 28, config.BodyFont, OnlineUi.Ink,
+            guidance = OnlineUi.Label(Line(board, 450f, 190f), string.Empty, 25, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.UpperLeft);
-            result = OnlineUi.Label(Line(board, 650f, 210f), string.Empty, 26, config.BodyFont, OnlineUi.Ink,
+            result = OnlineUi.Label(Line(board, 655f, 135f), string.Empty, 23, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.UpperLeft);
-            mode = OnlineUi.Label(Line(board, 832f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
+            OnlineUi.Label(Foot(board, 142f, 28f), "휠: 아래로 넘기기 · 끌기: 옮기기", 18, config.BodyFont,
+                OnlineUi.Faded, TextAnchor.MiddleLeft);
+            mode = OnlineUi.Label(Foot(board, 172f, 30f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.MiddleLeft);
-            voice = OnlineUi.Label(Line(board, 870f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
+            voice = OnlineUi.Label(Foot(board, 108f, 28f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.MiddleLeft);
-            connection = OnlineUi.Label(Line(board, 908f, 36f), string.Empty, 20, config.BodyFont, OnlineUi.Ink,
+            connection = OnlineUi.Label(Foot(board, 76f, 28f), string.Empty, 18, config.BodyFont, OnlineUi.Ink,
                 TextAnchor.MiddleLeft);
             OnlineUi.Button(OnlineUi.Box("Leave", board, new Vector2(0.5f, 0f), new Vector2(0f, 16f),
-                new Vector2(390f, 50f)), "공방에서 나가기", 24, config.BoldFont, () => Leave().Forget(), OnlineUi.WoodLight);
+                new Vector2(340f, 50f)), "공방에서 나가기", 24, config.BoldFont, () => Leave().Forget(), OnlineUi.WoodLight);
         }
 
         private static RectTransform Line(RectTransform parent, float top, float height) =>
-            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(30f, -top - height),
-                new Vector2(-30f, -top));
+            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(24f, -top - height),
+                new Vector2(-24f, -top));
+
+        /// <summary>A line measured up from the bottom of the board, so it never slides under the leave button.</summary>
+        private static RectTransform Foot(RectTransform parent, float bottom, float height) =>
+            OnlineUi.Rect("Foot", parent, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(24f, bottom),
+                new Vector2(-24f, bottom + height));
 
         private void ShowSheet(int index)
         {
@@ -130,6 +151,7 @@ namespace PotionShop.Online
                 shownEasy = session.EasyMode;
                 marks.Show(shownSheet, shownEasy);
             }
+            wholeLabel.text = panZoom.ShowsWholeSheet ? "크게 보기" : "전체 보기";
             mode.text = shownEasy ? "쉬움 모드 · 노랑은 증상, 초록은 재료 구별점" : string.Empty;
 
             var sync = session.Sync;
