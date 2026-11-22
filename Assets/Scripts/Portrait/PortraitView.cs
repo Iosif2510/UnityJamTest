@@ -43,7 +43,7 @@ namespace PotionShop.Portraits
             colors.Apply(hairTint, palette.Get(PortraitSlot.Eyes, eyes));
             if (expression != null)
             {
-                layers.ShowExpression(expression);
+                layers.ShowExpression(expression, profile.AngryExpressionAboveHair && expression == profile.AngryExpression);
                 return;
             }
             rig?.Load(profile.RigPrefab, profile.SpineRig);

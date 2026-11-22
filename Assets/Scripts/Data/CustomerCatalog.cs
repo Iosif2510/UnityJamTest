@@ -64,6 +64,7 @@ namespace PotionShop.Data
         [SerializeField] private Sprite eyeClosed;
         [SerializeField] private Sprite happyExpression;
         [SerializeField] private Sprite angryExpression;
+        [SerializeField] private bool angryExpressionAboveHair;
         [SerializeField] private Sprite hairFront;
         [SerializeField] private Sprite hairBack;
         [SerializeField] private List<AppearanceValue> hairColors = new();
@@ -99,6 +100,7 @@ namespace PotionShop.Data
         public Sprite EyeClosed => eyeClosed;
         public Sprite HappyExpression => happyExpression;
         public Sprite AngryExpression => angryExpression;
+        public bool AngryExpressionAboveHair => angryExpressionAboveHair;
         public Sprite HairFront => hairFront;
         public Sprite HairBack => hairBack;
         public IReadOnlyList<string> HairColorIds => hairColorIds;
