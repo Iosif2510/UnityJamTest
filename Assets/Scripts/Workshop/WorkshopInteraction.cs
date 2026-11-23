@@ -44,6 +44,7 @@ namespace PotionShop
         private PocketModelDisplay pocketModels;
         private CancellationTokenSource transfer;
         private Transform holdAnchor;
+        private HeldItemOverlay heldOverlay;
 
         private static int Required => RecipeEntry.RequiredIngredientKinds;
         private int Gathered => inCauldron.Count + (held != null ? 1 : 0);
@@ -68,6 +69,7 @@ namespace PotionShop
             pocketModels = hud.CreatePocketDisplay(playerCamera);
             holdAnchor = new GameObject("CenterHoldAnchor").transform;
             holdAnchor.SetParent(playerCamera.transform, false);
+            heldOverlay = new HeldItemOverlay(playerCamera);
             hud.ShowPrompt();
             var activeRound = RoundDirector.Instance;
             if (activeRound != null && activeRound.CurrentOrder != null)
@@ -79,6 +81,7 @@ namespace PotionShop
 
         private void Update()
         {
+            heldOverlay?.SyncLens();
             if (round != null)
             {
                 double remainingSeconds = round.RemainingSeconds;
@@ -226,6 +229,8 @@ namespace PotionShop
         private void SetHeldIngredient(WarehouseIngredient ingredient)
         {
             held = ingredient;
+            if (held != null) heldOverlay?.Show(held);
+            else heldOverlay?.Clear();
             if (armsAnimator != null)
                 armsAnimator.SetBool(IsHolding, held != null);
         }
@@ -250,6 +255,7 @@ namespace PotionShop
             {
                 var ingredient = held;
                 int slot = inCauldron.Count;
+                heldOverlay?.Clear(); // the throw flies into the cauldron, so it must be hidden by the rim again
                 await ThrowIngredient(ingredient, slot, cauldron, operation.Token);
                 operation.Token.ThrowIfCancellationRequested();
 
