@@ -110,6 +110,7 @@ namespace PotionShop.Online
                 return;
             tabIndex = index;
             RefreshTabs();
+            GameSfx.Play("PageTurn", 0.7f, 0.9f, 0.06f);
             // A tab with a single sheet opens it straight away; the potion memos are dealt onto the desk first.
             if (tabs[index].Sheets.Length == 1)
                 Unfold(0);
@@ -184,8 +185,10 @@ namespace PotionShop.Online
                 var from = target + new Vector2(-1500f, 60f);
                 card.anchoredPosition = from;
                 card.localRotation = Quaternion.Euler(0f, 0f, 14f);
+                float pitch = 0.95f + i * 0.04f;
                 LMotion.Create(0f, 1f, 0.42f).WithDelay(i * 0.06f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                    .WithOnComplete(() => GameSfx.Play("CardDeal", 0.7f, pitch, 0.05f))
                     .Bind(t =>
                     {
                         card.anchoredPosition = Vector2.LerpUnclamped(from, target, t);
@@ -254,6 +257,7 @@ namespace PotionShop.Online
             page = Mathf.Clamp(slot, 0, sheets.Length - 1);
             int index = sheets[page];
             seen.Add(index);
+            GameSfx.Play("PageTurn", 0.8f, 1.05f, 0.08f);
             sheet.Show(index, easy);
             sheet.Refresh();
             SetUnfolded(true);
@@ -327,6 +331,8 @@ namespace PotionShop.Online
             if (signalSent || !session.Signal.Send())
                 return;
             signalSent = true;
+            GameSfx.Play("FoundBell", 0.8f);
+            OrderHudMotion.Bounce(found.transform, 1.15f);
             toastSince = Time.unscaledTime;
             toast.gameObject.SetActive(true);
             LMotion.Create(0.7f, 1f, 0.28f).WithEase(Ease.OutBack).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)

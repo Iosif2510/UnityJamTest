@@ -68,6 +68,7 @@ namespace PotionShop.Online
             if (showToast && at != shownToastFor)
             {
                 shownToastFor = at;
+                GameSfx.Play("FoundBell", 0.8f);
                 LMotion.Create(0.6f, 1f, 0.3f).WithEase(Ease.OutBack)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                     .Bind(scale => toast.localScale = new Vector3(scale, scale, 1f)).AddTo(toast.gameObject);

@@ -97,6 +97,15 @@ namespace PotionShop.Online
                 .Bind(scale => card.localScale = new Vector3(scale, scale, 1f)).AddTo(root);
             var mark = stamp.rectTransform;
             mark.localScale = Vector3.zero;
+            // the same sounds as downstairs: the stamp lands, then cheers or deflates
+            bool fine = !s.TimedOut && s.Stamp == 2, failed = s.TimedOut || s.Stamp == 0;
+            LMotion.Create(0f, 1f, 0.01f).WithDelay(0.65f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithOnComplete(() =>
+                {
+                    GameSfx.Play("StampThud", 1f, 1f, 0.04f);
+                    if (fine) GameSfx.Play("Fanfare", 0.85f);
+                    else if (failed) GameSfx.Play("Flop", 0.8f);
+                }).Bind(_ => { }).AddTo(root);
             LMotion.Create(1.9f, 1f, 0.2f).WithDelay(0.45f).WithEase(Ease.InQuad)
                 .Bind(scale => mark.localScale = new Vector3(scale, scale, 1f)).AddTo(root);
         }

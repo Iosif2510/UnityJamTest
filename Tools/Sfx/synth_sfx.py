@@ -131,6 +131,47 @@ k = t(0.06)
 pat[int(SR * 0.22):int(SR * 0.22) + len(k)] = lowpass(rng.standard_normal(len(k)), 1200) * np.exp(-k / 0.012) * 1.6
 save("Card", swish + pat, 0.6)
 
+# Page turn: a quick papery swish with a soft flap at the end.
+x = t(0.28)
+sw = lowpass(rng.standard_normal(len(x)), 3200) * np.interp(x, [0, 0.04, 0.16, 0.28], [0, 0.8, 0.5, 0])
+flap = np.zeros(len(x)); k = t(0.05)
+flap[int(SR * 0.17):int(SR * 0.17) + len(k)] = lowpass(rng.standard_normal(len(k)), 900) * np.exp(-k / 0.01)
+save("PageTurn", sw + 0.8 * flap, 0.55)
+
+# Card deal: a tiny flick of paper landing.
+x = t(0.12)
+flick = lowpass(rng.standard_normal(len(x)), 4000) * np.interp(x, [0, 0.02, 0.06, 0.12], [0, 1, 0.3, 0])
+save("CardDeal", flick, 0.4)
+
+# Found: a small hand bell, rung twice quickly.
+fb = bell(2093, 1.1)
+fb2 = np.zeros_like(fb); lag = int(SR * 0.11)
+fb2[lag:] = 0.8 * bell(2093, 1.1)[:len(fb) - lag]
+save("FoundBell", (fb + fb2) * env(len(fb), 0.002, 0.7), 0.6)
+
+# Step chime: one soft glass note, for news from downstairs.
+save("StepChime", chime(1318.5, 0.9) * env(int(SR * 0.9), 0.003, 0.5), 0.45)
+
+# Click: a short wooden tick for any button.
+x = t(0.04)
+save("Click", (np.sin(2 * np.pi * 1300 * x) * np.exp(-x / 0.006) +
+               0.4 * lowpass(rng.standard_normal(len(x)), 5000) * np.exp(-x / 0.002)), 0.4)
+
+# Fanfare: a bright rising arpeggio for a fine brew.
+notes = [1046.5, 1318.5, 1568.0, 2093.0]
+fan = np.zeros(int(SR * 1.4))
+for i, f0 in enumerate(notes):
+    c = chime(f0, 1.0)
+    o = int(SR * 0.09 * i)
+    fan[o:o + len(c)] += c[:len(fan) - o] * (0.8 + 0.1 * i)
+save("Fanfare", fan * env(len(fan), 0.003, 0.9), 0.65)
+
+# Flop: a dull, deflating "bwomp" for a failed brew.
+x = t(0.6)
+fr = np.interp(x, [0, 0.6], [220, 90])
+flop = np.sin(2 * np.pi * np.cumsum(fr) / SR) + 0.3 * np.sin(4 * np.pi * np.cumsum(fr) / SR)
+save("Flop", lowpass(flop, 1200) * env(len(x), 0.01, 0.3), 0.6)
+
 # Reused project sounds that were not wired to anything.
 shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
 shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/paper.mp3", OUT / "Paper.mp3")

@@ -34,6 +34,7 @@ namespace PotionShop.Online
         private GameObject menu;
         private string shownGuidance;
         private float roundLimit;
+        private TimerUrgency clockUrgency;
         private RoundPhase? lastPhase;
 
         private void Start()
@@ -169,6 +170,8 @@ namespace PotionShop.Online
             // The narrator is not told the time limit; the longest time seen this round stands in for it.
             roundLimit = running ? Mathf.Max(roundLimit, remaining) : 0f;
             clock.text = running ? RoundDirector.FormatClock(remaining) : "--:--";
+            clockUrgency ??= new TimerUrgency(clock);
+            clockUrgency.Show(remaining, running);
             timerFill.fillAmount = 1f;
             float fill = running && roundLimit > 0f ? Mathf.Clamp01(remaining / roundLimit) : 0f;
             var fillRect = timerFill.rectTransform;
@@ -204,6 +207,12 @@ namespace PotionShop.Online
 
         private void ShowStep(int step)
         {
+            // News from downstairs: a customer arrives (door bell) or the maker moves on (a chime and a chip pop).
+            if (shownStep != -2 && step >= 0 && step != shownStep)
+            {
+                GameSfx.Play(step == 0 ? "DoorBell" : "StepChime", step == 0 ? 0.5f : 0.7f);
+                OrderHudMotion.Bounce(chips[step].transform, 1.2f);
+            }
             shownStep = step;
             for (int i = 0; i < chips.Length; i++)
             {

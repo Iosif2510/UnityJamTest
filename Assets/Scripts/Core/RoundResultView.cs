@@ -81,6 +81,10 @@ namespace PotionShop
                 _ => otherStamp.gameObject
             };
             await Stamp(stamp, camera, token);
+            if (result.Stamp == RoundResult.FineBrewStamp && !result.TimedOut)
+                await Celebrate((RectTransform)stamp.transform, token);
+            else if (result.Stamp != RoundResult.PassableStamp || result.TimedOut)
+                await Sag(token);
         }
 
         /// <summary>Rolls a number up with a tick per step, so each row is felt rather than just shown.</summary>
@@ -162,6 +166,64 @@ namespace PotionShop
                 rect.localPosition = position + (1 - factor) * center;
                 group.alpha = t;
             }
+        }
+
+        private static readonly Color[] ConfettiColors =
+        {
+            new(0.98f, 0.78f, 0.30f), new(0.93f, 0.45f, 0.32f), new(0.50f, 0.78f, 0.52f), new(0.45f, 0.62f, 0.92f),
+            new(0.95f, 0.92f, 0.82f),
+        };
+
+        /// <summary>A fine brew: a bright arpeggio and a burst of paper confetti from the stamp.</summary>
+        private async UniTask Celebrate(RectTransform stamp, CancellationToken token)
+        {
+            GameSfx.Play("Fanfare", 0.85f);
+            var card = (RectTransform)ingredients.transform.parent;
+            var origin = card.InverseTransformPoint(stamp.TransformPoint(stamp.rect.center));
+            var pieces = new RectTransform[28];
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                var piece = new GameObject("Confetti", typeof(RectTransform), typeof(UnityEngine.UI.Image)).GetComponent<RectTransform>();
+                piece.SetParent(card, false);
+                piece.sizeDelta = new Vector2(UnityEngine.Random.Range(8f, 14f), UnityEngine.Random.Range(12f, 20f));
+                piece.localPosition = origin;
+                var image = piece.GetComponent<UnityEngine.UI.Image>();
+                image.color = ConfettiColors[i % ConfettiColors.Length];
+                image.raycastTarget = false;
+                pieces[i] = piece;
+                float angle = UnityEngine.Random.Range(35f, 145f) * Mathf.Deg2Rad;
+                float speed = UnityEngine.Random.Range(260f, 520f);
+                var velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * speed;
+                float spin = UnityEngine.Random.Range(-720f, 720f);
+                var start = (Vector2)origin;
+                _ = LMotion.Create(0f, 1.1f, 1.1f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                    .Bind(t =>
+                    {
+                        if (piece == null) return;
+                        piece.localPosition = start + velocity * t + new Vector2(0f, -620f) * t * t;
+                        piece.localRotation = Quaternion.Euler(0f, 0f, spin * t);
+                        var c = image.color;
+                        image.color = new Color(c.r, c.g, c.b, Mathf.Clamp01((1.1f - t) / 0.35f));
+                    }).ToUniTask(token);
+            }
+            try { await UniTask.Delay(TimeSpan.FromSeconds(1.15), ignoreTimeScale: true, cancellationToken: token); }
+            finally { foreach (var p in pieces) if (p != null) Destroy(p.gameObject); }
+        }
+
+        /// <summary>A failed brew: a deflating sound and the card sags a little, then settles.</summary>
+        private UniTask Sag(CancellationToken token)
+        {
+            GameSfx.Play("Flop", 0.8f);
+            var card = (RectTransform)ingredients.transform.parent;
+            var rest = card.anchoredPosition;
+            return LMotion.Create(0f, 1f, 0.6f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(t =>
+                {
+                    if (card == null) return;
+                    float droop = Mathf.Sin(Mathf.Min(t, 0.5f) / 0.5f * Mathf.PI * 0.5f) * (1f - Mathf.Max(0f, t - 0.5f) * 1.2f);
+                    card.anchoredPosition = rest + new Vector2(0f, -12f * droop);
+                    card.localRotation = Quaternion.Euler(0f, 0f, 2.5f * droop);
+                }).ToUniTask(token);
         }
 
         /// <summary>The right answer, small and muted, after a wrong one.</summary>
