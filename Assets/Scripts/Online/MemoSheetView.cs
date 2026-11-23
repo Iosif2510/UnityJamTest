@@ -11,7 +11,8 @@ namespace PotionShop.Online
     /// </summary>
     internal sealed class MemoSheetView
     {
-        private static readonly Color InkColor = new(0.13f, 0.11f, 0.10f, 0.95f);
+        // The same warm sepia the sheets are baked with (Tools/MemoText/bake_sheets.py).
+        private static readonly Color InkColor = new(52f / 255f, 30f / 255f, 18f / 255f, 0.95f);
         private static readonly Color Symptom = new(1f, 0.78f, 0.16f, 0.45f);
         private static readonly Color Ingredient = new(0.42f, 0.80f, 0.36f, 0.42f);
 

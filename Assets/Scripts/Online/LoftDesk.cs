@@ -19,7 +19,8 @@ namespace PotionShop.Online
         private static readonly Vector2 CardSize = new(450f, 253f);
         private static readonly Vector2 PaperPos = new(490f, 150f), PaperSize = new(1256f, 706f);
         private const float ToastSeconds = 2.6f;
-        private static readonly Color PaperColor = new(0.96f, 0.92f, 0.82f);
+        // The sheet image is the paper (torn edges, transparent around): the card behind it only takes the clicks.
+        private static readonly Color PaperColor = new(1f, 1f, 1f, 0f);
 
         private sealed class Tab
         {
