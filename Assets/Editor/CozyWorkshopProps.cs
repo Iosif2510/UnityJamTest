@@ -27,8 +27,8 @@ namespace PotionShop.EditorTools
             ["BookStack"] = 0.18f, ["PotionTrio"] = 0.3f, ["HerbBundle"] = 0.55f, ["Pumpkin"] = 0.45f,
             ["WoodenCrate"] = 0.62f, ["ClayJar"] = 0.42f, ["RoundRug"] = 2.6f,
             ["Broom"] = 1.45f, ["HangingPlant"] = 0.7f,
-            ["Workbench"] = 0.95f, ["Bookcase"] = 2.05f, ["Bench"] = 0.5f, ["ApothecaryCabinet"] = 1.25f,
-            ["WoodenDoor"] = 2.15f, ["Fireplace"] = 1.65f, ["Chandelier"] = 0.75f, ["DryingRack"] = 0.65f,
+            ["Workbench"] = 0.95f, ["Bookcase"] = 2.05f, ["Bench"] = 0.5f, ["ApothecaryCabinet"] = 1.6f,
+            ["WoodenDoor"] = 2.45f, ["Fireplace"] = 1.65f, ["Chandelier"] = 0.75f, ["DryingRack"] = 0.65f,
         };
 
         // Meshy's smart-topology meshes ship vertex normals smoothed across hard edges (12–77 % of the surface
@@ -94,6 +94,7 @@ namespace PotionShop.EditorTools
 
             int placed = 0, missing = 0;
             var keyed = new Dictionary<string, GameObject>();
+            var roofColliders = AddRoofColliders();
             foreach (var spot in Layout())
             {
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelFolder}/{spot.Prop}/{spot.Prop}.fbx");
@@ -136,6 +137,8 @@ namespace PotionShop.EditorTools
             }
 
             AddPotionGlows(root);
+            foreach (var c in roofColliders) Object.DestroyImmediate(c);
+            AddChandelierFlames(root);
             string lights = FeatureLights(root, keyed);
             lights += $", floor decor cleared {ClearFootprints(root)}";
             EditorSceneManager.MarkSceneDirty(scene);
@@ -162,7 +165,7 @@ namespace PotionShop.EditorTools
             yield return OnWall("Workbench", fromFar, 2.25f, 0f, "workbench");      // x −2.25
             yield return Top("workbench", "PotionTrio", -0.3f, 0f, 10f);
             yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f);
-            yield return OnWall("Bench", fromFar, -2.25f, 0f, "bench", 1.3f);        // x +2.25
+            yield return OnWall("Bench", fromFar, -2.25f, 0f, "bench", 1.5f);        // x +2.25, seat about 0.45 m
             yield return Top("bench", "BookStack", -0.3f, 0f, 20f);
             yield return Top("bench", "ClayJar", 0.35f, 0f, 0f, 0.8f);
             float face = FarWallFace();
@@ -195,8 +198,8 @@ namespace PotionShop.EditorTools
 
             // Long walls: the gaps between the shelves (z ±2) hold a bookcase on one side and a crate stack
             // under the wall lantern on the other, staggered so each gap looks different.
-            yield return OnWall("Bookcase", fromWest, 2f, 0f, "bookcase west", 1.15f); // west, z −2
-            yield return OnWall("Bookcase", fromEast, 2f, 0f, "bookcase east", 1.15f); // east, z +2
+            yield return OnWall("Bookcase", fromWest, 2.25f, 0f, "bookcase west", 1.15f); // west, z −2.25, lantern beside it
+            yield return OnWall("Bookcase", fromEast, 2.25f, 0f, "bookcase east", 1.15f); // east, z +2.25, lantern beside it
             foreach (var (x, z) in new[] { (-1f, 2f), (1f, -2f) })
             {
                 var c = new Vector3(x * (fx - 0.38f), 0f, z - 0.15f);
@@ -208,8 +211,10 @@ namespace PotionShop.EditorTools
             // Overhead: a chandelier above the cauldron (scaled to about 0.9 m across) and herb drying racks
             // over the hall on either side of it (about 1.1 m long).
             yield return Hanging("Chandelier", new Vector3(0f, 2.75f, CozyWorkshopLook.CauldronZ), 0f, 1.75f);
-            foreach (float z in new[] { -2.6f, 4.0f })
-            foreach (float x in new[] { -1.5f, 1.5f })
+            // Racks hang above the shelf fronts rather than over the middle of the hall, so from the door they
+            // do not stack up behind the chandelier.
+            foreach (float z in new[] { -2.0f, 4.0f })
+            foreach (float x in new[] { -2.2f, 2.2f })
                 yield return Hanging("DryingRack", new Vector3(x, 2.75f, z), 90f, 1.6f);
         }
 
@@ -314,6 +319,58 @@ namespace PotionShop.EditorTools
             return new Vector3(fallback.x, y, fallback.z);
         }
 
+        /// <summary>Marks the temporary colliders added to the roof so rope casts stop only at the roof.</summary>
+        private sealed class RoofProbe : MonoBehaviour { }
+
+        private static List<Component> AddRoofColliders()
+        {
+            var added = new List<Component>();
+            foreach (Transform child in GameObject.Find("Environment/Room").transform)
+            {
+                if (!child.name.StartsWith("GableRoof")) continue;
+                foreach (var filter in child.GetComponentsInChildren<MeshFilter>())
+                {
+                    var collider = filter.gameObject.AddComponent<MeshCollider>();
+                    collider.sharedMesh = filter.sharedMesh;
+                    added.Add(filter.gameObject.AddComponent<RoofProbe>());
+                    added.Add(collider);
+                }
+            }
+            Physics.SyncTransforms();
+            return added;
+        }
+
+        // Candle tips of the Meshy chandelier in its mesh space, found from the cream wax texels of its texture.
+        private static readonly Vector3[] ChandelierCandleTips =
+        {
+            new(-0.00186f, 0.00277f, 0f), new(-0.00101f, 0.0028f, -0.00139f), new(0.00006f, 0.00283f, -0.00171f),
+            new(0.00097f, 0.0028f, -0.0013f), new(0.00111f, 0.00275f, 0.00119f), new(0.00013f, 0.00282f, 0.00155f),
+            new(-0.00104f, 0.00274f, 0.00136f),
+        };
+
+        /// <summary>Lights the chandelier: a small glowing flame on each of its candles.</summary>
+        private static void AddChandelierFlames(Transform root)
+        {
+            var flame = AssetDatabase.LoadAssetAtPath<Material>($"{MaterialFolder}/CandleFlame_Cozy.mat");
+            foreach (Transform prop in root)
+            {
+                if (!prop.name.StartsWith("Chandelier ") || prop.childCount == 0) continue;
+                var model = prop.GetChild(0);
+                foreach (var tip in ChandelierCandleTips)
+                {
+                    var f = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Object.DestroyImmediate(f.GetComponent<Collider>());
+                    f.name = "Candle Flame";
+                    f.transform.SetParent(prop, false);
+                    f.transform.position = model.TransformPoint(tip) + Vector3.up * 0.035f;
+                    f.transform.localScale = new Vector3(0.03f, 0.055f, 0.03f) / prop.lossyScale.x;
+                    var r = f.GetComponent<MeshRenderer>();
+                    r.sharedMaterial = flame;
+                    r.shadowCastingMode = ShadowCastingMode.Off;
+                }
+            }
+        }
+
         private static void AddRope(GameObject prop)
         {
             var rope = MaterialAsset("Rope_Cozy", "Universal Render Pipeline/Lit", m =>
@@ -322,7 +379,11 @@ namespace PotionShop.EditorTools
                 m.SetFloat("_Smoothness", 0.15f);
             });
             Bounds b = Bounds(prop);
-            float length = RopeTop - b.max.y;
+            // Up to the underside of the roof right above (beam, purlin or plank), not through it.
+            float top = RopeTop;
+            foreach (var hit in Physics.RaycastAll(new Vector3(b.center.x, b.max.y + 0.02f, b.center.z), Vector3.up, 8f))
+                if (hit.collider.GetComponent<RoofProbe>() != null) top = Mathf.Min(top, hit.point.y);
+            float length = top - b.max.y + 0.03f;
             var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             Object.DestroyImmediate(go.GetComponent<Collider>());
             go.name = "Rope";
@@ -404,7 +465,7 @@ namespace PotionShop.EditorTools
                 // No shadows: each shadowed point light costs six atlas maps, and the cauldron fire and
                 // fireplace already use twelve of them.
                 var chandelier = AddPointLight(root, "Chandelier Light", Bounds(child.gameObject).center,
-                    new Color(1f, 0.78f, 0.5f), 3.5f, 7f, 0.06f);
+                    new Color(1f, 0.78f, 0.5f), 4.5f, 7.5f, 0.06f);
                 chandelier.shadows = LightShadows.None;
                 break;
             }

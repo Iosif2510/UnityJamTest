@@ -289,6 +289,7 @@ namespace PotionShop.EditorTools
             marker.localScale = factor;
             Physics.SyncTransforms();
             int stuck = SnapIvyToWalls(environment.Find("Decorations_Toon/Ivy"));
+            PlaceShelfLanterns(environment);
             return $"room {2 * WallX:F1}×{2 * WallZ:F1} m, ivy snapped {stuck};";
         }
 
@@ -315,13 +316,44 @@ namespace PotionShop.EditorTools
                     case "Corner (1)": p.x = -SegmentSpacing; on = !longWall; break;
                     case "Corner (3)": p.x = SegmentSpacing; on = !longWall; break;
                     case "Corner (2)": on = false; break;
-                    case "Lantern (2)": p.x = 2f; on = longWall; break; // east wall → z −2, west wall → z +2
-                    case "Lantern": case "Lantern (1)": on = false; break;
+                    // The wall's own three lanterns are replaced by PlaceShelfLanterns (one in every gap).
+                    case "Lantern": case "Lantern (1)": case "Lantern (2)": on = false; break;
                 }
                 if (part.name.StartsWith("Wall"))
                     part.localScale = new Vector3(longWall ? 1.04f : 0.91f, part.localScale.y, part.localScale.z);
                 part.localPosition = p;
                 part.gameObject.SetActive(on);
+            }
+        }
+
+        // Wall lantern prefab and its mounting relative to the wall's centre line (taken from FrontWall).
+        private const string LanternPrefab = "Assets/Prefabs/Workshop/Lantern.prefab";
+        private const float LanternHeight = 1.46f, LanternOffset = 0.53f;
+        private const string LanternsRoot = "CozyLanterns";
+
+        /// <summary>
+        /// A wall lantern in every empty gap beside the shelves, so the ingredients on each shelf are lit from
+        /// both ends: the two middle gaps (z ±2) and the two ends (z ±6) of each long wall. In the middle gaps
+        /// the lantern sits beside the bookcase (z ±1.55) or above the crate stack (z ±2).
+        /// </summary>
+        private static void PlaceShelfLanterns(Transform environment)
+        {
+            var root = Recreate(LanternsRoot, environment);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(LanternPrefab);
+            if (prefab == null) return;
+            var spots = new (float side, float z)[]
+            {
+                (-1f, -6.0f), (-1f, -1.55f), (-1f, 2.0f), (-1f, 6.0f),   // west: bookcase gap at z −2.25
+                (1f, -6.0f), (1f, -2.0f), (1f, 1.55f), (1f, 6.0f),       // east: bookcase gap at z +2.25
+            };
+            int i = 0;
+            foreach (var (side, z) in spots)
+            {
+                var lantern = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root);
+                lantern.name = $"Shelf Lantern {++i}";
+                Vector3 inward = new Vector3(-side, 0f, 0f);
+                lantern.transform.SetPositionAndRotation(
+                    new Vector3(side * WallX + inward.x * LanternOffset, LanternHeight, z), Quaternion.LookRotation(inward));
             }
         }
 

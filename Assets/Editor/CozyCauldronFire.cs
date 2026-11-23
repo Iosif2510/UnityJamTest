@@ -60,17 +60,18 @@ namespace PotionShop.EditorTools
                 m.SetFloat("_Softness", 1.2f);
             });
 
-            // Flames sit just under the cauldron's rounded bottom and lick up its sides (the belly is about
-            // 0.8 m in radius, the base narrower), so most of each flame shows below the belly line.
+            // Flames must stay outside the pot: the cauldron is about 0.6 m in radius up to 0.3 m and 0.7-0.78 m
+            // above (measured), and flames inside its volume showed through its open top. Low flames hug the
+            // base just outside it; taller ones stand a little further out and lick up the belly.
             int cards = 0;
-            const int ring = 9;
+            const int ring = 10;
             for (int i = 0; i < ring; i++)
             {
                 float angle = i * Mathf.PI * 2f / ring + 0.3f;
                 bool big = i % 2 == 0;
-                float radius = big ? 0.5f : 0.58f;
-                float height = big ? 0.72f : 0.5f;
-                float width = big ? 0.5f : 0.38f;
+                float radius = big ? 0.82f : 0.72f;
+                float height = big ? 0.6f : 0.38f;
+                float width = big ? 0.46f : 0.34f;
                 AddFlame(root, flame, new Vector3(Mathf.Cos(angle) * radius, 0.02f, Mathf.Sin(angle) * radius),
                     width, height, i * 1.37f);
                 cards++;
@@ -78,11 +79,42 @@ namespace PotionShop.EditorTools
 
             AddGlowPool(root, glow);
             AddEmbers(root, ember);
+            string hearth = BuildHearthFire(flame);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            return $"[Cauldron fire] {cards} flame cards, glow pool, embers; old VFX disabled: {oldFire != null}";
+            return $"[Cauldron fire] {cards} flame cards, glow pool, embers; old VFX disabled: {oldFire != null}; {hearth}";
+        }
+
+        /// <summary>Three flame cards on the logs in the fireplace mouth (the fireplace comes from CozyWorkshopProps).</summary>
+        private static string BuildHearthFire(Material flame)
+        {
+            var props = GameObject.Find("Environment/CozyProps")?.transform;
+            if (props == null) return "no props for a hearth fire";
+            Transform fireplace = null;
+            // "Fireplace Light" shares the prefix; the prop is the one with renderers.
+            foreach (Transform t in props)
+                if (t.name.StartsWith("Fireplace ") && t.GetComponentInChildren<Renderer>() != null) fireplace = t;
+            if (fireplace == null) return "no fireplace";
+            var old = fireplace.Find("HearthFire");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var renderers = fireplace.GetComponentsInChildren<Renderer>();
+            Bounds b = renderers[0].bounds;
+            foreach (var r in renderers) b.Encapsulate(r.bounds);
+            var root = new GameObject("HearthFire").transform;
+            root.SetParent(fireplace, true);
+            // The mouth is centred on the fireplace, 0.25 m in from its front face (most of the model is sunk
+            // into the wall, so its bounds centre lies behind the mouth), above the hearth stones.
+            float inward = -Mathf.Sign(b.center.z);
+            float frontZ = b.center.z + inward * b.extents.z;
+            root.position = new Vector3(b.center.x, b.min.y + b.size.y * 0.13f, frontZ - inward * 0.25f);
+            root.rotation = Quaternion.identity;
+            float s = b.size.y / 1.4f;
+            AddFlame(root, flame, new Vector3(-0.22f * s, 0f, 0f), 0.34f * s, 0.42f * s, 21.3f);
+            AddFlame(root, flame, new Vector3(0f, 0f, 0.05f), 0.44f * s, 0.58f * s, 23.9f);
+            AddFlame(root, flame, new Vector3(0.24f * s, 0f, 0f), 0.32f * s, 0.38f * s, 27.1f);
+            return "hearth fire 3 cards";
         }
 
         private static void AddFlame(Transform root, Material material, Vector3 local, float width, float height, float seed)
@@ -142,7 +174,7 @@ namespace PotionShop.EditorTools
             var shape = system.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.angle = 12f;
-            shape.radius = 0.6f;
+            shape.radius = 0.75f;
             shape.radiusThickness = 0.35f; // from the rim, where the flames are
 
             var noise = system.noise;
