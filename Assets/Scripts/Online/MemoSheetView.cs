@@ -58,9 +58,9 @@ namespace PotionShop.Online
                 rect.gameObject.SetActive(used);
                 if (!used) continue;
                 var phrase = phrases[i];
-                // A little room to the right: handwriting fonts run wider than the hand that wrote the original.
+                // Boxes already clear the drawing's ink and have room for a wider font (Tools/MemoText/build_layout.py).
                 rect.anchorMin = phrase.Box.min;
-                rect.anchorMax = new Vector2(Mathf.Min(1f, phrase.Box.xMax + phrase.Box.width * 0.12f), phrase.Box.yMax);
+                rect.anchorMax = phrase.Box.max;
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
                 text.text = MemoText.Text(sheetIndex, phrase.Key);
                 // Start at the size it was written at (a little larger is fine), shrink to fit the box.

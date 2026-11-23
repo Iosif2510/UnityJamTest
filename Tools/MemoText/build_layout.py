@@ -9,6 +9,7 @@ place. The preview writes the Korean back onto the drawing-only sheet with the h
 """
 import glob, json, os, sys
 import numpy as np
+import cv2
 from PIL import Image, ImageDraw, ImageFont
 
 labels_dir, lines_dir, drawings_dir, out_json = sys.argv[1:5]
@@ -34,6 +35,55 @@ def wrap(draw, text, font, width):
     return rows + [row]
 
 
+def ink_table(drawing_path):
+    """Summed-area table of the drawing's ink (arrows, sketches, underlines), slightly thickened."""
+    gray = cv2.resize(cv2.imread(drawing_path, cv2.IMREAD_GRAYSCALE), (W, H))
+    ink = cv2.dilate((gray < 150).astype(np.uint8), np.ones((5, 5), np.uint8))
+    return cv2.integral(ink)
+
+
+def area_sum(table, b):
+    x0, y0 = max(0, int(b[0])), max(0, int(b[1]))
+    x1, y1 = min(W, int(b[2])), min(H, int(b[3]))
+    if x1 <= x0 or y1 <= y0:
+        return 0
+    return int(table[y1, x1] - table[y0, x1] - table[y1, x0] + table[y0, x0])
+
+
+def overlap(a, b):
+    w = min(a[2], b[2]) - max(a[0], b[0])
+    h = min(a[3], b[3]) - max(a[1], b[1])
+    return w * h if w > 0 and h > 0 else 0
+
+
+def place(boxes, table):
+    """Nudges or trims each phrase box off the drawing's ink, without running into the other phrases.
+    Every language shares these boxes, so this runs once on the layout, not per language."""
+    moved = [list(b) for b in boxes]
+    order = sorted(range(len(boxes)), key=lambda i: -area_sum(table, boxes[i]))
+    trims = [(0, 0, 0, 0), (0.12, 0, 0, 0), (0, 0, 0.12, 0), (0.22, 0, 0, 0), (0, 0, 0.22, 0), (0, 0.15, 0, 0),
+             (0, 0, 0, 0.15)]
+    for i in order:
+        x0, y0, x1, y1 = boxes[i]
+        w, h = x1 - x0, y1 - y0
+        if area_sum(table, boxes[i]) < 40:
+            continue
+        others = [moved[j] for j in range(len(boxes)) if j != i]
+        best, best_score = moved[i], None
+        for tl, tt, tr, tb in trims:
+            for dy in range(-30, 31, 6):
+                for dx in range(-48, 49, 8):
+                    c = [x0 + w * tl + dx, y0 + h * tt + dy, x1 - w * tr + dx, y1 - h * tb + dy]
+                    if c[0] < 8 or c[1] < 8 or c[2] > W - 8 or c[3] > H - 8:
+                        continue
+                    score = (area_sum(table, c) + 0.6 * sum(overlap(c, o) for o in others)
+                             + 2.5 * (abs(dx) + abs(dy)) + 0.04 * (w * h - (c[2] - c[0]) * (c[3] - c[1])))
+                    if best_score is None or score < best_score:
+                        best, best_score = c, score
+        moved[i] = best
+    return moved
+
+
 marks = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "marks.json"), encoding="utf-8"))
 sheets = {}
 for path in sorted(glob.glob(os.path.join(labels_dir, "*.json"))):
@@ -46,6 +96,8 @@ for path in sorted(glob.glob(os.path.join(labels_dir, "*.json"))):
         boxes += [[v * W / 2000 for v in b] for b in p.get("dboxes", [])]
         x0, y0 = min(b[0] for b in boxes), min(b[1] for b in boxes)
         x1, y1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
+        # handwriting fonts run wider than the hand that wrote the original: a little room on the right
+        x1 = min(W - 8, x1 + (x1 - x0) * 0.12)
         # rows: the phrase's own written lines grouped by baseline; boxes given by hand count by the sheet's
         # typical line height
         typical = float(np.median([b[3] - b[1] for b in lines.values()]))
@@ -59,6 +111,14 @@ for path in sorted(glob.glob(os.path.join(labels_dir, "*.json"))):
         phrases.append({"key": p["key"], "ko": p["ko"],
                         "box": [round(x0 / W, 4), round(y0 / H, 4), round(x1 / W, 4), round(y1 / H, 4)],
                         "rows": int(rows), "rowHeight": round(row_h / H, 4)})
+    table = ink_table(os.path.join(drawings_dir, name + "_drawing.png"))
+    before = sum(area_sum(table, [v * (W if k % 2 == 0 else H) for k, v in enumerate(ph["box"])]) for ph in phrases)
+    placed = place([[v * (W if k % 2 == 0 else H) for k, v in enumerate(ph["box"])] for ph in phrases], table)
+    for ph, b in zip(phrases, placed):
+        ph["box"] = [round(b[0] / W, 4), round(b[1] / H, 4), round(b[2] / W, 4), round(b[3] / H, 4)]
+        ph["rowHeight"] = round(min(ph["rowHeight"], (b[3] - b[1]) / H / ph["rows"]), 4)
+    after = sum(area_sum(table, b) for b in placed)
+    print(f"{name}: ink under phrase boxes {before} -> {after} px")
     sheet_marks = marks.get(name, {})
     for ph in phrases:
         ph["mark"] = next((kind for kind, keys in sheet_marks.items() if ph["key"] in keys), "")
