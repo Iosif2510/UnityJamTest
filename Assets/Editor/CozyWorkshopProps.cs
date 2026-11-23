@@ -136,6 +136,7 @@ namespace PotionShop.EditorTools
 
             AddPotionGlows(root);
             string lights = FeatureLights(root, keyed);
+            lights += $", floor decor cleared {ClearFootprints(root)}";
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             return $"[Cozy props] {imported} placed {placed}, missing {missing}, {lights}";
@@ -334,6 +335,44 @@ namespace PotionShop.EditorTools
         }
 
         /// <summary>Strong warm pools at the fireplace and chandelier; the side-wall lanterns they cover are switched off.</summary>
+        /// <summary>
+        /// The mushroom and moss decorations were scattered before the furniture existed; hide the ones that
+        /// land inside a wall feature or on the floor just in front of it (the fireplace mouth, the door).
+        /// All are switched back on first, so moving a feature lets its old spot fill again.
+        /// </summary>
+        private static int ClearFootprints(Transform root)
+        {
+            var decorations = GameObject.Find("Environment/Decorations_Toon")?.transform;
+            if (decorations == null) return 0;
+            var zones = new List<Bounds>();
+            foreach (Transform prop in root)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(prop.name,
+                        "^(Fireplace|Bookcase|Bench|Workbench|ApothecaryCabinet|WoodenDoor|RoundRug) ")) continue;
+                Bounds b = Bounds(prop.gameObject);
+                // Reach 0.9 m out from the wall the prop stands against, towards the room centre.
+                Vector3 inward = new Vector3(-Mathf.Sign(b.center.x) * (Mathf.Abs(b.center.x) > Mathf.Abs(b.center.z) ? 1 : 0), 0f,
+                    -Mathf.Sign(b.center.z) * (Mathf.Abs(b.center.z) >= Mathf.Abs(b.center.x) ? 1 : 0));
+                b.Encapsulate(b.center + inward * (Vector3.Dot(b.extents, new Vector3(Mathf.Abs(inward.x), 0, Mathf.Abs(inward.z))) + 0.9f));
+                b.Expand(new Vector3(0.3f, 4f, 0.3f));
+                zones.Add(b);
+            }
+
+            int hidden = 0;
+            foreach (string group in new[] { "Mushrooms", "MossPatches" })
+            {
+                var parent = decorations.Find(group);
+                if (parent == null) continue;
+                foreach (Transform item in parent)
+                {
+                    bool blocked = zones.Exists(z => z.Contains(item.position));
+                    item.gameObject.SetActive(!blocked);
+                    if (blocked) hidden++;
+                }
+            }
+            return hidden;
+        }
+
         private static string FeatureLights(Transform root, Dictionary<string, GameObject> keyed)
         {
             int off = 0;
