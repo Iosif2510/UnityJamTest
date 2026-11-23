@@ -13,11 +13,41 @@ namespace PotionShop
         private Light targetLight;
         private float baseIntensity;
         private MotionHandle motion;
+        private float flicker;
+        private float flareStrength;
+        private float flareSince = -10f;
+        private float flareSeconds = 1f;
+
+        /// <summary>The fire flares up by <paramref name="strength"/> (0.5 = half again as bright) and dies back.</summary>
+        public void Flare(float strength, float seconds = 0.8f)
+        {
+            flareStrength = Mathf.Max(strength, CurrentFlare);
+            flareSince = Time.unscaledTime;
+            flareSeconds = Mathf.Max(0.05f, seconds);
+        }
+
+        private float CurrentFlare
+        {
+            get
+            {
+                float age = Time.unscaledTime - flareSince;
+                if (age < 0f || age > flareSeconds) return 0f;
+                // a quick swell, then a slow fall
+                float rise = Mathf.Clamp01(age / 0.08f);
+                return flareStrength * rise * (1f - Mathf.SmoothStep(0f, 1f, age / flareSeconds));
+            }
+        }
+
+        private void Update()
+        {
+            if (targetLight != null) targetLight.intensity = flicker * (1f + CurrentFlare);
+        }
 
         private void OnEnable()
         {
             targetLight = GetComponent<Light>();
             baseIntensity = targetLight.intensity;
+            flicker = baseIntensity;
             ScheduleFlicker();
         }
 
@@ -38,7 +68,7 @@ namespace PotionShop
                 .WithImmediateBind(false)
                 .WithEase(Ease.OutQuad)
                 .WithOnComplete(ScheduleFlicker)
-                .Bind(targetLight, static (intensity, light) => light.intensity = intensity);
+                .Bind(this, static (intensity, self) => self.flicker = intensity);
         }
 
         private void OnDisable()

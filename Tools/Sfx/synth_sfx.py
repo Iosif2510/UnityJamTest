@@ -1,12 +1,14 @@
 """Synthesizes the small UI / feedback sounds the game was missing, so no outside sound files are needed.
 
-  python synth_sfx.py
+  python synth_sfx.py              every sound
+  python synth_sfx.py Gulp Purr    only the named ones (the rest stay as they are)
 
 Writes 44.1 kHz mono WAVs to Assets/Resources/Sfx and copies the two unused project sounds (splash, paper) there.
 Every sound is short, soft and warm (wood, brass, glass), to sit with the cozy shop.
 After this (or eleven_sfx.py) run Tools/Sfx/level_sfx.cs in the editor to bring every sound to its loudness target.
 """
 import shutil
+import sys
 from pathlib import Path
 import numpy as np
 from scipy.io import wavfile
@@ -43,7 +45,12 @@ ELEVEN = {"PageTurn", "CardDeal", "Paper", "Card", "StampThud", "SlimePop", "Dra
           "FoundBell", "BrewDone", "DoorBell", "Fanfare"}
 
 
+ONLY = set(sys.argv[1:])
+
+
 def save(name, x, gain=0.8):
+    if ONLY and name not in ONLY:
+        return
     if name in ELEVEN:  # replaced by an ElevenLabs recording (Tools/Sfx/eleven_sfx.py)
         print(name, "kept (ElevenLabs)")
         return
@@ -181,7 +188,40 @@ fr = np.interp(x, [0, 0.6], [220, 90])
 flop = np.sin(2 * np.pi * np.cumsum(fr) / SR) + 0.3 * np.sin(4 * np.pi * np.cumsum(fr) / SR)
 save("Flop", lowpass(flop, 1200) * env(len(x), 0.01, 0.3), 0.6)
 
+# A customer's gulp: a short wet "glug", a falling throat tone over a soft noise burst.
+x = t(0.2)
+fr = np.interp(x, [0, 0.05, 0.2], [210, 150, 85])
+glug = np.sin(2 * np.pi * np.cumsum(fr) / SR) * env(len(x), 0.008, 0.06)
+wet = lowpass(rng.normal(0, 1, len(x)), 700) * env(len(x), 0.002, 0.03)
+save("Gulp", glug + 0.6 * wet, 0.7)
+
+# A thrown ingredient: air rushing past, swelling and fading, its brightness rising and falling with it.
+x = t(0.32)
+noise = rng.normal(0, 1, len(x))
+swell = np.sin(np.pi * np.clip(x / 0.32, 0, 1)) ** 2
+whoosh = lowpass(noise, 1400) - lowpass(noise, 300)
+save("Whoosh", whoosh * swell, 0.55)
+
+# The cauldron fire flaring up: a low "fwoomp" with a few crackles riding on it.
+x = t(0.7)
+body = lowpass(rng.normal(0, 1, len(x)), 260) * np.interp(x, [0, 0.08, 0.7], [0, 1, 0])
+crack = np.zeros(len(x))
+for at in rng.uniform(0.03, 0.6, 9):
+    i = int(at * SR)
+    n = int(SR * 0.006)
+    crack[i:i + n] += rng.normal(0, 1, n) * np.exp(-np.arange(n) / (SR * 0.0015)) * rng.uniform(0.4, 1)
+save("FireFlare", body * 1.4 + lowpass(crack, 5000) * 0.8, 0.6)
+
+# A sleeping cat's purr: low rumble pulsing about 25 times a second, in and out on two breaths.
+x = t(1.8)
+rumble = lowpass(rng.normal(0, 1, len(x)), 140)
+pulse = 0.55 + 0.45 * np.sin(2 * np.pi * 26 * x)
+breath = np.where(x < 0.9, np.sin(np.pi * x / 0.9), 0.75 * np.sin(np.pi * (x - 0.9) / 0.9)) ** 0.7
+save("Purr", rumble * pulse * breath, 0.6)
+
 # Reused project sounds that were not wired to anything.
+if ONLY:
+    sys.exit(0)
 if "Splash" not in ELEVEN:
     shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
 if "Paper" not in ELEVEN:

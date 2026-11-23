@@ -40,6 +40,29 @@ namespace PotionShop
             }
         }
 
+        private static Material trailMaterial;
+
+        /// <summary>A short soft streak behind a thrown ingredient.</summary>
+        private static TrailRenderer Trail(Transform model)
+        {
+            var go = new GameObject("ThrowTrail");
+            go.transform.SetParent(model, false);
+            var trail = go.AddComponent<TrailRenderer>();
+            if (trailMaterial == null)
+                trailMaterial = new Material(Shader.Find("Sprites/Default"));
+            trail.sharedMaterial = trailMaterial;
+            trail.time = .14f;
+            trail.minVertexDistance = .02f;
+            trail.widthCurve = new AnimationCurve(new Keyframe(0f, .07f), new Keyframe(1f, 0f));
+            var gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(new Color(1f, .97f, .88f), 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(.45f, 0f), new GradientAlphaKey(0f, 1f) });
+            trail.colorGradient = gradient;
+            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            trail.receiveShadows = false;
+            return trail;
+        }
+
         internal static async UniTask Throw(WarehouseIngredient ingredient, Camera view, Vector3 end,
             CancellationToken token)
         {
@@ -52,6 +75,8 @@ namespace PotionShop
             model.position = start;
             model.localScale = rest * .72f;
             ingredient.gameObject.SetActive(true);
+            GameSfx.Play("Whoosh", .7f, 1f, .1f);
+            var trail = Trail(model);
             try
             {
                 await LMotion.Create(0f, 1f, .36f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
@@ -66,6 +91,7 @@ namespace PotionShop
             }
             finally
             {
+                if (trail != null) UnityEngine.Object.Destroy(trail.gameObject);
                 if (model != null)
                 {
                     model.gameObject.SetActive(false);

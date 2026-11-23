@@ -80,6 +80,7 @@ namespace PotionShop
             var selected = prescriptionPanel.transform.Find("SelectedOptions")?.GetComponent<Text>();
             prescriptionFeel = prescriptionPanel.GetComponent<PrescriptionFeel>() ??
                                prescriptionPanel.AddComponent<PrescriptionFeel>();
+            prescriptionFeel.Pointed += LookAtChoice;
             prescriptionFeel.Build(squareBottle, heartBottle, roundBottle, inkButtons, serveButton, selected,
                 selected != null ? selected.font : timerText.font);
             nextOrderButton.onClick.AddListener(DismissResult);
@@ -116,6 +117,7 @@ namespace PotionShop
 
         private TimerUrgency timerUrgency;
         private CustomerImpatience impatience;
+        private Sprite servedBottle;
         private PrescriptionFeel prescriptionFeel;
 
         private void OnEnable() => shownPhase = null;
@@ -276,10 +278,32 @@ namespace PotionShop
         private void Serve()
         {
             if (chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
+            servedBottle = prescriptionFeel.ChosenBottleSprite;
             prescriptionFeel.Serve(portraitView != null ? (RectTransform)portraitView.transform : null);
             if (!round.TryServe(chosenBottle, chosenInk)) return;
             GameSfx.Play("Serve", 0.8f);
             RefreshPhase();
+        }
+
+        /// <summary>The customer leans a little towards the bottle or ink the player is pointing at.</summary>
+        private void LookAtChoice(RectTransform choice)
+        {
+            if (portraitView == null || !portraitView.isActiveAndEnabled) return;
+            if (choice == null || round.Phase != RoundPhase.Prescribe)
+            {
+                portraitView.LookToward(0f);
+                return;
+            }
+            float side = (ScreenX(choice) - ScreenX((RectTransform)portraitView.transform)) / (Screen.width * 0.35f);
+            portraitView.LookToward(side);
+        }
+
+        private static float ScreenX(RectTransform rect)
+        {
+            var canvas = rect.GetComponentInParent<Canvas>();
+            if (canvas == null || canvas.rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay) return rect.position.x;
+            var cam = canvas.rootCanvas.worldCamera != null ? canvas.rootCanvas.worldCamera : Camera.main;
+            return cam != null ? cam.WorldToScreenPoint(rect.position).x : rect.position.x;
         }
 
         private void RefreshPhase()
@@ -330,6 +354,7 @@ namespace PotionShop
                 portraitView.gameObject.SetActive(showPortrait);
                 if (showPortrait) portraitView.Show(round.CurrentOrder, portraitColors);
                 impatience?.Reset();
+                if (showPortrait) portraitView.LookToward(0f);
             }
 
             if (consult || ending)
@@ -429,6 +454,7 @@ namespace PotionShop
                 await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token,
                     result.ReceiveDialogueKey);
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
+                await CustomerDrink.Play(portraitView, servedBottle, token);
                 await ApplyEffectAsync(result.Effect, token);
                 await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token,
                     result.DrinkDialogueKey);

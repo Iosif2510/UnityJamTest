@@ -25,6 +25,7 @@ namespace PotionShop.Portraits
         private int speechDirection = -1;
         private float impatience;
         private float fidgetSince = -10f, nextFidget;
+        private float look, lookTarget;
         public PortraitLayers Layers => layers;
         public PortraitBlink Blink => blink;
         public PortraitRigModule Rig => rig;
@@ -115,7 +116,7 @@ namespace PotionShop.Portraits
             bool hasSpine = rig != null && rig.SpineRig != null;
             rig?.SetGesture(landingProgress, speech);
             float angle = (LandingSwing(landingProgress, 0) * 13 + speech * 19) * (hasSpine ? .45f : 1f);
-            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle + ImpatienceAngle());
+            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle + ImpatienceAngle() - look * 6f);
         }
 
         /// <summary>
@@ -142,9 +143,30 @@ namespace PotionShop.Portraits
             return tilt + fidget;
         }
 
+        /// <summary>
+        /// Leans towards something the player is pointing at: -1 far left, 1 far right, 0 back upright.
+        /// </summary>
+        public void LookToward(float side)
+        {
+            CaptureRotation();
+            lookTarget = Mathf.Clamp(side, -1f, 1f);
+        }
+
         private void LateUpdate()
         {
-            if (impatience <= 0f || !poseInitialized) return;
+            if (!poseInitialized) return;
+            bool looking = !Mathf.Approximately(look, lookTarget) || Mathf.Abs(look) > 0.001f;
+            if (looking)
+            {
+                look = Mathf.MoveTowards(Mathf.Lerp(look, lookTarget, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 7f)),
+                    lookTarget, Time.unscaledDeltaTime * 0.05f);
+                if (impatience <= 0f)
+                {
+                    ApplyGesture();
+                    return;
+                }
+            }
+            if (impatience <= 0f) return;
             if (Time.unscaledTime >= nextFidget)
             {
                 fidgetSince = Time.unscaledTime;
@@ -170,6 +192,7 @@ namespace PotionShop.Portraits
             landingProgress = 1f;
             speech = 0f;
             impatience = 0f;
+            look = lookTarget = 0f;
             if (poseInitialized) ApplyGesture();
         }
 

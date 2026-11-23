@@ -281,6 +281,7 @@ namespace PotionShop
                 SetHeldIngredient(null);
                 pocketModels.ShowIngredient(slot, ingredient.transform);
                 hud.SetPocketVisible(true);
+                hud.PopSlot(slot, slot + 1 >= Required);
 
                 if (inCauldron.Count < Required || cauldron == null || !cauldron.isActiveAndEnabled ||
                     (round != null && !round.TrySubmitIngredients(inCauldron)))

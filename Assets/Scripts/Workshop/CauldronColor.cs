@@ -29,6 +29,17 @@ namespace PotionShop
         /// <summary>The liquid's colour right now (the progress ring borrows it).</summary>
         public Color Current { get; private set; }
 
+        /// <summary>The colour the last ingredient brought (the splash takes it), brightened to read as droplets.</summary>
+        public Color? LastTint => added.Count == 0 ? null : Bright(added[^1]);
+
+        private static Color Bright(Color c)
+        {
+            Color.RGBToHSV(c, out float h, out float s, out _);
+            var b = Color.HSVToRGB(h, s * 0.8f, 0.9f);
+            b.a = 0.9f;
+            return b;
+        }
+
         internal void Bind(Renderer renderer)
         {
             liquid = renderer;
@@ -38,6 +49,9 @@ namespace PotionShop
             baseLiquid = material.GetColor(LiquidColor);
             topBrightness = material.HasProperty(TopColor) ? Max(material.GetColor(TopColor)) : Max(baseLiquid) * 4f;
             Current = baseLiquid;
+            // Sample every ingredient up front, while they all sit on the shelves (a thrown one is already hidden).
+            foreach (var ingredient in FindObjectsByType<WarehouseIngredient>(FindObjectsSortMode.None))
+                Sample(ingredient);
         }
 
         /// <summary>An ingredient landed; <paramref name="landed"/> of <paramref name="count"/> are in now.</summary>
@@ -98,7 +112,7 @@ namespace PotionShop
             // The surface is an HDR glow of nearly pure colour (the base is lime at 2.0); scaling the whole colour up
             // instead would wash every channel out to white under bloom.
             Color.RGBToHSV(c, out float h, out float sat, out _);
-            var top = Color.HSVToRGB(h, Mathf.Max(sat, 0.9f), 1f, true) * topBrightness;
+            var top = Color.HSVToRGB(h, Mathf.Lerp(sat, 1f, 0.45f), 1f, true) * topBrightness;
             top.a = 1f;
             block.SetColor(TopColor, top);
             liquid.SetPropertyBlock(block);

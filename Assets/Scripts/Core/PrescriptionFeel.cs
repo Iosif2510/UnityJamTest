@@ -37,6 +37,12 @@ namespace PotionShop
         private RectTransform tag;
         private Text tagText;
         private Choice chosenBottle, chosenInk;
+
+        /// <summary>The bottle or ink under the pointer changed (null when the pointer left them).</summary>
+        public event System.Action<RectTransform> Pointed;
+
+        /// <summary>The picture of the bottle picked right now (the customer drinks from it).</summary>
+        internal Sprite ChosenBottleSprite => chosenBottle?.Image != null ? chosenBottle.Image.sprite : null;
         /// <summary>How far the cabinet sits below its scene position, so it covers less of the customer.</summary>
         private const float DrawerDrop = -60f;
         private bool built;
@@ -140,7 +146,11 @@ namespace PotionShop
             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
             enter.callback.AddListener(_ => Point(choice));
             var exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
-            exit.callback.AddListener(_ => { if (tag != null) tag.gameObject.SetActive(false); });
+            exit.callback.AddListener(_ =>
+            {
+                if (tag != null) tag.gameObject.SetActive(false);
+                Pointed?.Invoke(null);
+            });
             trigger.triggers.Add(enter);
             trigger.triggers.Add(exit);
         }
@@ -156,6 +166,7 @@ namespace PotionShop
             tag.SetAsLastSibling();
             tag.gameObject.SetActive(true);
             GameSfx.Play("Hover", 0.6f, 1f, 0.05f);
+            Pointed?.Invoke(choice.Rect);
         }
 
         /// <summary>The packaging step begins: reset choices and slide the cabinet up into view.</summary>

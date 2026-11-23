@@ -72,6 +72,31 @@ namespace PotionShop
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).BindToLocalScale(row);
         }
 
+        /// <summary>
+        /// An ingredient went into slot <paramref name="index"/>: that slot pops with a rising note. When the last
+        /// slot fills, every slot frame glints gold one after another.
+        /// </summary>
+        internal void PopSlot(int index, bool full)
+        {
+            if (index < 0 || index >= pocketPreviews.Length) return;
+            var slot = pocketPreviews[index].transform.parent;
+            if (!slot.gameObject.activeInHierarchy) return;
+            OrderHudMotion.Bounce(slot, 1.3f);
+            GameSfx.Play("Blip", 0.55f, 1f + index * 0.12f, 0.02f);
+            if (!full) return;
+            for (int i = 0; i < pocketPreviews.Length; i++)
+            {
+                var frame = pocketPreviews[i].transform.parent.GetComponent<UnityEngine.UI.Graphic>();
+                if (frame == null) continue;
+                var rest = frame.color;
+                var glint = new Color(1f, 0.9f, 0.45f, rest.a);
+                LMotion.Create(0f, 1f, 0.55f).WithDelay(0.12f + i * 0.08f)
+                    .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                    .Bind(t => { if (frame != null) frame.color = Color.Lerp(rest, glint, Mathf.Sin(t * Mathf.PI)); })
+                    .AddTo(frame.gameObject);
+            }
+        }
+
         /// <summary>All ingredients are gathered: a chime, and the slot row and the prompt pop.</summary>
         internal void CueAllGathered()
         {

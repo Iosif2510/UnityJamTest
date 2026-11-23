@@ -15,6 +15,8 @@ var targets = new Dictionary<string, float>
     // small interface sounds (call sites scale these further)
     ["Click"] = -22f, ["Tick"] = -22f, ["Hover"] = -26f, ["Select"] = -21f, ["Blip"] = -20f,
     ["StepChime"] = -22f, ["Heartbeat"] = -18f,
+    // workshop, counter and loft extras
+    ["Gulp"] = -21f, ["Whoosh"] = -27f, ["FireFlare"] = -23f, ["Purr"] = -24f,
     ["Step1"] = -24f, ["Step2"] = -24f, ["Step3"] = -24f, ["Step4"] = -24f,
 };
 var sb = new System.Text.StringBuilder();

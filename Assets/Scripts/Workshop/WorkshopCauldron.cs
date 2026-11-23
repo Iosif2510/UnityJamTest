@@ -56,7 +56,10 @@ namespace PotionShop
             if (ingredientDropAudio != null)
                 ingredientDropAudio.Play();
             if (feedback != null)
-                feedback.Splash(liquidMotion.SurfaceCenter(landed / (float)count));
+            {
+                feedback.Splash(liquidMotion.SurfaceCenter(landed / (float)count), colour != null ? colour.LastTint : null);
+                feedback.FireFlare(landed >= count ? 0.9f : 0.45f);
+            }
         }
 
         internal void StartBrewing()

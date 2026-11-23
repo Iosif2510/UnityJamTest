@@ -41,7 +41,22 @@ namespace PotionShop
             foreach (var shape in colliders)
                 shape.enabled = false;
 
-            TweenTo(anchor, Vector3.zero, Quaternion.identity, pickupDuration, restoreColliders: false);
+            TweenTo(anchor, Vector3.zero, Quaternion.identity, pickupDuration, restoreColliders: false, pop: true);
+            WobbleShelf();
+        }
+
+        /// <summary>The shelf it came off gives a small rattle.</summary>
+        private void WobbleShelf()
+        {
+            var shelf = shelfSlot != null ? shelfSlot.GetComponentInParent<WorkshopShelf>() : null;
+            if (shelf == null) return;
+            var t = shelf.transform;
+            if (t.gameObject.isStatic) return; // batched statics would leave their colliders behind
+            var rest = t.localRotation;
+            LMotion.Create(0f, 1f, 0.35f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithOnComplete(() => { if (t != null) t.localRotation = rest; })
+                .Bind(p => { if (t != null) t.localRotation = rest * Quaternion.Euler(0f, 0f, Mathf.Sin(p * 25f) * (1f - p) * 0.7f); })
+                .AddTo(t.gameObject);
         }
 
         public void ReturnToShelf(Action onArrived = null) =>
@@ -49,7 +64,7 @@ namespace PotionShop
                 onArrived: onArrived);
 
         private void TweenTo(Transform destination, Vector3 localPosition, Quaternion localRotation,
-            float duration, bool restoreColliders, Action onArrived = null)
+            float duration, bool restoreColliders, Action onArrived = null, bool pop = false)
         {
             transferMotion.TryCancel();
             transform.SetParent(destination, true);
@@ -87,7 +102,10 @@ namespace PotionShop
                     Quaternion targetRotation = destination != null ? destination.rotation * localRotation : localRotation;
                     transform.SetPositionAndRotation(Vector3.Lerp(startPosition, targetPosition, progress),
                         Quaternion.Slerp(startRotation, targetRotation, progress));
-                    transform.localScale = Vector3.Lerp(startScale, shelfScale, progress);
+                    // picked up: pressed down a little, then springs out past its size and settles
+                    float squash = !pop ? 1f : progress < 0.3f ? Mathf.Lerp(1f, 0.82f, progress / 0.3f)
+                        : 1f - 0.18f * (1f - (progress - 0.3f) / 0.7f) + Mathf.Sin((progress - 0.3f) / 0.7f * Mathf.PI) * 0.16f;
+                    transform.localScale = Vector3.Lerp(startScale, shelfScale, progress) * squash;
                 });
         }
 
