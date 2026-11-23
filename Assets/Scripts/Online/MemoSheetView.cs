@@ -18,6 +18,7 @@ namespace PotionShop.Online
 
         private readonly RectTransform page;
         private readonly Image image;
+        private readonly Image shadow;
         private readonly List<(Text text, Image mark)> slots = new();
         private int shown = -1;
         private bool shownEasy;
@@ -31,7 +32,9 @@ namespace PotionShop.Online
             var fitter = page.gameObject.AddComponent<AspectRatioFitter>();
             fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             fitter.aspectRatio = 16f / 9f;
-            image = OnlineUi.Fill(page, Color.white, false);
+            // The paper's own shadow (its torn shape, baked by Tools/MemoText) under the sheet, then the sheet.
+            shadow = OnlineUi.Fill(OnlineUi.Rect("Shadow", page, Vector2.zero, Vector2.one), new Color(1f, 1f, 1f, 0.62f), false);
+            image = OnlineUi.Fill(OnlineUi.Rect("Sheet", page, Vector2.zero, Vector2.one), Color.white, false);
         }
 
         public RectTransform Rect => page;
@@ -47,6 +50,15 @@ namespace PotionShop.Online
             shownLanguage = MemoText.Language;
             shownHeight = height;
             image.sprite = MemoText.Sheet(sheetIndex);
+            shadow.sprite = MemoText.Shadow(sheetIndex);
+            shadow.enabled = shadow.sprite != null;
+            // The shadow sprite reaches past the sheet on every side; it falls a little down and to the right.
+            float pad = MemoText.ShadowPad;
+            var shadowRect = shadow.rectTransform;
+            shadowRect.anchorMin = new Vector2(-pad, -pad);
+            shadowRect.anchorMax = new Vector2(1f + pad, 1f + pad);
+            var drop = new Vector2(page.rect.width, page.rect.height) * 0.012f;
+            shadowRect.offsetMin = shadowRect.offsetMax = new Vector2(drop.x, -drop.y * 1.4f);
             bool original = MemoText.ShowsOriginal(sheetIndex);
 
             var phrases = MemoText.Phrases(sheetIndex);

@@ -53,8 +53,6 @@ namespace PotionShop.Online
             OnlineUiParts.Backdrop(c, "BG_Loft", new Color(0.62f, 0.58f, 0.55f));
 
             var paper = At(c, "Guide", new Vector2(64f, 224f), new Vector2(1120f, 630f));
-            OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
-                new Vector2(12f, 8f)), "LOFT_PaperShadow");
             cover = new MemoSheetView(paper);
             cover.Show(0, false);
             // The guide memo's language, chosen here before anyone reads it.

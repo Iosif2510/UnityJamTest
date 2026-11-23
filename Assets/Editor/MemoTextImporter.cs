@@ -6,11 +6,12 @@ namespace PotionShop.EditorTools
     /// <summary>Imports the drawing-only memo sheets (Resources/MemoText/Sheets) as UI sprites, sharp enough to read.</summary>
     public sealed class MemoTextImporter : AssetPostprocessor
     {
-        private const string Folder = "Assets/Resources/MemoText/Sheets";
+        // Sheets, Sheets_ko and Shadows
+        private const string Folder = "Assets/Resources/MemoText/";
 
         private void OnPreprocessTexture()
         {
-            if (!assetPath.StartsWith(Folder))
+            if (!assetPath.StartsWith(Folder) || !assetPath.EndsWith(".png"))
                 return;
             var importer = (TextureImporter)assetImporter;
             importer.textureType = TextureImporterType.Sprite;

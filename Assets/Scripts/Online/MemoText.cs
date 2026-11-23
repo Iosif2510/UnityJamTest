@@ -32,6 +32,7 @@ namespace PotionShop.Online
         [Serializable] private sealed class LayoutData
         {
             public float margin;
+            public float shadowPad;
             public SheetData[] list;
         }
 
@@ -122,6 +123,17 @@ namespace PotionShop.Online
         private static Sprite Drawing(int index) => Cached(sheets, index, "MemoText/Sheets/");
         private static Sprite Original(int index) => Cached(originals, index, "MemoText/Sheets_ko/");
 
+        /// <summary>The soft shadow in the sheet's own torn shape; it extends <see cref="ShadowPad"/> beyond it.</summary>
+        public static Sprite Shadow(int index) => Cached(shadows, index, "MemoText/Shadows/");
+
+        public static float ShadowPad
+        {
+            get { Load(); return shadowPad; }
+        }
+
+        private static float shadowPad = 0.06f;
+        private static readonly Dictionary<int, Sprite> shadows = new();
+
         private static Sprite Cached(Dictionary<int, Sprite> cache, int index, string folder)
         {
             if (cache.TryGetValue(index, out var sprite) && sprite != null) return sprite;
@@ -164,6 +176,7 @@ namespace PotionShop.Online
             // JsonUtility cannot read a dictionary, so the "sheets" object is rewritten as a list first.
             var data = JsonUtility.FromJson<LayoutData>(AsList(asset.text));
             float m = data.margin, scale = 1f - 2f * m;
+            if (data.shadowPad > 0f) shadowPad = data.shadowPad;
             foreach (var sheet in data.list)
             {
                 var phrases = new Phrase[sheet.phrases.Length];

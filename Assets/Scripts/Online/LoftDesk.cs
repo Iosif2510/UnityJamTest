@@ -159,8 +159,6 @@ namespace PotionShop.Online
                 var card = OnlineUi.Box("Card " + i, table, new Vector2(0f, 1f), target, CardSize);
                 card.pivot = new Vector2(0.5f, 0.5f);
                 card.anchoredPosition = target;
-                var shadow = OnlineUi.Rect("Shadow", card, Vector2.zero, Vector2.one, new Vector2(-12f, -16f), new Vector2(12f, 8f));
-                OnlineUiParts.Draw(shadow, "LOFT_PaperShadow");
                 var face = OnlineUi.Fill(OnlineUi.Rect("Paper", card, Vector2.zero, Vector2.one), PaperColor);
                 var button = face.gameObject.AddComponent<Button>();
                 button.targetGraphic = face;
@@ -205,8 +203,6 @@ namespace PotionShop.Online
             unfoldedGroup = unfolded.AddComponent<CanvasGroup>();
 
             paper = At(u, "Paper", PaperPos, PaperSize);
-            OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
-                new Vector2(12f, 8f)), "LOFT_PaperShadow");
             sheet = new MemoSheetView(paper);
 
             previous = Arrow(u, "Previous", 380f, false, () => Flip(-1));

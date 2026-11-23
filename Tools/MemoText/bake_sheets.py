@@ -20,6 +20,8 @@ PAPERS = Path(__file__).with_name("papers")
 OUT = ROOT / "Assets" / "Resources" / "MemoText"
 SIZE = (1920, 1080)
 MARGIN = 0.085
+SHADOW_PAD = 0.06    # the shadow sprite extends this fraction of the sheet's size beyond it on every side
+SHADOW_SCALE = 0.25  # it is soft, so a quarter size is plenty
 SEPIA = np.array([52, 30, 18], np.float32)  # RGB
 # sheet -> (paper, the paper's dog-eared corner to keep the frame off: tl / tr / bl / br / none)
 SHEET_PAPER = {"Cover": (4, "none"), "POT_01": (1, "tr"), "POT_02": (2, "tl"), "POT_03": (3, "br"),
@@ -84,6 +86,22 @@ def ink(source):
     return cv2.GaussianBlur(a, (0, 0), 0.55)
 
 
+def shadow(alpha, target):
+    """A soft shadow in the paper's own shape: black, alpha from the blurred silhouette, with room around it."""
+    w, h = SIZE
+    px, py = round(w * SHADOW_PAD), round(h * SHADOW_PAD)
+    canvas = np.zeros((h + 2 * py, w + 2 * px), np.float32)
+    canvas[py:py + h, px:px + w] = alpha
+    canvas = cv2.GaussianBlur(canvas, (0, 0), 18)
+    small = cv2.resize(canvas, (round(canvas.shape[1] * SHADOW_SCALE), round(canvas.shape[0] * SHADOW_SCALE)),
+                       interpolation=cv2.INTER_AREA)
+    rgba = np.zeros(small.shape + (4,), np.uint8)
+    rgba[..., :3] = (12, 5, 2)
+    rgba[..., 3] = np.clip(small * 255, 0, 255).astype(np.uint8)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(target), cv2.cvtColor(rgba, cv2.COLOR_RGBA2BGRA))
+
+
 def bake(source, paper_n, corner, target, seed):
     rgb, alpha = paper(paper_n)
     a = ink(source)
@@ -99,8 +117,10 @@ sources, layout_path = Path(sys.argv[1]), Path(sys.argv[2])
 for i, (name, (n, corner)) in enumerate(SHEET_PAPER.items()):
     bake(sources / f"{name}_drawing.png", n, corner, OUT / "Sheets" / f"{name}.png", i)
     bake(sources / f"{name}_ko_written.png", n, corner, OUT / "Sheets_ko" / f"{name}.png", i)
+    shadow(paper(n)[1], OUT / "Shadows" / f"{name}.png")
     print(name, f"paper_{n}")
 
 layout = json.load(open(layout_path, encoding="utf-8"))
 layout["margin"] = MARGIN
+layout["shadowPad"] = SHADOW_PAD
 json.dump(layout, open(OUT / "layout.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
