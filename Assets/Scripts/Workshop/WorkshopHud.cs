@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LitMotion;
+using LitMotion.Extensions;
 using PotionShop.Data;
 using TMPro;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace PotionShop
         private Art.UiTypography typography;
         private WorkshopPromptRows promptRows;
         private MotionHandle timerSway;
+        private MotionHandle pocketPop;
         private int displayedSeconds = -1;
 
         private void Awake()
@@ -45,7 +47,21 @@ namespace PotionShop
 
         internal PocketModelDisplay CreatePocketDisplay(Camera playerCamera)
         {
+            SetPocketVisible(false);
             return new PocketModelDisplay(pocketPreviews, playerCamera);
+        }
+
+        /// <summary>The slot row (PocketDisplay) appears only once something is in it, with a small pop.</summary>
+        internal void SetPocketVisible(bool visible)
+        {
+            if (pocketPreviews.Length == 0) return;
+            var row = pocketPreviews[0].transform.parent.parent;
+            if (row.gameObject.activeSelf == visible) return;
+            pocketPop.TryCancel();
+            row.gameObject.SetActive(visible);
+            if (visible)
+                pocketPop = LMotion.Create(Vector3.one * 0.8f, Vector3.one, 0.22f).WithEase(Ease.OutBack)
+                    .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).BindToLocalScale(row);
         }
 
         internal void SetTimerVisible(bool visible)
@@ -59,13 +75,15 @@ namespace PotionShop
         private void OnDisable()
         {
             timerSway.TryCancel();
-            if (timer != null) timer.transform.localRotation = Quaternion.identity;
+            pocketPop.TryCancel();
+            if (timerText != null) timerText.rectTransform.localRotation = Quaternion.identity;
         }
 
+        // Only the digits sway; the hourglass, label and bar stay still.
         private void RefreshTimerSway()
         {
             timerSway.TryCancel();
-            if (timer.activeInHierarchy && isActiveAndEnabled) timerSway = OrderHudMotion.SwayTimer((RectTransform)timer.transform);
+            if (timer.activeInHierarchy && isActiveAndEnabled) timerSway = OrderHudMotion.SwayTimer(timerText.rectTransform);
         }
 
         internal void UpdateTimer(double remainingSeconds, int timeLimit)
@@ -93,10 +111,10 @@ namespace PotionShop
             promptRows.Show(action, key);
         }
 
-        internal void ShowHeldIngredient(string variantId)
+        internal void ShowHeldIngredient(string variantId, string leftAction, string leftKey)
         {
             SetPromptTitle(kindNamesByVariant.GetValueOrDefault(variantId, "재료"));
-            promptRows.ShowHeld();
+            promptRows.ShowHeld(leftAction, leftKey);
         }
 
         private void SetPromptTitle(string title)

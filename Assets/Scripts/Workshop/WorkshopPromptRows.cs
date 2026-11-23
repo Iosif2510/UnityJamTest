@@ -52,13 +52,11 @@ namespace PotionShop
         }
 
         private readonly Row primary;
-        private readonly Row rotate;
         private readonly Row restore;
 
         internal WorkshopPromptRows(TextMeshProUGUI action, TextMeshProUGUI key)
         {
             primary = new Row(action, key);
-            rotate = CopyRow("Rotate Row");
             restore = CopyRow("Return Row");
 
             Row CopyRow(string name)
@@ -76,15 +74,14 @@ namespace PotionShop
         internal void Show(string action, string key)
         {
             primary.Show(action, key);
-            rotate.Show(null, null);
             restore.Show(null, null);
         }
 
-        internal void ShowHeld()
+        /// <summary>Held ingredient: the left-button action (turn it, or put it in the cauldron) and right-click to put it down.</summary>
+        internal void ShowHeld(string leftAction, string leftKey)
         {
-            primary.Show("주머니에 넣기", "F", 0);
-            rotate.Show("마우스로 돌리기", "R", 1);
-            restore.Show("돌려놓기", "우클릭", 2);
+            primary.Show(leftAction, leftKey, 0);
+            restore.Show("내려놓기", "우클릭", 1);
         }
     }
 }
