@@ -72,7 +72,7 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 650a248f633f4dc0888575e026fbbea9, type: 3}
     bakedIris: {fileID: 21300000, guid: c230203498964176abd651beb196f996, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -112,7 +112,7 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 412746c0db4e431882893c2db07333df, type: 3}
     bakedIris: {fileID: 21300000, guid: 7fcbfd9ceac24505ad5e25da00df26be, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -152,7 +152,7 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 2df3d2776e2e4961b8c1077daa8a3b66, type: 3}
     bakedIris: {fileID: 21300000, guid: e1ffbf5183814ad8bb292139d522173b, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -201,7 +201,7 @@ MonoBehaviour:
       width: 0.0391684
       height: 0.0253901
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 0bf012a5b15a4223a2db17f5c5deb916, type: 3}
     bakedIris: {fileID: 0}
     irisMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
     irisVariantsMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
@@ -261,7 +261,7 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 78043c110146453a96184c2553ef0f42, type: 3}
     bakedIris: {fileID: 21300000, guid: 74b0730307c5443b8e8cff2fa4e75082, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -381,7 +381,7 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 6ee6e1964c124a788bcd9ea0a352f7ce, type: 3}
     bakedIris: {fileID: 21300000, guid: ae42ce180ef54745b358ce96cbecfe24, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -420,7 +420,7 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: ec53bf7aeecd443eb36ee632e7eac3ac, type: 3}
     bakedIris: {fileID: 21300000, guid: f2af991f62094adf8e6cae3e581a1d30, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -530,7 +530,7 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: bd43eabb88244fe18f3329d2280693dd, type: 3}
     bakedIris: {fileID: 21300000, guid: 053ea3a9614b4e449ab068a7557bd6d2, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -569,7 +569,7 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 36840e3bfe9641859e5e22b14a97b485, type: 3}
     bakedIris: {fileID: 21300000, guid: 5414d1dc6d3644a69606a4fdcd7d259d, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -621,7 +621,7 @@ MonoBehaviour:
       width: 0.0449523
       height: 0.0291304
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: df345cd6f4944c029ea371102773b823, type: 3}
     bakedIris: {fileID: 0}
     irisMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
     irisVariantsMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
@@ -724,7 +724,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 6f4449cb702c4b2fa483a8f45d8c7c27, type: 3}
     bakedIris: {fileID: 21300000, guid: f1fe8757d6f54979b1ab035978623cac, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -766,7 +766,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: f83a5624328149aa8ed63b30647a57cf, type: 3}
     bakedIris: {fileID: 21300000, guid: 4c52b0b85aff4e249db52e14cbffd68a, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -817,7 +817,7 @@ MonoBehaviour:
       width: 0.032449
       height: 0.0208163
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: a9f64310db354353bfb34bc9e965056f, type: 3}
     bakedIris: {fileID: 0}
     irisMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
     irisVariantsMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
@@ -878,7 +878,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 7c1ccc7eb1684f76b869f7da6ade7829, type: 3}
     bakedIris: {fileID: 21300000, guid: 5992b28436b44435b9b35f84e46b454b, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -948,7 +948,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: a4c4f804578a4a2cb43ffaacbd9b37cf, type: 3}
     bakedIris: {fileID: 21300000, guid: 5ee0426d8a9e4da981754e647871738d, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -983,7 +983,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 3703fb333f044aea85d3578d4502aa3c, type: 3}
     bakedIris: {fileID: 21300000, guid: 99142def7b4d488ca4599c0b3b397099, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
@@ -1018,7 +1018,7 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 777643807189401a9a10592d928a82be, type: 3}
     bakedIris: {fileID: 21300000, guid: 5905d50867464df390219ec465adae2e, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
