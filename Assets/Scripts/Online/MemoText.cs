@@ -5,7 +5,8 @@ using UnityEngine;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// The narrator's memos as data: drawing-only sheets (Resources/MemoText/Sheets) plus where each handwritten phrase
+    /// The narrator's memos as data. Korean shows the handwritten originals (Resources/MemoText/Sheets_ko); other
+    /// languages use drawing-only sheets (Resources/MemoText/Sheets) plus where each handwritten phrase
     /// sits on them (Resources/MemoText/layout.json, built by Tools/MemoText). The words themselves come from a text
     /// table per language (Resources/MemoText/text_&lt;lang&gt;.json, phrase key to text); Korean is the layout's own
     /// text and the fallback for any phrase a table lacks. Sheet indices follow OnlineCoopConfig.MemoSheets.
@@ -25,6 +26,7 @@ namespace PotionShop.Online
             public int rows;
             public float rowHeight;
             public string mark;
+            public float[] written;
         }
 
         [Serializable] private sealed class LayoutData
@@ -48,9 +50,12 @@ namespace PotionShop.Online
             public readonly float RowHeight;
             /// <summary>"symptom", "ingredient" or empty: what easy mode marks.</summary>
             public readonly string Mark;
+            /// <summary>Where the Korean original has it written, same space as <see cref="Box"/>.</summary>
+            public readonly Rect Written;
 
-            public Phrase(string key, Rect box, float rowHeight, string mark)
+            public Phrase(string key, Rect box, float rowHeight, string mark, Rect written)
             {
+                Written = written;
                 Key = key;
                 Box = box;
                 RowHeight = rowHeight;
@@ -63,6 +68,7 @@ namespace PotionShop.Online
         private static Dictionary<string, string> table;
         private static string tableLanguage;
         private static readonly Dictionary<int, Sprite> sheets = new();
+        private static readonly Dictionary<int, Sprite> originals = new();
         private static Font font;
 
         /// <summary>The memo language: a saved choice, else the system language when a table exists, else Korean.</summary>
@@ -88,11 +94,20 @@ namespace PotionShop.Online
 
         public static Font Font => font != null ? font : font = Resources.Load<Font>("MemoText/NanumPenScript-Regular");
 
-        public static Sprite Sheet(int index)
+        /// <summary>Korean shows the handwritten original; every other language writes on the drawing-only sheet.</summary>
+        public static bool ShowsOriginal(int index) => Language == Korean && Original(index) != null;
+
+        /// <summary>The sheet to show in the current language.</summary>
+        public static Sprite Sheet(int index) => ShowsOriginal(index) ? Original(index) : Drawing(index);
+
+        private static Sprite Drawing(int index) => Cached(sheets, index, "MemoText/Sheets/");
+        private static Sprite Original(int index) => Cached(originals, index, "MemoText/Sheets_ko/");
+
+        private static Sprite Cached(Dictionary<int, Sprite> cache, int index, string folder)
         {
-            if (sheets.TryGetValue(index, out var sprite) && sprite != null) return sprite;
-            sprite = Resources.Load<Sprite>("MemoText/Sheets/" + SheetNames[index]);
-            sheets[index] = sprite;
+            if (cache.TryGetValue(index, out var sprite) && sprite != null) return sprite;
+            sprite = Resources.Load<Sprite>(folder + SheetNames[index]);
+            if (sprite != null) cache[index] = sprite; // a miss is not remembered (assets may import later)
             return sprite;
         }
 
@@ -139,8 +154,11 @@ namespace PotionShop.Online
                     // Layout boxes are on the drawing, y down; the sheet image adds the paper margin around it.
                     float x0 = m + p.box[0] * scale, x1 = m + p.box[2] * scale;
                     float yTop = m + p.box[1] * scale, yBottom = m + p.box[3] * scale;
+                    var w = p.written ?? p.box;
+                    var written = Rect.MinMaxRect(m + w[0] * scale, 1f - (m + w[3] * scale), m + w[2] * scale,
+                        1f - (m + w[1] * scale));
                     phrases[i] = new Phrase(p.key, Rect.MinMaxRect(x0, 1f - yBottom, x1, 1f - yTop), p.rowHeight * scale,
-                        p.mark ?? string.Empty);
+                        p.mark ?? string.Empty, written);
                     korean[sheet.name + "." + p.key] = p.ko;
                 }
                 layout[sheet.name] = phrases;

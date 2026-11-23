@@ -96,6 +96,8 @@ for path in sorted(glob.glob(os.path.join(labels_dir, "*.json"))):
         boxes += [[v * W / 2000 for v in b] for b in p.get("dboxes", [])]
         x0, y0 = min(b[0] for b in boxes), min(b[1] for b in boxes)
         x1, y1 = max(b[2] for b in boxes), max(b[3] for b in boxes)
+        # where the Korean original wrote it: easy mode marks this box when the original sheet is shown
+        written = [round(x0 / W, 4), round(y0 / H, 4), round(x1 / W, 4), round(y1 / H, 4)]
         # handwriting fonts run wider than the hand that wrote the original: a little room on the right
         x1 = min(W - 8, x1 + (x1 - x0) * 0.12)
         # rows: the phrase's own written lines grouped by baseline; boxes given by hand count by the sheet's
@@ -110,7 +112,7 @@ for path in sorted(glob.glob(os.path.join(labels_dir, "*.json"))):
         row_h = (y1 - y0) / rows
         phrases.append({"key": p["key"], "ko": p["ko"],
                         "box": [round(x0 / W, 4), round(y0 / H, 4), round(x1 / W, 4), round(y1 / H, 4)],
-                        "rows": int(rows), "rowHeight": round(row_h / H, 4)})
+                        "rows": int(rows), "rowHeight": round(row_h / H, 4), "written": written})
     table = ink_table(os.path.join(drawings_dir, name + "_drawing.png"))
     before = sum(area_sum(table, [v * (W if k % 2 == 0 else H) for k, v in enumerate(ph["box"])]) for ph in phrases)
     placed = place([[v * (W if k % 2 == 0 else H) for k, v in enumerate(ph["box"])] for ph in phrases], table)

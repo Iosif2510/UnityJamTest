@@ -5,8 +5,8 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// One memo on screen: the drawing-only sheet, with every phrase written into its box in the handwriting font in
-    /// the chosen language (<see cref="MemoText"/>). Easy mode puts a highlighter stroke behind the phrases the
+    /// One memo on screen. In Korean it is the handwritten original; in other languages the drawing-only sheet with
+    /// every phrase written into its box in the handwriting font (<see cref="MemoText"/>). Easy mode puts a highlighter stroke behind the phrases the
     /// narrator actually needs: yellow for the symptoms, green for the notes that tell an ingredient apart.
     /// </summary>
     internal sealed class MemoSheetView
@@ -46,6 +46,7 @@ namespace PotionShop.Online
             shownLanguage = MemoText.Language;
             shownHeight = height;
             image.sprite = MemoText.Sheet(sheetIndex);
+            bool original = MemoText.ShowsOriginal(sheetIndex);
 
             var phrases = MemoText.Phrases(sheetIndex);
             while (slots.Count < phrases.Count)
@@ -59,8 +60,11 @@ namespace PotionShop.Online
                 if (!used) continue;
                 var phrase = phrases[i];
                 // Boxes already clear the drawing's ink and have room for a wider font (Tools/MemoText/build_layout.py).
-                rect.anchorMin = phrase.Box.min;
-                rect.anchorMax = phrase.Box.max;
+                var area = original ? phrase.Written : phrase.Box;
+                rect.anchorMin = area.min;
+                rect.anchorMax = area.max;
+                // The original already has the words written; only the easy-mode stroke goes on it.
+                text.enabled = !original;
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
                 text.text = MemoText.Text(sheetIndex, phrase.Key);
                 // Start at the size it was written at (a little larger is fine), shrink to fit the box.
