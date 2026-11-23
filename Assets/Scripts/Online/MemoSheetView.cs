@@ -66,11 +66,12 @@ namespace PotionShop.Online
                 // The original already has the words written; only the easy-mode stroke goes on it.
                 text.enabled = !original;
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
+                text.font = MemoText.Font;
                 text.text = MemoText.Text(sheetIndex, phrase.Key);
                 // Start at the size it was written at (a little larger is fine), shrink to fit the box.
                 int written = Mathf.Max(2, Mathf.RoundToInt(phrase.RowHeight * Mathf.Max(height, 1f) * 1.5f));
-                text.resizeTextMaxSize = written;
-                text.fontSize = written;
+                var size = new Vector2(page.rect.width * area.width, page.rect.height * area.height);
+                text.fontSize = Fit(text, size, written);
                 bool marked = easy && phrase.Mark.Length > 0;
                 mark.enabled = marked;
                 if (marked) mark.color = phrase.Mark == "symptom" ? Symptom : Ingredient;
@@ -84,6 +85,30 @@ namespace PotionShop.Online
                 Show(shown, shownEasy);
         }
 
+        private static readonly TextGenerator Measure = new();
+
+        /// <summary>The largest size up to <paramref name="max"/> whose wrapped text fits <paramref name="box"/>.</summary>
+        private static int Fit(Text text, Vector2 box, int max)
+        {
+            if (box.x <= 1f || box.y <= 1f || string.IsNullOrEmpty(text.text)) return max;
+            var settings = text.GetGenerationSettings(box);
+            settings.resizeTextForBestFit = false;
+            settings.horizontalOverflow = HorizontalWrapMode.Wrap;
+            settings.verticalOverflow = VerticalWrapMode.Overflow;
+            settings.generateOutOfBounds = true;
+            float scale = Mathf.Max(text.pixelsPerUnit, 0.0001f);
+            for (int size = max; size > 4; size--)
+            {
+                // Lay it out at this size, wrapped to the box width, and see whether the lines fit its height.
+                settings.fontSize = size;
+                Measure.Populate(text.text, settings);
+                if (Measure.lineCount * size * text.lineSpacing * 1.12f <= box.y * 1.06f ||
+                    Measure.rectExtents.height / scale <= box.y * 1.06f && Measure.lineCount <= 1)
+                    return size;
+            }
+            return 4;
+        }
+
         private (Text, Image) NewSlot()
         {
             var box = OnlineUi.Rect("Phrase", page, Vector2.zero, Vector2.zero);
@@ -91,10 +116,12 @@ namespace PotionShop.Online
                 new Vector2(4f, 2f)), Color.clear, false);
             var text = OnlineUi.Label(OnlineUi.Rect("Text", box, Vector2.zero, Vector2.one), string.Empty, 20, MemoText.Font,
                 InkColor, TextAnchor.UpperLeft);
-            text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = 1;
+            // Sized by Fit, not Unity's best fit: best fit only wraps at spaces, so Chinese and Japanese notes
+            // would shrink onto a single tiny line.
+            text.resizeTextForBestFit = false;
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
-            text.verticalOverflow = VerticalWrapMode.Truncate;
+            // A line a hair over the box still shows instead of vanishing.
+            text.verticalOverflow = VerticalWrapMode.Overflow;
             text.lineSpacing = 0.92f;
             return (text, mark);
         }

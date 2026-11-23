@@ -92,7 +92,26 @@ namespace PotionShop.Online
             set => PlayerPrefs.SetString(LanguageKey, value);
         }
 
-        public static Font Font => font != null ? font : font = Resources.Load<Font>("MemoText/NanumPenScript-Regular");
+        /// <summary>
+        /// Handwriting for the memo text: Xiaolai (OFL) for Chinese and Japanese, Nanum Pen Script (OFL) for the rest.
+        /// Xiaolai is cut down to the characters of the ja / zh tables (Tools/MemoText/subset_font.py).
+        /// </summary>
+        public static Font Font
+        {
+            get
+            {
+                string language = Language;
+                bool cjk = language == "ja" || language.StartsWith("zh");
+                if (font == null || fontIsCjk != cjk)
+                {
+                    font = Resources.Load<Font>(cjk ? "MemoText/Xiaolai-Regular" : "MemoText/NanumPenScript-Regular");
+                    fontIsCjk = cjk;
+                }
+                return font;
+            }
+        }
+
+        private static bool fontIsCjk;
 
         /// <summary>Korean shows the handwritten original; every other language writes on the drawing-only sheet.</summary>
         public static bool ShowsOriginal(int index) => Language == Korean && Original(index) != null;
