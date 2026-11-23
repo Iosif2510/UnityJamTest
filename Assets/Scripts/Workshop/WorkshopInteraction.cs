@@ -22,7 +22,10 @@ namespace PotionShop
 
         [SerializeField] private FirstPersonController player;
         [SerializeField] private Camera playerCamera;
-        [SerializeField] private Transform heldItemAnchor;
+        [SerializeField, Tooltip("Distance in front of the camera at which a held ingredient is shown, centred.")]
+        private float heldDistance = 0.55f;
+        [SerializeField, Tooltip("Largest dimension a held ingredient is scaled to, in metres (about 45 % of the view).")]
+        private float heldSize = 0.3f;
         [SerializeField] private Animator armsAnimator;
         [SerializeField, Min(0f)] private float heldRotationSensitivity = 0.35f;
         [SerializeField, Tooltip("How fast a held ingredient turns on its own, in degrees per second.")]
@@ -40,6 +43,7 @@ namespace PotionShop
         private RoundDirector round;
         private PocketModelDisplay pocketModels;
         private CancellationTokenSource transfer;
+        private Transform holdAnchor;
 
         private static int Required => RecipeEntry.RequiredIngredientKinds;
         private int Gathered => inCauldron.Count + (held != null ? 1 : 0);
@@ -62,6 +66,8 @@ namespace PotionShop
             if (armsAnimator != null)
                 armsAnimator.Play("Base Layer.Free", 0, 1f);
             pocketModels = hud.CreatePocketDisplay(playerCamera);
+            holdAnchor = new GameObject("CenterHoldAnchor").transform;
+            holdAnchor.SetParent(playerCamera.transform, false);
             hud.ShowPrompt();
             var activeRound = RoundDirector.Instance;
             if (activeRound != null && activeRound.CurrentOrder != null)
@@ -149,7 +155,7 @@ namespace PotionShop
                 hasSpace ? "집기" : "재료가 다 모였습니다. 가마솥으로 가세요",
                 hasSpace ? "좌클릭" : null);
             Vector3 shelfPosition = ingredient.transform.position;
-            if (hasSpace && click && shelf.TryTake(ingredient, heldItemAnchor))
+            if (hasSpace && click && shelf.TryTake(ingredient, PrepareHoldAnchor(ingredient)))
             {
                 SetHeldIngredient(ingredient);
                 workshopAudio?.PlayPickup(ingredient.VariantId, shelfPosition);
@@ -158,8 +164,8 @@ namespace PotionShop
 
         private void HandleHeldIngredient(WorkshopCauldron cauldron, bool click, bool putBack)
         {
-            if (cauldron != null) hud.ShowHeldIngredient(held.VariantId, "가마솥에 넣기", "좌클릭");
-            else hud.ShowHeldIngredient(held.VariantId, "돌려 보기", "좌클릭 드래그");
+            if (cauldron != null) hud.ShowHeldIngredient("가마솥에 넣기", "좌클릭");
+            else hud.ShowHeldIngredient("돌려 보기", "좌클릭 드래그");
 
             if (putBack)
             {
@@ -173,6 +179,28 @@ namespace PotionShop
             }
             else if (click && cauldron != null)
                 BeginPour(cauldron);
+        }
+
+        /// <summary>
+        /// Places the hold anchor so the ingredient's visual centre sits in the middle of the view at
+        /// <see cref="heldDistance"/>, scaled so its largest side is <see cref="heldSize"/>. The ingredient keeps
+        /// its shelf scale relative to the anchor, so putting it back restores its shelf size.
+        /// </summary>
+        private Transform PrepareHoldAnchor(WarehouseIngredient ingredient)
+        {
+            var renderers = ingredient.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) return holdAnchor;
+            Bounds bounds = renderers[0].bounds;
+            foreach (var r in renderers) bounds.Encapsulate(r.bounds);
+            var item = ingredient.transform;
+            float slotScale = item.parent != null ? item.parent.lossyScale.x : 1f;
+            float largest = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+            float scale = heldSize / Mathf.Max(0.01f, largest) * slotScale;
+            Vector3 centre = Vector3.Scale(item.localScale, item.InverseTransformPoint(bounds.center));
+            holdAnchor.localRotation = Quaternion.identity;
+            holdAnchor.localScale = Vector3.one * scale;
+            holdAnchor.localPosition = new Vector3(0f, 0f, heldDistance) - centre * scale;
+            return holdAnchor;
         }
 
         private bool AlreadyGathered(string variantId) => inCauldron.Contains(variantId);

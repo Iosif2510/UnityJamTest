@@ -20,6 +20,10 @@ namespace PotionShop
         [SerializeField] private GameObject crosshair;
         [SerializeField] private UnityEngine.UI.RawImage[] pocketPreviews;
         [SerializeField] private IngredientCatalog ingredients;
+        [Header("Prompt icons (drawn instead of the key text)")]
+        [SerializeField] private Sprite leftClickIcon;
+        [SerializeField] private Sprite rightClickIcon;
+        [SerializeField] private Sprite leftDragIcon;
 
         private readonly Dictionary<string, string> kindNamesByVariant = new(StringComparer.Ordinal);
         private Art.UiTypography typography;
@@ -30,7 +34,10 @@ namespace PotionShop
 
         private void Awake()
         {
-            promptRows = new WorkshopPromptRows(promptAction, keyText);
+            promptRows = new WorkshopPromptRows(promptAction, keyText, new Dictionary<string, Sprite>
+            {
+                ["좌클릭"] = leftClickIcon, ["우클릭"] = rightClickIcon, ["좌클릭 드래그"] = leftDragIcon,
+            });
             typography = new Art.UiTypography();
             typography.Apply(transform);
             foreach (var kind in ingredients.Kinds)
@@ -111,9 +118,11 @@ namespace PotionShop
             promptRows.Show(action, key);
         }
 
-        internal void ShowHeldIngredient(string variantId, string leftAction, string leftKey)
+        // The ingredient's name is shown only before it is picked up; once held, the ingredient itself fills
+        // the middle of the screen and only its two actions are shown below.
+        internal void ShowHeldIngredient(string leftAction, string leftKey)
         {
-            SetPromptTitle(kindNamesByVariant.GetValueOrDefault(variantId, "재료"));
+            SetPromptTitle("");
             promptRows.ShowHeld(leftAction, leftKey);
         }
 
