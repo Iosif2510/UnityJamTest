@@ -314,7 +314,6 @@ namespace PotionShop
             dialogueView.gameObject.SetActive((consult && !customerEntering) || ending);
             enterWorkshopButton.gameObject.SetActive(consult && !customerEntering);
             enterWorkshopButton.interactable = false;
-            if (!prescribe) prescriptionFeel.Close();
             prescriptionPanel.SetActive(prescribe);
             resultPanel.SetActive(false);
             hudMotion.SetTimer(consult || prescribe);
@@ -340,7 +339,7 @@ namespace PotionShop
             {
                 chosenBottle = BottleShape.Unspecified;
                 chosenInk = 0;
-                prescriptionFeel.Open(portraitView != null ? (RectTransform)portraitView.transform : null);
+                prescriptionFeel.Open();
                 RefreshChoices();
             }
             else if (ending)

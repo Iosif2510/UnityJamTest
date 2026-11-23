@@ -37,12 +37,6 @@ namespace PotionShop
         private RectTransform tag;
         private Text tagText;
         private Choice chosenBottle, chosenInk;
-        private RectTransform customer;
-        private Vector2 customerRest;
-        private bool customerMoved;
-        private MotionHandle customerMotion;
-        /// <summary>How far the customer steps left during packaging, so the cabinet's tall box doesn't cover the face.</summary>
-        private const float CustomerShift = -215f;
         /// <summary>How far the cabinet sits below its scene position, so it covers less of the customer.</summary>
         private const float DrawerDrop = -60f;
         private bool built;
@@ -165,9 +159,8 @@ namespace PotionShop
         }
 
         /// <summary>The packaging step begins: reset choices and slide the cabinet up into view.</summary>
-        public void Open(RectTransform customerPortrait = null)
+        public void Open()
         {
-            MoveCustomer(customerPortrait, true);
             chosenBottle = chosenInk = null;
             foreach (var c in bottles) Settle(c, false, false);
             foreach (var c in inks) Settle(c, false, false);
@@ -204,33 +197,9 @@ namespace PotionShop
             if (c.Image != null) c.Image.color = rowPicked && !chosen ? Dim : Color.white;
         }
 
-        /// <summary>The packaging step ended without a serve (time ran out, scene change): put the customer back.</summary>
-        public void Close() => MoveCustomer(customer, false);
-
-        private void MoveCustomer(RectTransform portrait, bool aside)
-        {
-            if (portrait == null) return;
-            if (!customerMoved)
-            {
-                if (!aside) return;
-                customer = portrait;
-                customerRest = portrait.anchoredPosition;
-            }
-            customerMoved = aside;
-            customerMotion.TryCancel();
-            var rect = customer;
-            var rest = customerRest;
-            float from = rect.anchoredPosition.x - rest.x, to = aside ? CustomerShift : 0f;
-            customerMotion = LMotion.Create(from, to, 0.4f).WithEase(Ease.OutCubic)
-                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                // aside and a little up, so the face clears the cabinet's tall box
-                .Bind(x => { if (rect != null) rect.anchoredPosition = rest + new Vector2(x, x / CustomerShift * 30f); });
-        }
-
         /// <summary>Serving: a copy of the chosen bottle arcs up to the customer and shrinks away.</summary>
         public void Serve(RectTransform customer)
         {
-            Close();
             if (chosenBottle == null || chosenBottle.Image == null) return;
             var canvas = GetComponentInParent<Canvas>().rootCanvas;
             var fly = new GameObject("ServedBottle", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();
