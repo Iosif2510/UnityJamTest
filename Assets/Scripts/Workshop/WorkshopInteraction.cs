@@ -44,6 +44,9 @@ namespace PotionShop
         private PocketModelDisplay pocketModels;
         private CancellationTokenSource transfer;
         private Transform holdAnchor;
+        private AimHighlight aimHighlight;
+        // Created on first use: scene objects kept across a script reload skip field initializers.
+        private AimHighlight aim => aimHighlight ??= new AimHighlight();
         private HeldItemOverlay heldOverlay;
 
         private static int Required => RecipeEntry.RequiredIngredientKinds;
@@ -53,6 +56,7 @@ namespace PotionShop
 
         private void OnDisable()
         {
+            aim.Release();
             transfer?.Cancel();
             if (player != null && player.TryHandleLookInput == TryRotateHeldIngredient)
                 player.TryHandleLookInput = null;
@@ -118,6 +122,8 @@ namespace PotionShop
             hud.SetCrosshairVisible(locked);
             if (!canInteract)
             {
+                aim.Release();
+                hud.SetCrosshairFocus(false);
                 hud.ShowPrompt(action: locked ? "" : "게임 화면을 클릭해 계속하기");
                 return;
             }
@@ -126,6 +132,13 @@ namespace PotionShop
             bool click = mouse?.leftButton.wasPressedThisFrame == true;
             TryGetInteractionHit(GetInteractionRay(), out var target, out _);
             var cauldron = target != null ? target.GetComponentInParent<WorkshopCauldron>() : null;
+
+            // What a click would act on: a free ingredient on a shelf, or the cauldron while holding one.
+            var aimedShelf = held == null && cauldron == null && target != null ? target.GetComponentInParent<WorkshopShelf>() : null;
+            var aimed = aimedShelf != null ? aimedShelf.FindStockedIngredient(target) : null;
+            if (aimed != null && (AlreadyGathered(aimed.VariantId) || Gathered >= Required)) aimed = null;
+            aim.Focus(aimed != null ? aimed.transform : null);
+            hud.SetCrosshairFocus(aimed != null || (held != null && cauldron != null));
 
             if (held != null)
             {
@@ -158,6 +171,8 @@ namespace PotionShop
                 hasSpace ? "집기" : "재료가 다 모였습니다. 가마솥으로 가세요",
                 hasSpace ? "좌클릭" : null);
             Vector3 shelfPosition = ingredient.transform.position;
+            if (hasSpace && click)
+                aim.Release(); // back to its own size and colour before it flies to the hand
             if (hasSpace && click && shelf.TryTake(ingredient, PrepareHoldAnchor(ingredient)))
             {
                 SetHeldIngredient(ingredient);
@@ -286,6 +301,9 @@ namespace PotionShop
             token.ThrowIfCancellationRequested();
             if (cauldron == null || !cauldron.isActiveAndEnabled) throw new System.OperationCanceledException();
             cauldron.AddIngredient(landed + 1, Required);
+            // A small kick forward and down as it lands, stronger for the last one.
+            bool last = landed + 1 >= Required;
+            player.Kick(new Vector3(0f, -1f, 0.5f), last ? 0.035f : 0.02f);
         }
 
         private void FinishTransfer(CancellationTokenSource operation)

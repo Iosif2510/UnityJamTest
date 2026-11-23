@@ -31,6 +31,7 @@ namespace PotionShop
         private MotionHandle timerSway;
         private MotionHandle pocketPop;
         private int displayedSeconds = -1;
+        private TimerUrgency urgency;
 
         private void Awake()
         {
@@ -96,6 +97,9 @@ namespace PotionShop
         internal void UpdateTimer(double remainingSeconds, int timeLimit)
         {
             timerFill.fillAmount = Mathf.Clamp01((float)(remainingSeconds / timeLimit));
+            // The storage room already ticks through the last seconds, so no heartbeat here.
+            urgency ??= new TimerUrgency(timerText, playHeartbeat: false);
+            urgency.Show(remainingSeconds);
             int seconds = (int)Math.Ceiling(remainingSeconds);
             if (seconds == displayedSeconds)
                 return;
@@ -105,6 +109,22 @@ namespace PotionShop
         }
 
         internal void SetCrosshairVisible(bool visible) => crosshair.SetActive(visible);
+
+        private bool crosshairFocused;
+        private MotionHandle crosshairMotion;
+
+        /// <summary>The crosshair opens up over something a click would act on.</summary>
+        internal void SetCrosshairFocus(bool focused)
+        {
+            if (focused == crosshairFocused || crosshair == null) return;
+            crosshairFocused = focused;
+            crosshairMotion.TryCancel();
+            var rect = crosshair.transform;
+            float from = rect.localScale.x, to = focused ? 1.8f : 1f;
+            crosshairMotion = LMotion.Create(from, to, 0.14f).WithEase(focused ? Ease.OutBack : Ease.OutQuad)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(s => { if (rect != null) rect.localScale = Vector3.one * s; });
+        }
 
         internal void ShowIngredient(string variantId, string action, string key = null)
         {

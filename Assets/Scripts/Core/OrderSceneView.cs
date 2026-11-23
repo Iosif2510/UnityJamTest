@@ -98,8 +98,14 @@ namespace PotionShop
                 RefreshPhase();
 
             if (timerText.gameObject.activeSelf)
+            {
                 timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
+                timerUrgency ??= new TimerUrgency(timerText);
+                timerUrgency.Show(round.RemainingSeconds, round.Phase is RoundPhase.Consult or RoundPhase.Prescribe);
+            }
         }
+
+        private TimerUrgency timerUrgency;
 
         private void OnEnable() => shownPhase = null;
 
@@ -163,6 +169,7 @@ namespace PotionShop
                     if (round == null || round.Phase != RoundPhase.Consult) return;
                     if (shownPhase != round.Phase) RefreshPhase();
                     order = round.CurrentOrder;
+                    GameSfx.Play("DoorBell", 0.7f, 1f, 0.03f);
                     if (entrance != null) await entrance.Play(token);
                     curtain.SetClosed(false);
                 }, token);
@@ -218,8 +225,9 @@ namespace PotionShop
 
         private void Serve()
         {
-            if (round.TryServe(chosenBottle, chosenInk))
-                RefreshPhase();
+            if (!round.TryServe(chosenBottle, chosenInk)) return;
+            GameSfx.Play("Serve", 0.8f);
+            RefreshPhase();
         }
 
         private void RefreshPhase()
@@ -311,6 +319,7 @@ namespace PotionShop
 
         private async UniTask PlayConsult(GeneratedOrder order, CancellationToken token)
         {
+            SetVoice(order);
             token.ThrowIfCancellationRequested();
             dialogueView.gameObject.SetActive(true);
             enterWorkshopButton.gameObject.SetActive(true);
@@ -328,8 +337,18 @@ namespace PotionShop
             if (portraitView != null && portraitView.isActiveAndEnabled) portraitView.Speak(strength);
         }
 
+        /// <summary>Each customer keeps one voice pitch, from their id, between 0.8 and 1.25.</summary>
+        private void SetVoice(GeneratedOrder order)
+        {
+            string id = order?.Customer != null ? order.Customer.Id : string.Empty;
+            int hash = 17;
+            foreach (char c in id ?? string.Empty) hash = hash * 31 + c;
+            dialogueView.VoicePitch = 0.8f + Mathf.Abs(hash % 1000) / 1000f * 0.45f;
+        }
+
         private async UniTask PlayEnding(GeneratedOrder order, RoundResult result, CancellationToken token)
         {
+            SetVoice(order);
             var gap = TimeSpan.FromSeconds(round.Tuning.ReactionGap);
             int speed = round.Tuning.TextSpeed;
             if (result.TimedOut)
@@ -398,12 +417,22 @@ namespace PotionShop
         {
             chosenBottle = bottle;
             RefreshChoices();
+            var button = bottle switch
+            {
+                BottleShape.Square => squareBottle,
+                BottleShape.Heart => heartBottle,
+                _ => roundBottle
+            };
+            OrderHudMotion.Bounce(button.transform);
+            GameSfx.Play("Select", 0.7f, 0.95f, 0.04f);
         }
 
         private void SelectInk(int ink)
         {
             chosenInk = ink;
             RefreshChoices();
+            if (ink >= 1 && ink <= inkButtons.Length) OrderHudMotion.Bounce(inkButtons[ink - 1].transform);
+            GameSfx.Play("Paper", 0.6f, 1f, 0.08f);
         }
 
         private void RefreshChoices()
@@ -415,6 +444,8 @@ namespace PotionShop
                 SetChoiceHighlight(inkButtons[i], chosenInk == i + 1);
 
             bool readyToServe = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
+            // The serve button pops the moment both choices are made.
+            if (readyToServe && !serveButton.interactable) OrderHudMotion.Bounce(serveButton.transform, 1.15f);
             serveButton.interactable = readyToServe;
             serveButton.image.material = readyToServe ? null : disabledServeMaterial;
         }

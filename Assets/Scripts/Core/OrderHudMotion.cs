@@ -41,6 +41,25 @@ namespace PotionShop
             timerMotion = SwayTimer(rect);
         }
 
+        private static readonly System.Collections.Generic.Dictionary<Transform, (Vector3 rest, MotionHandle motion)> bounces = new();
+
+        /// <summary>A quick squash-and-settle on a pressed choice; repeated presses restart from its rest size.</summary>
+        internal static void Bounce(Transform target, float peak = 1.12f)
+        {
+            if (target == null) return;
+            Vector3 rest = target.localScale;
+            if (bounces.TryGetValue(target, out var running))
+            {
+                running.motion.TryCancel();
+                rest = running.rest;
+            }
+            var handle = LMotion.Create(peak, 1f, 0.3f).WithEase(Ease.OutElastic)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithOnComplete(() => bounces.Remove(target))
+                .Bind(s => { if (target != null) target.localScale = rest * s; });
+            bounces[target] = (rest, handle);
+        }
+
         internal static MotionHandle SwayTimer(RectTransform rect) => LMotion.Create(0f, 2 * Mathf.PI, 2f)
             .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).WithLoops(-1)
             .Bind(phase =>

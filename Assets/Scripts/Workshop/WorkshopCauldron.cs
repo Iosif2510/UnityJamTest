@@ -29,7 +29,13 @@ namespace PotionShop
         internal Vector3 LiquidImpactPoint(int previouslyLanded, int count) =>
             liquidMotion.SurfaceCenter(previouslyLanded / (float)count);
 
-        private void Start() => liquidMotion?.PrepareFill();
+        private CauldronFeedback feedback;
+
+        private void Start()
+        {
+            liquidMotion?.PrepareFill();
+            feedback = GetComponent<CauldronFeedback>() ?? gameObject.AddComponent<CauldronFeedback>();
+        }
 
         internal void BeginPour() => pouring = true;
 
@@ -38,6 +44,8 @@ namespace PotionShop
             liquidMotion.AddIngredient(landed, count);
             if (ingredientDropAudio != null)
                 ingredientDropAudio.Play();
+            if (feedback != null)
+                feedback.Splash(liquidMotion.SurfaceCenter(landed / (float)count));
         }
 
         internal void StartBrewing()
@@ -65,7 +73,11 @@ namespace PotionShop
 
             double remaining = RemainingSeconds;
             if (remaining <= 0d)
+            {
                 SetBrewingEffects(false);
+                if (feedback != null && liquidMotion != null)
+                    feedback.BrewDone(liquidMotion.SurfaceCenter(1f));
+            }
             else if (brewingAudio != null && remaining < BrewingFadeSeconds)
                 brewingAudio.volume = brewingVolume * (float)(remaining / BrewingFadeSeconds);
         }

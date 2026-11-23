@@ -41,17 +41,19 @@ namespace PotionShop
         {
             await BetweenRows(token);
             ingredients.text = $"재료   {result.CorrectIngredients} / {RecipeEntry.RequiredIngredientKinds}";
-            ingredientPoints.text = $"+ {result.IngredientPoints}";
+            await CountUp(ingredientPoints, result.IngredientPoints, "+ {0}", token);
             await BetweenRows(token);
             bottle.text = $"물약병   {MatchLabel(result.BottleCorrect, result.TimedOut)}";
-            bottlePoints.text = $"+ {result.BottlePoints}";
+            await CountUp(bottlePoints, result.BottlePoints, "+ {0}", token);
             await BetweenRows(token);
             ink.text = $"잉크   {MatchLabel(result.InkCorrect, result.TimedOut)}";
-            inkPoints.text = $"+ {result.InkPoints}";
+            await CountUp(inkPoints, result.InkPoints, "+ {0}", token);
             await BetweenRows(token);
-            timeBonus.text = $"+ {result.TimeBonus}";
+            await CountUp(timeBonus, result.TimeBonus, "+ {0}", token);
             await BetweenRows(token);
-            total.text = $"총점   {result.Total}점";
+            total.text = "총점   0점";
+            await CountUp(total, result.Total, "총점   {0}점", token, 0.55f);
+            await Pop(total.rectTransform, token);
             await BetweenRows(token);
 
             otherStamp.sprite = result.TimedOut ? timeoutStamp : failureStamp;
@@ -62,6 +64,38 @@ namespace PotionShop
                 _ => otherStamp.gameObject
             };
             await Stamp(stamp, camera, token);
+        }
+
+        /// <summary>Rolls a number up with a tick per step, so each row is felt rather than just shown.</summary>
+        private static async UniTask CountUp(TMP_Text label, int value, string format, CancellationToken token,
+            float duration = 0.28f)
+        {
+            if (value <= 0)
+            {
+                label.text = string.Format(format, value);
+                GameSfx.Play("Tick", 0.5f, 0.8f);
+                return;
+            }
+            int shown = -1;
+            await LMotion.Create(0f, value, duration).WithEase(Ease.OutQuad)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(v =>
+                {
+                    int n = Mathf.RoundToInt(v);
+                    if (n == shown) return;
+                    shown = n;
+                    label.text = string.Format(format, n);
+                    GameSfx.Play("Tick", 0.55f, 0.9f + 0.5f * n / value, 0.03f);
+                }).ToUniTask(token);
+            label.text = string.Format(format, value);
+        }
+
+        private static UniTask Pop(RectTransform rect, CancellationToken token)
+        {
+            var scale = rect.localScale;
+            return LMotion.Create(1.18f, 1f, 0.22f).WithEase(Ease.OutBack)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(s => rect.localScale = scale * s).ToUniTask(token);
         }
 
         private static UniTask BetweenRows(CancellationToken token) =>
@@ -84,11 +118,14 @@ namespace PotionShop
                 await LMotion.Create(0f, 1f, .25f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).Bind(SetStampPose).ToUniTask(token);
                 SetStampPose(1);
+                // The stamp lands: thud, then a held beat before the shake, so the impact reads.
+                GameSfx.Play("StampThud", 1f, 1f, 0.04f);
+                await UniTask.Delay(TimeSpan.FromSeconds(0.07), ignoreTimeScale: true, cancellationToken: token);
                 await LMotion.Create(0f, 1f, .22f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                     .Bind(t =>
                     {
                         float remaining = (1 - t) * (1 - t);
-                        var offset = new Vector2(Mathf.Cos(28 * t) * 14, Mathf.Sin(39 * t + .4f) * 11) * remaining;
+                        var offset = new Vector2(Mathf.Cos(28 * t) * 18, Mathf.Sin(39 * t + .4f) * 14) * remaining;
                         panel.anchoredPosition = panelPosition + offset;
                         if (camera != null)
                             camera.transform.localPosition = cameraPosition + (Vector3)offset * .015f;

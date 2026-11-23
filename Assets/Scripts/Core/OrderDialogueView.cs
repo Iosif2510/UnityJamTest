@@ -40,6 +40,12 @@ namespace PotionShop
         private bool skipBeatPlayed;
 
         internal event Action<float> SpeechBeat;
+
+        /// <summary>Pitch of the speaking blips; each customer gets their own (set before a line plays).</summary>
+        internal float VoicePitch { get; set; } = 1f;
+
+        private const float BlipInterval = 0.085f;
+        private double nextBlip;
         internal TMP_FontAsset SpeakerFont => speaker.font;
 
         public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
@@ -121,6 +127,7 @@ namespace PotionShop
                 rain.gameObject.SetActive(true);
             }
             startedAt = Time.unscaledTimeAsDouble;
+            nextBlip = startedAt;
             speechBeat = 0;
             skipBeatPlayed = false;
             SpeechBeat?.Invoke(.68f);
@@ -153,6 +160,13 @@ namespace PotionShop
             }
 
             double elapsed = Time.unscaledTimeAsDouble - startedAt;
+            // Soft "voice" blips while the letters appear; they stop as soon as the line is skipped or done.
+            if (revealing && elapsed < skippedAt && elapsed < activeLine.Duration &&
+                Time.unscaledTimeAsDouble >= nextBlip)
+            {
+                nextBlip = Time.unscaledTimeAsDouble + BlipInterval;
+                GameSfx.Play("Blip", 0.35f, VoicePitch, 0.06f);
+            }
             if (reflow)
             {
                 activeLine.Layout = Layout(activeLine.Text);

@@ -148,6 +148,9 @@ namespace PotionShop.Portraits
                 }
 
                 token.ThrowIfCancellationRequested();
+                // The pop: a sound and a held beat on the squashed pose before the slime bursts out.
+                GameSfx.Play("SlimePop", 0.9f, 1f, 0.05f);
+                await UniTask.Delay(System.TimeSpan.FromSeconds(0.06), ignoreTimeScale: true, cancellationToken: token);
                 ShowSlime(sprite);
                 colors.SetTint(SlimeTransitionTint);
                 var burst = GetSlimeBurst();

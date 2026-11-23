@@ -130,7 +130,7 @@ namespace PotionShop.Online
         {
             menu = OnlineUi.Rect("Menu", root, Vector2.zero, Vector2.one).gameObject;
             OnlineUi.Fill((RectTransform)menu.transform, new Color(0.12f, 0.06f, 0.03f, 0.72f));
-            var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 600f));
+            var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 690f));
             card.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(card, "UI_Window");
             OnlineUi.Label(OnlineUi.Rect("Title", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -130f),
@@ -139,6 +139,8 @@ namespace PotionShop.Online
                 new Vector2(-70f, -150f)), "메모 언어", 28, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
             languages = new MemoLanguagePicker(OnlineUi.Rect("Languages", card, new Vector2(0f, 1f), new Vector2(1f, 1f),
                 new Vector2(70f, -276f), new Vector2(-70f, -204f)), config.BoldFont);
+            VolumeSlider.Build(OnlineUi.Rect("Volume", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(70f, -350f),
+                new Vector2(-70f, -298f)), config.BoldFont, OnlineUiParts.Ink);
             OnlineUiParts.Button(OnlineUi.Box("Resume", card, new Vector2(0.5f, 0f), new Vector2(0f, 190f), new Vector2(400f, 96f)),
                 "UI_BigButton", "계속하기", 36, config.BoldFont, () => menu.SetActive(false))
                 .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);

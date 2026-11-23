@@ -1,3 +1,4 @@
+using LitMotion;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -93,9 +94,30 @@ namespace PotionShop
         public bool InputEnabled { get; set; } = true;
         internal Func<bool> TryHandleLookInput { get; set; }
 
+        [Header("Head Bob")]
+        [Tooltip("Vertical / sideways bob of the camera pivot in metres at full speed. Kept small to avoid nausea.")]
+        [SerializeField] private Vector2 headBobAmplitude = new Vector2(0.018f, 0.009f);
+
+        private Vector3 cameraTargetRestPosition;
+        private float headBobWeight;
+        private Vector3 kickOffset;
+        private MotionHandle kickMotion;
+
+        /// <summary>A short, settling nudge of the view, for impacts (added to the bob, never fighting it).</summary>
+        public void Kick(Vector3 localDirection, float distance, float seconds = 0.3f)
+        {
+            kickMotion.TryCancel();
+            var from = kickOffset + localDirection.normalized * distance;
+            kickMotion = LMotion.Create(1f, 0f, seconds).WithEase(Ease.OutElastic)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(t => kickOffset = from * t).AddTo(gameObject);
+        }
+
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
+            if (cameraTarget != null)
+                cameraTargetRestPosition = cameraTarget.localPosition;
 
             if (cameraTarget == null)
                 Debug.LogError("FirstPersonController: Camera Target is not assigned.", this);
@@ -140,14 +162,15 @@ namespace PotionShop
 
         private void LateUpdate()
         {
-            if (leftArm == null && rightArm == null && heldItemAnchor == null)
-                return;
-
             // Use actual displacement so pushing into a wall does not keep the arms swinging.
             Vector3 velocity = characterController.velocity;
             velocity.y = 0f;
             float speedRatio = InputEnabled && characterController.isGrounded
                 ? Mathf.Clamp01(velocity.magnitude / Mathf.Max(walkSpeed, 0.001f)) : 0f;
+            UpdateHeadBob(speedRatio);
+
+            if (leftArm == null && rightArm == null && heldItemAnchor == null)
+                return;
             UpdateHeldItemWiggle(speedRatio);
             float blend = 1f - Mathf.Exp(-armJiggleSmoothing * Time.deltaTime);
             armJiggleWeight = Mathf.Lerp(armJiggleWeight, speedRatio, blend);
@@ -165,6 +188,19 @@ namespace PotionShop
             float jiggle = Mathf.Sin(armJigglePhase * 4f) * 0.15f;
             ApplyArmJiggle(leftArm, leftArmRestPosition, ref leftArmRotationBeforeJiggle, swing, bounce, jiggle);
             ApplyArmJiggle(rightArm, rightArmRestPosition, ref rightArmRotationBeforeJiggle, -swing, bounce, -jiggle);
+        }
+
+        /// <summary>The camera pivot bobs with the step (same phase as the arms) plus any kick.</summary>
+        private void UpdateHeadBob(float speedRatio)
+        {
+            if (cameraTarget == null)
+                return;
+            float blend = 1f - Mathf.Exp(-armJiggleSmoothing * Time.deltaTime);
+            headBobWeight = Mathf.Lerp(headBobWeight, speedRatio, blend);
+            float step = armJigglePhase;
+            var bob = new Vector3(Mathf.Sin(step) * headBobAmplitude.y, -Mathf.Abs(Mathf.Sin(step)) * headBobAmplitude.x, 0f)
+                * headBobWeight;
+            cameraTarget.localPosition = cameraTargetRestPosition + bob + kickOffset;
         }
 
         private void UpdateHeldItemWiggle(float speedRatio)
