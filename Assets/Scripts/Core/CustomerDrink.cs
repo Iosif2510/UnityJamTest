@@ -15,7 +15,7 @@ namespace PotionShop
     {
         private const float HoldSeconds = 0.55f;
 
-        public static async UniTask Play(PortraitView portrait, Sprite bottle, CancellationToken token)
+        public static async UniTask Play(PortraitView portrait, Sprite bottle, Sprite inkLabel, CancellationToken token)
         {
             if (portrait == null || !portrait.isActiveAndEnabled) return;
             var rect = (RectTransform)portrait.transform;
@@ -33,7 +33,11 @@ namespace PotionShop
                 image.preserveAspect = true;
                 image.raycastTarget = false;
                 float width = box.width * 0.26f;
-                held.sizeDelta = new Vector2(width, width * 1.25f);
+                held.sizeDelta = new Vector2(width, width * bottle.rect.height / bottle.rect.width);
+                var potion = PotionFill.On(held, bottle);
+                potion.Colour = PotionFill.BrewDisplay;
+                potion.SetLevel(1f);
+                if (inkLabel != null) LabelStamp.On(held).Show(inkLabel, Color.black, animate: false);
                 held.pivot = new Vector2(0.5f, 0.75f); // tips around the neck, near the lips
                 Vector2 low = At(0.66f, 0.3f), mouth = At(0.56f, 0.6f);
                 try
@@ -45,6 +49,7 @@ namespace PotionShop
                         {
                             held.anchoredPosition = Vector2.Lerp(low, mouth, t);
                             held.localRotation = Quaternion.Euler(0f, 0f, 40f * t);
+                            potion.KeepLevel(40f * t);
                             image.color = new Color(1f, 1f, 1f, Mathf.Clamp01(t * 3f));
                         }).ToUniTask(token);
                     // two gulps: tip back further, swallow, ease off a little
@@ -52,11 +57,14 @@ namespace PotionShop
                     {
                         GameSfx.Play("Gulp", 0.85f, 1f - i * 0.08f, 0.04f);
                         portrait.Speak(0.22f);
+                        potion.FillTo(i == 0 ? 0.65f : 0.3f, 0.34f, slosh: false);
                         float from = 40f + i * 18f;
                         await LMotion.Create(0f, 1f, 0.34f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                             .Bind(t =>
                             {
-                                held.localRotation = Quaternion.Euler(0f, 0f, from + Mathf.Sin(t * Mathf.PI) * 22f + t * 10f);
+                                float angle = from + Mathf.Sin(t * Mathf.PI) * 22f + t * 10f;
+                                held.localRotation = Quaternion.Euler(0f, 0f, angle);
+                                potion.KeepLevel(angle);
                                 held.anchoredPosition = mouth + Vector2.up * (Mathf.Sin(t * Mathf.PI) * box.height * 0.012f);
                             }).ToUniTask(token);
                     }
@@ -67,6 +75,7 @@ namespace PotionShop
                         {
                             held.anchoredPosition = Vector2.Lerp(mouth, low, t);
                             held.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(78f, 0f, t));
+                            potion.KeepLevel(Mathf.Lerp(78f, 0f, t));
                             image.color = new Color(1f, 1f, 1f, 1f - t);
                         }).ToUniTask(token);
                 }

@@ -30,6 +30,8 @@ namespace PotionShop
         private bool sweatLeft;
         private float nextSweat, nextMutter;
         private RectTransform bubble;
+        private TextMeshProUGUI bubbleText;
+        private float huffUntil;
         private MotionHandle bubbleMotion;
 
         public CustomerImpatience(PortraitView portrait, PortraitColorCatalog palette, TMP_FontAsset font)
@@ -121,14 +123,29 @@ namespace PotionShop
                 });
         }
 
-        private void Mutter()
+        /// <summary>
+        /// Time ran out: the customer turns cross at once and huffs "흥!" in the bubble, which stays up through the
+        /// change of phase.
+        /// </summary>
+        public void Huff(GeneratedOrder order)
+        {
+            if (portrait == null || !portrait.isActiveAndEnabled) return;
+            var angry = order?.Customer.AngryExpression;
+            if (angry != null && palette != null) portrait.Show(order, palette, angry);
+            portrait.Speak(1f);
+            huffUntil = Time.unscaledTime + 1.8f;
+            Mutter("흥!", 1.8f);
+        }
+
+        private void Mutter(string text = "흠…", float seconds = 2.6f)
         {
             if (bubble == null) bubble = MakeBubble();
+            bubbleText.text = text;
             bubble.SetAsLastSibling();
             bubble.anchoredPosition = At(.76f, .8f);
             bubbleMotion.TryCancel();
             var b = bubble;
-            bubbleMotion = LMotion.Create(0f, 1f, 2.6f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+            bubbleMotion = LMotion.Create(0f, 1f, seconds).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                 .Bind(t =>
                 {
                     if (b == null) return;
@@ -140,6 +157,7 @@ namespace PotionShop
 
         private void HideBubble()
         {
+            if (Time.unscaledTime < huffUntil) return;
             bubbleMotion.TryCancel();
             if (bubble != null) bubble.localScale = Vector3.zero;
         }
@@ -168,7 +186,7 @@ namespace PotionShop
             labelRect.anchorMin = new Vector2(0f, .22f);
             labelRect.anchorMax = Vector2.one;
             labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
-            var text = label.GetComponent<TextMeshProUGUI>();
+            var text = bubbleText = label.GetComponent<TextMeshProUGUI>();
             if (font != null) text.font = font;
             text.text = "흠…";
             text.fontSize = 38;

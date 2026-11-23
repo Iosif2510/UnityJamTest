@@ -43,6 +43,25 @@ namespace PotionShop
 
         /// <summary>The picture of the bottle picked right now (the customer drinks from it).</summary>
         internal Sprite ChosenBottleSprite => chosenBottle?.Image != null ? chosenBottle.Image.sprite : null;
+
+        /// <summary>The picture of the ink pot picked right now (its label goes on the bottle).</summary>
+        internal Sprite ChosenInkSprite => chosenInk?.Image != null ? chosenInk.Image.sprite : null;
+
+        /// <summary>The ink of the picked pot, for the flecks when its label lands.</summary>
+        internal Color ChosenInkColour => chosenInk != null ? InkColour(inks.IndexOf(chosenInk)) : Color.black;
+
+        // green, blue, red, yellow, purple, black: the order of the ink row
+        private static Color InkColour(int index) => index switch
+        {
+            0 => new Color(0.24f, 0.45f, 0.22f),
+            1 => new Color(0.2f, 0.33f, 0.62f),
+            2 => new Color(0.66f, 0.17f, 0.14f),
+            3 => new Color(0.86f, 0.62f, 0.16f),
+            4 => new Color(0.45f, 0.26f, 0.55f),
+            _ => new Color(0.12f, 0.1f, 0.1f),
+        };
+
+        private Choice filledBottle, stampedInk;
         /// <summary>How far the cabinet sits below its scene position, so it covers less of the customer.</summary>
         private const float DrawerDrop = -60f;
         private bool built;
@@ -191,9 +210,40 @@ namespace PotionShop
             chosenInk = ink >= 0 && ink < inks.Count ? inks[ink] : null;
             foreach (var c in bottles) Settle(c, c == chosenBottle, chosenBottle != null);
             foreach (var c in inks) Settle(c, c == chosenInk, chosenInk != null);
+            ShowPotion();
             if (hint == null) return;
             hint.text = chosenBottle == null && chosenInk == null ? "물약병과 잉크를 하나씩 고르세요"
                 : $"{(chosenBottle != null ? chosenBottle.Name : "물약병?")}  ·  {(chosenInk != null ? chosenInk.Name : "잉크?")}";
+        }
+
+        /// <summary>
+        /// The picked bottle fills with the brew made downstairs; picking an ink slaps its label on that bottle.
+        /// Putting a bottle back drains it and takes its label off.
+        /// </summary>
+        private void ShowPotion()
+        {
+            if (filledBottle != chosenBottle)
+            {
+                if (filledBottle?.Image != null)
+                {
+                    PotionFill.On(filledBottle.Rect, filledBottle.Image.sprite).FillTo(0f, 0.25f, slosh: false);
+                    LabelStamp.On(filledBottle.Rect).Clear();
+                }
+                filledBottle = chosenBottle;
+                stampedInk = null;
+                if (chosenBottle?.Image != null)
+                {
+                    var fill = PotionFill.On(chosenBottle.Rect, chosenBottle.Image.sprite);
+                    fill.Colour = PotionFill.BrewDisplay;
+                    fill.FillTo(1f, 0.75f);
+                    GameSfx.Play("Splash", 0.22f, 1.5f, 0.08f);
+                }
+            }
+            if (chosenBottle?.Image == null || stampedInk == chosenInk) return;
+            stampedInk = chosenInk;
+            var stamp = LabelStamp.On(chosenBottle.Rect);
+            if (chosenInk?.Image != null) stamp.Show(chosenInk.Image.sprite, ChosenInkColour);
+            else stamp.Clear();
         }
 
         /// <summary>Chosen items stand up from the shelf; once a row has a pick, the others in it dim.</summary>
@@ -220,6 +270,10 @@ namespace PotionShop
             image.preserveAspect = true;
             image.raycastTarget = false;
             fly.sizeDelta = chosenBottle.Rect.rect.size;
+            var flyFill = PotionFill.On(fly, image.sprite);
+            flyFill.Colour = PotionFill.BrewDisplay;
+            flyFill.SetLevel(1f);
+            if (chosenInk?.Image != null) LabelStamp.On(fly).Show(chosenInk.Image.sprite, ChosenInkColour, animate: false);
             Vector3 from = chosenBottle.Rect.position;
             Vector3 to = customer != null ? customer.position : from + Vector3.up * 200f;
             fly.position = from;

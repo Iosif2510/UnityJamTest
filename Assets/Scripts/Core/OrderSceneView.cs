@@ -117,7 +117,7 @@ namespace PotionShop
 
         private TimerUrgency timerUrgency;
         private CustomerImpatience impatience;
-        private Sprite servedBottle;
+        private Sprite servedBottle, servedInk;
         private PrescriptionFeel prescriptionFeel;
 
         private void OnEnable() => shownPhase = null;
@@ -279,6 +279,7 @@ namespace PotionShop
         {
             if (chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
             servedBottle = prescriptionFeel.ChosenBottleSprite;
+            servedInk = prescriptionFeel.ChosenInkSprite;
             prescriptionFeel.Serve(portraitView != null ? (RectTransform)portraitView.transform : null);
             if (!round.TryServe(chosenBottle, chosenInk)) return;
             GameSfx.Play("Serve", 0.8f);
@@ -444,6 +445,7 @@ namespace PotionShop
             int speed = round.Tuning.TextSpeed;
             if (result.TimedOut)
             {
+                await TimeoutMoment.Play(impatience, order, token);
                 await dialogueView.PlayReaction(order.GetReactionLine("timeout"), speed, token, "timeout");
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
                 round.CompleteEnding(result);
@@ -454,7 +456,7 @@ namespace PotionShop
                 await dialogueView.PlayReaction(order.GetReactionLine(result.ReceiveDialogueKey), speed, token,
                     result.ReceiveDialogueKey);
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
-                await CustomerDrink.Play(portraitView, servedBottle, token);
+                await CustomerDrink.Play(portraitView, servedBottle, servedInk, token);
                 await ApplyEffectAsync(result.Effect, token);
                 await dialogueView.PlayReaction(order.GetReactionLine(result.DrinkDialogueKey), speed, token,
                     result.DrinkDialogueKey);

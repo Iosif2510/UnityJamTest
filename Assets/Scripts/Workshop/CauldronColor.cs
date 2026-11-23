@@ -26,6 +26,12 @@ namespace PotionShop
         private readonly List<Color> added = new();
         private MotionHandle motion;
 
+        /// <summary>The finished colour of the last brew made, carried to the counter to fill the bottle.</summary>
+        public static Color? LastBrew { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => LastBrew = null; // no domain reload between play sessions
+
         /// <summary>The liquid's colour right now (the progress ring borrows it).</summary>
         public Color Current { get; private set; }
 
@@ -78,6 +84,7 @@ namespace PotionShop
             var colours = added.ToArray();
             var start = Current;
             var final = Finished(colours);
+            LastBrew = final;
             motion = LMotion.Create(0f, 1f, SwirlSeconds).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                 .Bind(t =>
                 {
@@ -88,7 +95,7 @@ namespace PotionShop
                     var c = Color.Lerp(start, chase, Mathf.Clamp01(t / 0.12f));
                     // a bright flash in the middle of the swirl, then the settled colour
                     float glow = 1f + 0.35f * Mathf.Sin(Mathf.Clamp01(t / 0.8f) * Mathf.PI);
-                    Apply(Color.Lerp(c * glow, final, Mathf.SmoothStep(0.55f, 1f, t)));
+                    Apply(Color.Lerp(c * glow, final, Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.55f, 1f, t))));
                 });
         }
 
