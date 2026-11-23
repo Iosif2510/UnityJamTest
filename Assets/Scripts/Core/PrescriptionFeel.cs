@@ -44,6 +44,10 @@ namespace PotionShop
         /// <summary>The picture of the bottle picked right now (the customer drinks from it).</summary>
         internal Sprite ChosenBottleSprite => chosenBottle?.Image != null ? chosenBottle.Image.sprite : null;
 
+        /// <summary>The picked bottle and ink pot on the shelf (the crafting scene lifts them from there).</summary>
+        internal RectTransform ChosenBottleRect => chosenBottle?.Rect;
+        internal RectTransform ChosenInkRect => chosenInk?.Rect;
+
         /// <summary>The picture of the ink pot picked right now (its label goes on the bottle).</summary>
         internal Sprite ChosenInkSprite => chosenInk?.Image != null ? chosenInk.Image.sprite : null;
 
@@ -161,7 +165,7 @@ namespace PotionShop
             };
             choice.Rest = choice.Rect.anchoredPosition;
             list.Add(choice);
-            var trigger = button.gameObject.GetComponent<EventTrigger>() ?? button.gameObject.AddComponent<EventTrigger>();
+            var trigger = (button.gameObject.TryGetComponent(out EventTrigger foundEventTrigger) ? foundEventTrigger : button.gameObject.AddComponent<EventTrigger>());
             var enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
             enter.callback.AddListener(_ => Point(choice));
             var exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };

@@ -39,11 +39,11 @@ namespace PotionShop
         private void Start()
         {
             liquidMotion?.PrepareFill();
-            feedback = GetComponent<CauldronFeedback>() ?? gameObject.AddComponent<CauldronFeedback>();
+            feedback = (TryGetComponent(out CauldronFeedback foundCauldronFeedback) ? foundCauldronFeedback : gameObject.AddComponent<CauldronFeedback>());
             if (liquidMotion == null) return;
-            colour = GetComponent<CauldronColor>() ?? gameObject.AddComponent<CauldronColor>();
+            colour = (TryGetComponent(out CauldronColor foundCauldronColor) ? foundCauldronColor : gameObject.AddComponent<CauldronColor>());
             colour.Bind(liquidMotion.LiquidRenderer);
-            var ring = GetComponent<BrewProgressRing>() ?? gameObject.AddComponent<BrewProgressRing>();
+            var ring = (TryGetComponent(out BrewProgressRing foundBrewProgressRing) ? foundBrewProgressRing : gameObject.AddComponent<BrewProgressRing>());
             ring.Bind(this, colour);
         }
 

@@ -48,7 +48,7 @@ namespace PotionShop.Online
         /// <summary>Draws a part on the rect: sliced when it has a border, stretched otherwise.</summary>
         internal static Image Draw(RectTransform rect, string key, bool raycast = false)
         {
-            var image = rect.GetComponent<Image>() ?? rect.gameObject.AddComponent<Image>();
+            var image = (rect.TryGetComponent(out Image foundImage) ? foundImage : rect.gameObject.AddComponent<Image>());
             image.sprite = Get(key);
             image.color = Color.white;
             image.raycastTarget = raycast;

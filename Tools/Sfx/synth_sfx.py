@@ -219,6 +219,69 @@ pulse = 0.55 + 0.45 * np.sin(2 * np.pi * 26 * x)
 breath = np.where(x < 0.9, np.sin(np.pi * x / 0.9), 0.75 * np.sin(np.pi * (x - 0.9) / 0.9)) ** 0.7
 save("Purr", rumble * pulse * breath, 0.6)
 
+# Customer voices: one short syllable per vowel (a e i o u) and onset (p plosive, n nasal, f fricative, 0 none),
+# a buzzy glottal source shaped by three vowel formants. The game picks one per Hangul syllable it reveals and
+# sets the pitch per customer, so lines sound like murmured speech rather than a beeping typewriter.
+from scipy.signal import lfilter
+
+
+def resonator(x, freq, bw):
+    r = np.exp(-np.pi * bw / SR)
+    c = 2 * r * np.cos(2 * np.pi * freq / SR)
+    return lfilter([1 - r], [1, -c, r * r], x)
+
+
+FORMANTS = {"a": (800, 1200, 2500), "e": (450, 1900, 2550), "i": (300, 2250, 3000),
+            "o": (500, 850, 2450), "u": (340, 800, 2300)}
+for vowel, (f1, f2, f3) in FORMANTS.items():
+    for onset in "pnf0":
+        x = t(0.1)
+        f0 = np.interp(x, [0, 0.1], [200, 185])
+        phase = np.cumsum(f0) / SR
+        source = 2 * (phase % 1.0) - 1  # sawtooth: rich harmonics for the formants to shape
+        voiced = resonator(source, f1, 90) + 0.6 * resonator(source, f2, 120) + 0.25 * resonator(source, f3, 180)
+        start = {"p": 0.012, "n": 0.0, "f": 0.03, "0": 0.0}[onset]
+        shape = np.clip((x - start) / 0.012, 0, 1) * np.clip((0.1 - x) / 0.035, 0, 1)
+        voice = voiced * shape
+        if onset == "p":    # a little click before the vowel
+            burst = rng.normal(0, 1, len(x)) * np.exp(-x / 0.003) * (x < 0.01)
+            voice = voice / (np.max(np.abs(voice)) + 1e-9) + 0.5 * lowpass(burst, 3500)
+        elif onset == "f":  # a breath of hiss
+            hiss = rng.normal(0, 1, len(x))
+            hiss = (hiss - lowpass(hiss, 2500)) * np.clip(1 - np.abs(x - 0.016) / 0.016, 0, 1)
+            voice = voice / (np.max(np.abs(voice)) + 1e-9) + 0.35 * hiss
+        elif onset == "n":  # a hummed lead-in
+            hum = np.sin(2 * np.pi * np.cumsum(f0) / SR) * np.clip(1 - x / 0.03, 0, 1)
+            voice = voice / (np.max(np.abs(voice)) + 1e-9) * np.clip((x - 0.015) / 0.02, 0, 1) + 0.5 * hum
+        save(f"Voice_{vowel}_{onset}", voice, 0.6)
+
+# Potion crafting at the counter: pouring the brew into the bottle, pressing its cork in, popping the ink pot's
+# cork, and the quill scratching the label.
+x = t(0.9)
+stream = lowpass(rng.normal(0, 1, len(x)), 1800) - lowpass(rng.normal(0, 1, len(x)), 200)
+gurgle = 0.6 + 0.4 * np.sin(2 * np.pi * np.cumsum(np.interp(x, [0, 0.9], [9, 5])) / SR)
+blups = np.zeros(len(x))
+for at in np.arange(0.08, 0.85, 0.11) + rng.uniform(-0.02, 0.02, 7):
+    i = int(at * SR); n = int(SR * 0.05)
+    f = np.interp(np.arange(n), [0, n], [300 + 600 * at, 900 + 600 * at])
+    blups[i:i + n] += np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-np.arange(n) / (SR * 0.012))
+save("Pour", (stream * gurgle * 0.7 + blups * 0.5) * np.interp(x, [0, 0.06, 0.75, 0.9], [0, 1, 0.8, 0]), 0.6)
+
+x = t(0.2)
+squeak = np.sin(2 * np.pi * np.cumsum(np.interp(x, [0, 0.07], [900, 600])) / SR) * env(len(x), 0.003, 0.03) * (x < 0.08)
+thunk = np.sin(2 * np.pi * np.cumsum(np.interp(x, [0.06, 0.2], [220, 140])) / SR) * env(len(x), 0.001, 0.05) * (x > 0.06)
+save("CorkIn", 0.5 * squeak + thunk, 0.7)
+
+x = t(0.15)
+pop = np.sin(2 * np.pi * np.cumsum(np.interp(x, [0, 0.15], [500, 1100])) / SR) * env(len(x), 0.001, 0.035)
+air = lowpass(rng.normal(0, 1, len(x)), 4000) * np.exp(-x / 0.006)
+save("CorkPop", pop + 0.7 * air, 0.7)
+
+x = t(0.12)
+grain = rng.normal(0, 1, len(x))
+scratch = (grain - lowpass(grain, 2200)) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 38 * x))) * np.interp(x, [0, 0.02, 0.1, 0.12], [0, 1, 0.7, 0])
+save("Scribble", scratch, 0.5)
+
 # Reused project sounds that were not wired to anything.
 if ONLY:
     sys.exit(0)

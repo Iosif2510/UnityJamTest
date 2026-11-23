@@ -13,7 +13,7 @@ namespace PotionShop
     public sealed class PotionFill : MonoBehaviour
     {
         /// <summary>The fill line when full, as a fraction of the picture's height (below the neck and cork).</summary>
-        private const float FullLine = 0.6f;
+        public float FullLine { get; set; } = 0.6f;
 
         private static readonly Color Fallback = new(0.55f, 0.85f, 0.3f);
 

@@ -45,6 +45,8 @@ namespace PotionShop
         internal bool HasEffects { get; }
         internal double LastAccentEnd { get; }
         internal IReadOnlyList<double> AccentTimes { get; }
+        /// <summary>When each character of <see cref="Text"/> starts to appear, in seconds from the line's start.</summary>
+        internal IReadOnlyList<double> CharStarts { get; }
 
         internal DialogueTimeline(DialogueOption line, SymptomEffect inheritedEffect, int speed, DialogueRevealMode mode)
             : this(line.Segments, line.DefaultSymptomEffect == SymptomEffect.Inherit ? inheritedEffect :
@@ -61,6 +63,7 @@ namespace PotionShop
             var starts = new double[text.Length];
             Duration = new StringInfo(text).LengthInTextElements / (double)Math.Max(1, speed);
             AssignTimes(text, flags, starts, Duration, mode);
+            CharStarts = starts;
             var accented = new bool[text.Length];
             var (accent, lastAccent) = DialogueEmphasis.Select(text, flags, starts, reactionKey, accented);
             var beats = new List<double>();

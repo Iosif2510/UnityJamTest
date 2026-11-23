@@ -40,7 +40,7 @@ namespace PotionShop
             var round = RoundDirector.Instance;
             bool wanted = customer != null && round != null &&
                 round.Phase is RoundPhase.Consult or RoundPhase.Prescribe or RoundPhase.Ending;
-            bool packaging = wanted && round.Phase == RoundPhase.Prescribe;
+            bool packaging = wanted && (round.Phase == RoundPhase.Prescribe || PotionCrafting.Active);
             // 0 wide, 1 on the customer, 2 packaging: the camera, not the customer, moves so the face clears the cabinet
             int next = !wanted ? 0 : packaging ? 2 : 1;
             if (next == framing) return;

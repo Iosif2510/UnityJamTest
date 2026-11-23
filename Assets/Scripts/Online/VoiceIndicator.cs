@@ -188,7 +188,7 @@ namespace PotionShop.Online
 
         private static Image Fill(RectTransform rect, Sprite sprite, Color color)
         {
-            var image = rect.GetComponent<Image>() ?? rect.gameObject.AddComponent<Image>();
+            var image = (rect.TryGetComponent(out Image foundImage) ? foundImage : rect.gameObject.AddComponent<Image>());
             image.sprite = sprite;
             image.color = color;
             image.raycastTarget = false;

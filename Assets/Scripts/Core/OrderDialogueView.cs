@@ -44,8 +44,10 @@ namespace PotionShop
         /// <summary>Pitch of the speaking blips; each customer gets their own (set before a line plays).</summary>
         internal float VoicePitch { get; set; } = 1f;
 
-        private const float BlipInterval = 0.085f;
-        private double nextBlip;
+        private const float MinVoiceGap = 0.065f;
+        private readonly DialogueVoice voice = new();
+        private int voicedChars;
+        private double lastVoiced;
         internal TMP_FontAsset SpeakerFont => speaker.font;
 
         public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
@@ -127,7 +129,9 @@ namespace PotionShop
                 rain.gameObject.SetActive(true);
             }
             startedAt = Time.unscaledTimeAsDouble;
-            nextBlip = startedAt;
+            voicedChars = 0;
+            lastVoiced = double.NegativeInfinity;
+            voice.Begin();
             speechBeat = 0;
             skipBeatPlayed = false;
             SpeechBeat?.Invoke(.68f);
@@ -147,6 +151,22 @@ namespace PotionShop
             }
         }
 
+        private void Voice(double elapsed)
+        {
+            var text = activeLine.Text;
+            var starts = activeLine.CharStarts;
+            int newest = -1;
+            while (voicedChars < text.Length && starts[voicedChars] <= elapsed) newest = voicedChars++;
+            // several letters in one frame (or very fast text): voice only the latest, and not too often
+            if (newest < 0 || Time.unscaledTimeAsDouble - lastVoiced < MinVoiceGap) return;
+            if (!DialogueVoice.Voiced(text[newest], out _, out _)) return;
+            lastVoiced = Time.unscaledTimeAsDouble;
+            int end = text.Length - 1;
+            while (end > 0 && !DialogueVoice.Voiced(text[end], out _, out _)) end--;
+            bool question = newest >= end - 1 && text.TrimEnd().EndsWith("?");
+            voice.Speak(text[newest], VoicePitch, question);
+        }
+
         private void LateUpdate()
         {
             if (activeLine == null && message == null) return;
@@ -160,13 +180,8 @@ namespace PotionShop
             }
 
             double elapsed = Time.unscaledTimeAsDouble - startedAt;
-            // Soft "voice" blips while the letters appear; they stop as soon as the line is skipped or done.
-            if (revealing && elapsed < skippedAt && elapsed < activeLine.Duration &&
-                Time.unscaledTimeAsDouble >= nextBlip)
-            {
-                nextBlip = Time.unscaledTimeAsDouble + BlipInterval;
-                GameSfx.Play("Blip", 0.35f, VoicePitch, 0.06f);
-            }
+            // A murmured voice, one syllable per letter as it appears; quiet once the line is skipped or done.
+            if (revealing && elapsed < skippedAt && elapsed < activeLine.Duration) Voice(elapsed);
             if (reflow)
             {
                 activeLine.Layout = Layout(activeLine.Text);

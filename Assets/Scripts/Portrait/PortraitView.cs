@@ -88,7 +88,7 @@ namespace PotionShop.Portraits
 
         private SlimeJelly jelly;
         private SlimeJelly Jelly => jelly != null ? jelly
-            : jelly = layers.slime.GetComponent<SlimeJelly>() ?? layers.slime.gameObject.AddComponent<SlimeJelly>();
+            : jelly = (layers.slime.TryGetComponent(out SlimeJelly foundSlimeJelly) ? foundSlimeJelly : layers.slime.gameObject.AddComponent<SlimeJelly>());
 
         internal void Speak(float strength)
         {

@@ -16,9 +16,11 @@ var targets = new Dictionary<string, float>
     ["Click"] = -22f, ["Tick"] = -22f, ["Hover"] = -26f, ["Select"] = -21f, ["Blip"] = -20f,
     ["StepChime"] = -22f, ["Heartbeat"] = -18f,
     // workshop, counter and loft extras
+    ["Pour"] = -24f, ["CorkIn"] = -22f, ["CorkPop"] = -22f, ["Scribble"] = -28f,
     ["Gulp"] = -21f, ["Whoosh"] = -27f, ["FireFlare"] = -23f, ["Purr"] = -24f,
     ["Step1"] = -24f, ["Step2"] = -24f, ["Step3"] = -24f, ["Step4"] = -24f,
 };
+foreach (var v in "aeiou") foreach (var o in "pnf0") targets[$"Voice_{v}_{o}"] = -23f;
 var sb = new System.Text.StringBuilder();
 string dir = Application.dataPath + "/Resources/Sfx/";
 foreach (var clip in Resources.LoadAll<AudioClip>("Sfx"))

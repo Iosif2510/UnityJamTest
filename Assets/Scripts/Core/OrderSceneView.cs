@@ -78,8 +78,7 @@ namespace PotionShop
             }
             serveButton.onClick.AddListener(Serve);
             var selected = prescriptionPanel.transform.Find("SelectedOptions")?.GetComponent<Text>();
-            prescriptionFeel = prescriptionPanel.GetComponent<PrescriptionFeel>() ??
-                               prescriptionPanel.AddComponent<PrescriptionFeel>();
+            prescriptionFeel = (prescriptionPanel.TryGetComponent(out PrescriptionFeel foundPrescriptionFeel) ? foundPrescriptionFeel : prescriptionPanel.AddComponent<PrescriptionFeel>());
             prescriptionFeel.Pointed += LookAtChoice;
             prescriptionFeel.Build(squareBottle, heartBottle, roundBottle, inkButtons, serveButton, selected,
                 selected != null ? selected.font : timerText.font);
@@ -101,10 +100,10 @@ namespace PotionShop
             if (round == null)
                 return;
 
-            if (shownPhase != round.Phase)
+            if (shownPhase != round.Phase && !crafting)
                 RefreshPhase();
 
-            if (timerText.gameObject.activeSelf)
+            if (timerText.gameObject.activeSelf && !crafting) // the clock stopped when the potion was handed over
             {
                 timerText.text = RoundDirector.FormatClock(round.RemainingSeconds);
                 timerUrgency ??= new TimerUrgency(timerText);
@@ -277,11 +276,33 @@ namespace PotionShop
 
         private void Serve()
         {
-            if (chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
+            if (crafting || chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
             servedBottle = prescriptionFeel.ChosenBottleSprite;
             servedInk = prescriptionFeel.ChosenInkSprite;
-            prescriptionFeel.Serve(portraitView != null ? (RectTransform)portraitView.transform : null);
+            var (potion, forWhom) = PotionLabelText.For(round.CurrentOrder, round.SubmittedIngredients);
+            var craft = new PotionCrafting.Order(prescriptionFeel.ChosenBottleRect, servedBottle,
+                prescriptionFeel.ChosenInkRect, servedInk, prescriptionFeel.ChosenInkColour, potion, forWhom,
+                portraitView != null ? (RectTransform)portraitView.transform : null);
+            // the score and the clock are settled now; the crafting scene plays before the customer reacts
             if (!round.TryServe(chosenBottle, chosenInk)) return;
+            CraftAndServe(craft).Forget();
+        }
+
+        private bool crafting;
+
+        private async UniTaskVoid CraftAndServe(PotionCrafting.Order craft)
+        {
+            crafting = true;
+            serveButton.interactable = false;
+            try
+            {
+                await PotionCrafting.Play(craft, this.GetCancellationTokenOnDestroy());
+            }
+            catch (OperationCanceledException) { return; }
+            finally
+            {
+                crafting = false;
+            }
             GameSfx.Play("Serve", 0.8f);
             RefreshPhase();
         }
