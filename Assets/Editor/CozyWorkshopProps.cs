@@ -162,22 +162,19 @@ namespace PotionShop.EditorTools
             yield return fireplace;
             yield return Top("fireplace", "PotionTrio", -0.4f, 0f, 0f, 0.8f);
             yield return Top("fireplace", "BookStack", 0.45f, 0f, 15f);
-            yield return OnWall("Workbench", fromFar, 2.25f, 0f, "workbench");      // x −2.25
-            yield return Top("workbench", "PotionTrio", -0.3f, 0f, 10f);
-            yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f);
-            yield return OnWall("Bench", fromFar, -2.25f, 0f, "bench", 1.5f);        // x +2.25, seat about 0.45 m
-            yield return Top("bench", "BookStack", -0.3f, 0f, 20f);
-            yield return Top("bench", "ClayJar", 0.35f, 0f, 0f, 0.8f);
+            // The one bookcase stands right beside the fireplace (a reading corner); the bench on the other
+            // side is a real two-seater (seat about 0.6 m wide each) and nothing is put on it.
+            yield return OnWall("Bookcase", fromFar, 1.55f, 0f, "bookcase", 1.15f); // x −1.55
+            yield return OnWall("Bench", fromFar, -2.3f, 0f, "bench", 2.0f);        // x +2.3
+            yield return new Spot("ClayJar", new Vector3(-2.3f, 0f, fz - 0.3f), 15f, 0.9f);
             float face = FarWallFace();
-            foreach (float x in new[] { -2.7f, -1.8f, 1.8f, 2.7f })
+            foreach (float x in new[] { -3.1f, -2.4f, 1.8f, 2.8f })
                 yield return new Spot("HerbBundle", new Vector3(x, 1.95f, face - 0.1f), 180f + x * 20f, 0.9f);
-            // Two pumpkins in each far corner pocket (x 2.85–4.34, z 5.35–6.64: between the bench or
-            // workbench, the end of the far shelf and the corner candles).
-            foreach (float x in new[] { -1f, 1f })
-            {
-                yield return new Spot("Pumpkin", new Vector3(x * 3.25f, 0f, 5.85f), 30f * x, 0.9f);
-                yield return new Spot("Pumpkin", new Vector3(x * 3.95f, 0f, 5.6f), -50f, 0.55f);
-            }
+            // Pumpkins in the far corner pockets (x 2.85–4.34, z 5.35–6.64), clear of the bench and the
+            // corner candles; the right pocket is narrower because of the bench.
+            yield return new Spot("Pumpkin", new Vector3(-3.25f, 0f, 5.85f), -30f, 0.9f);
+            yield return new Spot("Pumpkin", new Vector3(-3.95f, 0f, 5.6f), -50f, 0.55f);
+            yield return new Spot("Pumpkin", new Vector3(3.65f, 0f, 5.8f), 30f, 0.85f);
 
             // Entry wall. The round door is sunk until only its stone ring stands proud; the player starts on
             // the round mat in front of it, looking down the hall.
@@ -190,32 +187,34 @@ namespace PotionShop.EditorTools
             yield return OnWall("ApothecaryCabinet", fromBack, 2.5f, 0f, "cabinet");  // x +2.5
             yield return Top("cabinet", "PotionTrio", -0.2f, 0f, 200f, 0.9f);
             yield return Top("cabinet", "ClayJar", 0.3f, 0f, 30f, 0.7f);
-            yield return new Spot("WoodenCrate", new Vector3(-2.7f, 0f, -fz + 0.4f), 6f);
-            yield return new Spot("WoodenCrate", new Vector3(-2.7f, 0.62f, -fz + 0.4f), -10f, 0.8f);
-            yield return new Spot("ClayJar", new Vector3(-2.05f, 0f, -fz + 0.35f), 20f, 0.9f);
+            // The crate has an open lid with scrolls sticking out, so crates stand side by side, never stacked.
+            yield return new Spot("WoodenCrate", new Vector3(-2.35f, 0f, -fz + 0.4f), 6f);
+            yield return new Spot("WoodenCrate", new Vector3(-3.1f, 0f, -fz + 0.45f), -14f, 0.85f);
             yield return Hanging("HangingPlant", new Vector3(-3.75f, 2.1f, -6.0f), 40f);
             yield return Hanging("HangingPlant", new Vector3(3.75f, 2.1f, -6.0f), -40f);
 
-            // Long walls: the gaps between the shelves (z ±2) hold a bookcase on one side and a crate stack
-            // under the wall lantern on the other, staggered so each gap looks different.
-            yield return OnWall("Bookcase", fromWest, 2.25f, 0f, "bookcase west", 1.15f); // west, z −2.25, lantern beside it
-            yield return OnWall("Bookcase", fromEast, 2.25f, 0f, "bookcase east", 1.15f); // east, z +2.25, lantern beside it
-            foreach (var (x, z) in new[] { (-1f, 2f), (1f, -2f) })
+            // Long walls: the gaps between the shelves (z ±2, 1.3 m wide) each sit under a lantern. The west
+            // near gap holds the workbench (moved off the hearth wall for the bookcase); the others hold a
+            // single crate with a jar beside it.
+            yield return OnWall("Workbench", fromWest, 2.0f, 0f, "workbench");      // west, z −2
+            yield return Top("workbench", "PotionTrio", -0.3f, 0f, 10f);
+            yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f);
+            foreach (var (x, z) in new[] { (-1f, 2f), (1f, -2f), (1f, 2f) })
             {
-                var c = new Vector3(x * (fx - 0.38f), 0f, z - 0.15f);
-                yield return new Spot("WoodenCrate", c, 90f * x + 8f);
-                yield return new Spot("WoodenCrate", c + new Vector3(0f, 0.62f, 0f), 90f * x - 12f, 0.8f);
-                yield return new Spot("ClayJar", c + new Vector3(0f, 0f, 0.55f), 20f, 0.8f);
+                var c = new Vector3(x * (fx - 0.38f), 0f, z - 0.2f);
+                yield return new Spot("WoodenCrate", c, 90f * x + 8f * z);
+                yield return new Spot("ClayJar", c + new Vector3(0f, 0f, 0.55f), 20f * z, 0.8f);
             }
 
             // Overhead: a chandelier above the cauldron (scaled to about 0.9 m across) and herb drying racks
             // over the hall on either side of it (about 1.1 m long).
             yield return Hanging("Chandelier", new Vector3(0f, 2.75f, CozyWorkshopLook.CauldronZ), 0f, 1.75f);
-            // Racks hang above the shelf fronts rather than over the middle of the hall, so from the door they
-            // do not stack up behind the chandelier.
-            foreach (float z in new[] { -2.0f, 4.0f })
+            // Racks hang above the shelf fronts, running across the hall (yaw 0) in the bays between the roof
+            // trusses (whose tie beams come down to ~2.9 m at z −6, −4.8…−4, −2.2, −0.6…0.2, 1.8, 3.6…4.6, 5.6),
+            // low enough (bottom 2.55 m) to stay under the purlins.
+            foreach (float z in new[] { -3.1f, 2.7f })
             foreach (float x in new[] { -2.2f, 2.2f })
-                yield return Hanging("DryingRack", new Vector3(x, 2.75f, z), 90f, 1.6f);
+                yield return Hanging("DryingRack", new Vector3(x, 2.55f, z), 0f, 1.6f);
         }
 
         // ---------- import ----------

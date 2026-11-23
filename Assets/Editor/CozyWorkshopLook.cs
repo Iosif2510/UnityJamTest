@@ -343,8 +343,8 @@ namespace PotionShop.EditorTools
             if (prefab == null) return;
             var spots = new (float side, float z)[]
             {
-                (-1f, -6.0f), (-1f, -1.55f), (-1f, 2.0f), (-1f, 6.0f),   // west: bookcase gap at z −2.25
-                (1f, -6.0f), (1f, -2.0f), (1f, 1.55f), (1f, 6.0f),       // east: bookcase gap at z +2.25
+                (-1f, -6.0f), (-1f, -1.55f), (-1f, 2.0f), (-1f, 6.0f),   // west: workbench gap at z −2
+                (1f, -6.0f), (1f, -2.0f), (1f, 1.55f), (1f, 6.0f),       // east: crate gaps
             };
             int i = 0;
             foreach (var (side, z) in spots)
@@ -352,8 +352,11 @@ namespace PotionShop.EditorTools
                 var lantern = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root);
                 lantern.name = $"Shelf Lantern {++i}";
                 Vector3 inward = new Vector3(-side, 0f, 0f);
+                // Match the wall's own lanterns: the FrontWall's forward points out of the room and its lanterns
+                // sit at local yaw 270 (west wall lanterns face yaw 180, east 0). Anything else turns the bracket.
                 lantern.transform.SetPositionAndRotation(
-                    new Vector3(side * WallX + inward.x * LanternOffset, LanternHeight, z), Quaternion.LookRotation(inward));
+                    new Vector3(side * WallX + inward.x * LanternOffset, LanternHeight, z),
+                    Quaternion.LookRotation(-inward) * Quaternion.Euler(0f, 270f, 0f));
             }
         }
 
