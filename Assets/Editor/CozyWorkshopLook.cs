@@ -27,9 +27,9 @@ namespace PotionShop.EditorTools
         private const string CompactMarker = "CozyRoomCompacted";
 
         // Room: walls pulled in from ±9 m to ±WallDistance, shelves to ±ShelfDistance, roof scaled to match.
-        // Defaults give a ~10 m room; Apply(wall, shelf) tries other sizes (original room: 9 and 4).
-        public const float DefaultWallDistance = 4.9f;
-        public const float DefaultShelfDistance = 3.2f;
+        // Defaults give a ~13 m room (chosen over ~10 m so the shelves read at a glance); Apply(wall, shelf) tries other sizes (original room: 9 and 4).
+        public const float DefaultWallDistance = 6.4f;
+        public const float DefaultShelfDistance = 3.8f;
         private static float WallDistance = DefaultWallDistance;
         private static float ShelfDistance = DefaultShelfDistance;
         private static float RoomScale => WallDistance / 9f;
