@@ -30,9 +30,17 @@ namespace PotionShop.EditorTools
             ["WoodenDoor"] = 2.15f, ["Fireplace"] = 1.65f, ["Chandelier"] = 0.75f, ["DryingRack"] = 0.65f,
         };
 
-        // Meshy models whose own vertex normals are smoothed across hard edges, which shows as dark streaks
-        // (the round door's planks); Unity recalculates their normals with this smoothing angle instead.
-        private static readonly Dictionary<string, float> RecalculateNormals = new() { ["WoodenDoor"] = 30f };
+        // Meshy's smart-topology meshes ship vertex normals smoothed across hard edges (12–77 % of the surface
+        // more than 60° off its faces in a 2026-11-23 check), which lights as dark streaks and smears.
+        // Unity recalculates them on import: 30° keeps furniture edges crisp, 60° keeps organic props soft.
+        // The pumpkin's own normals were already clean (0.7 %), so it keeps them.
+        private static readonly Dictionary<string, float> RecalculateNormals = new()
+        {
+            ["WoodenDoor"] = 30f, ["ApothecaryCabinet"] = 30f, ["Bench"] = 30f, ["Bookcase"] = 30f,
+            ["BookStack"] = 30f, ["WoodenCrate"] = 30f, ["Workbench"] = 30f, ["Fireplace"] = 30f,
+            ["Chandelier"] = 30f, ["DryingRack"] = 30f, ["RoundRug"] = 30f,
+            ["Broom"] = 60f, ["ClayJar"] = 60f, ["HerbBundle"] = 60f, ["HangingPlant"] = 60f, ["PotionTrio"] = 60f,
+        };
 
         private const float RopeTop = 6.5f; // above the roof framing, so ropes disappear into it
 
