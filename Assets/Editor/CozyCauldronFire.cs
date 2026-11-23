@@ -60,19 +60,27 @@ namespace PotionShop.EditorTools
                 m.SetFloat("_Softness", 1.2f);
             });
 
-            // Flames must stay outside the pot: the cauldron is about 0.6 m in radius up to 0.3 m and 0.7-0.78 m
-            // above (measured), and flames inside its volume showed through its open top. Low flames hug the
-            // base just outside it; taller ones stand a little further out and lick up the belly.
+            // Measured: the pot's bottom is at 0.18 m, its body about 0.69 m in radius, and the liquid's interior
+            // volume 0.64 m in radius from 0.25 m up; a flame inside that volume shows through the open top.
+            // So: low flames under the pot, between the logs, stay below 0.25 m; licking flames hug the belly
+            // just outside 0.64 m instead of standing out in a wide ring around it.
             int cards = 0;
-            const int ring = 10;
+            const int under = 7;
+            for (int i = 0; i < under; i++)
+            {
+                float angle = i * Mathf.PI * 2f / under + 0.15f;
+                AddFlame(root, flame, new Vector3(Mathf.Cos(angle) * 0.42f, 0.02f, Mathf.Sin(angle) * 0.42f),
+                    0.3f, 0.22f, 40f + i * 1.91f);
+                cards++;
+            }
+            const int ring = 8;
             for (int i = 0; i < ring; i++)
             {
                 float angle = i * Mathf.PI * 2f / ring + 0.3f;
                 bool big = i % 2 == 0;
-                float radius = big ? 0.82f : 0.72f;
-                float height = big ? 0.6f : 0.38f;
-                float width = big ? 0.46f : 0.34f;
-                AddFlame(root, flame, new Vector3(Mathf.Cos(angle) * radius, 0.02f, Mathf.Sin(angle) * radius),
+                float height = big ? 0.42f : 0.3f;
+                float width = big ? 0.28f : 0.22f;
+                AddFlame(root, flame, new Vector3(Mathf.Cos(angle) * 0.68f, 0.03f, Mathf.Sin(angle) * 0.68f),
                     width, height, i * 1.37f);
                 cards++;
             }
@@ -104,16 +112,17 @@ namespace PotionShop.EditorTools
             foreach (var r in renderers) b.Encapsulate(r.bounds);
             var root = new GameObject("HearthFire").transform;
             root.SetParent(fireplace, true);
-            // The mouth is centred on the fireplace, 0.25 m in from its front face (most of the model is sunk
-            // into the wall, so its bounds centre lies behind the mouth), above the hearth stones.
+            // The mouth is centred on the fireplace, 0.3 m in from its front face (most of the model is sunk into
+            // the wall, so its bounds centre lies behind the mouth), above the hearth stones. Any further forward
+            // and the flame tips stick out past the stone face when seen from the side.
             float inward = -Mathf.Sign(b.center.z);
             float frontZ = b.center.z + inward * b.extents.z;
-            root.position = new Vector3(b.center.x, b.min.y + b.size.y * 0.13f, frontZ - inward * 0.25f);
+            root.position = new Vector3(b.center.x, b.min.y + b.size.y * 0.13f, frontZ - inward * 0.3f);
             root.rotation = Quaternion.identity;
             float s = b.size.y / 1.4f;
-            AddFlame(root, flame, new Vector3(-0.22f * s, 0f, 0f), 0.34f * s, 0.42f * s, 21.3f);
-            AddFlame(root, flame, new Vector3(0f, 0f, 0.05f), 0.44f * s, 0.58f * s, 23.9f);
-            AddFlame(root, flame, new Vector3(0.24f * s, 0f, 0f), 0.32f * s, 0.38f * s, 27.1f);
+            AddFlame(root, flame, new Vector3(-0.22f * s, 0f, 0f), 0.36f * s, 0.5f * s, 21.3f);
+            AddFlame(root, flame, new Vector3(0f, 0f, 0.05f), 0.46f * s, 0.68f * s, 23.9f);
+            AddFlame(root, flame, new Vector3(0.24f * s, 0f, 0f), 0.34f * s, 0.46f * s, 27.1f);
             return "hearth fire 3 cards";
         }
 
@@ -174,7 +183,7 @@ namespace PotionShop.EditorTools
             var shape = system.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.angle = 12f;
-            shape.radius = 0.75f;
+            shape.radius = 0.62f;
             shape.radiusThickness = 0.35f; // from the rim, where the flames are
 
             var noise = system.noise;

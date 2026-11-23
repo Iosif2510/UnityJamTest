@@ -140,7 +140,7 @@ namespace PotionShop.EditorTools
             foreach (var c in roofColliders) Object.DestroyImmediate(c);
             AddChandelierFlames(root);
             string lights = FeatureLights(root, keyed);
-            lights += $", floor decor cleared {ClearFootprints(root)}";
+            lights += $", floor decor cleared {ClearFootprints(root)}, {CozyBraidedRug.Apply(root)}";
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             return $"[Cozy props] {imported} placed {placed}, missing {missing}, {lights}";
