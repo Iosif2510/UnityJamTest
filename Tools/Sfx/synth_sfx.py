@@ -38,8 +38,13 @@ def lowpass(x, cutoff):
     return y
 
 
+# Sounds that now come from ElevenLabs recordings: never overwritten here.
+ELEVEN = {"PageTurn", "CardDeal", "Paper", "Card", "StampThud", "SlimePop", "Drawer", "Splash", "Flop", "Serve",
+          "FoundBell", "BrewDone", "DoorBell", "Fanfare"}
+
+
 def save(name, x, gain=0.8):
-    if (OUT / f"{name}.mp3").exists():  # replaced by an ElevenLabs recording (Tools/Sfx/eleven_sfx.py)
+    if name in ELEVEN:  # replaced by an ElevenLabs recording (Tools/Sfx/eleven_sfx.py)
         print(name, "kept (ElevenLabs)")
         return
     x = x / (np.max(np.abs(x)) + 1e-9) * gain
@@ -177,8 +182,9 @@ flop = np.sin(2 * np.pi * np.cumsum(fr) / SR) + 0.3 * np.sin(4 * np.pi * np.cums
 save("Flop", lowpass(flop, 1200) * env(len(x), 0.01, 0.3), 0.6)
 
 # Reused project sounds that were not wired to anything.
-shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
-if not (OUT / "Paper.mp3").exists():
+if "Splash" not in ELEVEN:
+    shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
+if "Paper" not in ELEVEN:
     shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/paper.mp3", OUT / "Paper.mp3")
 import glob
 tone = glob.glob(str(ROOT / "Assets/Arts/Audio/Workshop/Workshop_Room_Tone.*"))
