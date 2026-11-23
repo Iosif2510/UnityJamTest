@@ -29,6 +29,7 @@ namespace PotionShop.Online
         private Text directLabel;
         private GameObject copyButton;
         private Text status;
+        private Image[] waitDots;
         private Text error;
         private InputField codeInput;
         private InputField addressInput;
@@ -66,13 +67,18 @@ namespace PotionShop.Online
                 new Vector2(320f, 96f)), "UI_BigButton", "온라인 협동", 36, config.BoldFont, () => panel.SetActive(true)).gameObject;
 
             panel = OnlineUi.Rect("Panel", root, Vector2.zero, Vector2.one).gameObject;
-            OnlineUi.Fill((RectTransform)panel.transform, new Color(0.06f, 0.03f, 0.02f, 0.6f));
+            // The title scene has no picture of its own yet, so it gets the darkened shop; on the counter the shop is
+            // already behind, so a warm dim is enough.
+            if (SceneManager.GetActiveScene().name == OnlineCoopConfig.TitleScene)
+                OnlineUiParts.Backdrop((RectTransform)panel.transform, "BG_Shop");
+            else
+                OnlineUi.Fill((RectTransform)panel.transform, new Color(0.12f, 0.06f, 0.03f, 0.55f));
             var card = OnlineUi.Box("Window", panel.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880f, 770f));
             card.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(card, "UI_Window", true);
 
-            closeButton = OnlineUiParts.Button(OnlineUi.Box("Close", card, new Vector2(1f, 1f), new Vector2(-44f, -44f),
-                new Vector2(72f, 66f)), "UI_CloseButton", null, 0, config.BoldFont, () => panel.SetActive(false)).gameObject;
+            closeButton = OnlineUiParts.Button(OnlineUi.Box("Close", card, new Vector2(1f, 1f), new Vector2(-44f, -40f),
+                new Vector2(64f, 64f)), "UI_CloseButton", null, 0, config.BoldFont, () => panel.SetActive(false)).gameObject;
 
             BuildChoices(card);
             BuildWaiting(card);
@@ -96,18 +102,19 @@ namespace PotionShop.Online
         {
             choices = OnlineUi.Rect("Choices", card, Vector2.zero, Vector2.one).gameObject;
             var c = (RectTransform)choices.transform;
-            OnlineUi.Label(Row(c, 56f, 70f), "온라인 협동", 46, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            OnlineUi.Fill(Row(c, 132f, 3f), new Color(0.45f, 0.28f, 0.18f, 0.35f), false);
+            OnlineUi.Label(Row(c, 56f, 60f), "온라인 협동", 42, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Row(c, 120f, 64f), "한 사람은 아래층에서 손님을 맞고,\n한 사람은 위층 공방에서 메모를 보며 목소리로 안내해요.",
+                22, config.BoldFont, OnlineUiParts.InkSoft, TextAnchor.UpperLeft);
 
-            OnlineUiParts.Button(Row(c, 160f, 104f), "UI_BigButton", "방 만들기", 44, config.BoldFont, () => HostCloud().Forget());
+            OnlineUiParts.Button(Row(c, 206f, 96f), "UI_BigButton", "방 만들기", 40, config.BoldFont, () => HostCloud().Forget());
 
-            OnlineUi.Fill(Row(c, 300f, 2f), new Color(0.45f, 0.28f, 0.18f, 0.3f), false);
-            var or = OnlineUi.Box("Or", c, new Vector2(0.5f, 1f), new Vector2(0f, -284f), new Vector2(90f, 34f));
-            OnlineUi.Fill(or, new Color(0.97f, 0.88f, 0.70f), false);
-            OnlineUi.Label(OnlineUi.Rect("Text", or, Vector2.zero, Vector2.one), "또는", 24, config.BoldFont, OnlineUiParts.Muted);
+            OnlineUi.Fill(Row(c, 348f, 2f), new Color(0.47f, 0.35f, 0.25f, 0.45f), false);
+            var or = OnlineUi.Box("Or", c, new Vector2(0.5f, 1f), new Vector2(0f, -332f), new Vector2(84f, 34f));
+            OnlineUi.Fill(or, new Color(0.99f, 0.95f, 0.87f), false);
+            OnlineUi.Label(OnlineUi.Rect("Text", or, Vector2.zero, Vector2.one), "또는", 22, config.BoldFont, OnlineUiParts.InkSoft);
 
-            OnlineUi.Label(Row(c, 330f, 40f), "친구에게 받은 코드", 26, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            codeInput = Field(Cell(c, 378f, 92f, 0f, 0.68f), "K7Q2M9", 40, 12);
+            OnlineUi.Label(Row(c, 384f, 40f), "친구에게 받은 코드", 26, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            codeInput = Field(Cell(c, 432f, 88f, 0f, 0.66f), "K7Q2M9", 40, 12);
             codeInput.textComponent.alignment = TextAnchor.MiddleCenter;
             ((Text)codeInput.placeholder).alignment = TextAnchor.MiddleCenter;
             codeInput.onValueChanged.AddListener(text =>
@@ -115,32 +122,33 @@ namespace PotionShop.Online
                 string upper = text.ToUpperInvariant();
                 if (upper != text) codeInput.SetTextWithoutNotify(upper);
             });
-            OnlineUiParts.Button(Cell(c, 378f, 92f, 0.71f, 1f), "UI_SmallButton", "들어가기", 32, config.BoldFont,
-                () => JoinCloud().Forget(), OnlineUiParts.Ink);
+            OnlineUiParts.Button(Cell(c, 440f, 72f, 0.70f, 1f), "UI_SmallButton", "들어가기", 30, config.BoldFont,
+                () => JoinCloud().Forget());
 
-            OnlineUi.Fill(Row(c, 500f, 2f), new Color(0.45f, 0.28f, 0.18f, 0.3f), false);
-            var lanToggle = OnlineUi.Rect("LanToggle", Row(c, 512f, 48f), Vector2.zero, new Vector2(0.7f, 1f));
-            var lanText = OnlineUi.Label(lanToggle, "같은 네트워크에서 직접 연결  ▸", 24, config.BoldFont, OnlineUiParts.Ink,
+            // The LAN fold-out is marked with the arrow part turned on its side (the font has no triangle glyphs).
+            var lanToggle = OnlineUi.Rect("LanToggle", Row(c, 590f, 48f), Vector2.zero, new Vector2(0.75f, 1f));
+            var lanText = OnlineUi.Label(lanToggle, "같은 네트워크에서 직접 연결", 24, config.BoldFont, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
             lanText.raycastTarget = true;
+            var lanArrow = OnlineUi.Box("Arrow", lanToggle, new Vector2(0f, 0.5f), new Vector2(352f, 0f), new Vector2(18f, 18f));
+            lanArrow.pivot = new Vector2(0.5f, 0.5f);
+            OnlineUiParts.Triangle(lanArrow, OnlineUiParts.Ink);
             lanToggle.gameObject.AddComponent<Button>().onClick.AddListener(() =>
             {
                 lanRow.SetActive(!lanRow.activeSelf);
-                lanText.text = "같은 네트워크에서 직접 연결  " + (lanRow.activeSelf ? "▾" : "▸");
+                lanArrow.localRotation = Quaternion.Euler(0f, 0f, lanRow.activeSelf ? -90f : 0f); // points down when open
             });
 
             lanRow = OnlineUi.Rect("Lan", c, Vector2.zero, Vector2.one).gameObject;
             var l = (RectTransform)lanRow.transform;
-            addressInput = Field(Cell(l, 570f, 76f, 0f, 0.42f), "방을 연 PC 주소", 26, 64);
-            OnlineUiParts.Button(Cell(l, 570f, 76f, 0.44f, 0.71f), "UI_SmallButton", "직접 참가", 26, config.BoldFont,
-                () => Finish(OnlineSession.Instance.JoinLan(addressInput.text)), OnlineUiParts.Ink);
-            OnlineUiParts.Button(Cell(l, 570f, 76f, 0.73f, 1f), "UI_SmallButton", "직접 방 열기", 26, config.BoldFont,
-                () => Finish(OnlineSession.Instance.HostLan()), OnlineUiParts.Ink);
-            OnlineUi.Label(Row(l, 654f, 30f), "직접 연결에는 게임 안 음성이 없어요. 외부 음성 채팅을 켜 주세요.", 20,
-                config.BodyFont, OnlineUiParts.Muted, TextAnchor.MiddleLeft);
+            addressInput = Field(Cell(l, 644f, 72f, 0f, 0.42f), "방을 연 PC 주소", 24, 64);
+            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.44f, 0.71f), "UI_SmallButton", "직접 참가", 26, config.BoldFont,
+                () => Finish(OnlineSession.Instance.JoinLan(addressInput.text)));
+            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.73f, 1f), "UI_SmallButton", "직접 방 열기", 26, config.BoldFont,
+                () => Finish(OnlineSession.Instance.HostLan()));
             lanRow.SetActive(false);
 
-            error = OnlineUi.Label(Row(card, 688f, 36f), string.Empty, 22, config.BoldFont, new Color(0.7f, 0.2f, 0.12f));
+            error = OnlineUi.Label(Row(card, 540f, 36f), string.Empty, 22, config.BoldFont, OnlineUiParts.StampRed);
         }
 
         /// <summary>Mockup 06: the room's code as letter tiles to read out, and a strip that says we are waiting.</summary>
@@ -148,46 +156,49 @@ namespace PotionShop.Online
         {
             waiting = OnlineUi.Rect("Waiting", card, Vector2.zero, Vector2.one).gameObject;
             var w = (RectTransform)waiting.transform;
-            waitTitle = OnlineUi.Label(Row(w, 70f, 72f), "방을 만들었어요", 50, config.BoldFont, OnlineUiParts.Ink);
-            waitDetail = OnlineUi.Label(Row(w, 144f, 40f), "이 코드를 친구에게 불러 주세요", 26, config.BoldFont,
-                OnlineUiParts.Muted);
+            waitTitle = OnlineUi.Label(Row(w, 70f, 64f), "방을 만들었어요", 44, config.BoldFont, OnlineUiParts.Ink);
+            waitDetail = OnlineUi.Label(Row(w, 136f, 40f), "이 코드를 친구에게 불러 주세요", 24, config.BoldFont,
+                OnlineUiParts.InkSoft);
 
-            tiles = OnlineUi.Box("Tiles", w, new Vector2(0.5f, 1f), new Vector2(0f, -214f), new Vector2(700f, 132f)).gameObject;
+            tiles = OnlineUi.Box("Tiles", w, new Vector2(0.5f, 1f), new Vector2(0f, -196f), new Vector2(700f, 120f)).gameObject;
             var t = (RectTransform)tiles.transform;
             t.pivot = new Vector2(0.5f, 1f);
             var layout = tiles.AddComponent<HorizontalLayoutGroup>();
             layout.childAlignment = TextAnchor.MiddleCenter;
-            layout.spacing = 14f;
+            layout.spacing = 14f; // 96 wide tiles, 110 apart
             layout.childControlWidth = layout.childControlHeight = false;
             layout.childForceExpandWidth = layout.childForceExpandHeight = false;
             tileLetters = new Text[CodeLength];
             for (int i = 0; i < CodeLength; i++)
             {
                 var tile = OnlineUi.Rect("Tile", t, Vector2.zero, Vector2.zero);
-                tile.sizeDelta = new Vector2(100f, 124f);
+                tile.sizeDelta = new Vector2(96f, 120f);
                 OnlineUiParts.Draw(tile, "NET_CodeTile");
                 tileLetters[i] = OnlineUi.Label(OnlineUi.Rect("Letter", tile, Vector2.zero, Vector2.one, new Vector2(0f, 6f),
-                    Vector2.zero), string.Empty, 64, config.BoldFont, OnlineUiParts.Ink);
+                    Vector2.zero), string.Empty, 60, config.BoldFont, OnlineUiParts.Ink);
             }
-            directLabel = OnlineUi.Label(Row(w, 214f, 132f), string.Empty, 44, config.BoldFont, OnlineUiParts.Ink);
+            directLabel = OnlineUi.Label(Row(w, 196f, 120f), string.Empty, 40, config.BoldFont, OnlineUiParts.Ink);
 
-            var copy = OnlineUi.Box("Copy", w, new Vector2(0.5f, 1f), new Vector2(0f, -370f), new Vector2(240f, 76f));
+            var copy = OnlineUi.Box("Copy", w, new Vector2(0.5f, 1f), new Vector2(0f, -342f), new Vector2(220f, 72f));
             copy.pivot = new Vector2(0.5f, 1f);
-            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", "코드 복사", 30, config.BoldFont, () =>
+            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", "코드 복사", 28, config.BoldFont, () =>
             {
                 if (OnlineSession.Exists && OnlineSession.Instance.JoinCode != null)
                     GUIUtility.systemCopyBuffer = OnlineSession.Instance.JoinCode;
-            }, OnlineUiParts.Ink).gameObject;
+            }).gameObject;
 
-            var strip = Row(w, 476f, 92f);
+            var strip = Row(w, 446f, 84f);
             OnlineUiParts.Draw(strip, "NET_WaitBar");
-            status = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(30f, 0f),
-                new Vector2(-30f, 0f)), string.Empty, 28, config.BoldFont, OnlineUiParts.Ink);
+            waitDots = OnlineUiParts.WaitingDots(strip, new Vector2(78f, -42f), 18f);
+            status = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(124f, 2f),
+                new Vector2(-30f, 0f)), string.Empty, 28, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Row(w, 544f, 36f), "친구가 들어오면 바로 역할 고르기로 넘어가요", 22, config.BoldFont,
+                OnlineUiParts.InkSoft);
 
-            var leave = OnlineUi.Box("Leave", w, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(220f, 76f));
+            var leave = OnlineUi.Box("Leave", w, new Vector2(0.5f, 0f), new Vector2(0f, 92f), new Vector2(200f, 72f));
             leave.pivot = new Vector2(0.5f, 0f);
-            leaveButton = OnlineUiParts.Button(leave, "UI_SmallButton", "방 닫기", 30, config.BoldFont,
-                () => OnlineSession.Instance.LeaveAsync().Forget(), OnlineUiParts.Ink);
+            leaveButton = OnlineUiParts.Button(leave, "UI_SmallButton", "방 닫기", 28, config.BoldFont,
+                () => OnlineSession.Instance.LeaveAsync().Forget());
             waiting.SetActive(false);
         }
 
@@ -208,7 +219,8 @@ namespace PotionShop.Online
             field.textComponent.rectTransform.offsetMax = new Vector2(-26f, -4f);
             field.placeholder.rectTransform.offsetMin = new Vector2(26f, 4f);
             field.placeholder.rectTransform.offsetMax = new Vector2(-26f, -4f);
-            ((Text)field.placeholder).color = new Color(0.27f, 0.15f, 0.09f, 0.3f);
+            ((Text)field.placeholder).color = new Color(0.29f, 0.18f, 0.12f, 0.3f);
+            field.textComponent.color = OnlineUiParts.Ink;
             return field;
         }
 
@@ -235,13 +247,8 @@ namespace PotionShop.Online
             if (closeButton.activeSelf == pairing)
                 closeButton.SetActive(!pairing);
 
-            if (waiting.activeSelf && OnlineSession.Exists && !OnlineSession.Instance.PeerConnected &&
-                !OnlineSession.Instance.Busy)
-            {
-                // "••• 친구가 …" with the dots filling in turn.
-                int lit = (int)(Time.unscaledTime * 3f) % 4;
-                status.text = new string('•', lit) + new string(' ', 3 - lit) + "  " + waitingLine;
-            }
+            if (waiting.activeSelf)
+                OnlineUiParts.AnimateDots(waitDots);
         }
 
         private string waitingLine = string.Empty;

@@ -62,25 +62,28 @@ namespace PotionShop.Online
         /// <summary>Top band: name plate, hourglass and bar with the time left, then where the maker is.</summary>
         private void BuildBand(RectTransform root)
         {
-            var plate = OnlineUi.Box("Plate", root, new Vector2(0f, 1f), new Vector2(24f, -14f), new Vector2(220f, 70f));
+            var plate = OnlineUi.Box("Plate", root, new Vector2(0f, 1f), new Vector2(24f, -12f), new Vector2(220f, 68f));
             OnlineUiParts.Draw(plate, "LOFT_Nameplate");
-            OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one, new Vector2(0f, 2f), Vector2.zero),
-                "위층 공방", 34, config.BoldFont, OnlineUiParts.Cream);
+            OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one, new Vector2(0f, 4f),
+                Vector2.zero), "위층 공방", 30, config.BoldFont, OnlineUiParts.Cream), OnlineUiParts.OutlineRed);
 
-            var glass = OnlineUi.Box("Hourglass", root, new Vector2(0f, 1f), new Vector2(254f, -16f), new Vector2(48f, 64f));
+            var glass = OnlineUi.Box("Hourglass", root, new Vector2(0f, 1f), new Vector2(270f, -12f), new Vector2(54f, 68f));
             OnlineUiParts.Draw(glass, "UI_Timer_Hourglass").preserveAspect = true;
 
-            var frame = OnlineUi.Box("TimerFrame", root, new Vector2(0f, 1f), new Vector2(314f, -26f), new Vector2(760f, 44f));
+            var frame = OnlineUi.Box("TimerFrame", root, new Vector2(0f, 1f), new Vector2(330f, -14f), new Vector2(760f, 64f));
             OnlineUiParts.Draw(frame, "UI_Timer_Frame");
-            var fillArea = OnlineUi.Rect("FillArea", frame, Vector2.zero, Vector2.one, new Vector2(10f, 9f), new Vector2(-10f, -9f));
+            // The fill keeps its own height (3-slice) and sits in the frame's groove.
+            var fillArea = OnlineUi.Rect("FillArea", frame, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(14f, -18f),
+                new Vector2(-14f, 18f));
             timerFill = OnlineUiParts.Draw(OnlineUi.Rect("Fill", fillArea, Vector2.zero, Vector2.one), "UI_Timer_Fill");
-            clock = OnlineUi.Label(OnlineUi.Box("Clock", root, new Vector2(0f, 1f), new Vector2(1086f, -20f),
-                new Vector2(130f, 56f)), "--:--", 36, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft);
+            clock = OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Box("Clock", root, new Vector2(0f, 1f),
+                new Vector2(1104f, -16f), new Vector2(130f, 60f)), "--:--", 38, config.BoldFont, OnlineUiParts.Cream,
+                TextAnchor.MiddleLeft));
 
-            var row = OnlineUi.Box("Chips", root, new Vector2(1f, 1f), new Vector2(-24f, -22f), new Vector2(700f, 54f));
+            var row = OnlineUi.Box("Chips", root, new Vector2(1f, 1f), new Vector2(-150f, -22f), new Vector2(560f, 48f));
             var layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             layout.childAlignment = TextAnchor.MiddleRight;
-            layout.spacing = 10f;
+            layout.spacing = 8f;
             layout.childControlWidth = layout.childControlHeight = true;
             layout.childForceExpandWidth = layout.childForceExpandHeight = false;
             chips = new Image[StepNames.Length];
@@ -90,40 +93,43 @@ namespace PotionShop.Online
                 var chip = OnlineUi.Rect("Chip " + StepNames[i], row, Vector2.zero, Vector2.zero);
                 chips[i] = OnlineUiParts.Draw(chip, "LOFT_Chip_Upcoming");
                 var size = chip.gameObject.AddComponent<LayoutElement>();
-                size.preferredHeight = 54f;
-                size.preferredWidth = 118f;
-                chipLabels[i] = OnlineUi.Label(OnlineUi.Rect("Text", chip, Vector2.zero, Vector2.one, new Vector2(0f, 2f),
-                    Vector2.zero), StepNames[i], 28, config.BoldFont, OnlineUiParts.Ink);
+                size.preferredHeight = 48f;
+                size.preferredWidth = 120f;
+                chipLabels[i] = OnlineUi.Label(OnlineUi.Rect("Text", chip, Vector2.zero, Vector2.one, new Vector2(0f, 3f),
+                    Vector2.zero), StepNames[i], 24, config.BoldFont, OnlineUiParts.Ink);
             }
         }
 
         /// <summary>Left column under the tabs: what to do now, and the link and voice status in small type.</summary>
         private void BuildSide(RectTransform root)
         {
-            // Between the last tab and the status lines, whatever the screen height.
+            // Between the last tab and the status lines, whatever the screen height, on a soft dark pad.
             guidanceBox = OnlineUi.Rect("Guide", root, Vector2.zero, new Vector2(0f, 1f));
             guidanceBox.pivot = new Vector2(0.5f, 1f); // the pop grows from the top; set before the offsets
-            guidanceBox.offsetMin = new Vector2(24f, 128f);
-            guidanceBox.offsetMax = new Vector2(320f, -760f);
-            var heading = OnlineUi.Box("Now", guidanceBox, new Vector2(0f, 1f), Vector2.zero, new Vector2(150f, 44f));
+            guidanceBox.offsetMin = new Vector2(30f, 132f);
+            guidanceBox.offsetMax = new Vector2(310f, -768f);
+            OnlineUiParts.Shade(OnlineUi.Rect("Shade", guidanceBox, Vector2.zero, Vector2.one, new Vector2(-14f, -10f),
+                new Vector2(14f, 10f)), 0.6f);
+            var heading = OnlineUi.Box("Now", guidanceBox, new Vector2(0f, 1f), new Vector2(4f, -4f), new Vector2(140f, 48f));
             OnlineUiParts.Draw(heading, "LOFT_Chip_Current");
-            OnlineUi.Label(OnlineUi.Rect("Text", heading, Vector2.zero, Vector2.one), "지금 할 일", 22, config.BoldFont,
-                OnlineUiParts.Cream);
-            guidance = OnlineUi.Label(OnlineUi.Rect("Text", guidanceBox, Vector2.zero, Vector2.one, new Vector2(4f, 0f),
-                new Vector2(0f, -54f)), string.Empty, 23, config.BoldFont, OnlineUiParts.Cream, TextAnchor.UpperLeft);
+            OnlineUi.Label(OnlineUi.Rect("Text", heading, Vector2.zero, Vector2.one, new Vector2(0f, 3f), Vector2.zero),
+                "지금 할 일", 22, config.BoldFont, OnlineUiParts.Ink);
+            guidance = OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Text", guidanceBox, Vector2.zero, Vector2.one,
+                new Vector2(6f, 0f), new Vector2(-4f, -60f)), string.Empty, 23, config.BoldFont, OnlineUiParts.Cream,
+                TextAnchor.UpperLeft));
             guidance.lineSpacing = 1.05f;
             guidance.verticalOverflow = VerticalWrapMode.Truncate;
 
-            status = OnlineUi.Label(OnlineUi.Box("Status", root, new Vector2(0f, 0f), new Vector2(28f, 16f),
-                new Vector2(292f, 104f)), string.Empty, 17, config.BodyFont, new Color(1f, 0.92f, 0.8f, 0.75f),
-                TextAnchor.LowerLeft);
+            status = OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Box("Status", root, new Vector2(0f, 0f),
+                new Vector2(30f, 16f), new Vector2(300f, 104f)), string.Empty, 17, config.BoldFont, OnlineUiParts.Cream,
+                TextAnchor.LowerLeft));
         }
 
         /// <summary>Esc opens a small window to leave the loft, so no button has to sit on the desk.</summary>
         private void BuildMenu(RectTransform root)
         {
             menu = OnlineUi.Rect("Menu", root, Vector2.zero, Vector2.one).gameObject;
-            OnlineUi.Fill((RectTransform)menu.transform, new Color(0.05f, 0.03f, 0.02f, 0.75f));
+            OnlineUi.Fill((RectTransform)menu.transform, new Color(0.12f, 0.06f, 0.03f, 0.72f));
             var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(560f, 440f));
             card.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(card, "UI_Window");
@@ -133,7 +139,7 @@ namespace PotionShop.Online
                 "UI_BigButton", "계속하기", 36, config.BoldFont, () => menu.SetActive(false))
                 .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
             OnlineUiParts.Button(OnlineUi.Box("Leave", card, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(320f, 80f)),
-                "UI_SmallButton", "공방에서 나가기", 30, config.BoldFont, () => Leave().Forget(), OnlineUiParts.Ink)
+                "UI_SmallButton", "공방에서 나가기", 30, config.BoldFont, () => Leave().Forget())
                 .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
             menu.SetActive(false);
         }
@@ -181,8 +187,8 @@ namespace PotionShop.Online
 
             string link = session.Role != OnlineRole.Narrator ? "연결이 끊어졌습니다" :
                 session.PeerConnected ? "아래층과 연결됨" : "아래층에 연결하는 중…";
-            status.text = "● " + link + "\n" + session.Voice.Describe() +
-                (session.EasyMode ? "\n쉬움 모드: 노랑은 증상, 초록은 구별점" : string.Empty) + "\nEsc: 메뉴 · 휠: 확대";
+            status.text = link + "\n" + session.Voice.Describe() +
+                (session.EasyMode ? "\n쉬움 모드: 노랑은 증상, 초록은 구별점" : string.Empty) + "\nEsc: 메뉴";
         }
 
         private void ShowStep(int step)
@@ -193,10 +199,10 @@ namespace PotionShop.Online
                 bool done = step >= 0 && i < step;
                 bool current = i == step;
                 chips[i].sprite = OnlineUiParts.Get(current ? "LOFT_Chip_Current" : done ? "LOFT_Chip_Done" : "LOFT_Chip_Upcoming");
-                chipLabels[i].text = StepNames[i] + (current && i == 0 ? " 중" : done ? " ✓" : string.Empty);
-                chipLabels[i].color = current ? OnlineUiParts.Cream : done ? OnlineUiParts.Muted : OnlineUiParts.Ink;
+                chipLabels[i].text = StepNames[i] + (current && i == 0 ? " 중" : string.Empty);
+                chipLabels[i].color = done ? OnlineUiParts.InkSoft : OnlineUiParts.Ink;
                 var size = chips[i].GetComponent<LayoutElement>();
-                size.preferredWidth = 64f + chipLabels[i].text.Length * 26f;
+                size.preferredWidth = Mathf.Max(120f, 56f + chipLabels[i].text.Length * 24f);
             }
         }
 

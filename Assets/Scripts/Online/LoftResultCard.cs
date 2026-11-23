@@ -28,7 +28,8 @@ namespace PotionShop.Online
         {
             config = coopConfig;
             root = OnlineUi.Rect("Result", canvas, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0f, -topInset)).gameObject;
-            OnlineUi.Fill((RectTransform)root.transform, new Color(0.05f, 0.03f, 0.02f, 0.82f));
+            // A warm dark, like the counter's own result screen, rather than a flat grey.
+            OnlineUi.Fill((RectTransform)root.transform, new Color(0.14f, 0.07f, 0.03f, 0.72f));
 
             card = OnlineUi.Box("Card", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(600f, 800f));
             card.pivot = new Vector2(0.5f, 0.5f);
@@ -40,8 +41,8 @@ namespace PotionShop.Online
             plate.localRotation = Quaternion.Euler(0f, 0f, 2f);
             var plateImage = OnlineUi.Fill(plate, config.NamePlate != null ? Color.white : OnlineUi.Accent, false);
             plateImage.sprite = config.NamePlate;
-            OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one), "제작결과", 32, config.BoldFont,
-                OnlineUi.Parchment);
+            OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one, new Vector2(0f, 4f), Vector2.zero), "제작 결과", 32, config.BoldFont,
+                OnlineUiParts.Cream), OnlineUiParts.OutlineRed);
 
             // Item names on the left, points on the right, as on the counter's result card.
             labels = OnlineUi.Label(OnlineUi.Rect("Labels", card, new Vector2(0f, 1f), new Vector2(1f, 1f),

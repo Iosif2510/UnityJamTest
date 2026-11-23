@@ -7,27 +7,28 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// The narrator's desk in the loft (B-style mockups 01–03): three tabs on the left and a felt table. Picking a tab
-    /// deals its sheets onto the table; clicking one unfolds it large. While unfolded the narrator flips to the
-    /// neighbouring sheets with the arrows, and on the potion memos presses "찾았어!" to tell the maker downstairs
-    /// that it is time for the storage room. The sheet stays open so the ingredients can be read out.
+    /// The narrator's desk in the loft (handoff 조립_시안 01–03): three tabs on the left, and the wooden desk of
+    /// <c>BG_Loft</c> as the table. Picking a tab deals its sheets onto the desk; clicking one unfolds it. While unfolded
+    /// the narrator flips to the neighbouring sheets with the arrows, and on the potion memos presses "찾았어!" to tell
+    /// the maker downstairs that it is time for the storage room. The sheet stays open so the ingredients can be read out.
+    /// Sheets are portrait, so they are shown as two columns (top half, bottom half) to fit the landscape slots.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LoftDesk : MonoBehaviour
     {
-        private const float FeltLeft = 336f, FeltTop = 108f, FeltRight = 24f, FeltBottom = 30f;
-        private static readonly Vector2 CardSize = new(420f, 300f);
+        private static readonly Vector2 CardSize = new(450f, 253f);
+        private static readonly Vector2 PaperPos = new(490f, 150f), PaperSize = new(1256f, 706f);
         private const float ToastSeconds = 2.6f;
+        private static readonly Color PaperColor = new(0.96f, 0.92f, 0.82f);
 
         private sealed class Tab
         {
             public string Name;
+            public string Count;
             public int[] Sheets;
             public bool CanSignal;
-            public RectTransform Rect;
             public Button Button;
             public Image Image;
-            public Text Label;
         }
 
         private OnlineCoopConfig config;
@@ -42,14 +43,12 @@ namespace PotionShop.Online
 
         private RectTransform table;
         private readonly List<RectTransform> cards = new();
-        private readonly Dictionary<int, Sprite> cardFaces = new();
         private GameObject unfolded;
         private CanvasGroup unfoldedGroup;
-        private Image sheet;
-        private SheetPanZoom panZoom;
-        private SheetMarks marks;
-        private Button previous, next, found;
-        private Text foundLabel;
+        private RectTransform paper;
+        private SheetColumns sheet;
+        private Button previous, next, found, toTable;
+        private Text foundLabel, pageLabel;
         private RectTransform dots;
         private readonly List<Image> dotImages = new();
         private RectTransform toast;
@@ -59,45 +58,47 @@ namespace PotionShop.Online
         {
             config = coopConfig;
             session = onlineSession;
-            int memoCount = config.MemoSheets.Length;
-            var memos = new int[memoCount - 2];
+            var memos = new int[config.MemoSheets.Length - 2];
             for (int i = 0; i < memos.Length; i++) memos[i] = i + 1;
             tabs = new[]
             {
-                new Tab { Name = "질병과 재료", Sheets = memos, CanSignal = true },
-                new Tab { Name = "포장", Sheets = new[] { config.CounterManualIndex } },
+                new Tab { Name = "질병과 재료", Count = $"메모 {memos.Length}장", Sheets = memos, CanSignal = true },
+                new Tab { Name = "포장", Count = "1장", Sheets = new[] { config.CounterManualIndex } },
                 new Tab { Name = "안내서", Sheets = new[] { 0 } },
             };
 
             BuildTabs(root);
-            // Fixed left and top (tabs and band), stretching to the right and bottom edges for other aspects.
-            var felt = OnlineUi.Rect("Table", root, Vector2.zero, Vector2.one, new Vector2(FeltLeft, FeltBottom),
-                new Vector2(-FeltRight, -FeltTop));
-            OnlineUiParts.Draw(felt, "LOFT_Felt");
-            table = OnlineUi.Rect("Cards", felt, Vector2.zero, Vector2.one);
-            BuildUnfolded(felt);
+            table = OnlineUi.Rect("Table", root, Vector2.zero, Vector2.one);
+            BuildUnfolded(root);
         }
 
         /// <summary>The guide is where the narrator starts while waiting for the first customer.</summary>
         public void OpenStart() => Select(2);
 
+        private static RectTransform At(Transform parent, string name, Vector2 topLeft, Vector2 size)
+        {
+            var rect = OnlineUi.Box(name, parent, new Vector2(0f, 1f), new Vector2(topLeft.x, -topLeft.y), size);
+            return rect;
+        }
+
         // ---- tabs ------------------------------------------------------------------------------------------------
         private void BuildTabs(RectTransform root)
         {
+            float[] tops = { 116f, 436f, 636f };
             float[] heights = { 300f, 180f, 112f };
-            int[] sizes = { 40, 40, 34 };
-            float top = 112f;
             for (int i = 0; i < tabs.Length; i++)
             {
                 int index = i;
                 var tab = tabs[i];
-                tab.Rect = OnlineUi.Box("Tab " + tab.Name, root, new Vector2(0f, 1f), new Vector2(24f, -top),
-                    new Vector2(296f, heights[i]));
-                tab.Button = OnlineUiParts.Button(tab.Rect, "LOFT_Tab", tab.Name, sizes[i], config.BoldFont,
-                    () => Select(index), OnlineUiParts.Ink);
+                var rect = At(root, "Tab " + tab.Name, new Vector2(30f, tops[i]), new Vector2(280f, heights[i]));
+                tab.Button = OnlineUiParts.Button(rect, "LOFT_Tab", null, 0, config.BoldFont, () => Select(index));
                 tab.Image = (Image)tab.Button.targetGraphic;
-                tab.Label = tab.Rect.GetComponentInChildren<Text>();
-                top += heights[i] + 16f;
+                bool counted = tab.Count != null;
+                OnlineUi.Label(OnlineUi.Rect("Name", rect, new Vector2(0f, counted ? 0.32f : 0f), Vector2.one,
+                    new Vector2(8f, 0f), new Vector2(-14f, 0f)), tab.Name, 36, config.BoldFont, OnlineUiParts.Ink);
+                if (counted)
+                    OnlineUi.Label(OnlineUi.Rect("Count", rect, Vector2.zero, new Vector2(1f, 0.32f), new Vector2(8f, 10f),
+                        new Vector2(-14f, 0f)), tab.Count, 22, config.BoldFont, OnlineUiParts.InkSoft);
             }
         }
 
@@ -107,7 +108,7 @@ namespace PotionShop.Online
                 return;
             tabIndex = index;
             RefreshTabs();
-            // A tab with a single sheet opens it straight away; the potion memos are dealt onto the table first.
+            // A tab with a single sheet opens it straight away; the potion memos are dealt onto the desk first.
             if (tabs[index].Sheets.Length == 1)
                 Unfold(0);
             else
@@ -120,16 +121,14 @@ namespace PotionShop.Online
             {
                 bool selected = i == tabIndex;
                 bool blink = i == blinkTab && !selected && Mathf.Repeat(Time.unscaledTime, 1f) < 0.5f;
-                string normal = selected ? "LOFT_Tab_Selected" : blink ? "LOFT_Tab_Blink" : "LOFT_Tab_Normal";
-                var sprite = OnlineUiParts.Get(normal);
-                if (tabs[i].Image.sprite != sprite)
-                {
-                    tabs[i].Image.sprite = sprite;
-                    var state = tabs[i].Button.spriteState;
-                    state.highlightedSprite = state.pressedSprite = selected ? sprite : OnlineUiParts.Get("LOFT_Tab_Hover");
-                    state.selectedSprite = sprite;
-                    tabs[i].Button.spriteState = state;
-                }
+                var sprite = OnlineUiParts.Get(selected ? "LOFT_Tab_Selected" : blink ? "LOFT_Tab_Blink" : "LOFT_Tab_Normal");
+                if (tabs[i].Image.sprite == sprite)
+                    continue;
+                tabs[i].Image.sprite = sprite;
+                var state = tabs[i].Button.spriteState;
+                state.highlightedSprite = state.pressedSprite = selected ? sprite : OnlineUiParts.Get("LOFT_Tab_Hover");
+                state.selectedSprite = sprite;
+                tabs[i].Button.spriteState = state;
             }
         }
 
@@ -138,47 +137,50 @@ namespace PotionShop.Online
         {
             page = -1;
             SetUnfolded(false);
-            foreach (var card in cards) Destroy(card.gameObject);
+            foreach (Transform child in table) Destroy(child.gameObject);
             cards.Clear();
+
+            // A soft dark pad quiets the props on the desk behind the cards.
+            OnlineUiParts.Shade(At(table, "Shade", new Vector2(350f, 180f), new Vector2(1510f, 660f)), 0.55f);
+            var hint = OnlineUi.Label(At(table, "Hint", new Vector2(390f, 852f), new Vector2(1440f, 48f)),
+                "종이를 누르면 크게 펼쳐져요", 28, config.BoldFont, OnlineUiParts.Cream);
+            OnlineUiParts.Outlined(hint);
 
             var sheets = tabs[tabIndex].Sheets;
             const int columns = 3;
-            int rows = Mathf.CeilToInt(sheets.Length / (float)columns);
-            const float gapX = 40f, gapY = 44f;
-            float gridW = columns * CardSize.x + (columns - 1) * gapX;
-            float gridH = rows * CardSize.y + (rows - 1) * gapY;
             for (int i = 0; i < sheets.Length; i++)
             {
                 int slot = i;
-                int col = i % columns, row = i / columns;
-                var target = new Vector2(-gridW * 0.5f + col * (CardSize.x + gapX) + CardSize.x * 0.5f,
-                    gridH * 0.5f - row * (CardSize.y + gapY) - CardSize.y * 0.5f);
-                var card = OnlineUi.Box("Card " + i, table, new Vector2(0.5f, 0.5f), target, CardSize);
+                var target = new Vector2(390f + (i % columns) * (CardSize.x + 40f) + CardSize.x * 0.5f,
+                    -(214f + (i / columns) * (CardSize.y + 64f) + CardSize.y * 0.5f));
+                var card = OnlineUi.Box("Card " + i, table, new Vector2(0f, 1f), target, CardSize);
                 card.pivot = new Vector2(0.5f, 0.5f);
-                var shadow = OnlineUi.Rect("Shadow", card, Vector2.zero, Vector2.one, new Vector2(8f, -12f), new Vector2(8f, -12f));
-                OnlineUi.Fill(shadow, new Color(0.08f, 0.02f, 0.12f, 0.45f), false);
-                var face = OnlineUi.Rect("Face", card, Vector2.zero, Vector2.one);
-                var image = OnlineUi.Fill(face, Color.white);
-                image.sprite = CardFace(sheets[i]);
+                card.anchoredPosition = target;
+                var shadow = OnlineUi.Rect("Shadow", card, Vector2.zero, Vector2.one, new Vector2(-12f, -16f), new Vector2(12f, 8f));
+                OnlineUiParts.Draw(shadow, "LOFT_PaperShadow");
+                var face = OnlineUi.Fill(OnlineUi.Rect("Paper", card, Vector2.zero, Vector2.one), PaperColor);
                 var button = face.gameObject.AddComponent<Button>();
-                button.targetGraphic = image;
+                button.targetGraphic = face;
                 var colors = button.colors;
-                colors.highlightedColor = new Color(1f, 0.98f, 0.92f);
-                colors.pressedColor = new Color(0.88f, 0.84f, 0.78f);
+                colors.highlightedColor = new Color(1f, 0.98f, 0.9f);
+                colors.pressedColor = new Color(0.9f, 0.86f, 0.78f);
                 button.colors = colors;
                 button.onClick.AddListener(() => Unfold(slot));
                 face.gameObject.AddComponent<CardHover>();
+                new SheetColumns((RectTransform)face.transform, config, CardSize, 10f).Show(sheets[i], easy);
                 if (seen.Contains(sheets[i]))
                 {
-                    var mark = OnlineUi.Box("Seen", face, new Vector2(1f, 1f), new Vector2(-14f, -14f), new Vector2(26f, 26f));
-                    OnlineUiParts.Draw(mark, "LOFT_Dot_Seen");
+                    var badge = OnlineUi.Box("Seen", card, new Vector2(1f, 1f), new Vector2(-10f, -8f), new Vector2(96f, 40f));
+                    OnlineUiParts.Draw(badge, "LOFT_SeenBadge");
+                    OnlineUi.Label(OnlineUi.Rect("Text", badge, Vector2.zero, Vector2.one, new Vector2(0f, 2f), Vector2.zero),
+                        "본 장", 22, config.BoldFont, OnlineUiParts.StampRed);
                 }
 
                 // Sheets fly in from the left one after another and settle slightly askew, like paper.
-                float tilt = (i * 37 % 7 - 3) * 0.5f;
-                card.anchoredPosition = target + new Vector2(-1500f, 60f);
+                float tilt = (i * 37 % 7 - 3) * 0.4f;
+                var from = target + new Vector2(-1500f, 60f);
+                card.anchoredPosition = from;
                 card.localRotation = Quaternion.Euler(0f, 0f, 14f);
-                var from = card.anchoredPosition;
                 LMotion.Create(0f, 1f, 0.42f).WithDelay(i * 0.06f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                     .Bind(t =>
@@ -190,79 +192,59 @@ namespace PotionShop.Online
             }
         }
 
-        /// <summary>The top of a sheet, where its title and symptoms are, cut to the card's shape.</summary>
-        private Sprite CardFace(int sheetIndex)
-        {
-            if (cardFaces.TryGetValue(sheetIndex, out var face))
-                return face;
-            var source = config.MemoSheets[sheetIndex];
-            var r = source.textureRect;
-            float h = Mathf.Min(r.height, r.width * CardSize.y / CardSize.x);
-            face = Sprite.Create(source.texture, new Rect(r.x, r.y + r.height - h, r.width, h), new Vector2(0.5f, 0.5f));
-            face.name = source.name + " (card)";
-            cardFaces[sheetIndex] = face;
-            return face;
-        }
-
         // ---- unfolded sheet --------------------------------------------------------------------------------------
-        private void BuildUnfolded(RectTransform felt)
+        private void BuildUnfolded(RectTransform root)
         {
-            unfolded = OnlineUi.Rect("Unfolded", felt, Vector2.zero, Vector2.one).gameObject;
+            unfolded = OnlineUi.Rect("Unfolded", root, Vector2.zero, Vector2.one).gameObject;
             var u = (RectTransform)unfolded.transform;
             unfoldedGroup = unfolded.AddComponent<CanvasGroup>();
 
-            // The sheet: whole by default; the wheel zooms in and dragging moves it, for the small handwriting.
-            var viewport = OnlineUi.Rect("Viewport", u, Vector2.zero, Vector2.one, new Vector2(130f, 150f),
-                new Vector2(-130f, -40f));
-            OnlineUi.Fill(viewport, new Color(0f, 0f, 0f, 0f));
-            viewport.gameObject.AddComponent<RectMask2D>();
-            var content = OnlineUi.Rect("Page", viewport, Vector2.zero, Vector2.zero);
-            var shadow = OnlineUi.Rect("Shadow", content, Vector2.zero, Vector2.one, new Vector2(10f, -14f), new Vector2(10f, -14f));
-            OnlineUi.Fill(shadow, new Color(0.08f, 0.02f, 0.12f, 0.45f), false);
-            sheet = OnlineUi.Fill(OnlineUi.Rect("Sheet", content, Vector2.zero, Vector2.one), Color.white, false);
-            panZoom = viewport.gameObject.AddComponent<SheetPanZoom>();
-            var first = config.MemoSheets[0];
-            panZoom.Bind(viewport, content, first.rect.width / first.rect.height);
-            panZoom.WheelZooms = true;
-            marks = content.gameObject.AddComponent<SheetMarks>();
-            marks.Bind(content);
+            paper = At(u, "Paper", PaperPos, PaperSize);
+            OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
+                new Vector2(12f, 8f)), "LOFT_PaperShadow");
+            OnlineUi.Fill(OnlineUi.Rect("Sheet", paper, Vector2.zero, Vector2.one), PaperColor, false);
+            sheet = new SheetColumns(paper, config, PaperSize, 24f);
 
-            previous = Arrow(u, "Previous", false, () => Flip(-1));
-            next = Arrow(u, "Next", true, () => Flip(1));
+            previous = Arrow(u, "Previous", 380f, false, () => Flip(-1));
+            next = Arrow(u, "Next", 1772f, true, () => Flip(1));
 
-            var back = OnlineUi.Box("ToTable", u, new Vector2(0f, 0f), new Vector2(130f, 40f), new Vector2(200f, 80f));
-            OnlineUiParts.Button(back, "UI_SmallButton", "탁자로", 32, config.BoldFont, ShowTable, OnlineUiParts.Ink);
-            back.name = "ToTable";
+            toTable = OnlineUiParts.Button(At(u, "ToTable", new Vector2(490f, 916f), new Vector2(186f, 72f)),
+                "UI_SmallButton", "탁자로", 30, config.BoldFont, ShowTable);
 
-            dots = OnlineUi.Box("Dots", u, new Vector2(0.5f, 0f), new Vector2(0f, 68f), new Vector2(600f, 32f));
-            dots.pivot = new Vector2(0.5f, 0.5f);
+            dots = At(u, "Dots", new Vector2(960f, 932f), new Vector2(240f, 40f));
             var layout = dots.gameObject.AddComponent<HorizontalLayoutGroup>();
-            layout.childAlignment = TextAnchor.MiddleCenter;
-            layout.spacing = 14f;
+            layout.childAlignment = TextAnchor.MiddleRight;
+            layout.spacing = 6f;
             layout.childControlWidth = layout.childControlHeight = false;
             layout.childForceExpandWidth = layout.childForceExpandHeight = false;
+            pageLabel = OnlineUiParts.Outlined(OnlineUi.Label(At(u, "Page", new Vector2(1208f, 928f), new Vector2(120f, 48f)),
+                string.Empty, 30, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
 
-            var foundRect = OnlineUi.Box("Found", u, new Vector2(1f, 0f), new Vector2(-130f, 28f), new Vector2(340f, 104f));
-            found = OnlineUiParts.Button(foundRect, "UI_BigButton", "찾았어!", 44, config.BoldFont, SendFound);
+            var foundRect = At(u, "Found", new Vector2(1406f, 906f), new Vector2(340f, 96f));
+            found = OnlineUiParts.Button(foundRect, "UI_BigButton", "찾았어!", 42, config.BoldFont, SendFound);
             foundLabel = foundRect.GetComponentInChildren<Text>();
 
-            toast = OnlineUi.Box("Toast", u, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(560f, 64f));
-            toast.pivot = new Vector2(0.5f, 1f);
+            toast = At(u, "Toast", new Vector2(838f, 118f), new Vector2(560f, 64f));
+            toast.pivot = new Vector2(0.5f, 0.5f);
+            toast.anchoredPosition += new Vector2(280f, -32f);
             OnlineUiParts.Draw(toast, "LOFT_Toast");
-            OnlineUi.Label(OnlineUi.Rect("Text", toast, Vector2.zero, Vector2.one, new Vector2(30f, 0f), new Vector2(-30f, 0f)),
-                "아래층에 신호를 보냈어요 ✓", 28, config.BoldFont, OnlineUiParts.Cream);
+            OnlineUi.Label(OnlineUi.Rect("Text", toast, Vector2.zero, Vector2.one, new Vector2(30f, 2f), new Vector2(-30f, 0f)),
+                "아래층에 신호를 보냈어요", 28, config.BoldFont, OnlineUiParts.Cream);
             toast.gameObject.SetActive(false);
             unfolded.SetActive(false);
         }
 
-        private Button Arrow(RectTransform parent, string name, bool right, UnityEngine.Events.UnityAction onClick)
+        private Button Arrow(RectTransform parent, string name, float x, bool right, UnityEngine.Events.UnityAction onClick)
         {
-            var rect = OnlineUi.Box(name, parent, new Vector2(right ? 1f : 0f, 0.5f), new Vector2(right ? -22f : 22f, 50f),
-                new Vector2(92f, 200f));
-            rect.pivot = new Vector2(right ? 1f : 0f, 0.5f);
+            var rect = At(parent, name, new Vector2(x, 403f), new Vector2(84f, 200f));
             var button = OnlineUiParts.Button(rect, "LOFT_Arrow", null, 0, config.BoldFont, onClick);
-            if (right) rect.localScale = new Vector3(-1f, 1f, 1f);
-            if (right) rect.pivot = new Vector2(0f, 0.5f);
+            if (right)
+            {
+                // The part points left; flip it about its own centre.
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition += new Vector2(42f, -100f);
+                rect.localScale = new Vector3(-1f, 1f, 1f);
+            }
             return button;
         }
 
@@ -272,27 +254,23 @@ namespace PotionShop.Online
             page = Mathf.Clamp(slot, 0, sheets.Length - 1);
             int index = sheets[page];
             seen.Add(index);
-            sheet.sprite = config.MemoSheets[index];
-            panZoom.ShowWholeSheet();
-            marks.Show(index, easy);
+            sheet.Show(index, easy);
             SetUnfolded(true);
             RefreshControls();
 
             unfoldedGroup.alpha = 0f;
-            var paper = (RectTransform)sheet.transform.parent;
             LMotion.Create(0f, 1f, 0.22f).WithEase(Ease.OutQuad).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
                 .Bind(t =>
                 {
                     unfoldedGroup.alpha = t;
-                    paper.localScale = Vector3.one * Mathf.Lerp(0.94f, 1f, t);
+                    paper.localScale = Vector3.one * Mathf.Lerp(0.96f, 1f, t);
                 }).AddTo(unfolded);
         }
 
         private void Flip(int step)
         {
-            var sheets = tabs[tabIndex].Sheets;
             int target = page + step;
-            if (target < 0 || target >= sheets.Length) return;
+            if (target < 0 || target >= tabs[tabIndex].Sheets.Length) return;
             Unfold(target);
         }
 
@@ -314,38 +292,38 @@ namespace PotionShop.Online
         {
             var tab = tabs[tabIndex];
             int count = tab.Sheets.Length;
-            previous.gameObject.SetActive(count > 1);
-            next.gameObject.SetActive(count > 1);
+            bool several = count > 1;
+            previous.gameObject.SetActive(several);
+            next.gameObject.SetActive(several);
             previous.interactable = page > 0;
             next.interactable = page < count - 1;
-            // "탁자로" only makes sense for a tab with several sheets on the table.
-            previous.transform.parent.Find("ToTable").gameObject.SetActive(count > 1);
+            toTable.gameObject.SetActive(several);
+            pageLabel.text = several ? $"{page + 1} / {count}" : string.Empty;
 
             while (dotImages.Count < count)
             {
                 var dot = OnlineUi.Rect("Dot", dots, Vector2.zero, Vector2.zero);
+                dot.sizeDelta = new Vector2(28f, 28f);
                 dotImages.Add(OnlineUiParts.Draw(dot, "LOFT_Dot_Unseen"));
             }
             for (int i = 0; i < dotImages.Count; i++)
             {
-                bool shown = i < count && count > 1;
+                bool shown = i < count && several;
                 dotImages[i].gameObject.SetActive(shown);
                 if (!shown) continue;
-                bool current = i == page;
-                dotImages[i].sprite = OnlineUiParts.Get(current ? "LOFT_Dot_Current" : seen.Contains(tab.Sheets[i])
-                    ? "LOFT_Dot_Seen" : "LOFT_Dot_Unseen");
-                dotImages[i].rectTransform.sizeDelta = Vector2.one * (current ? 30f : 18f);
+                dotImages[i].sprite = OnlineUiParts.Get(i == page ? "LOFT_Dot_Current"
+                    : seen.Contains(tab.Sheets[i]) ? "LOFT_Dot_Seen" : "LOFT_Dot_Unseen");
             }
 
             found.gameObject.SetActive(tab.CanSignal);
             found.interactable = !signalSent;
-            foundLabel.text = signalSent ? "보냈어 ✓" : "찾았어!";
+            foundLabel.text = signalSent ? "보냈어" : "찾았어!";
+            foundLabel.color = signalSent ? OnlineUiParts.InkSoft : OnlineUiParts.Ink;
         }
 
         private void SendFound()
         {
-            if (signalSent) return;
-            if (!session.Signal.Send())
+            if (signalSent || !session.Signal.Send())
                 return;
             signalSent = true;
             toastSince = Time.unscaledTime;
@@ -365,11 +343,12 @@ namespace PotionShop.Online
                 signalSent = false;
                 seen.Clear();
                 if (page >= 0) RefreshControls();
+                else if (tabIndex >= 0 && tabs[tabIndex].Sheets.Length > 1) DealCards();
             }
             if (easyMode != easy)
             {
                 easy = easyMode;
-                if (page >= 0) marks.Show(tabs[tabIndex].Sheets[page], easy);
+                if (page >= 0) sheet.Show(tabs[tabIndex].Sheets[page], easy);
             }
 
             // Point at the tab the narrator needs next.

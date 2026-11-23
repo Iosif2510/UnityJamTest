@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using LitMotion;
 using UnityEngine;
@@ -11,7 +10,8 @@ namespace PotionShop.Online
     /// <summary>
     /// Shown to both players as soon as they are connected: they read the cover note together, then one of them
     /// picks who goes upstairs. After a short "on the way" screen the narrator moves to the loft and the maker
-    /// is left at the counter, where the customer can now be received.
+    /// is left at the counter, where the customer can now be received. Drawn from the designer's parts
+    /// (handoff 조립_시안 07 and 08).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BriefingPanel : MonoBehaviour
@@ -24,11 +24,10 @@ namespace PotionShop.Online
         private CanvasGroup travelGroup;
         private Text travelTitle;
         private Text travelDetail;
-        private Text easyLabel;
+        private Image[] travelDots;
+        private Text travelStatus;
         private Image easyToggle;
         private Text voice;
-        private Text travelDots;
-        private Text travelStatus;
         private bool travelStarted;
         private float choosingSince = -1f;
 
@@ -42,63 +41,71 @@ namespace PotionShop.Online
             travelling.SetActive(false);
         }
 
+        private static RectTransform At(Transform parent, string name, Vector2 topLeft, Vector2 size) =>
+            OnlineUi.Box(name, parent, new Vector2(0f, 1f), new Vector2(topLeft.x, -topLeft.y), size);
+
         /// <summary>Mockup 07: the guide memo to read together on the left, the role window on the right.</summary>
         private void BuildChoosing(Transform root)
         {
             choosing = OnlineUi.Rect("Choosing", root, Vector2.zero, Vector2.one).gameObject;
             var c = (RectTransform)choosing.transform;
-            OnlineUiParts.Backdrop(c, "BG_Briefing");
+            OnlineUiParts.Backdrop(c, "BG_Loft", new Color(0.62f, 0.58f, 0.55f));
 
-            var paper = OnlineUi.Box("Cover", c, new Vector2(0f, 0.5f), new Vector2(620f, 0f), new Vector2(700f, 988f));
-            paper.pivot = new Vector2(0.5f, 0.5f);
-            paper.localRotation = Quaternion.Euler(0f, 0f, -1.2f);
-            OnlineUi.Fill(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(12f, -16f), new Vector2(12f, -16f)),
-                new Color(0.05f, 0.02f, 0.06f, 0.5f), false);
-            var cover = OnlineUi.Fill(OnlineUi.Rect("Sheet", paper, Vector2.zero, Vector2.one), Color.white, false);
-            cover.sprite = config.MemoSheets[0];
-            cover.preserveAspect = true;
+            var paper = At(c, "Guide", new Vector2(64f, 224f), new Vector2(1120f, 630f));
+            OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
+                new Vector2(12f, 8f)), "LOFT_PaperShadow");
+            OnlineUi.Fill(OnlineUi.Rect("Sheet", paper, Vector2.zero, Vector2.one), new Color(0.96f, 0.92f, 0.82f), false);
+            new SheetColumns(paper, config, new Vector2(1120f, 630f), 20f).Show(0, false);
 
-            var board = OnlineUi.Box("Window", c, new Vector2(1f, 0.5f), new Vector2(-48f, 0f), new Vector2(640f, 960f));
+            var board = At(c, "Window", new Vector2(1220f, 64f), new Vector2(640f, 960f));
             OnlineUiParts.Draw(board, "UI_Window", true);
-            OnlineUi.Label(Line(board, 78f, 64f), "누가 위층으로 갈까요?", 42, config.BoldFont, OnlineUiParts.Ink,
+            OnlineUi.Label(Line(board, 64f, 60f), "누가 위층으로 갈까요?", 40, config.BoldFont, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
-            OnlineUi.Label(Line(board, 146f, 64f), "왼쪽 안내서를 같이 읽고, 한 사람이 자기 자리를 고르세요. 남은 사람은 다른 자리로 가요.",
-                22, config.BodyFont, OnlineUiParts.Muted, TextAnchor.UpperLeft);
+            OnlineUi.Label(Line(board, 130f, 64f), "왼쪽 쪽지를 같이 읽고, 한 사람이 자리를 고르세요. 다른 사람은 남은 자리로 갑니다.",
+                22, config.BoldFont, OnlineUiParts.InkSoft, TextAnchor.UpperLeft);
 
-            RoleButton(board, 230f, "PickLoft", "위층 · 메모 담당", "손님은 못 보고, 메모만 봐요",
+            RoleButton(board, 222f, "PickLoft", "NET_RoleIcon_Upstairs", "위층 · 메모 담당", "손님은 못 보고, 메모만 봐요",
                 () => OnlineSession.Instance.Lobby.Pick(OnlineRole.Narrator));
-            RoleButton(board, 424f, "PickCounter", "아래층 · 손님 담당", "손님을 맞고, 재료를 집어요",
+            RoleButton(board, 418f, "PickCounter", "NET_RoleIcon_Downstairs", "아래층 · 손님 담당", "손님을 맞고, 재료를 집어요",
                 () => OnlineSession.Instance.Lobby.Pick(OnlineRole.Maker));
 
-            voice = OnlineUi.Label(Line(board, 618f, 56f), string.Empty, 22, config.BodyFont, OnlineUiParts.Ink,
+            var lamp = At(board, "Lamp", new Vector2(52f, 624f), new Vector2(18f, 18f));
+            OnlineUiParts.Lamp(lamp);
+            OnlineUi.Label(Line(board, 612f, 42f, 80f), "친구 연결됨 · 고르는 중…", 24, config.BoldFont, OnlineUiParts.Ink,
+                TextAnchor.MiddleLeft);
+            voice = OnlineUi.Label(Line(board, 656f, 34f, 80f), string.Empty, 20, config.BoldFont, OnlineUiParts.InkSoft,
                 TextAnchor.MiddleLeft);
 
-            var easyRow = Line(board, 690f, 92f);
-            OnlineUiParts.Draw(easyRow, "NET_WaitBar");
-            OnlineUi.Label(OnlineUi.Rect("Label", easyRow, Vector2.zero, Vector2.one, new Vector2(28f, 0f), new Vector2(-140f, 0f)),
-                "쉬움 모드", 32, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            var toggleRect = OnlineUi.Box("EasyMode", easyRow, new Vector2(1f, 0.5f), new Vector2(-24f, 0f), new Vector2(88f, 48f));
-            easyToggle = OnlineUi.Fill(toggleRect, Color.white);
-            var toggle = toggleRect.gameObject.AddComponent<Button>();
-            toggle.targetGraphic = easyToggle;
-            toggle.onClick.AddListener(() => OnlineSession.Instance.Lobby.RequestEasyMode(!OnlineSession.Instance.EasyMode));
-            easyLabel = OnlineUi.Label(Line(board, 790f, 60f), string.Empty, 20, config.BodyFont, OnlineUiParts.Muted,
-                TextAnchor.UpperLeft);
+            OnlineUi.Label(Line(board, 740f, 44f), "쉬움 모드", 30, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Line(board, 786f, 32f), "메모의 꼭 필요한 곳에 상자가 쳐져요", 20, config.BoldFont,
+                OnlineUiParts.InkSoft, TextAnchor.MiddleLeft);
+            var toggleRect = OnlineUi.Box("EasyMode", board, new Vector2(1f, 1f), new Vector2(-52f, -754f), new Vector2(88f, 48f));
+            easyToggle = OnlineUiParts.Draw(toggleRect, "NET_Toggle_Off", true);
+            toggleRect.gameObject.AddComponent<Button>().onClick.AddListener(() =>
+                OnlineSession.Instance.Lobby.RequestEasyMode(!OnlineSession.Instance.EasyMode));
 
-            OnlineUiParts.Button(OnlineUi.Box("Leave", board, new Vector2(0f, 0f), new Vector2(48f, 44f), new Vector2(220f, 72f)),
-                "UI_SmallButton", "연결 끊기", 28, config.BoldFont, () => OnlineSession.Instance.LeaveAsync().Forget(),
-                OnlineUiParts.Ink);
+            // "연결 끊기" is a quiet underlined link, as in the mockup.
+            var leave = At(board, "Leave", new Vector2(52f, 872f), new Vector2(140f, 40f));
+            var leaveText = OnlineUi.Label(leave, "연결 끊기", 24, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            leaveText.raycastTarget = true;
+            leave.gameObject.AddComponent<Button>().onClick.AddListener(() => OnlineSession.Instance.LeaveAsync().Forget());
+            OnlineUi.Fill(OnlineUi.Rect("Underline", leave, Vector2.zero, new Vector2(0.72f, 0f), new Vector2(0f, -2f),
+                new Vector2(0f, 0f)), OnlineUiParts.Ink, false);
         }
 
-        private void RoleButton(RectTransform board, float top, string name, string title, string detail,
+        private void RoleButton(RectTransform board, float top, string name, string icon, string title, string detail,
             UnityEngine.Events.UnityAction pick)
         {
-            var rect = Named(Line(board, top, 176f), name);
-            OnlineUiParts.Button(rect, "LOFT_Tab", null, 0, config.BoldFont, pick);
-            OnlineUi.Label(OnlineUi.Rect("Title", rect, new Vector2(0f, 0.48f), Vector2.one, new Vector2(36f, 0f),
-                new Vector2(-24f, -18f)), title, 36, config.BoldFont, OnlineUiParts.Ink, TextAnchor.LowerLeft);
-            OnlineUi.Label(OnlineUi.Rect("Detail", rect, Vector2.zero, new Vector2(1f, 0.48f), new Vector2(36f, 18f),
-                new Vector2(-24f, -8f)), detail, 24, config.BodyFont, OnlineUiParts.Muted, TextAnchor.UpperLeft);
+            var rect = Line(board, top, 176f);
+            rect.name = name;
+            OnlineUiParts.Button(rect, "NET_RoleButton", null, 0, config.BoldFont, pick);
+            var picture = OnlineUi.Box("Icon", rect, new Vector2(0f, 0.5f), new Vector2(24f, 0f), new Vector2(112f, 112f));
+            picture.pivot = new Vector2(0f, 0.5f);
+            OnlineUiParts.Draw(picture, icon);
+            OnlineUi.Label(OnlineUi.Rect("Title", rect, new Vector2(0f, 0.5f), Vector2.one, new Vector2(156f, 0f),
+                new Vector2(-20f, -16f)), title, 32, config.BoldFont, OnlineUiParts.Ink, TextAnchor.LowerLeft);
+            OnlineUi.Label(OnlineUi.Rect("Detail", rect, Vector2.zero, new Vector2(1f, 0.5f), new Vector2(156f, 16f),
+                new Vector2(-20f, -8f)), detail, 22, config.BoldFont, OnlineUiParts.InkSoft, TextAnchor.UpperLeft);
         }
 
         /// <summary>Mockup 08: the stairs, a window saying where you are going, and the link status at the bottom.</summary>
@@ -109,22 +116,20 @@ namespace PotionShop.Online
             OnlineUiParts.Backdrop(t, "BG_Travel");
             travelGroup = travelling.AddComponent<CanvasGroup>();
 
-            var window = OnlineUi.Box("Window", t, new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(980f, 640f));
+            var window = OnlineUi.Box("Window", t, new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(960f, 612f));
             window.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(window, "UI_Window", true);
-            var icon = OnlineUi.Box("Icon", window, new Vector2(0.5f, 1f), new Vector2(0f, -60f), new Vector2(168f, 150f));
-            OnlineUiParts.Draw(icon, "NET_TravelIcon").preserveAspect = true;
-            travelTitle = OnlineUi.Label(OnlineUi.Rect("Title", window, new Vector2(0f, 1f), new Vector2(1f, 1f),
-                new Vector2(60f, -320f), new Vector2(-60f, -230f)), string.Empty, 56, config.BoldFont, OnlineUiParts.Ink);
-            travelDetail = OnlineUi.Label(OnlineUi.Rect("Detail", window, new Vector2(0f, 1f), new Vector2(1f, 1f),
-                new Vector2(70f, -420f), new Vector2(-70f, -330f)), string.Empty, 30, config.BoldFont, OnlineUiParts.Muted);
-            travelDots = OnlineUi.Label(OnlineUi.Rect("Dots", window, new Vector2(0f, 1f), new Vector2(1f, 1f),
-                new Vector2(0f, -500f), new Vector2(0f, -430f)), "● ● ●", 30, config.BoldFont, OnlineUiParts.Ink);
+            var icon = OnlineUi.Box("Icon", window, new Vector2(0.5f, 1f), new Vector2(0f, -70f), new Vector2(150f, 150f));
+            OnlineUiParts.Draw(icon, "NET_TravelIcon");
+            travelTitle = OnlineUi.Label(Line(window, 246f, 70f), string.Empty, 48, config.BoldFont, OnlineUiParts.Ink);
+            travelDetail = OnlineUi.Label(Line(window, 324f, 44f), string.Empty, 26, config.BoldFont, OnlineUiParts.InkSoft);
+            travelDots = OnlineUiParts.WaitingDots(window, new Vector2(480f, -410f));
 
             var strip = OnlineUi.Rect("Status", t, Vector2.zero, new Vector2(1f, 0f), Vector2.zero, new Vector2(0f, 64f));
-            OnlineUi.Fill(strip, new Color(0.1f, 0.05f, 0.03f, 0.88f), false);
-            travelStatus = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one), string.Empty, 24,
-                config.BoldFont, OnlineUiParts.Cream);
+            OnlineUiParts.Draw(strip, "NET_StatusStrip");
+            OnlineUiParts.Lamp(OnlineUi.Box("Lamp", strip, new Vector2(0f, 0.5f), new Vector2(40f, 0f), new Vector2(18f, 18f)));
+            travelStatus = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(68f, 0f),
+                new Vector2(-40f, 0f)), string.Empty, 22, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft);
         }
 
         private void Update()
@@ -141,18 +146,15 @@ namespace PotionShop.Online
             if (choose)
             {
                 easyToggle.sprite = OnlineUiParts.Get(session.EasyMode ? "NET_Toggle_On" : "NET_Toggle_Off");
-                easyLabel.text = "쉬움 모드에서는 메모의 꼭 필요한 말에 표시가 돼요. 처음 하는 팀에게 권해요.";
-                voice.text = "<color=#3f9a5a>●</color> 친구 연결됨 · 고르는 중…   " + session.Voice.Describe();
+                voice.text = session.Voice.Describe();
                 AutoPick(session);
             }
 
             if (travelling.activeSelf)
             {
-                // Three dots that fill in turn while walking.
-                int lit = (int)(Time.unscaledTime * 3f) % 4;
-                travelDots.text = string.Concat(Enumerable.Range(0, 3).Select(i => i < lit ? "● " : "○ "));
+                OnlineUiParts.AnimateDots(travelDots);
                 travelStatus.text = session != null && session.PeerConnected
-                    ? "● 온라인 · 친구 연결됨 · " + session.Voice.Describe()
+                    ? "온라인 · 친구 연결됨 · " + session.Voice.Describe()
                     : "연결이 끊어졌어요";
             }
 
@@ -211,14 +213,8 @@ namespace PotionShop.Online
             travelStarted = false;
         }
 
-        private static RectTransform Line(RectTransform parent, float top, float height) =>
-            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(48f, -top - height),
-                new Vector2(-48f, -top));
-
-        private static RectTransform Named(RectTransform rect, string name)
-        {
-            rect.name = name;
-            return rect;
-        }
+        private static RectTransform Line(RectTransform parent, float top, float height, float left = 52f) =>
+            OnlineUi.Rect("Line", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(left, -top - height),
+                new Vector2(-52f, -top));
     }
 }
