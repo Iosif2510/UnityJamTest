@@ -9,15 +9,27 @@ namespace PotionShop.Online
     /// Adds the online co-op entry at runtime to the screen the game waits on: the title, or the counter while its
     /// curtain is closed. It only connects the two players; who goes upstairs is picked afterwards on the
     /// <see cref="BriefingPanel"/>. The existing buttons keep starting the game, so offline play is unchanged.
+    /// Drawn in the B style (handoff mockups 05 and 06): one window that first offers "방 만들기" or a code, and
+    /// after making a room shows the code as letter tiles while waiting for the friend.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TitleOnlinePanel : MonoBehaviour
     {
+        private const int CodeLength = 6;
+
         private OnlineCoopConfig config;
         private GameObject panel;
         private GameObject choices;
+        private GameObject lanRow;
+        private GameObject waiting;
+        private Text waitTitle;
+        private Text waitDetail;
+        private GameObject tiles;
+        private Text[] tileLetters;
+        private Text directLabel;
+        private GameObject copyButton;
         private Text status;
-        private Text codeLabel;
+        private Text error;
         private InputField codeInput;
         private InputField addressInput;
         private Button leaveButton;
@@ -50,45 +62,20 @@ namespace PotionShop.Online
             var canvas = OnlineUi.Canvas("OnlineCanvas", 50, transform);
             var root = canvas.transform;
 
-            openButton = OnlineUi.Button(OnlineUi.Box("OpenOnline", root, new Vector2(1f, 0f), new Vector2(-40f, 40f),
-                new Vector2(300f, 76f)), "온라인 협동", 32, config.BoldFont, () => panel.SetActive(true)).gameObject;
+            openButton = OnlineUiParts.Button(OnlineUi.Box("OpenOnline", root, new Vector2(1f, 0f), new Vector2(-40f, 40f),
+                new Vector2(320f, 96f)), "UI_BigButton", "온라인 협동", 36, config.BoldFont, () => panel.SetActive(true)).gameObject;
 
             panel = OnlineUi.Rect("Panel", root, Vector2.zero, Vector2.one).gameObject;
-            OnlineUi.Fill((RectTransform)panel.transform, new Color(0f, 0f, 0f, 0.6f));
-            var card = OnlineUi.Box("Card", panel.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880f, 760f));
+            OnlineUi.Fill((RectTransform)panel.transform, new Color(0.06f, 0.03f, 0.02f, 0.6f));
+            var card = OnlineUi.Box("Window", panel.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880f, 770f));
             card.pivot = new Vector2(0.5f, 0.5f);
-            OnlineUi.Fill(card, OnlineUi.Parchment);
+            OnlineUiParts.Draw(card, "UI_Window", true);
 
-            OnlineUi.Label(Row(card, 30f, 70f), "온라인 협동", 44, config.BoldFont, OnlineUi.Ink);
-            OnlineUi.Label(Row(card, 104f, 64f),
-                "한 사람은 아래층에서 손님을 맞고, 다른 사람은 위층 공방에서 메모를 보며 목소리로 안내합니다. 자리는 연결된 뒤에 정합니다.",
-                24, config.BodyFont, OnlineUi.Ink);
+            closeButton = OnlineUiParts.Button(OnlineUi.Box("Close", card, new Vector2(1f, 1f), new Vector2(-44f, -44f),
+                new Vector2(72f, 66f)), "UI_CloseButton", null, 0, config.BoldFont, () => panel.SetActive(false)).gameObject;
 
-            choices = OnlineUi.Rect("Choices", card, Vector2.zero, Vector2.one).gameObject;
-            var c = (RectTransform)choices.transform;
-            OnlineUi.Button(Row(c, 190f, 84f), "방 만들기", 32, config.BoldFont, () => HostCloud().Forget());
-
-            codeInput = OnlineUi.Input(Cell(c, 300f, 76f, 0f, 0.48f), "참가 코드", 32, config.BodyFont, 12);
-            OnlineUi.Button(Cell(c, 300f, 76f, 0.5f, 1f), "코드로 참가", 28, config.BoldFont,
-                () => JoinCloud().Forget());
-
-            OnlineUi.Label(Row(c, 410f, 40f), "같은 네트워크에서 직접 연결 (게임 내 보이스 없음)", 22, config.BodyFont,
-                OnlineUi.Faded);
-            addressInput = OnlineUi.Input(Cell(c, 456f, 64f, 0f, 0.38f), "방을 연 PC 주소", 26, config.BodyFont, 64);
-            OnlineUi.Button(Cell(c, 456f, 64f, 0.40f, 0.69f), "직접 참가", 26, config.BoldFont,
-                () => Finish(OnlineSession.Instance.JoinLan(addressInput.text)), OnlineUi.WoodLight);
-            OnlineUi.Button(Cell(c, 456f, 64f, 0.71f, 1f), "직접 방 열기", 26, config.BoldFont,
-                () => Finish(OnlineSession.Instance.HostLan()), OnlineUi.WoodLight);
-
-            codeLabel = OnlineUi.Label(Row(card, 200f, 150f), string.Empty, 96, config.BoldFont, OnlineUi.Accent);
-            status = OnlineUi.Label(Row(card, 540f, 110f), string.Empty, 26, config.BodyFont, OnlineUi.Ink);
-
-            leaveButton = OnlineUi.Button(OnlineUi.Box("Leave", card, new Vector2(0f, 0f), new Vector2(60f, 30f),
-                new Vector2(240f, 64f)), "연결 끊기", 26, config.BoldFont, () => OnlineSession.Instance.LeaveAsync().Forget(),
-                OnlineUi.WoodLight);
-            closeButton = OnlineUi.Button(OnlineUi.Box("Close", card, new Vector2(1f, 0f), new Vector2(-60f, 30f),
-                new Vector2(240f, 64f)), "닫기", 26, config.BoldFont, () => panel.SetActive(false), OnlineUi.WoodLight)
-                .gameObject;
+            BuildChoices(card);
+            BuildWaiting(card);
 
             panel.SetActive(false);
             gameObject.AddComponent<BriefingPanel>();
@@ -104,27 +91,160 @@ namespace PotionShop.Online
                 Finish(OnlineSession.Instance.JoinLan(OnlineSession.CommandLineValue("-onlineAddress")));
         }
 
+        /// <summary>Mockup 05: make a room, or type the friend's code. Direct LAN play folds out underneath.</summary>
+        private void BuildChoices(RectTransform card)
+        {
+            choices = OnlineUi.Rect("Choices", card, Vector2.zero, Vector2.one).gameObject;
+            var c = (RectTransform)choices.transform;
+            OnlineUi.Label(Row(c, 56f, 70f), "온라인 협동", 46, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Fill(Row(c, 132f, 3f), new Color(0.45f, 0.28f, 0.18f, 0.35f), false);
+
+            OnlineUiParts.Button(Row(c, 160f, 104f), "UI_BigButton", "방 만들기", 44, config.BoldFont, () => HostCloud().Forget());
+
+            OnlineUi.Fill(Row(c, 300f, 2f), new Color(0.45f, 0.28f, 0.18f, 0.3f), false);
+            var or = OnlineUi.Box("Or", c, new Vector2(0.5f, 1f), new Vector2(0f, -284f), new Vector2(90f, 34f));
+            OnlineUi.Fill(or, new Color(0.97f, 0.88f, 0.70f), false);
+            OnlineUi.Label(OnlineUi.Rect("Text", or, Vector2.zero, Vector2.one), "또는", 24, config.BoldFont, OnlineUiParts.Muted);
+
+            OnlineUi.Label(Row(c, 330f, 40f), "친구에게 받은 코드", 26, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            codeInput = Field(Cell(c, 378f, 92f, 0f, 0.68f), "K7Q2M9", 40, 12);
+            codeInput.textComponent.alignment = TextAnchor.MiddleCenter;
+            ((Text)codeInput.placeholder).alignment = TextAnchor.MiddleCenter;
+            codeInput.onValueChanged.AddListener(text =>
+            {
+                string upper = text.ToUpperInvariant();
+                if (upper != text) codeInput.SetTextWithoutNotify(upper);
+            });
+            OnlineUiParts.Button(Cell(c, 378f, 92f, 0.71f, 1f), "UI_SmallButton", "들어가기", 32, config.BoldFont,
+                () => JoinCloud().Forget(), OnlineUiParts.Ink);
+
+            OnlineUi.Fill(Row(c, 500f, 2f), new Color(0.45f, 0.28f, 0.18f, 0.3f), false);
+            var lanToggle = OnlineUi.Rect("LanToggle", Row(c, 512f, 48f), Vector2.zero, new Vector2(0.7f, 1f));
+            var lanText = OnlineUi.Label(lanToggle, "같은 네트워크에서 직접 연결  ▸", 24, config.BoldFont, OnlineUiParts.Ink,
+                TextAnchor.MiddleLeft);
+            lanText.raycastTarget = true;
+            lanToggle.gameObject.AddComponent<Button>().onClick.AddListener(() =>
+            {
+                lanRow.SetActive(!lanRow.activeSelf);
+                lanText.text = "같은 네트워크에서 직접 연결  " + (lanRow.activeSelf ? "▾" : "▸");
+            });
+
+            lanRow = OnlineUi.Rect("Lan", c, Vector2.zero, Vector2.one).gameObject;
+            var l = (RectTransform)lanRow.transform;
+            addressInput = Field(Cell(l, 570f, 76f, 0f, 0.42f), "방을 연 PC 주소", 26, 64);
+            OnlineUiParts.Button(Cell(l, 570f, 76f, 0.44f, 0.71f), "UI_SmallButton", "직접 참가", 26, config.BoldFont,
+                () => Finish(OnlineSession.Instance.JoinLan(addressInput.text)), OnlineUiParts.Ink);
+            OnlineUiParts.Button(Cell(l, 570f, 76f, 0.73f, 1f), "UI_SmallButton", "직접 방 열기", 26, config.BoldFont,
+                () => Finish(OnlineSession.Instance.HostLan()), OnlineUiParts.Ink);
+            OnlineUi.Label(Row(l, 654f, 30f), "직접 연결에는 게임 안 음성이 없어요. 외부 음성 채팅을 켜 주세요.", 20,
+                config.BodyFont, OnlineUiParts.Muted, TextAnchor.MiddleLeft);
+            lanRow.SetActive(false);
+
+            error = OnlineUi.Label(Row(card, 688f, 36f), string.Empty, 22, config.BoldFont, new Color(0.7f, 0.2f, 0.12f));
+        }
+
+        /// <summary>Mockup 06: the room's code as letter tiles to read out, and a strip that says we are waiting.</summary>
+        private void BuildWaiting(RectTransform card)
+        {
+            waiting = OnlineUi.Rect("Waiting", card, Vector2.zero, Vector2.one).gameObject;
+            var w = (RectTransform)waiting.transform;
+            waitTitle = OnlineUi.Label(Row(w, 70f, 72f), "방을 만들었어요", 50, config.BoldFont, OnlineUiParts.Ink);
+            waitDetail = OnlineUi.Label(Row(w, 144f, 40f), "이 코드를 친구에게 불러 주세요", 26, config.BoldFont,
+                OnlineUiParts.Muted);
+
+            tiles = OnlineUi.Box("Tiles", w, new Vector2(0.5f, 1f), new Vector2(0f, -214f), new Vector2(700f, 132f)).gameObject;
+            var t = (RectTransform)tiles.transform;
+            t.pivot = new Vector2(0.5f, 1f);
+            var layout = tiles.AddComponent<HorizontalLayoutGroup>();
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.spacing = 14f;
+            layout.childControlWidth = layout.childControlHeight = false;
+            layout.childForceExpandWidth = layout.childForceExpandHeight = false;
+            tileLetters = new Text[CodeLength];
+            for (int i = 0; i < CodeLength; i++)
+            {
+                var tile = OnlineUi.Rect("Tile", t, Vector2.zero, Vector2.zero);
+                tile.sizeDelta = new Vector2(100f, 124f);
+                OnlineUiParts.Draw(tile, "NET_CodeTile");
+                tileLetters[i] = OnlineUi.Label(OnlineUi.Rect("Letter", tile, Vector2.zero, Vector2.one, new Vector2(0f, 6f),
+                    Vector2.zero), string.Empty, 64, config.BoldFont, OnlineUiParts.Ink);
+            }
+            directLabel = OnlineUi.Label(Row(w, 214f, 132f), string.Empty, 44, config.BoldFont, OnlineUiParts.Ink);
+
+            var copy = OnlineUi.Box("Copy", w, new Vector2(0.5f, 1f), new Vector2(0f, -370f), new Vector2(240f, 76f));
+            copy.pivot = new Vector2(0.5f, 1f);
+            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", "코드 복사", 30, config.BoldFont, () =>
+            {
+                if (OnlineSession.Exists && OnlineSession.Instance.JoinCode != null)
+                    GUIUtility.systemCopyBuffer = OnlineSession.Instance.JoinCode;
+            }, OnlineUiParts.Ink).gameObject;
+
+            var strip = Row(w, 476f, 92f);
+            OnlineUiParts.Draw(strip, "NET_WaitBar");
+            status = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(30f, 0f),
+                new Vector2(-30f, 0f)), string.Empty, 28, config.BoldFont, OnlineUiParts.Ink);
+
+            var leave = OnlineUi.Box("Leave", w, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(220f, 76f));
+            leave.pivot = new Vector2(0.5f, 0f);
+            leaveButton = OnlineUiParts.Button(leave, "UI_SmallButton", "방 닫기", 30, config.BoldFont,
+                () => OnlineSession.Instance.LeaveAsync().Forget(), OnlineUiParts.Ink);
+            waiting.SetActive(false);
+        }
+
+        private InputField Field(RectTransform rect, string placeholder, int size, int limit)
+        {
+            var field = OnlineUi.Input(rect, placeholder, size, config.BoldFont, limit);
+            var image = rect.GetComponent<Image>();
+            image.sprite = OnlineUiParts.Get("NET_Input_Normal");
+            image.type = Image.Type.Sliced;
+            field.transition = Selectable.Transition.SpriteSwap;
+            field.spriteState = new SpriteState
+            {
+                highlightedSprite = OnlineUiParts.Get("NET_Input_Focused"),
+                selectedSprite = OnlineUiParts.Get("NET_Input_Focused"),
+                pressedSprite = OnlineUiParts.Get("NET_Input_Focused"),
+            };
+            field.textComponent.rectTransform.offsetMin = new Vector2(26f, 4f);
+            field.textComponent.rectTransform.offsetMax = new Vector2(-26f, -4f);
+            field.placeholder.rectTransform.offsetMin = new Vector2(26f, 4f);
+            field.placeholder.rectTransform.offsetMax = new Vector2(-26f, -4f);
+            ((Text)field.placeholder).color = new Color(0.27f, 0.15f, 0.09f, 0.3f);
+            return field;
+        }
+
         private void Update()
         {
             // On the counter the entry only belongs to the closed-curtain wait between customers.
             var round = RoundDirector.Instance;
-            bool waiting = round == null || round.Phase == RoundPhase.Waiting;
+            bool waitingForCustomer = round == null || round.Phase == RoundPhase.Waiting;
             var role = OnlineSession.CurrentRole;
-            bool entry = waiting && role != OnlineRole.Undecided;
+            // Not while the roles are being picked or on the walk to the counter.
+            bool walking = role is OnlineRole.Maker or OnlineRole.Narrator && !OnlineSession.Instance.Arrived;
+            bool entry = waitingForCustomer && role != OnlineRole.Undecided && !walking;
             if (openButton.activeSelf != entry)
                 openButton.SetActive(entry);
 
-            // Connected but not yet paired or assigned: the customer must not be received, so the card stays up
+            // Connected but not yet paired or assigned: the customer must not be received, so the window stays up
             // while waiting for the friend, and gives way to the briefing once they are here.
             bool pairing = role == OnlineRole.Undecided && !OnlineSession.Instance.PeerConnected;
             bool briefing = role == OnlineRole.Undecided && !pairing;
             if (pairing && !panel.activeSelf)
                 panel.SetActive(true);
-            if ((!waiting || briefing) && panel.activeSelf)
+            if ((!waitingForCustomer || briefing) && panel.activeSelf)
                 panel.SetActive(false);
             if (closeButton.activeSelf == pairing)
                 closeButton.SetActive(!pairing);
+
+            if (waiting.activeSelf && OnlineSession.Exists && !OnlineSession.Instance.PeerConnected &&
+                !OnlineSession.Instance.Busy)
+            {
+                // "••• 친구가 …" with the dots filling in turn.
+                int lit = (int)(Time.unscaledTime * 3f) % 4;
+                status.text = new string('•', lit) + new string(' ', 3 - lit) + "  " + waitingLine;
+            }
         }
+
+        private string waitingLine = string.Empty;
 
         private void OnDestroy()
         {
@@ -133,8 +253,8 @@ namespace PotionShop.Online
         }
 
         private static RectTransform Row(RectTransform parent, float top, float height) =>
-            OnlineUi.Rect("Row", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(60f, -top - height),
-                new Vector2(-60f, -top));
+            OnlineUi.Rect("Row", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(64f, -top - height),
+                new Vector2(-64f, -top));
 
         private static RectTransform Cell(RectTransform parent, float top, float height, float from, float to)
         {
@@ -154,12 +274,17 @@ namespace PotionShop.Online
             Finish(await OnlineSession.Instance.JoinCloudAsync(codeInput.text));
         }
 
-        private void Finish(string error)
+        private void Finish(string message)
         {
             Subscribe();
             Refresh();
-            if (error != null && status != null)
-                status.text = error;
+            if (error != null)
+                error.text = message ?? string.Empty;
+            if (message != null && codeInput != null)
+            {
+                var image = codeInput.GetComponent<Image>();
+                image.sprite = OnlineUiParts.Get("NET_Input_Error");
+            }
         }
 
         private bool subscribed;
@@ -182,22 +307,32 @@ namespace PotionShop.Online
             bool offline = role == OnlineRole.Offline;
             bool busy = session != null && session.Busy;
             choices.SetActive(offline && !busy);
+            waiting.SetActive(!offline || busy);
             leaveButton.gameObject.SetActive(!offline);
-            codeLabel.text = offline ? string.Empty : session.JoinCode ?? "직접 연결";
-            codeLabel.fontSize = !offline && session.JoinCode == null ? 56 : 96;
+            if (offline && !busy)
+                return;
+
+            string code = session?.JoinCode;
+            bool hosting = session != null && session.IsHost;
+            tiles.SetActive(code != null && hosting);
+            copyButton.SetActive(code != null && hosting);
+            for (int i = 0; i < tileLetters.Length; i++)
+                tileLetters[i].text = code != null && i < code.Length ? code[i].ToString() : string.Empty;
+            directLabel.text = code == null && hosting ? "직접 연결로 방을 열었어요" : string.Empty;
+
+            waitTitle.text = busy ? "연결하는 중…" : hosting ? "방을 만들었어요" : "방에 들어가는 중…";
+            waitDetail.text = hosting && code != null ? "이 코드를 친구에게 불러 주세요"
+                : hosting ? "친구가 이 PC의 주소로 직접 참가하면 돼요" : string.Empty;
 
             if (busy)
-                status.text = "연결하는 중…";
-            else if (offline)
-                status.text = string.Empty;
+                waitingLine = "연결하는 중…";
             else if (!session.PeerConnected)
-                status.text = !session.IsHost ? "방에 들어가는 중…" : session.UsesCloud
-                    ? "이 코드를 친구에게 알려 주세요. 친구를 기다리는 중…"
-                    : "친구가 이 PC의 주소로 직접 참가하기를 기다리는 중…";
+                waitingLine = hosting ? "친구가 들어오길 기다리는 중…" : "방에 들어가는 중…";
             else
-                status.text = role == OnlineRole.Maker
-                    ? "친구가 위층 공방에 있습니다. 닫기를 누르고 손님을 받으세요."
-                    : "친구와 연결됐습니다.";
+                waitingLine = role == OnlineRole.Maker
+                    ? "친구가 위층 공방에 있어요. 닫고 손님을 받으세요."
+                    : "친구와 연결됐어요";
+            status.text = waitingLine;
         }
     }
 }

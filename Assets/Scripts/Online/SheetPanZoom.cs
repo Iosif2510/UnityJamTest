@@ -47,6 +47,17 @@ namespace PotionShop.Online
             Apply();
         }
 
+        /// <summary>When set, the plain wheel zooms (drag still pans); otherwise it scrolls and Ctrl+wheel zooms.</summary>
+        public bool WheelZooms { get; set; }
+
+        /// <summary>Shows the whole sheet, centred. Safe to call before the canvas has laid out.</summary>
+        public void ShowWholeSheet()
+        {
+            zoom = 0f; // clamped up to the whole-sheet zoom when applied
+            offset = Vector2.zero;
+            Apply();
+        }
+
         public void ZoomIn() => SetZoom(zoom * ZoomStep);
         public void ZoomOut() => SetZoom(zoom / ZoomStep);
 
@@ -63,7 +74,8 @@ namespace PotionShop.Online
             if (Mathf.Approximately(wheel, 0f))
                 return;
             var keyboard = Keyboard.current;
-            if (keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed))
+            bool ctrl = keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed);
+            if (WheelZooms || ctrl)
             {
                 SetZoom(wheel > 0f ? zoom * ZoomStep : zoom / ZoomStep);
                 return;

@@ -23,10 +23,11 @@ namespace PotionShop.Online
 
         public bool Visible => root != null && root.activeSelf;
 
-        public void Build(RectTransform canvas, OnlineCoopConfig coopConfig)
+        /// <param name="topInset">Height of the band at the top that the card leaves uncovered.</param>
+        public void Build(RectTransform canvas, OnlineCoopConfig coopConfig, float topInset = 0f)
         {
             config = coopConfig;
-            root = OnlineUi.Rect("Result", canvas, Vector2.zero, Vector2.one).gameObject;
+            root = OnlineUi.Rect("Result", canvas, Vector2.zero, Vector2.one, Vector2.zero, new Vector2(0f, -topInset)).gameObject;
             OnlineUi.Fill((RectTransform)root.transform, new Color(0.05f, 0.03f, 0.02f, 0.82f));
 
             card = OnlineUi.Box("Card", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -10f), new Vector2(600f, 800f));
@@ -60,9 +61,9 @@ namespace PotionShop.Online
             stamp.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -4f);
             stamp.preserveAspect = true;
 
-            OnlineUi.Wooden(OnlineUi.Button(OnlineUi.Box("Confirm", card, new Vector2(0.5f, 0f), new Vector2(0f, 62f),
-                new Vector2(320f, 80f)), "확인", 32, config.BoldFont, () => dismissed = true, OnlineUi.WoodLight),
-                config.WoodButton).GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
+            OnlineUiParts.Button(OnlineUi.Box("Confirm", card, new Vector2(0.5f, 0f), new Vector2(0f, 56f),
+                new Vector2(320f, 92f)), "UI_BigButton", "확인", 36, config.BoldFont, () => dismissed = true)
+                .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
             root.SetActive(false);
         }
 

@@ -38,6 +38,7 @@ namespace PotionShop.Online
                     root.AddComponent<RoundSync>();
                     root.AddComponent<RoleLobby>();
                     root.AddComponent<VoiceChat>();
+                    root.AddComponent<NarratorSignal>();
                 }
                 return instance;
             }
@@ -61,6 +62,7 @@ namespace PotionShop.Online
         public RoundSync Sync => GetComponent<RoundSync>();
         public VoiceChat Voice => GetComponent<VoiceChat>();
         public RoleLobby Lobby => GetComponent<RoleLobby>();
+        public NarratorSignal Signal => GetComponent<NarratorSignal>();
 
         /// <summary>Raised whenever role, code, or peer connection changes.</summary>
         public event Action Changed;
