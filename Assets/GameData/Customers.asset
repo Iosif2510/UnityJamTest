@@ -162,7 +162,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.human
     gender: 2
-    basePortrait: {fileID: 21300000, guid: 3e51bb71662a4447a62d36137e6d46fd, type: 3}
+    basePortrait: {fileID: 21300000, guid: 749e4138762e407db59b3e34d5ae1950, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB3C4\uC11C\uAD00 \uC0AC\uC11C"
@@ -189,14 +189,44 @@ MonoBehaviour:
     - EYE_BROWN
     - EYE_BLUE
     - EYE_GREEN
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.490048
+      y: 0.6820288
+      width: 0.0420964
+      height: 0.0272836
+    - serializedVersion: 2
+      x: 0.5896281
+      y: 0.6911114
+      width: 0.0391684
+      height: 0.0253901
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
-    bakedIris: {fileID: 21300000, guid: fb77f6da3c484cbd828904035be71a07, type: 3}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
+    bakedIris: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
     irisDetailStyle: 0
-    irisDetails: []
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: HUM_F2
     status: 1
     speciesId: species.human
@@ -549,7 +579,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 1
-    basePortrait: {fileID: 21300000, guid: ff4f4b04575d4067b76c5138651a1f38, type: 3}
+    basePortrait: {fileID: 21300000, guid: 9d0890ad544e4d05982c608aea00c128, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC6B0\uD3B8\uBC30\uB2EC\uBD80"
@@ -579,14 +609,44 @@ MonoBehaviour:
     - EYE_ORANGE
     - EYE_GREEN
     - EYE_BLUE
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.4291772
+      y: 0.6805344
+      width: 0.0490339
+      height: 0.0317698
+    - serializedVersion: 2
+      x: 0.5219267
+      y: 0.6918893
+      width: 0.0449523
+      height: 0.0291304
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
-    bakedIris: {fileID: 21300000, guid: b92978452f894e4190340e6ba792549f, type: 3}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
+    bakedIris: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
+    irisDetailStyle: 3
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: BST_M2
     status: 1
     speciesId: species.beastfolk
@@ -716,7 +776,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 2
-    basePortrait: {fileID: 21300000, guid: 1da864b792dc4f22a60c57e6170ed765, type: 3}
+    basePortrait: {fileID: 21300000, guid: 23394acace3640fc8158275c27c09294, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uBE75\uC9D1 \uC8FC\uC778"
@@ -745,14 +805,44 @@ MonoBehaviour:
     - EYE_ORANGE
     - EYE_GREEN
     - EYE_BLUE
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.4718527
+      y: 0.6826791
+      width: 0.0328571
+      height: 0.0213605
+    - serializedVersion: 2
+      x: 0.5658068
+      y: 0.69467
+      width: 0.032449
+      height: 0.0208163
     rigPrefab: {fileID: 0}
     spineRig: {fileID: 0}
-    bakedIris: {fileID: 21300000, guid: e4e9b929e6a04756b9cab5bfdf9bd79d, type: 3}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
+    bakedIris: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
     irisDetailStyle: 0
-    irisDetails: []
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: BST_F3
     status: 1
     speciesId: species.beastfolk
