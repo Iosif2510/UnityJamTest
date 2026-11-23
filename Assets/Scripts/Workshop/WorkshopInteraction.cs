@@ -244,6 +244,9 @@ namespace PotionShop
         private void SetHeldIngredient(WarehouseIngredient ingredient)
         {
             held = ingredient;
+            // The last ingredient is in hand: everything is gathered, so point the player at the cauldron.
+            if (held != null && Gathered >= Required)
+                hud.CueAllGathered();
             if (held != null) heldOverlay?.Show(held);
             else heldOverlay?.Clear();
             if (armsAnimator != null)

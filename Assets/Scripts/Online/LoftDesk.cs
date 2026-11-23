@@ -185,10 +185,12 @@ namespace PotionShop.Online
                 var from = target + new Vector2(-1500f, 60f);
                 card.anchoredPosition = from;
                 card.localRotation = Quaternion.Euler(0f, 0f, 14f);
-                float pitch = 0.95f + i * 0.04f;
+                // One soft landing for the first card and one for the last, not one per card (that rattled).
+                bool sounds = i == 0 || i == sheets.Length - 1;
+                float pitch = i == 0 ? 0.95f : 1.08f;
                 LMotion.Create(0f, 1f, 0.42f).WithDelay(i * 0.06f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                    .WithOnComplete(() => GameSfx.Play("CardDeal", 0.7f, pitch, 0.05f))
+                    .WithOnComplete(() => { if (sounds) GameSfx.Play("CardDeal", 0.55f, pitch, 0.05f); })
                     .Bind(t =>
                     {
                         card.anchoredPosition = Vector2.LerpUnclamped(from, target, t);

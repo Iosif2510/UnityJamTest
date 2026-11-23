@@ -72,6 +72,16 @@ namespace PotionShop
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).BindToLocalScale(row);
         }
 
+        /// <summary>All ingredients are gathered: a chime, and the slot row and the prompt pop.</summary>
+        internal void CueAllGathered()
+        {
+            GameSfx.Play("StepChime", 0.8f, 1.12f);
+            if (pocketPreviews.Length > 0 && pocketPreviews[0].transform.parent.parent.gameObject.activeInHierarchy)
+                OrderHudMotion.Bounce(pocketPreviews[0].transform.parent.parent, 1.15f);
+            if (promptAction != null)
+                OrderHudMotion.Bounce(promptAction.transform.parent, 1.12f);
+        }
+
         internal void SetTimerVisible(bool visible)
         {
             timer.SetActive(visible);

@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using LitMotion;
 using PotionShop.Data;
 using PotionShop.Portraits;
 using TMPro;
@@ -208,9 +209,48 @@ namespace PotionShop
             }
         }
 
+        private bool leaving;
+
         private void DismissResult()
         {
-            if (resultPanel.activeInHierarchy && nextOrderButton.interactable && round.DismissResult())
+            if (leaving || !resultPanel.activeInHierarchy || !nextOrderButton.interactable) return;
+            CustomerLeaves().Forget();
+        }
+
+        /// <summary>The customer waves off: turns to the door, slides out and fades, the door bell rings once.</summary>
+        private async UniTaskVoid CustomerLeaves()
+        {
+            leaving = true;
+            nextOrderButton.interactable = false;
+            try
+            {
+                if (resultPortrait != null && resultPortrait.isActiveAndEnabled)
+                {
+                    var rect = (RectTransform)resultPortrait.transform;
+                    var group = GetOrAddCanvasGroup(resultPortrait);
+                    var rest = rect.anchoredPosition;
+                    var scale = rect.localScale;
+                    GameSfx.Play("DoorBell", 0.45f, 1.05f);
+                    await LMotion.Create(0f, 1f, 0.45f).WithEase(Ease.InCubic)
+                        .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                        .Bind(t =>
+                        {
+                            if (rect == null) return;
+                            rect.anchoredPosition = rest + new Vector2(-260f * t, 14f * Mathf.Sin(t * Mathf.PI * 3f) * (1f - t));
+                            rect.localScale = new Vector3(-Mathf.Abs(scale.x), scale.y, scale.z); // facing the door
+                            group.alpha = 1f - t;
+                        }).ToUniTask(this.GetCancellationTokenOnDestroy());
+                    rect.anchoredPosition = rest;
+                    rect.localScale = scale;
+                    group.alpha = 1f;
+                }
+            }
+            finally
+            {
+                leaving = false;
+                nextOrderButton.interactable = true;
+            }
+            if (resultPanel.activeInHierarchy && round.DismissResult())
                 RefreshPhase();
         }
 

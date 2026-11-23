@@ -83,8 +83,13 @@ namespace PotionShop.Portraits
             finally { if (rect != null) rect.anchoredPosition = rest; }
         }
 
+        private SlimeJelly jelly;
+        private SlimeJelly Jelly => jelly != null ? jelly
+            : jelly = layers.slime.GetComponent<SlimeJelly>() ?? layers.slime.gameObject.AddComponent<SlimeJelly>();
+
         internal void Speak(float strength)
         {
+            if (layers.slime != null && layers.slime.enabled) Jelly.Jiggle(0.5f * strength);
             CaptureRotation();
             speechMotion.TryCancel();
             speechDirection *= -1;
@@ -197,6 +202,8 @@ namespace PotionShop.Portraits
             foreach (var image in layers.All) image.enabled = false;
             if (layers.irisMask != null) layers.irisMask.enabled = false;
             layers.slime.sprite = sprite; layers.slime.color = Color.white; layers.slime.enabled = true;
+            // the slime's own rig: planted, breathing jelly that jiggles as it appears and when it talks
+            Jelly.Jiggle(1f);
         }
     }
 }

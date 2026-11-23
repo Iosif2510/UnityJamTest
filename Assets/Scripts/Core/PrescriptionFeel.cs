@@ -42,7 +42,9 @@ namespace PotionShop
         private bool customerMoved;
         private MotionHandle customerMotion;
         /// <summary>How far the customer steps left during packaging, so the cabinet's tall box doesn't cover the face.</summary>
-        private const float CustomerShift = -130f;
+        private const float CustomerShift = -215f;
+        /// <summary>How far the cabinet sits below its scene position, so it covers less of the customer.</summary>
+        private const float DrawerDrop = -60f;
         private bool built;
 
         /// <summary>Wires the cabinet once. Bottles in square/heart/round order; inks in ink-number order.</summary>
@@ -52,7 +54,7 @@ namespace PotionShop
             if (built) return;
             built = true;
             panel = (RectTransform)transform;
-            panelRest = panel.anchoredPosition;
+            panelRest = panel.anchoredPosition + new Vector2(0f, DrawerDrop);
             Add(bottles, square, "네모 병");
             Add(bottles, heart, "하트 병");
             Add(bottles, round, "동그란 병");
@@ -66,7 +68,7 @@ namespace PotionShop
             var serveRect = (RectTransform)serve.transform;
             serveRect.anchorMin = serveRect.anchorMax = new Vector2(0f, 0f);
             serveRect.sizeDelta = new Vector2(210f, 92f);
-            serveRect.anchoredPosition = new Vector2(905f, 92f);
+            serveRect.anchoredPosition = new Vector2(905f, 92f - DrawerDrop); // stays on screen with the drawer lowered
 
             // What to do / what was picked, on a dark pill in the top-left corner.
             if (selected != null)
@@ -221,7 +223,8 @@ namespace PotionShop
             float from = rect.anchoredPosition.x - rest.x, to = aside ? CustomerShift : 0f;
             customerMotion = LMotion.Create(from, to, 0.4f).WithEase(Ease.OutCubic)
                 .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                .Bind(x => { if (rect != null) rect.anchoredPosition = rest + new Vector2(x, 0f); });
+                // aside and a little up, so the face clears the cabinet's tall box
+                .Bind(x => { if (rect != null) rect.anchoredPosition = rest + new Vector2(x, x / CustomerShift * 30f); });
         }
 
         /// <summary>Serving: a copy of the chosen bottle arcs up to the customer and shrinks away.</summary>
