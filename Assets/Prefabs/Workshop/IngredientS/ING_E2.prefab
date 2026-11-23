@@ -68,6 +68,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
   variantId: E2
+  pickupDuration: 0.24
+  returnDuration: 0.28
 --- !u!1001 &5193747486291841542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -116,6 +118,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: cce3dfeb50f5bd94f8f0ce4c35b81e24, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d12cb203006ad634bb2327a1389364f9, type: 2}
     - target: {fileID: 919132149155446097, guid: cce3dfeb50f5bd94f8f0ce4c35b81e24, type: 3}
       propertyPath: m_Name
       value: ING_E2

@@ -83,7 +83,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 75b8467dacf688249821a6b3fe9050ba, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: a0ca214f3d79d0b4497dad23dc992c07, type: 2}
+      objectReference: {fileID: 2100000, guid: 2e1914de02aabdc48806795869c3ed49, type: 2}
     - target: {fileID: 919132149155446097, guid: 75b8467dacf688249821a6b3fe9050ba, type: 3}
       propertyPath: m_Name
       value: MossPatch

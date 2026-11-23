@@ -12,7 +12,7 @@ if (!key) { console.error('MESHY_API_KEY is not set'); process.exit(2); }
 const [outDir, ...names] = process.argv.slice(2);
 if (!outDir || !names.length) { console.error('usage: generate.mjs <outDir> <name>...'); process.exit(2); }
 
-const { style, polycount, props } = JSON.parse(readFileSync(new URL('./props.json', import.meta.url), 'utf8'));
+const { style: defaultStyle, styles = {}, polycount, props } = JSON.parse(readFileSync(new URL('./props.json', import.meta.url), 'utf8'));
 const api = 'https://api.meshy.ai/openapi';
 const headers = { authorization: `Bearer ${key}`, 'content-type': 'application/json' };
 
@@ -44,6 +44,7 @@ async function download(url, file) {
 async function make(name) {
   const prop = props[name];
   if (!prop) return `${name}: not in props.json`;
+  const style = styles[prop.style] ?? defaultStyle;
   const dir = join(outDir, name);
   mkdirSync(dir, { recursive: true });
   const started = Date.now();

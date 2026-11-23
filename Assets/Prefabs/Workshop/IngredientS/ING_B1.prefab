@@ -68,6 +68,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.WarehouseIngredient
   variantId: B1
+  pickupDuration: 0.24
+  returnDuration: 0.28
 --- !u!1001 &2290031250553595575
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -119,7 +121,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 3280c049789ac3b49b35af4a3956774f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 9a6d02a82217ba348a9cf41f82b5458a, type: 2}
+      objectReference: {fileID: 2100000, guid: 4fccb4e4cfd43d14fa81f7d3b93089ce, type: 2}
     - target: {fileID: 919132149155446097, guid: 3280c049789ac3b49b35af4a3956774f, type: 3}
       propertyPath: m_Name
       value: ING_B1

@@ -83,7 +83,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f89da871fb3bde34c9eba9df79b985cd, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: c7ba77e2cd12cb3469159b35047b693c, type: 2}
+      objectReference: {fileID: 2100000, guid: d643961448b23604785a85f21f79b901, type: 2}
     - target: {fileID: 919132149155446097, guid: f89da871fb3bde34c9eba9df79b985cd, type: 3}
       propertyPath: m_Name
       value: HangingIvy
