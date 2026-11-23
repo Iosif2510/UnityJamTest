@@ -56,6 +56,13 @@ namespace PotionShop.EditorTools
             ["shelf"] = "#b4a4e6", ["table"] = "#b4a4e6", ["wall"] = "#9ea6e8", ["corner"] = "#9ea6e8",
         };
 
+        // Simple box furniture whose painted texture stays orange-red under any tint: use a flat mauve-wood
+        // colour (keeping the normal map for grain), like the clay furniture in the references.
+        private static readonly Dictionary<string, string> FlatColors = new()
+        {
+            ["shelf"] = "#9a6c82", ["table"] = "#9a6c82",
+        };
+
         [MenuItem("Potion Shop/Art/Apply Cozy Workshop Look")]
         public static void ApplyFromMenu()
         {
@@ -124,8 +131,14 @@ namespace PotionShop.EditorTools
             var entry = System.Array.Find(Palette, e => key.Contains(e.key));
             if (entry.key != null)
             {
-                cozy.SetColor("_BaseColor", DirectTints.TryGetValue(entry.key, out string direct)
-                    ? Hex(direct) : Color.Lerp(Hex(entry.hex), Color.white, 0.35f) * 1.15f);
+                if (FlatColors.TryGetValue(entry.key, out string flat))
+                {
+                    cozy.SetTexture("_BaseMap", null);
+                    cozy.SetColor("_BaseColor", Hex(flat));
+                }
+                else
+                    cozy.SetColor("_BaseColor", DirectTints.TryGetValue(entry.key, out string direct)
+                        ? Hex(direct) : Color.Lerp(Hex(entry.hex), Color.white, 0.35f) * 1.15f);
                 cozy.SetFloat("_Smoothness", entry.smooth);
                 cozy.SetFloat("_Metallic", entry.metal);
             }

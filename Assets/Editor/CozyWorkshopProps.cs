@@ -39,10 +39,11 @@ namespace PotionShop.EditorTools
             public string On;      // sit on top of this keyed prop; Position is then a local XZ offset on its top
             public Vector3 Inward; // non-zero: Position is on a wall face; push the prop in until its back touches it
             public bool Hang;      // add a rope from the prop up into the roof
+            public float Protrude; // > 0: sink a deep wall prop into the wall so only this much sticks out
             public Spot(string prop, Vector3 position, float yaw = 0f, float scale = 1f, Vector3 tilt = default)
             {
                 Prop = prop; Position = position; Yaw = yaw; Scale = scale; Tilt = tilt;
-                Key = null; On = null; Inward = default; Hang = false;
+                Key = null; On = null; Inward = default; Hang = false; Protrude = 0f;
             }
         }
 
@@ -105,6 +106,8 @@ namespace PotionShop.EditorTools
                     var axis = new Vector3(Mathf.Abs(spot.Inward.x), 0f, Mathf.Abs(spot.Inward.z));
                     float back = Vector3.Dot(pb.center - go.transform.position, -spot.Inward) + Vector3.Dot(pb.extents, axis);
                     go.transform.position += spot.Inward * (back + 0.02f);
+                    if (spot.Protrude > 0f)
+                        go.transform.position -= spot.Inward * Mathf.Max(0f, Vector3.Dot(pb.size, axis) - spot.Protrude);
                 }
                 if (spot.Key != null) keyed[spot.Key] = go;
                 if (spot.Hang) AddRope(go);
@@ -131,8 +134,7 @@ namespace PotionShop.EditorTools
         {
             const float w = 5.75f;
             // Rug under the cauldron and a broom leaning beside it.
-            yield return new Spot("RoundRug", new Vector3(0f, 0.005f, 2f));
-            yield return new Spot("Broom", new Vector3(1.45f, 0f, 3.05f), 200f, 1f, new Vector3(-12f, 0f, 6f));
+            // No rug under the fire: it becomes a round mat in front of the door (see the back wall below).
 
             // Pumpkin heaps in the four corners, by the candle clusters.
             foreach (var (x, z) in new[] { (-1f, 1f), (1f, 1f), (-1f, -1f), (1f, -1f) })
@@ -180,7 +182,14 @@ namespace PotionShop.EditorTools
             yield return Top("workbench", "PotionTrio", -0.35f, 0f, 10f);
             yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f, 0.9f);
             // Back wall (behind the starting point): the door and a drawer cabinet.
-            yield return OnWall("WoodenDoor", fromBack, 2.3f, 0f);
+            // The round door model is over a metre deep (its doorstep sticks out furthest); sink it until the
+            // stone ring stands just proud of the wall.
+            var door = OnWall("WoodenDoor", fromBack, 2.3f, 0f);
+            door.Protrude = 0.5f;
+            yield return door;
+            yield return new Spot("RoundRug", new Vector3(2.3f, 0.005f, -5.0f), 0f, 0.6f);
+            // The broom leans on the back wall beside the door instead of standing on its own by the fire.
+            yield return new Spot("Broom", new Vector3(0.75f, 0f, -5.7f), 0f, 1f, new Vector3(-14f, 0f, 0f));
             yield return OnWall("ApothecaryCabinet", fromBack, -2.3f, 0f, "cabinet");
             yield return Top("cabinet", "PotionTrio", -0.2f, 0f, 200f, 0.9f);
             yield return Top("cabinet", "ClayJar", 0.3f, 0f, 30f, 0.7f);
@@ -328,13 +337,17 @@ namespace PotionShop.EditorTools
             foreach (Transform child in root)
             {
                 if (!child.name.StartsWith("Chandelier")) continue;
-                AddPointLight(root, "Chandelier Light", Bounds(child.gameObject).center, new Color(1f, 0.78f, 0.5f), 3.5f, 7f, 0.06f);
+                // No shadows: each shadowed point light costs six atlas maps, and the cauldron fire and
+                // fireplace already use twelve of them.
+                var chandelier = AddPointLight(root, "Chandelier Light", Bounds(child.gameObject).center,
+                    new Color(1f, 0.78f, 0.5f), 3.5f, 7f, 0.06f);
+                chandelier.shadows = LightShadows.None;
                 break;
             }
             return $"side lanterns off {off}";
         }
 
-        private static void AddPointLight(Transform parent, string name, Vector3 position, Color color, float intensity,
+        private static Light AddPointLight(Transform parent, string name, Vector3 position, Color color, float intensity,
             float range, float flicker)
         {
             var go = new GameObject(name);
@@ -346,10 +359,11 @@ namespace PotionShop.EditorTools
             light.intensity = intensity;
             light.range = range;
             light.shadows = LightShadows.Soft;
-            if (flicker <= 0f) return;
+            if (flicker <= 0f) return light;
             var serialized = new SerializedObject(go.AddComponent<FireLightFlicker>());
             serialized.FindProperty("amplitude").floatValue = flicker;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+            return light;
         }
 
         /// <summary>Z of the far (+z) wall's inner face, found by casting from the room centre.</summary>

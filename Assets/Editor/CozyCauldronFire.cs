@@ -60,16 +60,17 @@ namespace PotionShop.EditorTools
                 m.SetFloat("_Softness", 1.2f);
             });
 
-            // Big flames lick up around the cauldron's belly (about 0.8 m across); smaller ones fill the gaps.
+            // Flames sit just under the cauldron's rounded bottom and lick up its sides (the belly is about
+            // 0.8 m in radius, the base narrower), so most of each flame shows below the belly line.
             int cards = 0;
             const int ring = 9;
             for (int i = 0; i < ring; i++)
             {
                 float angle = i * Mathf.PI * 2f / ring + 0.3f;
                 bool big = i % 2 == 0;
-                float radius = big ? 0.74f : 0.8f;
-                float height = big ? 0.66f : 0.46f;
-                float width = big ? 0.52f : 0.4f;
+                float radius = big ? 0.5f : 0.58f;
+                float height = big ? 0.72f : 0.5f;
+                float width = big ? 0.5f : 0.38f;
                 AddFlame(root, flame, new Vector3(Mathf.Cos(angle) * radius, 0.02f, Mathf.Sin(angle) * radius),
                     width, height, i * 1.37f);
                 cards++;
@@ -141,7 +142,7 @@ namespace PotionShop.EditorTools
             var shape = system.shape;
             shape.shapeType = ParticleSystemShapeType.Cone;
             shape.angle = 12f;
-            shape.radius = 0.8f;
+            shape.radius = 0.6f;
             shape.radiusThickness = 0.35f; // from the rim, where the flames are
 
             var noise = system.noise;
