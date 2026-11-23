@@ -76,6 +76,11 @@ namespace PotionShop
                 inkButtons[i].onClick.AddListener(() => SelectInk(ink));
             }
             serveButton.onClick.AddListener(Serve);
+            var selected = prescriptionPanel.transform.Find("SelectedOptions")?.GetComponent<Text>();
+            prescriptionFeel = prescriptionPanel.GetComponent<PrescriptionFeel>() ??
+                               prescriptionPanel.AddComponent<PrescriptionFeel>();
+            prescriptionFeel.Build(squareBottle, heartBottle, roundBottle, inkButtons, serveButton, selected,
+                selected != null ? selected.font : timerText.font);
             nextOrderButton.onClick.AddListener(DismissResult);
             receiveCustomerButton.onClick.AddListener(ReceiveCustomer);
 
@@ -106,6 +111,7 @@ namespace PotionShop
         }
 
         private TimerUrgency timerUrgency;
+        private PrescriptionFeel prescriptionFeel;
 
         private void OnEnable() => shownPhase = null;
 
@@ -225,6 +231,8 @@ namespace PotionShop
 
         private void Serve()
         {
+            if (chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
+            prescriptionFeel.Serve(portraitView != null ? (RectTransform)portraitView.transform : null);
             if (!round.TryServe(chosenBottle, chosenInk)) return;
             GameSfx.Play("Serve", 0.8f);
             RefreshPhase();
@@ -266,6 +274,7 @@ namespace PotionShop
             dialogueView.gameObject.SetActive((consult && !customerEntering) || ending);
             enterWorkshopButton.gameObject.SetActive(consult && !customerEntering);
             enterWorkshopButton.interactable = false;
+            if (!prescribe) prescriptionFeel.Close();
             prescriptionPanel.SetActive(prescribe);
             resultPanel.SetActive(false);
             hudMotion.SetTimer(consult || prescribe);
@@ -291,6 +300,7 @@ namespace PotionShop
             {
                 chosenBottle = BottleShape.Unspecified;
                 chosenInk = 0;
+                prescriptionFeel.Open(portraitView != null ? (RectTransform)portraitView.transform : null);
                 RefreshChoices();
             }
             else if (ending)
@@ -313,7 +323,19 @@ namespace PotionShop
                 ShowResultPortrait(result);
             });
             var portraitCanvas = portraitView != null ? portraitView.GetComponentInParent<Canvas>(true) : null;
-            await resultView.Play(result, portraitCanvas != null ? portraitCanvas.worldCamera : Camera.main, token);
+            var order = round.CurrentOrder;
+            string bottleAnswer = order == null ? null : order.Bottle switch
+            {
+                BottleShape.Square => "네모 병",
+                BottleShape.Heart => "하트 병",
+                BottleShape.Round => "동그란 병",
+                _ => null
+            };
+            int inkIndex = order != null ? order.Ink.InkNumber - 1 : -1;
+            string inkAnswer = inkIndex >= 0 && inkIndex < inkButtons.Length
+                ? inkButtons[inkIndex].transform.Find("Label")?.GetComponent<Text>()?.text : null;
+            await resultView.Play(result, portraitCanvas != null ? portraitCanvas.worldCamera : Camera.main, token,
+                bottleAnswer, inkAnswer);
             nextOrderButton.interactable = true;
         }
 
@@ -443,6 +465,13 @@ namespace PotionShop
             for (int i = 0; i < inkButtons.Length; i++)
                 SetChoiceHighlight(inkButtons[i], chosenInk == i + 1);
 
+            prescriptionFeel.Refresh(chosenBottle switch
+            {
+                BottleShape.Square => 0,
+                BottleShape.Heart => 1,
+                BottleShape.Round => 2,
+                _ => -1
+            }, chosenInk - 1);
             bool readyToServe = chosenBottle != BottleShape.Unspecified && chosenInk != 0;
             // The serve button pops the moment both choices are made.
             if (readyToServe && !serveButton.interactable) OrderHudMotion.Bounce(serveButton.transform, 1.15f);

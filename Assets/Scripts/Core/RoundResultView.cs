@@ -35,18 +35,35 @@ namespace PotionShop
             passableStamp.SetActive(false);
             fineBrewStamp.SetActive(false);
             otherStamp.gameObject.SetActive(false);
+            foreach (var row in new[] { ingredients, bottle, ink })
+            {
+                row.textWrappingMode = TextWrappingModes.NoWrap; // an answer note may run past the label column
+                row.richText = true;
+            }
+            // The customer stands larger beside the card, cut off by the bottom edge rather than standing on the desk.
+            var portrait = transform.Find("ResultPortrait") as RectTransform;
+            if (portrait != null)
+            {
+                portrait.sizeDelta = new Vector2(320f, 480f);
+                portrait.anchoredPosition = new Vector2(-440f, -150f);
+            }
+            var next = transform.Find("ResultCard/NextOrderButton/Label")?.GetComponent<UnityEngine.UI.Text>();
+            if (next != null) next.text = "다음 주문";
         }
 
-        internal async UniTask Play(RoundResult result, Camera camera, CancellationToken token)
+        /// <param name="bottleAnswer">Name of the right bottle, shown when the choice was wrong (so the next one is better).</param>
+        internal async UniTask Play(RoundResult result, Camera camera, CancellationToken token,
+            string bottleAnswer = null, string inkAnswer = null)
         {
+            await DropIn(token);
             await BetweenRows(token);
             ingredients.text = $"재료   {result.CorrectIngredients} / {RecipeEntry.RequiredIngredientKinds}";
             await CountUp(ingredientPoints, result.IngredientPoints, "+ {0}", token);
             await BetweenRows(token);
-            bottle.text = $"물약병   {MatchLabel(result.BottleCorrect, result.TimedOut)}";
+            bottle.text = $"물약병  {MatchLabel(result.BottleCorrect, result.TimedOut)}{Answer(result.BottleCorrect, bottleAnswer)}";
             await CountUp(bottlePoints, result.BottlePoints, "+ {0}", token);
             await BetweenRows(token);
-            ink.text = $"잉크   {MatchLabel(result.InkCorrect, result.TimedOut)}";
+            ink.text = $"잉크  {MatchLabel(result.InkCorrect, result.TimedOut)}{Answer(result.InkCorrect, inkAnswer)}";
             await CountUp(inkPoints, result.InkPoints, "+ {0}", token);
             await BetweenRows(token);
             await CountUp(timeBonus, result.TimeBonus, "+ {0}", token);
@@ -147,7 +164,27 @@ namespace PotionShop
             }
         }
 
+        /// <summary>The right answer, small and muted, after a wrong one.</summary>
+        private static string Answer(bool correct, string answer) =>
+            correct || string.IsNullOrEmpty(answer) ? string.Empty : $" <size=88%><color=#9a4a2c>→ {answer}</color></size>";
+
+        /// <summary>The card lands on the counter: drops in from above, tilting straight, with a papery sound.</summary>
+        private UniTask DropIn(CancellationToken token)
+        {
+            var card = (RectTransform)ingredients.transform.parent;
+            var rest = card.anchoredPosition;
+            GameSfx.Play("Card", 0.8f, 1f, 0.05f);
+            return LMotion.Create(1f, 0f, 0.38f).WithEase(Ease.OutBack).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .Bind(t =>
+                {
+                    if (card == null) return;
+                    card.anchoredPosition = rest + new Vector2(0f, 90f * t);
+                    card.localRotation = Quaternion.Euler(0f, 0f, -4f * t);
+                }).ToUniTask(token);
+        }
+
         private static string MatchLabel(bool correct, bool timedOut) =>
             timedOut ? "미제출" : correct ? "일치" : "불일치";
+        // (labels kept short so a right-answer note fits on the same line)
     }
 }

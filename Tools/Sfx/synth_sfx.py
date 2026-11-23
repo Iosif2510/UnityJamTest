@@ -110,6 +110,27 @@ off = int(SR * 0.2)
 beat[off:off + len(thump())] += 0.7 * thump()
 save("Heartbeat", beat, 0.7)
 
+# Drawer: a wooden drawer sliding out, ending in a soft knock.
+x = t(0.45)
+slide = lowpass(rng.standard_normal(len(x)), 900) * np.interp(x, [0, 0.05, 0.3, 0.36, 0.45], [0, 0.6, 0.5, 0.1, 0])
+knock = np.zeros(len(x))
+k = t(0.1)
+start = int(SR * 0.33)
+knock[start:start + len(k)] = np.sin(2 * np.pi * 140 * k) * np.exp(-k / 0.025)
+save("Drawer", slide + 0.9 * knock, 0.65)
+
+# Hover: the faintest glassy tap, for pointing at a bottle or ink.
+x = t(0.06)
+save("Hover", np.sin(2 * np.pi * 2300 * x) * np.exp(-x / 0.01), 0.25)
+
+# Card: a sheet of parchment dropped on the counter.
+x = t(0.3)
+swish = lowpass(rng.standard_normal(len(x)), 2500) * np.interp(x, [0, 0.1, 0.22, 0.3], [0, 0.35, 0.9, 0])
+pat = np.zeros(len(x))
+k = t(0.06)
+pat[int(SR * 0.22):int(SR * 0.22) + len(k)] = lowpass(rng.standard_normal(len(k)), 1200) * np.exp(-k / 0.012) * 1.6
+save("Card", swish + pat, 0.6)
+
 # Reused project sounds that were not wired to anything.
 shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
 shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/paper.mp3", OUT / "Paper.mp3")
