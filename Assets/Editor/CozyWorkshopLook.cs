@@ -26,13 +26,18 @@ namespace PotionShop.EditorTools
         private const string CandlesRoot = "CozyCandles";
         private const string CompactMarker = "CozyRoomCompacted";
 
-        // Room: walls pulled in from ±9 m to ±WallDistance, shelves to ±ShelfDistance, roof scaled to match.
-        // Defaults give a ~13 m room (chosen over ~10 m so the shelves read at a glance); Apply(wall, shelf) tries other sizes (original room: 9 and 4).
-        public const float DefaultWallDistance = 6.4f;
-        public const float DefaultShelfDistance = 3.8f;
-        private static float WallDistance = DefaultWallDistance;
-        private static float ShelfDistance = DefaultShelfDistance;
-        private static float RoomScale => WallDistance / 9f;
+        // Room ("plan B", chosen 2026-11-23): a long hall 2 × 3 wall segments (≈ 9.3 × 13.9 m) instead of the
+        // original 18 m square. The door is in the middle of the near short wall (−z), the fireplace in the
+        // middle of the far one (+z); the six ingredient shelves stand along the long walls facing the hall,
+        // and the cauldron sits in the middle of the hall. Values are wall centre lines; walls are 0.62 m thick.
+        public const float WallX = 4.65f, WallZ = 6.95f;
+        public const float FaceX = WallX - 0.31f, FaceZ = WallZ - 0.31f; // inner wall faces
+        public const float ShelfX = 3.45f;                                // shelf centre, back 0.29 m off the wall
+        public static readonly float[] ShelfRows = { -4f, 0f, 4f };
+        public const float CauldronZ = 1f;
+        public static readonly Vector3 PlayerStart = new(0f, 0f, -5.3f);
+        private const float OriginalWall = 9f;                            // the 18 m room the scene was built as
+        private const float SegmentSpacing = 4.64f;
 
         // name fragment → (reference colour, smoothness, metallic). Texture is kept and multiplied by a
         // lightened version of the colour so grain and bricks stay readable.
@@ -77,12 +82,8 @@ namespace PotionShop.EditorTools
             Debug.Log(Apply());
         }
 
-        public static string Apply() => Apply(DefaultWallDistance, DefaultShelfDistance);
-
-        public static string Apply(float wallDistance, float shelfDistance)
+        public static string Apply()
         {
-            WallDistance = wallDistance;
-            ShelfDistance = shelfDistance;
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             var log = new System.Text.StringBuilder("[Cozy workshop] ");
             Directory.CreateDirectory(MaterialFolder);
@@ -242,49 +243,100 @@ namespace PotionShop.EditorTools
             foreach (Transform child in room)
             {
                 if (child.name.StartsWith("FrontWall"))
-                {
-                    Vector3 inward = child.rotation * Vector3.forward;
-                    child.position = new Vector3(inward.x, 0f, inward.z) * WallDistance;
-                    foreach (Transform part in child)
-                    {
-                        // Outer segments are needed once the room is wider than the inner two (±4.6 m);
-                        // corner lanterns would crowd the corners of a small room.
-                        bool outerSegment = WallDistance < 5.2f && part.name is "Wall (2)" or "Wall (3)";
-                        bool cornerLantern = WallDistance < 5.5f && part.name is "Lantern (1)" or "Lantern (2)";
-                        part.gameObject.SetActive(!outerSegment && !cornerLantern);
-                    }
-                }
+                    LayoutWall(child);
                 else if (child.name.StartsWith("GableRoof"))
-                {
-                    float baseScale = child.name == "GableRoof" ? 5.5f : 1f;
-                    child.localScale = Vector3.one * baseScale * RoomScale;
-                }
+                    ScaleRoof(child, child.name == "GableRoof" ? 5.5f : 1f);
             }
 
+            // Shelves line the long walls with their open (−z local) side towards the hall.
+            int index = 0;
             foreach (Transform shelf in shelves)
             {
-                Vector3 p = shelf.position;
-                shelf.position = new Vector3(Mathf.Sign(p.x) * ShelfDistance,
-                    p.y, Mathf.Abs(p.z) < 0.5f ? 0f : Mathf.Sign(p.z) * ShelfDistance);
+                float side = index < 3 ? -1f : 1f;
+                shelf.position = new Vector3(side * ShelfX, 0f, ShelfRows[index % 3]);
+                shelf.rotation = Quaternion.Euler(0f, side < 0 ? -90f : 90f, 0f);
+                index++;
             }
 
-            var environment = GameObject.Find("Environment").transform;
-            if (environment.Find(CompactMarker) == null)
+            var cauldron = GameObject.Find("Stations/Cauldron")?.transform;
+            if (cauldron != null) cauldron.position = new Vector3(0f, cauldron.position.y, CauldronZ);
+            foreach (string name in new[] { "Player", "PlayerCamera", "FirstPersonCinemachineCamera" })
             {
-                // Decorations were laid out for the 18 m room; pull them in once.
-                var decorations = environment.Find("Decorations_Toon");
-                if (decorations != null)
-                    foreach (Transform group in decorations)
-                    foreach (Transform item in group)
-                    {
-                        Vector3 p = item.position;
-                        item.position = new Vector3(p.x * RoomScale, p.y, p.z * RoomScale);
-                    }
-                new GameObject(CompactMarker).transform.SetParent(environment, false);
+                var t = GameObject.Find(name)?.transform;
+                if (t == null) continue;
+                t.SetPositionAndRotation(new Vector3(PlayerStart.x, t.position.y, PlayerStart.z), Quaternion.identity);
             }
+
+            // Decorations were scattered for the 18 m square. The marker's scale remembers the factors last
+            // applied, so re-running (or changing the room) rescales from the original layout, not compounded.
+            var environment = GameObject.Find("Environment").transform;
+            var marker = environment.Find(CompactMarker);
+            if (marker == null)
+            {
+                marker = new GameObject(CompactMarker).transform;
+                marker.SetParent(environment, false);
+            }
+            Vector3 previous = marker.localScale;
+            var factor = new Vector3(WallX / OriginalWall, 1f, WallZ / OriginalWall);
+            var decorations = environment.Find("Decorations_Toon");
+            if (decorations != null)
+                foreach (Transform group in decorations)
+                foreach (Transform item in group)
+                {
+                    Vector3 p = item.position;
+                    item.position = new Vector3(p.x / previous.x * factor.x, p.y, p.z / previous.z * factor.z);
+                }
+            marker.localScale = factor;
             Physics.SyncTransforms();
             int stuck = SnapIvyToWalls(environment.Find("Decorations_Toon/Ivy"));
-            return $"room compacted, ivy snapped {stuck};";
+            return $"room {2 * WallX:F1}×{2 * WallZ:F1} m, ivy snapped {stuck};";
+        }
+
+        /// <summary>
+        /// Rebuilds one wall from its four segments, three pillars and three lanterns.
+        /// Short walls (door / fireplace in the middle): two segments, end pillars only, no lanterns.
+        /// Long walls: three seamless segments without pillars; one lantern above the crate gap.
+        /// </summary>
+        private static void LayoutWall(Transform wall)
+        {
+            Vector3 inward = wall.rotation * Vector3.forward;
+            bool longWall = Mathf.Abs(inward.x) > 0.5f;
+            wall.position = new Vector3(inward.x * WallX, 0f, inward.z * WallZ);
+            foreach (Transform part in wall)
+            {
+                Vector3 p = part.localPosition;
+                bool on = true;
+                switch (part.name)
+                {
+                    case "Wall (1)": p.x = longWall ? -SegmentSpacing : -SegmentSpacing / 2; break;
+                    case "Wall (4)": p.x = longWall ? 0f : SegmentSpacing / 2; break;
+                    case "Wall (2)": p.x = SegmentSpacing; on = longWall; break;
+                    case "Wall (3)": on = false; break;
+                    case "Corner (1)": p.x = -SegmentSpacing; on = !longWall; break;
+                    case "Corner (3)": p.x = SegmentSpacing; on = !longWall; break;
+                    case "Corner (2)": on = false; break;
+                    case "Lantern (2)": p.x = 2f; on = longWall; break; // east wall → z −2, west wall → z +2
+                    case "Lantern": case "Lantern (1)": on = false; break;
+                }
+                if (part.name.StartsWith("Wall"))
+                    part.localScale = new Vector3(longWall ? 1.04f : 0.91f, part.localScale.y, part.localScale.z);
+                part.localPosition = p;
+                part.gameObject.SetActive(on);
+            }
+        }
+
+        /// <summary>Scales the gable roof so it spans the room; height follows the short span to keep its pitch.</summary>
+        private static void ScaleRoof(Transform roof, float baseScale)
+        {
+            float fx = WallX / OriginalWall, fz = WallZ / OriginalWall;
+            var scale = new Vector3();
+            for (int i = 0; i < 3; i++)
+            {
+                Vector3 axis = roof.rotation * (i == 0 ? Vector3.right : i == 1 ? Vector3.up : Vector3.forward);
+                float f = Mathf.Abs(axis.z) > 0.7f ? fz : fx; // world x and height use the short span
+                scale[i] = baseScale * f;
+            }
+            roof.localScale = scale;
         }
 
         /// <summary>Ivy hung on the old walls; after compaction, cast outward and stick it onto the new wall face.</summary>
@@ -348,7 +400,7 @@ namespace PotionShop.EditorTools
                 AddLight(root, $"Lantern Light {++lanterns}", renderer.bounds.center + inward.normalized * 0.25f,
                     "#ffc27a", 2.4f, 4.5f, 0.08f);
             }
-            AddLight(root, "Cauldron Glow", new Vector3(0f, 1.35f, 2f), "#8dffb5", 1.4f, 3.2f, 0f);
+            AddLight(root, "Cauldron Glow", new Vector3(0f, 1.35f, CauldronZ), "#8dffb5", 1.4f, 3.2f, 0f);
             return $"lights {lanterns} lanterns;";
         }
 
@@ -366,11 +418,12 @@ namespace PotionShop.EditorTools
             var flame = MaterialAsset("CandleFlame_Cozy", "Universal Render Pipeline/Unlit", m =>
                 m.SetColor("_BaseColor", new Color(4f, 2.1f, 0.8f, 1f)));
 
-            float c = WallDistance - 0.55f;
+            // One cluster in each corner, clear of the walls. None by the cauldron: candles next to an open
+            // fire read as a hazard, not as cosy.
+            float cx = FaceX - 0.4f, cz = FaceZ - 0.4f;
             var clusters = new[]
             {
-                new Vector3(-c, 0f, c), new Vector3(c, 0f, c), new Vector3(-c, 0f, -c), new Vector3(c, 0f, -c),
-                new Vector3(-0.9f, 0f, 3.1f), new Vector3(1.0f, 0f, 2.9f),
+                new Vector3(-cx, 0f, cz), new Vector3(cx, 0f, cz), new Vector3(-cx, 0f, -cz), new Vector3(cx, 0f, -cz),
             };
             float[] heights = { 0.32f, 0.22f, 0.15f };
             Vector3[] offsets = { Vector3.zero, new(0.13f, 0f, 0.05f), new(-0.05f, 0f, 0.14f) };
@@ -386,16 +439,20 @@ namespace PotionShop.EditorTools
                     candle.name = $"Candle {i + 1}";
                     candle.transform.localPosition = offsets[i];
                     candle.transform.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+                    // Scale relative to the model's own import scale, then stand it on the floor: the candle's
+                    // pivot is at its middle, which buried half of every candle before.
                     Bounds b = Encapsulate(candle);
-                    float scale = heights[i] / Mathf.Max(0.01f, b.size.y);
-                    candle.transform.localScale = Vector3.one * scale;
+                    candle.transform.localScale *= heights[i] / Mathf.Max(0.001f, b.size.y);
+                    b = Encapsulate(candle);
+                    candle.transform.position += Vector3.up * (center.y - b.min.y);
+                    b = Encapsulate(candle);
                     foreach (var r in candle.GetComponentsInChildren<Renderer>()) r.sharedMaterial = wax;
 
                     var tip = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     Object.DestroyImmediate(tip.GetComponent<Collider>());
                     tip.name = "Flame";
                     tip.transform.SetParent(group, false);
-                    tip.transform.position = center + offsets[i] + Vector3.up * (heights[i] + 0.035f);
+                    tip.transform.position = new Vector3(b.center.x, b.max.y + 0.03f, b.center.z);
                     tip.transform.localScale = new Vector3(0.028f, 0.05f, 0.028f);
                     var tipRenderer = tip.GetComponent<MeshRenderer>();
                     tipRenderer.sharedMaterial = flame;

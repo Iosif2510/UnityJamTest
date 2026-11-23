@@ -23,7 +23,8 @@ namespace PotionShop.EditorTools
         // name → height (or diameter for the rug) the model is normalised to, in metres.
         private static readonly Dictionary<string, float> Sizes = new()
         {
-            ["BookStack"] = 0.26f, ["PotionTrio"] = 0.3f, ["HerbBundle"] = 0.55f, ["Pumpkin"] = 0.45f,
+            // Books were 0.26 m tall (0.74 m wide, giant tomes); 0.18 m reads as ordinary books.
+            ["BookStack"] = 0.18f, ["PotionTrio"] = 0.3f, ["HerbBundle"] = 0.55f, ["Pumpkin"] = 0.45f,
             ["WoodenCrate"] = 0.62f, ["ClayJar"] = 0.42f, ["RoundRug"] = 2.6f,
             ["Broom"] = 1.45f, ["HangingPlant"] = 0.7f,
             ["Workbench"] = 0.95f, ["Bookcase"] = 2.05f, ["Bench"] = 0.5f, ["ApothecaryCabinet"] = 1.25f,
@@ -142,84 +143,74 @@ namespace PotionShop.EditorTools
             return $"[Cozy props] {imported} placed {placed}, missing {missing}, {lights}";
         }
 
-        // Room: walls ±6.4 (inner face ≈ ±6.15), shelves at x ±3.8, z −3.8/0/3.8, cauldron (0, 0, 2), player starts (0, 0, −3) facing +z.
+        // Long hall (plan B, see CozyWorkshopLook): inner faces x ±4.34, z ±6.64; shelves along the long walls at
+        // x ±3.45, z −4 / 0 / +4 (gaps between them at z ±2), cauldron (0, 0, 1), player starts at (0, 0, −5.3) by
+        // the door. Zones: entry (near wall: door, broom, cabinet, crates), hall (shelves, cauldron, racks overhead)
+        // and hearth (far wall: fireplace between workbench and bench).
         private static IEnumerable<Spot> Layout()
         {
-            const float w = 5.75f;
-            // Rug under the cauldron and a broom leaning beside it.
-            // No rug under the fire: it becomes a round mat in front of the door (see the back wall below).
-
-            // Pumpkin heaps in the four corners, by the candle clusters.
-            foreach (var (x, z) in new[] { (-1f, 1f), (1f, 1f), (-1f, -1f), (1f, -1f) })
-            {
-                var c = new Vector3(x * (w - 0.1f), 0f, z * (w - 0.1f));
-                yield return new Spot("Pumpkin", c + new Vector3(-x * 0.55f, 0f, 0f), 30f * x, 1.25f);
-                yield return new Spot("Pumpkin", c + new Vector3(0f, 0f, -z * 0.6f), -50f, 0.8f);
-                yield return new Spot("Pumpkin", c + new Vector3(-x * 0.2f, 0f, -z * 0.95f), 110f, 0.6f);
-            }
-
-            // Crate stacks with jars and books between the shelf backs and the side walls: one tucked behind the
-            // middle shelf, one in the near aisle gap. The far aisle gap (z +1.9) is kept for the bookcase and
-            // fireplace so they show between the shelves.
-            foreach (float x in new[] { -1f, 1f })
-            foreach (float z in new[] { -1.9f, 0f })
-            {
-                var c = new Vector3(x * w, 0f, z);
-                yield return new Spot("WoodenCrate", c, 90f * x + 8f * z);
-                yield return new Spot("WoodenCrate", c + new Vector3(0f, 0.62f, 0f), 90f * x - 12f, 0.8f);
-                yield return new Spot("ClayJar", c + new Vector3(-x * 0.1f, 0f, z > 0 ? -0.62f : 0.62f), 20f, z > 0 ? 1f : 0.8f);
-                yield return new Spot("BookStack", c + new Vector3(0f, 0f, z > 0 ? 0.65f : -0.65f), 70f * z);
-            }
-
-            // The workshop is a cellar: no windows. Herbs hang above the far-wall bench and workbench instead.
-            float face = FarWallFace();
-            foreach (float x in new[] { -2.75f, -1.85f, 1.85f, 2.75f })
-                yield return new Spot("HerbBundle", new Vector3(x, 1.95f, face - 0.1f), 180f + x * 20f, 0.9f);
-
-            // Herb bundles hanging along the side walls, hanging plants in the near corners.
-            foreach (float x in new[] { -1f, 1f })
-                for (int i = 0; i < 4; i++)
-                    yield return new Spot("HerbBundle", new Vector3(x * (w + 0.15f), 2.25f, new[] { -4.3f, -2.6f, 2.6f, 4.3f }[i]), 90f * x + i * 25f, 1f + (i % 2) * 0.2f);
-            yield return new Spot("HangingPlant", new Vector3(-w + 0.2f, 2.1f, -w + 0.2f), 40f);
-            yield return new Spot("HangingPlant", new Vector3(w - 0.2f, 2.1f, -w + 0.2f), -40f);
-
-            // Potion trio and books by the cauldron.
-            yield return new Spot("PotionTrio", new Vector3(-1.25f, 0f, 3.2f), 160f);
-            yield return new Spot("BookStack", new Vector3(-1.6f, 0f, 2.6f), 35f, 1.3f);
-
-            // Each wall gets its own feature so the four walls stop repeating.
+            const float fx = CozyWorkshopLook.FaceX, fz = CozyWorkshopLook.FaceZ;
             Vector3 fromFar = Vector3.back, fromBack = Vector3.forward, fromEast = Vector3.left, fromWest = Vector3.right;
-            // Far wall: a bench under one window, a workbench under the other.
-            yield return OnWall("Bench", fromFar, 2.3f, 0f, "bench");
-            yield return Top("bench", "BookStack", -0.35f, 0f, 20f, 1.1f);
-            yield return Top("bench", "ClayJar", 0.4f, 0f, 0f, 0.8f);
-            yield return OnWall("Workbench", fromFar, -2.3f, 0f, "workbench");
-            yield return Top("workbench", "PotionTrio", -0.35f, 0f, 10f);
-            yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f, 0.9f);
-            // Back wall (behind the starting point): the door and a drawer cabinet.
-            // The round door model is over a metre deep (its doorstep sticks out furthest); sink it until the
-            // stone ring stands just proud of the wall.
-            var door = OnWall("WoodenDoor", fromBack, 2.3f, 0f);
+
+            // Hearth wall. The fireplace is sunk into the wall (it is 1.3 m deep) and scaled down a little so
+            // it sits between the workbench and the bench instead of filling the wall.
+            var fireplace = OnWall("Fireplace", fromFar, 0f, 0f, "fireplace", 0.85f);
+            fireplace.Protrude = 0.7f;
+            yield return fireplace;
+            yield return Top("fireplace", "PotionTrio", -0.4f, 0f, 0f, 0.8f);
+            yield return Top("fireplace", "BookStack", 0.45f, 0f, 15f);
+            yield return OnWall("Workbench", fromFar, 2.25f, 0f, "workbench");      // x −2.25
+            yield return Top("workbench", "PotionTrio", -0.3f, 0f, 10f);
+            yield return Top("workbench", "BookStack", 0.35f, 0.05f, -25f);
+            yield return OnWall("Bench", fromFar, -2.25f, 0f, "bench", 1.3f);        // x +2.25
+            yield return Top("bench", "BookStack", -0.3f, 0f, 20f);
+            yield return Top("bench", "ClayJar", 0.35f, 0f, 0f, 0.8f);
+            float face = FarWallFace();
+            foreach (float x in new[] { -2.7f, -1.8f, 1.8f, 2.7f })
+                yield return new Spot("HerbBundle", new Vector3(x, 1.95f, face - 0.1f), 180f + x * 20f, 0.9f);
+            // Two pumpkins in each far corner pocket (x 2.85–4.34, z 5.35–6.64: between the bench or
+            // workbench, the end of the far shelf and the corner candles).
+            foreach (float x in new[] { -1f, 1f })
+            {
+                yield return new Spot("Pumpkin", new Vector3(x * 3.25f, 0f, 5.85f), 30f * x, 0.9f);
+                yield return new Spot("Pumpkin", new Vector3(x * 3.95f, 0f, 5.6f), -50f, 0.55f);
+            }
+
+            // Entry wall. The round door is sunk until only its stone ring stands proud; the player starts on
+            // the round mat in front of it, looking down the hall.
+            var door = OnWall("WoodenDoor", fromBack, 0f, 0f);
             door.Protrude = 0.5f;
             yield return door;
-            yield return new Spot("RoundRug", new Vector3(2.3f, 0.005f, -5.0f), 0f, 0.6f);
-            // The broom leans on the back wall beside the door instead of standing on its own by the fire.
-            yield return new Spot("Broom", new Vector3(0.75f, 0f, -5.7f), 0f, 1f, new Vector3(-14f, 0f, 0f));
-            yield return OnWall("ApothecaryCabinet", fromBack, -2.3f, 0f, "cabinet");
+            yield return new Spot("RoundRug", new Vector3(0f, 0.005f, -5.3f), 0f, 0.6f);
+            // Leaning on the wall beside the door, its foot far enough out that the handle rests on the wall.
+            yield return new Spot("Broom", new Vector3(-1.55f, 0.03f, -fz + 0.55f), 0f, 1f, new Vector3(-14f, 0f, 0f));
+            yield return OnWall("ApothecaryCabinet", fromBack, 2.5f, 0f, "cabinet");  // x +2.5
             yield return Top("cabinet", "PotionTrio", -0.2f, 0f, 200f, 0.9f);
             yield return Top("cabinet", "ClayJar", 0.3f, 0f, 30f, 0.7f);
-            // East wall: a bookcase. West wall: the fireplace. Both face the far aisle gap between the shelves
-            // (z +1.9) so they are seen from the cauldron and the starting view; at z 0 the shelves hid them.
-            yield return OnWall("Bookcase", fromEast, 1.9f, 0f, "bookcase");
-            yield return OnWall("Fireplace", fromWest, -1.9f, 0f, "fireplace");
-            yield return Top("fireplace", "PotionTrio", -0.35f, 0f, 0f, 0.8f);
-            yield return Top("fireplace", "BookStack", 0.4f, 0f, 15f, 0.8f);
+            yield return new Spot("WoodenCrate", new Vector3(-2.7f, 0f, -fz + 0.4f), 6f);
+            yield return new Spot("WoodenCrate", new Vector3(-2.7f, 0.62f, -fz + 0.4f), -10f, 0.8f);
+            yield return new Spot("ClayJar", new Vector3(-2.05f, 0f, -fz + 0.35f), 20f, 0.9f);
+            yield return Hanging("HangingPlant", new Vector3(-3.75f, 2.1f, -6.0f), 40f);
+            yield return Hanging("HangingPlant", new Vector3(3.75f, 2.1f, -6.0f), -40f);
 
-            // Overhead: a chandelier above the cauldron and drying racks over the aisles.
-            yield return Hanging("Chandelier", new Vector3(0f, 2.75f, 2f), 0f);
-            yield return Hanging("DryingRack", new Vector3(-1.9f, 2.7f, -1.2f), 90f);
-            yield return Hanging("DryingRack", new Vector3(1.9f, 2.7f, -1.2f), 90f, 1.1f);
-            yield return Hanging("DryingRack", new Vector3(0f, 2.85f, -4.6f), 0f);
+            // Long walls: the gaps between the shelves (z ±2) hold a bookcase on one side and a crate stack
+            // under the wall lantern on the other, staggered so each gap looks different.
+            yield return OnWall("Bookcase", fromWest, 2f, 0f, "bookcase west", 1.15f); // west, z −2
+            yield return OnWall("Bookcase", fromEast, 2f, 0f, "bookcase east", 1.15f); // east, z +2
+            foreach (var (x, z) in new[] { (-1f, 2f), (1f, -2f) })
+            {
+                var c = new Vector3(x * (fx - 0.38f), 0f, z - 0.15f);
+                yield return new Spot("WoodenCrate", c, 90f * x + 8f);
+                yield return new Spot("WoodenCrate", c + new Vector3(0f, 0.62f, 0f), 90f * x - 12f, 0.8f);
+                yield return new Spot("ClayJar", c + new Vector3(0f, 0f, 0.55f), 20f, 0.8f);
+            }
+
+            // Overhead: a chandelier above the cauldron (scaled to about 0.9 m across) and herb drying racks
+            // over the hall on either side of it (about 1.1 m long).
+            yield return Hanging("Chandelier", new Vector3(0f, 2.75f, CozyWorkshopLook.CauldronZ), 0f, 1.75f);
+            foreach (float z in new[] { -2.6f, 4.0f })
+            foreach (float x in new[] { -1.5f, 1.5f })
+                yield return Hanging("DryingRack", new Vector3(x, 2.75f, z), 90f, 1.6f);
         }
 
         // ---------- import ----------
@@ -307,9 +298,18 @@ namespace PotionShop.EditorTools
             Physics.SyncTransforms();
             var room = GameObject.Find("Environment/Room").transform;
             var origin = new Vector3(offset.x, 1.2f, offset.z);
-            foreach (var hit in Physics.RaycastAll(origin, outward, 12f))
+            // The short walls have a seam in the middle (its pillar is hidden behind the door and fireplace),
+            // so also try 1 m to either side; the wall face is flat, so the depth found there holds here too.
+            Vector3 along = Vector3.Cross(Vector3.up, outward);
+            foreach (float shift in new[] { 0f, 1f, -1f })
+            foreach (var hit in Physics.RaycastAll(origin + along * shift, outward, 12f))
                 if (hit.collider.transform.IsChildOf(room) && Vector3.Dot(hit.point, outward) > 4f)
-                    return new Vector3(hit.point.x, y, hit.point.z);
+                {
+                    float depth = Vector3.Dot(hit.point, outward);
+                    Vector3 p = origin - outward * Vector3.Dot(origin, outward) + outward * depth;
+                    return new Vector3(p.x, y, p.z);
+                }
+            Debug.LogWarning($"[Cozy props] no wall found towards {outward} from {origin}");
             var fallback = origin + outward * 6.1f;
             return new Vector3(fallback.x, y, fallback.z);
         }
@@ -392,7 +392,10 @@ namespace PotionShop.EditorTools
             if (keyed.TryGetValue("fireplace", out var fireplace))
             {
                 Bounds b = Bounds(fireplace);
-                AddPointLight(root, "Fireplace Light", new Vector3(b.max.x + 0.4f, 0.55f, b.center.z),
+                Vector3 inward = Mathf.Abs(b.center.x) > Mathf.Abs(b.center.z)
+                    ? new Vector3(-Mathf.Sign(b.center.x), 0f, 0f) : new Vector3(0f, 0f, -Mathf.Sign(b.center.z));
+                Vector3 front = b.center + inward * (Vector3.Dot(b.extents, new Vector3(Mathf.Abs(inward.x), 0f, Mathf.Abs(inward.z))) + 0.4f);
+                AddPointLight(root, "Fireplace Light", new Vector3(front.x, 0.55f, front.z),
                     new Color(1f, 0.55f, 0.24f), 6f, 6.5f, 0.22f);
             }
             foreach (Transform child in root)
