@@ -157,9 +157,11 @@ namespace PotionShop.EditorTools
                 yield return new Spot("Pumpkin", c + new Vector3(-x * 0.2f, 0f, -z * 0.95f), 110f, 0.6f);
             }
 
-            // Crate stacks with jars and books between the shelf backs and the side walls.
+            // Crate stacks with jars and books between the shelf backs and the side walls: one tucked behind the
+            // middle shelf, one in the near aisle gap. The far aisle gap (z +1.9) is kept for the bookcase and
+            // fireplace so they show between the shelves.
             foreach (float x in new[] { -1f, 1f })
-            foreach (float z in new[] { -1.9f, 1.9f })
+            foreach (float z in new[] { -1.9f, 0f })
             {
                 var c = new Vector3(x * w, 0f, z);
                 yield return new Spot("WoodenCrate", c, 90f * x + 8f * z);
@@ -205,9 +207,10 @@ namespace PotionShop.EditorTools
             yield return OnWall("ApothecaryCabinet", fromBack, -2.3f, 0f, "cabinet");
             yield return Top("cabinet", "PotionTrio", -0.2f, 0f, 200f, 0.9f);
             yield return Top("cabinet", "ClayJar", 0.3f, 0f, 30f, 0.7f);
-            // East wall: a bookcase. West wall: the fireplace.
-            yield return OnWall("Bookcase", fromEast, 0f, 0f, "bookcase");
-            yield return OnWall("Fireplace", fromWest, 0f, 0f, "fireplace");
+            // East wall: a bookcase. West wall: the fireplace. Both face the far aisle gap between the shelves
+            // (z +1.9) so they are seen from the cauldron and the starting view; at z 0 the shelves hid them.
+            yield return OnWall("Bookcase", fromEast, 1.9f, 0f, "bookcase");
+            yield return OnWall("Fireplace", fromWest, -1.9f, 0f, "fireplace");
             yield return Top("fireplace", "PotionTrio", -0.35f, 0f, 0f, 0.8f);
             yield return Top("fireplace", "BookStack", 0.4f, 0f, 15f, 0.8f);
 
