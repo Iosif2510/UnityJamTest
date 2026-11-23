@@ -109,9 +109,13 @@ namespace PotionShop
                 timerUrgency ??= new TimerUrgency(timerText);
                 timerUrgency.Show(round.RemainingSeconds, round.Phase is RoundPhase.Consult or RoundPhase.Prescribe);
             }
+            impatience ??= new CustomerImpatience(portraitView, portraitColors, dialogueView.SpeakerFont);
+            impatience.Show((float)round.RemainingSeconds,
+                round.Phase is RoundPhase.Consult or RoundPhase.Prescribe && round.CurrentOrder != null, round.CurrentOrder);
         }
 
         private TimerUrgency timerUrgency;
+        private CustomerImpatience impatience;
         private PrescriptionFeel prescriptionFeel;
 
         private void OnEnable() => shownPhase = null;
@@ -325,6 +329,7 @@ namespace PotionShop
                     round.CurrentOrder.Customer.FixedAppearance && round.CurrentOrder.Customer.BasePortrait != null;
                 portraitView.gameObject.SetActive(showPortrait);
                 if (showPortrait) portraitView.Show(round.CurrentOrder, portraitColors);
+                impatience?.Reset();
             }
 
             if (consult || ending)

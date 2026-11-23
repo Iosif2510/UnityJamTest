@@ -303,7 +303,7 @@ namespace PotionShop
             await WorkshopIngredientMotion.Throw(ingredient, playerCamera, cauldron.LiquidImpactPoint(landed, Required), token);
             token.ThrowIfCancellationRequested();
             if (cauldron == null || !cauldron.isActiveAndEnabled) throw new System.OperationCanceledException();
-            cauldron.AddIngredient(landed + 1, Required);
+            cauldron.AddIngredient(landed + 1, Required, ingredient);
             // A small kick forward and down as it lands, stronger for the last one.
             bool last = landed + 1 >= Required;
             player.Kick(new Vector3(0f, -1f, 0.5f), last ? 0.035f : 0.02f);

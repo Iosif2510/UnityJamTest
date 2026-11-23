@@ -23,6 +23,8 @@ namespace PotionShop.Portraits
         private float speech;
         private bool poseInitialized;
         private int speechDirection = -1;
+        private float impatience;
+        private float fidgetSince = -10f, nextFidget;
         public PortraitLayers Layers => layers;
         public PortraitBlink Blink => blink;
         public PortraitRigModule Rig => rig;
@@ -113,7 +115,43 @@ namespace PotionShop.Portraits
             bool hasSpine = rig != null && rig.SpineRig != null;
             rig?.SetGesture(landingProgress, speech);
             float angle = (LandingSwing(landingProgress, 0) * 13 + speech * 19) * (hasSpine ? .45f : 1f);
-            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle);
+            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle + ImpatienceAngle());
+        }
+
+        /// <summary>
+        /// How restless the customer is about the time left (0 calm, 1 cross): the head tilts to one side and sways,
+        /// and every few seconds the body gives a short impatient jiggle, more often the crosser they are.
+        /// </summary>
+        public void SetImpatience(float level)
+        {
+            level = Mathf.Clamp01(level);
+            if (Mathf.Approximately(level, impatience)) return;
+            CaptureRotation();
+            if (impatience <= 0f) nextFidget = Time.unscaledTime + .4f;
+            impatience = level;
+            ApplyGesture();
+        }
+
+        private float ImpatienceAngle()
+        {
+            if (impatience <= 0f) return 0f;
+            float t = Time.unscaledTime;
+            float tilt = -4.5f * impatience + Mathf.Sin(t * 1.3f) * 1.2f * impatience;
+            float age = t - fidgetSince;
+            float fidget = age < .5f ? Mathf.Sin(age * 34f) * (1f - age / .5f) * 3.2f * impatience : 0f;
+            return tilt + fidget;
+        }
+
+        private void LateUpdate()
+        {
+            if (impatience <= 0f || !poseInitialized) return;
+            if (Time.unscaledTime >= nextFidget)
+            {
+                fidgetSince = Time.unscaledTime;
+                nextFidget = fidgetSince + UnityEngine.Random.Range(1.6f, 2.8f) / Mathf.Lerp(1f, 1.6f, impatience);
+                if (layers.slime != null && layers.slime.enabled) Jelly.Jiggle(.3f * impatience);
+            }
+            ApplyGesture();
         }
 
         internal static float LandingSwing(float progress, float delay)
@@ -131,6 +169,7 @@ namespace PotionShop.Portraits
             speechMotion.TryCancel();
             landingProgress = 1f;
             speech = 0f;
+            impatience = 0f;
             if (poseInitialized) ApplyGesture();
         }
 

@@ -44,6 +44,8 @@ namespace PotionShop
             return new Vector3(bounds.center.x, Mathf.Clamp(surface, bounds.min.y, bounds.max.y), bounds.center.z);
         }
 
+        internal Renderer LiquidRenderer => liquidRenderer != null ? liquidRenderer : liquidRenderer = GetComponent<Renderer>();
+
         private float HeightScale => Mathf.Max(.0001f, transform.TransformVector(Vector3.up).magnitude);
 
         internal void PrepareFill()

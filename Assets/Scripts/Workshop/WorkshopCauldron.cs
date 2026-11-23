@@ -29,19 +29,30 @@ namespace PotionShop
         internal Vector3 LiquidImpactPoint(int previouslyLanded, int count) =>
             liquidMotion.SurfaceCenter(previouslyLanded / (float)count);
 
+        /// <summary>0 when brewing starts, 1 when the potion is done (0 with no batch).</summary>
+        internal float BrewProgress => hasBatch && tuning != null && tuning.BrewingSeconds > 0f
+            ? 1f - (float)(RemainingSeconds / tuning.BrewingSeconds) : 0f;
+
         private CauldronFeedback feedback;
+        private CauldronColor colour;
 
         private void Start()
         {
             liquidMotion?.PrepareFill();
             feedback = GetComponent<CauldronFeedback>() ?? gameObject.AddComponent<CauldronFeedback>();
+            if (liquidMotion == null) return;
+            colour = GetComponent<CauldronColor>() ?? gameObject.AddComponent<CauldronColor>();
+            colour.Bind(liquidMotion.LiquidRenderer);
+            var ring = GetComponent<BrewProgressRing>() ?? gameObject.AddComponent<BrewProgressRing>();
+            ring.Bind(this, colour);
         }
 
         internal void BeginPour() => pouring = true;
 
-        internal void AddIngredient(int landed, int count)
+        internal void AddIngredient(int landed, int count, WarehouseIngredient ingredient = null)
         {
             liquidMotion.AddIngredient(landed, count);
+            if (colour != null) colour.Add(ingredient, landed, count);
             if (ingredientDropAudio != null)
                 ingredientDropAudio.Play();
             if (feedback != null)
@@ -61,6 +72,7 @@ namespace PotionShop
             if (!pouring) return;
             pouring = false;
             if (liquidMotion != null) liquidMotion.ResetFill();
+            if (colour != null) colour.ResetColor();
             if (ingredientDropAudio != null) ingredientDropAudio.Stop();
         }
 
