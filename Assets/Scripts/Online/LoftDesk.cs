@@ -11,7 +11,7 @@ namespace PotionShop.Online
     /// <c>BG_Loft</c> as the table. Picking a tab deals its sheets onto the desk; clicking one unfolds it. While unfolded
     /// the narrator flips to the neighbouring sheets with the arrows, and on the potion memos presses "찾았어!" to tell
     /// the maker downstairs that it is time for the storage room. The sheet stays open so the ingredients can be read out.
-    /// Sheets are portrait, so they are shown as two columns (top half, bottom half) to fit the landscape slots.
+    /// The sheets are landscape drawings with the writing laid over them in the chosen language (<see cref="MemoSheetView"/>).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LoftDesk : MonoBehaviour
@@ -46,7 +46,8 @@ namespace PotionShop.Online
         private GameObject unfolded;
         private CanvasGroup unfoldedGroup;
         private RectTransform paper;
-        private SheetColumns sheet;
+        private MemoSheetView sheet;
+        private readonly List<MemoSheetView> cardViews = new();
         private Button previous, next, found, toTable;
         private Text foundLabel, pageLabel;
         private RectTransform dots;
@@ -139,6 +140,7 @@ namespace PotionShop.Online
             SetUnfolded(false);
             foreach (Transform child in table) Destroy(child.gameObject);
             cards.Clear();
+            cardViews.Clear();
 
             // A soft dark pad quiets the props on the desk behind the cards.
             OnlineUiParts.Shade(At(table, "Shade", new Vector2(350f, 180f), new Vector2(1510f, 660f)), 0.55f);
@@ -167,7 +169,9 @@ namespace PotionShop.Online
                 button.colors = colors;
                 button.onClick.AddListener(() => Unfold(slot));
                 face.gameObject.AddComponent<CardHover>();
-                new SheetColumns((RectTransform)face.transform, config, CardSize, 10f).Show(sheets[i], easy);
+                var view = new MemoSheetView((RectTransform)face.transform);
+                view.Show(sheets[i], false);
+                cardViews.Add(view);
                 if (seen.Contains(sheets[i]))
                 {
                     var badge = OnlineUi.Box("Seen", card, new Vector2(1f, 1f), new Vector2(-10f, -8f), new Vector2(96f, 40f));
@@ -202,8 +206,7 @@ namespace PotionShop.Online
             paper = At(u, "Paper", PaperPos, PaperSize);
             OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
                 new Vector2(12f, 8f)), "LOFT_PaperShadow");
-            OnlineUi.Fill(OnlineUi.Rect("Sheet", paper, Vector2.zero, Vector2.one), PaperColor, false);
-            sheet = new SheetColumns(paper, config, PaperSize, 24f);
+            sheet = new MemoSheetView(paper);
 
             previous = Arrow(u, "Previous", 380f, false, () => Flip(-1));
             next = Arrow(u, "Next", 1772f, true, () => Flip(1));
@@ -255,6 +258,7 @@ namespace PotionShop.Online
             int index = sheets[page];
             seen.Add(index);
             sheet.Show(index, easy);
+            sheet.Refresh();
             SetUnfolded(true);
             RefreshControls();
 
@@ -359,6 +363,10 @@ namespace PotionShop.Online
                 _ => -1
             };
             RefreshTabs();
+
+            // Sheets lay out a frame after they are built; resize their writing once they have a size.
+            sheet.Refresh();
+            foreach (var view in cardViews) view.Refresh();
 
             if (toast.gameObject.activeSelf && Time.unscaledTime - toastSince > ToastSeconds)
                 toast.gameObject.SetActive(false);

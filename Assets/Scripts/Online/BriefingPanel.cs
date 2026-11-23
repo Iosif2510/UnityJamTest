@@ -27,6 +27,7 @@ namespace PotionShop.Online
         private Image[] travelDots;
         private Text travelStatus;
         private Image easyToggle;
+        private MemoSheetView cover;
         private Text voice;
         private bool travelStarted;
         private float choosingSince = -1f;
@@ -54,8 +55,8 @@ namespace PotionShop.Online
             var paper = At(c, "Guide", new Vector2(64f, 224f), new Vector2(1120f, 630f));
             OnlineUiParts.Draw(OnlineUi.Rect("Shadow", paper, Vector2.zero, Vector2.one, new Vector2(-12f, -16f),
                 new Vector2(12f, 8f)), "LOFT_PaperShadow");
-            OnlineUi.Fill(OnlineUi.Rect("Sheet", paper, Vector2.zero, Vector2.one), new Color(0.96f, 0.92f, 0.82f), false);
-            new SheetColumns(paper, config, new Vector2(1120f, 630f), 20f).Show(0, false);
+            cover = new MemoSheetView(paper);
+            cover.Show(0, false);
 
             var board = At(c, "Window", new Vector2(1220f, 64f), new Vector2(640f, 960f));
             OnlineUiParts.Draw(board, "UI_Window", true);
@@ -145,6 +146,7 @@ namespace PotionShop.Online
             }
             if (choose)
             {
+                cover.Refresh();
                 easyToggle.sprite = OnlineUiParts.Get(session.EasyMode ? "NET_Toggle_On" : "NET_Toggle_Off");
                 voice.text = session.Voice.Describe();
                 AutoPick(session);
