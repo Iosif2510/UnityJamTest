@@ -4,6 +4,7 @@
 
 Writes 44.1 kHz mono WAVs to Assets/Resources/Sfx and copies the two unused project sounds (splash, paper) there.
 Every sound is short, soft and warm (wood, brass, glass), to sit with the cozy shop.
+After this (or eleven_sfx.py) run Tools/Sfx/level_sfx.cs in the editor to bring every sound to its loudness target.
 """
 import shutil
 from pathlib import Path
@@ -38,6 +39,9 @@ def lowpass(x, cutoff):
 
 
 def save(name, x, gain=0.8):
+    if (OUT / f"{name}.mp3").exists():  # replaced by an ElevenLabs recording (Tools/Sfx/eleven_sfx.py)
+        print(name, "kept (ElevenLabs)")
+        return
     x = x / (np.max(np.abs(x)) + 1e-9) * gain
     fade = min(len(x), int(SR * 0.01))
     x[-fade:] *= np.linspace(1, 0, fade)
@@ -174,7 +178,8 @@ save("Flop", lowpass(flop, 1200) * env(len(x), 0.01, 0.3), 0.6)
 
 # Reused project sounds that were not wired to anything.
 shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/splash.wav", OUT / "Splash.wav")
-shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/paper.mp3", OUT / "Paper.mp3")
+if not (OUT / "Paper.mp3").exists():
+    shutil.copy(ROOT / "Assets/Arts/Models/gg/Soundeffect/paper.mp3", OUT / "Paper.mp3")
 import glob
 tone = glob.glob(str(ROOT / "Assets/Arts/Audio/Workshop/Workshop_Room_Tone.*"))
 tone = [p for p in tone if not p.endswith(".meta")]
