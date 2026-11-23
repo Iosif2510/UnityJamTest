@@ -6,8 +6,8 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// The cat from the guide memo ("밥 주지 마. 이미 먹었음"), asleep in the basket on the loft desk. It breathes and
-    /// lets a "z" drift up now and then; click it and it purrs, gives a little squish and a heart floats up.
+    /// The cat from the guide memo ("밥 주지 마. 이미 먹었음"), asleep in the basket on the loft desk. It breathes slowly;
+    /// click it and it purrs, gives a little squish and a heart floats up.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LoftCat : MonoBehaviour, IPointerClickHandler
@@ -15,17 +15,14 @@ namespace PotionShop.Online
         // Where the cat sits in the 1920×1080 BG_Loft picture (the basket at the lower right).
         private static readonly Rect InPicture = new(1577f, 751f, 315f, 215f);
         private const float PurrSeconds = 1.8f;
-        private const float SnoreEvery = 3.2f;
 
         private static Sprite heartSprite;
 
         private RectTransform body;
-        private Font font;
-        private float nextSnore;
         private float purringUntil;
 
         /// <summary>Puts the cat into the basket of the backdrop picture (the image <see cref="OnlineUiParts.Backdrop"/> made).</summary>
-        internal static LoftCat Place(Image backdrop, Font font)
+        internal static LoftCat Place(Image backdrop)
         {
             if (!OnlineUiParts.Has("LOFT_Cat")) return null;
             var picture = backdrop.rectTransform;
@@ -35,7 +32,6 @@ namespace PotionShop.Online
             var image = OnlineUiParts.Draw(rect, "LOFT_Cat", raycast: true);
             var cat = rect.gameObject.AddComponent<LoftCat>();
             cat.body = rect;
-            cat.font = font;
             rect.pivot = new Vector2(0.5f, 0.3f); // breathes up from where it lies
             return cat;
         }
@@ -47,11 +43,6 @@ namespace PotionShop.Online
             // slow sleeping breath; quicker and deeper while purring
             float breath = Mathf.Sin(t * (purring ? 5.5f : 1.9f)) * (purring ? 0.02f : 0.014f);
             body.localScale = new Vector3(1f + breath * 0.4f, 1f + breath, 1f);
-            if (t >= nextSnore)
-            {
-                nextSnore = t + SnoreEvery;
-                if (!purring) Float(Snore(), new Vector2(0.72f, 0.62f), 1.8f, 55f);
-            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -61,16 +52,6 @@ namespace PotionShop.Online
             GameSfx.Play("Purr", 0.8f, 1f, 0.06f);
             OrderHudMotion.Bounce(body, 1.06f);
             Float(Heart(), new Vector2(0.7f, 0.66f), 1.8f, 80f);
-        }
-
-        /// <summary>A small "z" in the loft's ink colour.</summary>
-        private RectTransform Snore()
-        {
-            var rect = OnlineUi.Rect("Z", Overlay, Vector2.zero, Vector2.zero);
-            rect.sizeDelta = new Vector2(56f, 56f);
-            var label = OnlineUi.Label(rect, "z", 40, font, OnlineUiParts.Cream, TextAnchor.MiddleCenter);
-            label.raycastTarget = false;
-            return rect;
         }
 
         private RectTransform Heart()

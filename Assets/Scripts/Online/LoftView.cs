@@ -48,7 +48,7 @@ namespace PotionShop.Online
         private void Build()
         {
             var root = (RectTransform)OnlineUi.Canvas("LoftCanvas", 0, transform).transform;
-            LoftCat.Place(OnlineUiParts.Backdrop(root, "BG_Loft"), config.BoldFont);
+            LoftCat.Place(OnlineUiParts.Backdrop(root, "BG_Loft"));
             BuildBand(root);
 
             desk = gameObject.AddComponent<LoftDesk>();
