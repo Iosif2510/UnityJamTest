@@ -97,7 +97,7 @@ def shadow(alpha, target):
                        interpolation=cv2.INTER_AREA)
     rgba = np.zeros(small.shape + (4,), np.uint8)
     rgba[..., :3] = (12, 5, 2)
-    rgba[..., 3] = np.clip(small * 255, 0, 255).astype(np.uint8)
+    rgba[..., 3] = np.clip(small * 1.6 * 255, 0, 255).astype(np.uint8)  # darker right at the paper edge
     target.parent.mkdir(parents=True, exist_ok=True)
     cv2.imwrite(str(target), cv2.cvtColor(rgba, cv2.COLOR_RGBA2BGRA))
 

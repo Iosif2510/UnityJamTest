@@ -33,7 +33,7 @@ namespace PotionShop.Online
             fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             fitter.aspectRatio = 16f / 9f;
             // The paper's own shadow (its torn shape, baked by Tools/MemoText) under the sheet, then the sheet.
-            shadow = OnlineUi.Fill(OnlineUi.Rect("Shadow", page, Vector2.zero, Vector2.one), new Color(1f, 1f, 1f, 0.62f), false);
+            shadow = OnlineUi.Fill(OnlineUi.Rect("Shadow", page, Vector2.zero, Vector2.one), new Color(1f, 1f, 1f, 0.9f), false);
             image = OnlineUi.Fill(OnlineUi.Rect("Sheet", page, Vector2.zero, Vector2.one), Color.white, false);
         }
 
@@ -57,7 +57,7 @@ namespace PotionShop.Online
             var shadowRect = shadow.rectTransform;
             shadowRect.anchorMin = new Vector2(-pad, -pad);
             shadowRect.anchorMax = new Vector2(1f + pad, 1f + pad);
-            var drop = new Vector2(page.rect.width, page.rect.height) * 0.012f;
+            var drop = new Vector2(page.rect.width, page.rect.height) * 0.016f;
             shadowRect.offsetMin = shadowRect.offsetMax = new Vector2(drop.x, -drop.y * 1.4f);
             bool original = MemoText.ShowsOriginal(sheetIndex);
 
