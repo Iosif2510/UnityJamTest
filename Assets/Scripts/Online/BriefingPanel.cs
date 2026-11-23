@@ -57,6 +57,12 @@ namespace PotionShop.Online
                 new Vector2(12f, 8f)), "LOFT_PaperShadow");
             cover = new MemoSheetView(paper);
             cover.Show(0, false);
+            // The guide memo's language, chosen here before anyone reads it.
+            var pickRow = At(c, "MemoLanguage", new Vector2(64f, 884f), new Vector2(1120f, 64f));
+            OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Label", pickRow, Vector2.zero, new Vector2(0f, 1f), Vector2.zero,
+                new Vector2(150f, 0f)), "메모 언어", 26, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
+            new MemoLanguagePicker(OnlineUi.Rect("Buttons", pickRow, Vector2.zero, Vector2.one, new Vector2(160f, 0f),
+                Vector2.zero), config.BoldFont);
 
             var board = At(c, "Window", new Vector2(1220f, 64f), new Vector2(640f, 960f));
             OnlineUiParts.Draw(board, "UI_Window", true);

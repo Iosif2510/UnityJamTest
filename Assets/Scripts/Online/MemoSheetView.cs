@@ -78,10 +78,10 @@ namespace PotionShop.Online
             }
         }
 
-        /// <summary>Call when the sheet may have been resized (first layout, window change).</summary>
+        /// <summary>Call every frame or so: redraws when the sheet was resized or the memo language changed.</summary>
         public void Refresh()
         {
-            if (shown >= 0 && !Mathf.Approximately(page.rect.height, shownHeight))
+            if (shown >= 0 && (!Mathf.Approximately(page.rect.height, shownHeight) || MemoText.Language != shownLanguage))
                 Show(shown, shownEasy);
         }
 

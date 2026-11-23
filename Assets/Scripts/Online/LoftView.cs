@@ -130,11 +130,15 @@ namespace PotionShop.Online
         {
             menu = OnlineUi.Rect("Menu", root, Vector2.zero, Vector2.one).gameObject;
             OnlineUi.Fill((RectTransform)menu.transform, new Color(0.12f, 0.06f, 0.03f, 0.72f));
-            var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(560f, 440f));
+            var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 600f));
             card.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(card, "UI_Window");
             OnlineUi.Label(OnlineUi.Rect("Title", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -130f),
                 new Vector2(0f, -50f)), "위층 공방", 44, config.BoldFont, OnlineUiParts.Ink);
+            OnlineUi.Label(OnlineUi.Rect("LanguageTitle", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(70f, -196f),
+                new Vector2(-70f, -150f)), "메모 언어", 28, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            languages = new MemoLanguagePicker(OnlineUi.Rect("Languages", card, new Vector2(0f, 1f), new Vector2(1f, 1f),
+                new Vector2(70f, -276f), new Vector2(-70f, -204f)), config.BoldFont);
             OnlineUiParts.Button(OnlineUi.Box("Resume", card, new Vector2(0.5f, 0f), new Vector2(0f, 190f), new Vector2(400f, 96f)),
                 "UI_BigButton", "계속하기", 36, config.BoldFont, () => menu.SetActive(false))
                 .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
@@ -144,10 +148,15 @@ namespace PotionShop.Online
             menu.SetActive(false);
         }
 
+        private MemoLanguagePicker languages;
+
         private void Update()
         {
             if (Keyboard.current?.escapeKey.wasPressedThisFrame == true && !resultCard.Visible)
+            {
                 menu.SetActive(!menu.activeSelf);
+                languages.Refresh();
+            }
 
             var sync = session.Sync;
             bool live = session.Role == OnlineRole.Narrator && session.PeerConnected && sync.HasSnapshot;

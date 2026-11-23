@@ -26,6 +26,7 @@ for lang in TABLES:
     table = OUT / f"text_{lang}.json"
     if table.exists():
         chars.update("".join(json.load(open(table, encoding="utf-8")).values()))
+chars.update("日本語简体中文繁體中文")  # the language picker's own names
 codes = {ord(c) for c in chars}
 codes |= set(range(0x20, 0x7F))                       # ASCII
 codes |= set(range(0x3000, 0x3040))                   # CJK punctuation
