@@ -56,11 +56,12 @@ namespace PotionShop.EditorTools
             ["shelf"] = "#b4a4e6", ["table"] = "#b4a4e6", ["wall"] = "#9ea6e8", ["corner"] = "#9ea6e8",
         };
 
-        // Simple box furniture whose painted texture stays orange-red under any tint: use a flat mauve-wood
-        // colour (keeping the normal map for grain), like the clay furniture in the references.
+        // Simple box furniture whose painted texture stays orange-red under any tint: use a flat warm
+        // brown wood colour (keeping the normal map for grain), like the clay furniture in the references.
+        // Chosen over mauve (#9a6c82) so the ingredients on the shelves stand out (user, 2026-11-23).
         private static readonly Dictionary<string, string> FlatColors = new()
         {
-            ["shelf"] = "#9a6c82", ["table"] = "#9a6c82",
+            ["shelf"] = "#a0704a", ["table"] = "#a0704a",
         };
 
         [MenuItem("Potion Shop/Art/Apply Cozy Workshop Look")]

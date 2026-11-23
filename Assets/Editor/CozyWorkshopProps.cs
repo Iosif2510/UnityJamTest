@@ -30,6 +30,10 @@ namespace PotionShop.EditorTools
             ["WoodenDoor"] = 2.15f, ["Fireplace"] = 1.65f, ["Chandelier"] = 0.75f, ["DryingRack"] = 0.65f,
         };
 
+        // Meshy models whose own vertex normals are smoothed across hard edges, which shows as dark streaks
+        // (the round door's planks); Unity recalculates their normals with this smoothing angle instead.
+        private static readonly Dictionary<string, float> RecalculateNormals = new() { ["WoodenDoor"] = 30f };
+
         private const float RopeTop = 6.5f; // above the roof framing, so ropes disappear into it
 
         private struct Spot
@@ -230,12 +234,19 @@ namespace PotionShop.EditorTools
 
             foreach (string name in Sizes.Keys)
             {
-                if (AssetImporter.GetAtPath($"{ModelFolder}/{name}/{name}.fbx") is ModelImporter model &&
-                    (model.materialImportMode != ModelImporterMaterialImportMode.None || model.importAnimation))
+                if (AssetImporter.GetAtPath($"{ModelFolder}/{name}/{name}.fbx") is ModelImporter model)
                 {
-                    model.materialImportMode = ModelImporterMaterialImportMode.None;
-                    model.importAnimation = false;
-                    model.SaveAndReimport();
+                    bool recalc = RecalculateNormals.TryGetValue(name, out float angle);
+                    var normals = recalc ? ModelImporterNormals.Calculate : ModelImporterNormals.Import;
+                    if (model.materialImportMode != ModelImporterMaterialImportMode.None || model.importAnimation ||
+                        model.importNormals != normals || (recalc && !Mathf.Approximately(model.normalSmoothingAngle, angle)))
+                    {
+                        model.materialImportMode = ModelImporterMaterialImportMode.None;
+                        model.importAnimation = false;
+                        model.importNormals = normals;
+                        if (recalc) model.normalSmoothingAngle = angle;
+                        model.SaveAndReimport();
+                    }
                 }
                 if (AssetImporter.GetAtPath($"{ModelFolder}/{name}/{name}_normal.png") is TextureImporter normal &&
                     normal.textureType != TextureImporterType.NormalMap)
