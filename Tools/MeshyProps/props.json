@@ -56,6 +56,38 @@
     "HangingPlant": {
       "style": "cozy",
       "prompt": "A single round clay flower pot hanging from three ropes, with lush trailing ivy leaves spilling over the rim, soft teal-green leaves, terracotta pot."
+    },
+    "Workbench": {
+      "style": "cozy",
+      "prompt": "A single sturdy apothecary workbench table with thick rounded wooden top, chunky legs, a low shelf underneath holding two baskets, mauve brown wood, empty table top."
+    },
+    "Bookcase": {
+      "style": "cozy",
+      "prompt": "A single tall chunky bookcase with four shelves packed with leaning colorful books, a few jars and a small potted plant, rounded wooden frame with a little arched top, mauve brown wood."
+    },
+    "Bench": {
+      "style": "cozy",
+      "prompt": "A single low wooden bench with rounded thick plank seat and four short stubby legs, a soft lavender cushion on one end, mauve brown wood, empty seat."
+    },
+    "ApothecaryCabinet": {
+      "style": "cozy",
+      "prompt": "A single small apothecary cabinet with many little square drawers with round brass knobs and tiny paper labels, rounded wooden frame, mauve brown wood, flat empty top."
+    },
+    "WoodenDoor": {
+      "style": "cozy",
+      "prompt": "A single rounded arched wooden door in a thick stone frame for a cottage wall, vertical planks, black iron hinges and a ring handle, a small wreath of dried herbs hanging on it, flat back."
+    },
+    "Fireplace": {
+      "style": "cozy",
+      "prompt": "A single small cozy stone fireplace for a wall, rounded chunky stones, an arched opening with logs and soft glowing embers inside, a wooden mantel shelf on top, flat back."
+    },
+    "Chandelier": {
+      "style": "cozy",
+      "prompt": "A single round wrought iron hanging chandelier ring holding six short cream candles with small flames, hanging from three short chains joined at a top hook, a few ivy leaves wrapped around the ring."
+    },
+    "DryingRack": {
+      "style": "cozy",
+      "prompt": "A single hanging wooden herb drying rack: one horizontal wooden pole hung from two ropes, with five small bundles of dried herbs and flowers hanging upside down from it in sage green, lavender and dusty pink."
     }
   },
   "styles": {
