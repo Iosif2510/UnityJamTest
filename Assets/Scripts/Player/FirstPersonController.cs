@@ -200,7 +200,9 @@ namespace PotionShop
             float step = armJigglePhase;
             var bob = new Vector3(Mathf.Sin(step) * headBobAmplitude.y, -Mathf.Abs(Mathf.Sin(step)) * headBobAmplitude.x, 0f)
                 * headBobWeight;
-            cameraTarget.localPosition = cameraTargetRestPosition + bob + kickOffset;
+            if (GameSettings.CalmCamera)
+                bob = Vector3.zero;
+            cameraTarget.localPosition = cameraTargetRestPosition + bob + (GameSettings.CalmCamera ? Vector3.zero : kickOffset);
         }
 
         private void UpdateHeldItemWiggle(float speedRatio)
@@ -311,10 +313,10 @@ namespace PotionShop
 
             // Pointer delta is already per-frame; stick values are rates and need deltaTime.
             bool isPointer = lookAction.action.activeControl?.device is Pointer;
-            float scale = isPointer ? mouseSensitivity : gamepadSensitivity * Time.deltaTime;
+            float scale = (isPointer ? mouseSensitivity : gamepadSensitivity * Time.deltaTime) * GameSettings.MouseSpeed;
 
             float yawDelta = look.x * scale;
-            float pitchDelta = look.y * scale * (invertY ? 1f : -1f);
+            float pitchDelta = look.y * scale * (invertY != GameSettings.InvertY ? 1f : -1f);
 
             pitch = Mathf.Clamp(pitch + pitchDelta, -maxPitch, maxPitch);
             cameraTarget.localRotation = Quaternion.Euler(pitch, 0f, 0f);

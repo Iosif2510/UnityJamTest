@@ -25,7 +25,7 @@ namespace PotionShop
             // a slow wave over the phrase plus a small wander, so neighbouring syllables don't repeat exactly
             drift = UnityEngine.Mathf.Clamp(drift + UnityEngine.Random.Range(-0.025f, 0.025f), -0.06f, 0.06f);
             float melody = 1f + 0.05f * UnityEngine.Mathf.Sin(syllable * 0.9f) + drift + (questionEnd ? 0.12f : 0f);
-            GameSfx.Play($"Voice_{vowel}_{onset}", 0.5f, pitch * melody, 0.02f);
+            GameSfx.PlayVoice($"Voice_{vowel}_{onset}", 0.5f, pitch * melody, 0.02f);
         }
 
         /// <summary>The vowel (a e i o u) and onset (p n f 0) of a character, or false for a silent one.</summary>

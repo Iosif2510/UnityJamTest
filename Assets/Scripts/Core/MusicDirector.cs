@@ -108,9 +108,10 @@ namespace PotionShop
                 hurry.Play();
             else if (hurryMix <= 0f && hurry.isPlaying)
                 hurry.Stop(); // the next rush starts from the top again
-            hurry.volume = hurryVolume * hurryMix;
+            float music = GameSettings.Music;
+            hurry.volume = hurryVolume * hurryMix * music;
 
-            float keep = 1f - hurryMix;
+            float keep = (1f - hurryMix) * music;
             baseMusic.volume = baseVolume * keep;
             if (sceneMusic != null)
                 sceneMusic.volume = sceneVolume * keep;

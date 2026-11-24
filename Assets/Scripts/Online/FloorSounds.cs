@@ -63,7 +63,7 @@ namespace PotionShop.Online
             var clip = GameSfx.Load(sound);
             if (clip == null) return;
             source.pitch = 0.9f * (1f + UnityEngine.Random.Range(-0.05f, 0.05f));
-            source.PlayOneShot(clip, Volume);
+            source.PlayOneShot(clip, Volume * GameSettings.Effects);
         }
 
         private void Update()

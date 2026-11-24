@@ -38,7 +38,7 @@ namespace PotionShop
                 tone.clip = clip;
                 tone.loop = true;
                 tone.spatialBlend = 0f;
-                tone.volume = RoomToneVolume;
+                tone.volume = RoomToneVolume * GameSettings.Effects;
                 tone.Play();
             }
         }

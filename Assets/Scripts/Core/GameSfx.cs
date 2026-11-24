@@ -37,8 +37,16 @@ namespace PotionShop
 
         /// <param name="name">File name in Resources/Sfx, e.g. "StampThud".</param>
         /// <param name="pitchJitter">Random pitch spread, so repeated sounds don't feel mechanical.</param>
-        public static void Play(string name, float volume = 1f, float pitch = 1f, float pitchJitter = 0f)
+        public static void Play(string name, float volume = 1f, float pitch = 1f, float pitchJitter = 0f) =>
+            PlayScaled(name, volume * GameSettings.Effects, pitch, pitchJitter);
+
+        /// <summary>Like <see cref="Play"/>, for the customers' murmured voices (their own volume setting).</summary>
+        public static void PlayVoice(string name, float volume = 1f, float pitch = 1f, float pitchJitter = 0f) =>
+            PlayScaled(name, volume * GameSettings.Voices, pitch, pitchJitter);
+
+        private static void PlayScaled(string name, float volume, float pitch, float pitchJitter)
         {
+            if (volume <= 0f) return;
             var player = Instance;
             var clip = player.Clip(name);
             if (clip == null) return;

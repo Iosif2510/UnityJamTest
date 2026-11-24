@@ -92,7 +92,7 @@ namespace PotionShop
             if (sound == null) return;
             source.transform.position = at;
             source.pitch = pitch;
-            source.PlayOneShot(sound, volume);
+            source.PlayOneShot(sound, volume * GameSettings.Effects);
         }
 
         private AudioSource Loop(string name, Vector3 at, string clip, float volume, float near, float far)
@@ -121,7 +121,7 @@ namespace PotionShop
             source.minDistance = near;
             source.maxDistance = far;
             source.dopplerLevel = 0f;
-            source.volume = volume;
+            source.volume = volume * GameSettings.Effects;
             return source;
         }
     }

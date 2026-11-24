@@ -8,7 +8,7 @@ namespace PotionShop
 {
     /// <summary>
     /// The title screen's menu under the logo: 혼자하기 walks to the counter, 함께하기 opens the online co-op window,
-    /// 옵션 opens a small settings sheet (volume, full screen, memo language) and 게임끄기 asks once before quitting.
+    /// 옵션 opens the settings on tabs with the credits (<see cref="OptionsWindow"/>) and 게임끄기 asks once before quitting.
     /// The four buttons are copies of <see cref="template"/>, the counter's own wooden button, centred under the
     /// logo on a soft dark pad (게임끄기 a little apart and in red); each shows clearly when it is pointed at (<see cref="TitleMenuItem"/>) and the arrow keys walk them.
     /// </summary>
@@ -22,8 +22,7 @@ namespace PotionShop
 
         private GameObject options;
         private GameObject quitConfirm;
-        private MemoLanguagePicker languages;
-        private Toggle fullScreen;
+        private OptionsWindow optionsWindow;
         private bool leaving;
         private readonly System.Collections.Generic.List<TitleMenuItem> items = new();
 
@@ -161,11 +160,7 @@ namespace PotionShop
 
         private void Show(GameObject window, bool show)
         {
-            if (show)
-            {
-                languages?.Refresh();
-                if (fullScreen != null) fullScreen.SetIsOnWithoutNotify(Screen.fullScreen);
-            }
+            if (show) optionsWindow?.Refresh();
             window.SetActive(show);
             GameSfx.Play("Paper", 0.6f, show ? 1.05f : 0.95f, 0.05f);
             if (show) OrderHudMotion.Bounce(window.transform.GetChild(0), 1.04f);
@@ -191,37 +186,8 @@ namespace PotionShop
         private GameObject BuildOptions(RectTransform root, Font font)
         {
             var holder = new GameObject[1];
-            var card = Window(root, "Options", new Vector2(860f, 500f), holder);
-            OnlineUi.Label(Row(card, 56f, 60f), Loc.T("옵션"), 42, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-
-            VolumeSlider.Build(Row(card, 150f, 56f), font, OnlineUiParts.Ink);
-
-            // full screen on or off, as a ticked box
-            var row = Row(card, 240f, 56f);
-            OnlineUi.Label(OnlineUi.Rect("Label", row, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(240f, 0f)),
-                Loc.T("전체 화면"), 26, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            // an ink rim drawn behind the cream box (a child would draw over it)
-            var rim = OnlineUi.Box("Rim", row, new Vector2(0f, 0.5f), new Vector2(247f, 0f), new Vector2(54f, 54f));
-            rim.pivot = new Vector2(0f, 0.5f);
-            OnlineUi.Fill(rim, OnlineUiParts.Ink, false);
-            var box = OnlineUi.Box("Box", row, new Vector2(0f, 0.5f), new Vector2(250f, 0f), new Vector2(48f, 48f));
-            box.pivot = new Vector2(0f, 0.5f);
-            var boxImage = OnlineUi.Fill(box, new Color(0.99f, 0.95f, 0.87f));
-            var tick = OnlineUi.Rect("Tick", box, Vector2.zero, Vector2.one, new Vector2(10f, 10f), new Vector2(-10f, -10f));
-            var tickImage = OnlineUi.Fill(tick, OnlineUiParts.StampRed, false);
-            fullScreen = box.gameObject.AddComponent<Toggle>();
-            fullScreen.targetGraphic = boxImage;
-            fullScreen.graphic = tickImage;
-            fullScreen.SetIsOnWithoutNotify(Screen.fullScreen);
-            fullScreen.onValueChanged.AddListener(on =>
-            {
-                Screen.fullScreenMode = on ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
-                GameSfx.Play("Tick", 0.8f);
-            });
-
-            OnlineUi.Label(Row(card, 330f, 40f), Loc.IsKorean ? "언어 · Language" : Loc.T("언어"), 24, font, OnlineUiParts.Ink,
-                TextAnchor.MiddleLeft);
-            languages = new MemoLanguagePicker(Row(card, 380f, 64f), font);
+            var card = Window(root, "Options", new Vector2(1040f, 640f), holder);
+            optionsWindow = new OptionsWindow(card, font);
             return holder[0];
         }
 
