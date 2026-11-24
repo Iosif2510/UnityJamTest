@@ -80,9 +80,18 @@ namespace PotionShop
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (revealing && double.IsPositiveInfinity(skippedAt) && !eventData.dragging &&
-                eventData.button == PointerEventData.InputButton.Left)
-                skippedAt = Time.unscaledTimeAsDouble - startedAt;
+            // A click hurries the line along (twice as fast) instead of finishing it at once, so nothing is missed.
+            if (revealing && !hurried && !eventData.dragging && eventData.button == PointerEventData.InputButton.Left)
+                hurried = true;
+        }
+
+        private const double HurryRate = 2.0;
+        private bool hurried;
+
+        /// <summary>While hurried, the line's clock runs <see cref="HurryRate"/> times as fast.</summary>
+        private void Hurry()
+        {
+            if (hurried && revealing) startedAt -= Time.unscaledDeltaTime * (HurryRate - 1.0);
         }
 
         private async UniTask Reveal(DialogueTimeline line, CancellationToken token)
@@ -91,6 +100,7 @@ namespace PotionShop
             ClearLine();
             activeLine = line;
             skippedAt = double.PositiveInfinity;
+            hurried = false;
             lastScrolledIndex = -1;
             finalFrameDrawn = false;
             revealing = true;
@@ -139,7 +149,10 @@ namespace PotionShop
             try
             {
                 while (activeLine == line && Time.unscaledTimeAsDouble - startedAt < Math.Min(line.Duration, skippedAt))
+                {
                     await UniTask.Yield(PlayerLoopTiming.Update, token);
+                    Hurry();
+                }
                 if (activeLine != line) throw new OperationCanceledException();
                 revealing = false;
                 Draw(Time.unscaledTimeAsDouble - startedAt);
@@ -156,7 +169,9 @@ namespace PotionShop
             var text = activeLine.Text;
             var starts = activeLine.CharStarts;
             int newest = -1;
-            while (voicedChars < text.Length && starts[voicedChars] <= elapsed) newest = voicedChars++;
+            // starts can be shorter than the text (it counts text elements, not chars)
+            int count = Mathf.Min(text.Length, starts.Count);
+            while (voicedChars < count && starts[voicedChars] <= elapsed) newest = voicedChars++;
             // several letters in one frame (or very fast text): voice only the latest, and not too often
             if (newest < 0 || Time.unscaledTimeAsDouble - lastVoiced < MinVoiceGap) return;
             if (!DialogueVoice.Voiced(text[newest], out _, out _)) return;

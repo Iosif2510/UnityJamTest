@@ -48,6 +48,9 @@ namespace PotionShop
             voice.PlayOneShot(clip, volume);
         }
 
+        /// <summary>The clip itself, for sounds played through another source (e.g. muffled, from another floor).</summary>
+        public static AudioClip Load(string name) => Instance.Clip(name);
+
         private static GameSfx Instance
         {
             get

@@ -39,6 +39,7 @@ namespace PotionShop.Online
                     root.AddComponent<RoleLobby>();
                     root.AddComponent<VoiceChat>();
                     root.AddComponent<NarratorSignal>();
+                    root.AddComponent<FloorSounds>();
                 }
                 return instance;
             }

@@ -35,6 +35,7 @@ namespace PotionShop
             main.startColor = tint ?? Liquid;
             splash.Emit(16);
             GameSfx.Play("Splash", 0.55f, 1f, 0.12f);
+            Online.FloorSounds.Send("Splash");
         }
 
         /// <summary>
@@ -66,6 +67,7 @@ namespace PotionShop
             sparkle.transform.position = surface;
             sparkle.Emit(36);
             GameSfx.Play("BrewDone", 0.8f);
+            Online.FloorSounds.Send("BrewDone");
             // The pot gives a small hop.
             var pot = transform;
             var scale = pot.localScale;

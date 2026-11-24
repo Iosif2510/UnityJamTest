@@ -111,6 +111,7 @@ namespace PotionShop.Online
             tabIndex = index;
             RefreshTabs();
             GameSfx.Play("PageTurn", 0.7f, 0.9f, 0.06f);
+            FloorSounds.Send("PageTurn");
             // A tab with a single sheet opens it straight away; the potion memos are dealt onto the desk first.
             if (tabs[index].Sheets.Length == 1)
                 Unfold(0);
@@ -190,7 +191,7 @@ namespace PotionShop.Online
                 float pitch = i == 0 ? 0.95f : 1.08f;
                 LMotion.Create(0f, 1f, 0.42f).WithDelay(i * 0.06f).WithEase(Ease.OutCubic)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                    .WithOnComplete(() => { if (sounds) GameSfx.Play("CardDeal", 0.55f, pitch, 0.05f); })
+                    .WithOnComplete(() => { if (sounds) { GameSfx.Play("CardDeal", 0.55f, pitch, 0.05f); FloorSounds.Send("CardDeal"); } })
                     .Bind(t =>
                     {
                         card.anchoredPosition = Vector2.LerpUnclamped(from, target, t);
@@ -260,6 +261,7 @@ namespace PotionShop.Online
             int index = sheets[page];
             seen.Add(index);
             GameSfx.Play("PageTurn", 0.8f, 1.05f, 0.08f);
+            FloorSounds.Send("PageTurn");
             sheet.Show(index, easy);
             sheet.Refresh();
             SetUnfolded(true);
