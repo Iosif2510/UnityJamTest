@@ -3,14 +3,14 @@ using UnityEngine;
 namespace PotionShop
 {
     /// <summary>
-    /// A cold cellar mist lying low along the floor: broad, faint puffs creeping slowly about. By the fireplace and
+    /// A cellar haze lying low along the floor: broad, barely-there puffs creeping slowly about. By the fireplace and
     /// the cauldron the warmth lifts it away, so the hearth and the brew stand in clear air.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class FloorMist : MonoBehaviour
     {
         private static readonly Vector3 Area = new(8.0f, 0.15f, 12.4f);
-        private const float Alpha = 0.09f, WarmRadius = 1.9f;
+        private const float Alpha = 0.035f, WarmRadius = 1.9f;
 
         private ParticleSystem mist;
         private ParticleSystem.Particle[] buffer;
@@ -34,10 +34,11 @@ namespace PotionShop
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.02f, 0.06f);
             main.startSize = new ParticleSystem.MinMaxCurve(2.4f, 4.2f);
             main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
-            main.startColor = new Color(0.78f, 0.8f, 0.9f, Alpha);
-            main.maxParticles = 90;
+            // dusty and warm like the room, not a cold white (that read as a snowy map)
+            main.startColor = new Color(0.7f, 0.6f, 0.52f, Alpha);
+            main.maxParticles = 60;
             var emission = mist.emission;
-            emission.rateOverTime = 5f;
+            emission.rateOverTime = 3.2f;
             var shape = mist.shape;
             shape.shapeType = ParticleSystemShapeType.Box;
             shape.scale = Area;

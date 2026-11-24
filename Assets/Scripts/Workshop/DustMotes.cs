@@ -21,9 +21,9 @@ namespace PotionShop
             if (lights != null)
                 foreach (Transform lamp in lights)
                     if (lamp.name.StartsWith("Lantern Light") || lamp.name == "Cauldron Glow")
-                        clouds.Add(Cloud(lamp, lamp.name == "Cauldron Glow" ? 1.3f : 1.1f, 26));
+                        clouds.Add(Cloud(lamp, lamp.name == "Cauldron Glow" ? 1.3f : 1.1f, 9));
             var chandelier = CellarAtmosphere.Find(scene, "Chandelier Light");
-            if (chandelier != null) clouds.Add(Cloud(chandelier, 2.2f, 50, -1.8f));
+            if (chandelier != null) clouds.Add(Cloud(chandelier, 2.2f, 16, -1.8f));
         }
 
         private ParticleSystem Cloud(Transform lamp, float radius, int count, float drop = 0f)
@@ -34,8 +34,9 @@ namespace PotionShop
             main.loop = true;
             main.startLifetime = new ParticleSystem.MinMaxCurve(7f, 12f);
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.005f, 0.03f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.014f, 0.032f);
-            main.startColor = new Color(1f, 0.9f, 0.72f, 0.75f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.01f, 0.024f);
+            // amber specks catching the lamplight (white ones read as snow)
+            main.startColor = new Color(1f, 0.78f, 0.5f, 0.5f);
             main.maxParticles = count;
             main.gravityModifier = 0.002f;
             var emission = ps.emission;

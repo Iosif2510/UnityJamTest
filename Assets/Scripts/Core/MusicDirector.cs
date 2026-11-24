@@ -71,13 +71,32 @@ namespace PotionShop
             }
             baseVolume = volume;
 
-            sceneMusic = null;
-            foreach (var source in FindObjectsByType<AudioSource>(FindObjectsSortMode.None))
-                if (source.gameObject.scene == scene && source.clip != null && source.clip.name == CounterMusic)
+            // The shop's music rides on the round, which outlives scenes: find that copy (a second one comes with each
+            // visit to the counter and is thrown away at once, so keep it quiet). It plays at the counter and in the
+            // storage room, and pauses wherever a scene has its own music (the title, the loft).
+            AudioSource shop = null;
+            var copies = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+            foreach (var source in copies)
+                if (source.clip != null && source.clip.name == CounterMusic &&
+                    (shop == null || source.gameObject.scene.name == "DontDestroyOnLoad"))
+                    shop = source;
+            foreach (var source in copies)
+                if (source != shop && source.clip != null && source.clip.name == CounterMusic)
+                    source.Stop();
+            if (shop != sceneMusic)
+            {
+                sceneMusic = shop;
+                if (shop != null) sceneVolume = shop.volume;
+            }
+            if (shop != null)
+            {
+                if (next != null) shop.Pause();
+                else if (!shop.isPlaying)
                 {
-                    sceneMusic = source;
-                    sceneVolume = source.volume;
+                    shop.UnPause();
+                    if (!shop.isPlaying) shop.Play();
                 }
+            }
         }
 
         private void Update()
