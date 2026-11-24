@@ -40,6 +40,8 @@ namespace PotionShop.Data
         public RoundTuning Tuning { get; }
         internal AppearanceBuckets Appearances { get; }
         public int AppearanceCountForInk(int inkNumber) => Appearances.Count(inkNumber);
+        /// <summary>Every customer who can come in.</summary>
+        public IReadOnlyList<string> SpawnCustomerIds => Appearances.SpawnCustomerIds;
         public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue { get; internal set; }
         internal Dictionary<string, DialogueOption> SymptomFallbacks { get; } = new(StringComparer.Ordinal);
         internal IReadOnlyDictionary<string, string> ReactionLines { get; set; }

@@ -21,6 +21,11 @@ namespace PotionShop
         private bool useDialogueApi;
 
         private readonly System.Random seedSource = new();
+        // Every customer comes once before anyone comes again, in a fresh shuffle each time round, and the same
+        // face never opens a round twice in a row. (Picking an ink first made the few customers of a rare ink
+        // show up eight times as often as others.)
+        private readonly Queue<string> customerBag = new();
+        private string lastCustomerId;
         private LoadedCatalog loadedCatalog;
         private string previousDiseaseId;
         private double deadline;
@@ -78,6 +83,25 @@ namespace PotionShop
                 LoadSceneIfNeeded(CounterScene);
         }
 
+        /// <summary>The next customer from the shuffle bag, refilled and reshuffled when empty.</summary>
+        private string NextCustomer()
+        {
+            if (customerBag.Count == 0)
+            {
+                var ids = new List<string>(loadedCatalog.SpawnCustomerIds);
+                for (int i = ids.Count - 1; i > 0; i--)
+                {
+                    int j = seedSource.Next(i + 1);
+                    (ids[i], ids[j]) = (ids[j], ids[i]);
+                }
+                // the last face of the old bag doesn't open the new one
+                if (ids.Count > 1 && ids[0] == lastCustomerId)
+                    (ids[0], ids[ids.Count - 1]) = (ids[ids.Count - 1], ids[0]);
+                foreach (var id in ids) customerBag.Enqueue(id);
+            }
+            return lastCustomerId = customerBag.Dequeue();
+        }
+
         public bool BeginOrder()
         {
             if (Phase != RoundPhase.Waiting)
@@ -86,9 +110,9 @@ namespace PotionShop
             loadedCatalog ??= CatalogLoader.Load(catalog);
 #if UNITY_EDITOR
             CurrentOrder = EditorOrderFactory != null ? EditorOrderFactory(loadedCatalog, previousDiseaseId) :
-                OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId);
+                OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId, NextCustomer());
 #else
-            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId);
+            CurrentOrder = OrderGenerator.Generate(loadedCatalog, seedSource.Next(), previousDiseaseId, NextCustomer());
 #endif
             previousDiseaseId = CurrentOrder.Disease.Id;
             if (useDialogueApi && CurrentOrder.Voice != null)

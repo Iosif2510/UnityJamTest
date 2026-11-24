@@ -64,6 +64,16 @@ namespace PotionShop.Data
             return CreateOrder(catalog, seed, previousDiseaseId, random, catalog.Appearances.Choose(random));
         }
 
+        /// <summary>An order from <paramref name="customerId"/>, in one of their looks.</summary>
+        public static GeneratedOrder Generate(LoadedCatalog catalog, int seed, string previousDiseaseId, string customerId)
+        {
+            if (catalog == null)
+                throw new ArgumentNullException(nameof(catalog));
+
+            var random = new Random(seed);
+            return CreateOrder(catalog, seed, previousDiseaseId, random, catalog.Appearances.ChooseFor(random, customerId));
+        }
+
 #if UNITY_EDITOR
         public static GeneratedOrder GenerateFixed(LoadedCatalog catalog, int seed, string previousDiseaseId,
             string customerId, AppearanceValue? hairColor, AppearanceValue? eyeColor)

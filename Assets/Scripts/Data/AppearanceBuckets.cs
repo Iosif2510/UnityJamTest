@@ -67,6 +67,19 @@ namespace PotionShop.Data
 
         internal int Count(int inkNumber) => spawnBuckets[inkNumber - 1].Count;
 
+        /// <summary>Every customer who can come in, in a stable order.</summary>
+        internal IReadOnlyList<string> SpawnCustomerIds => availableSpawnBuckets.SelectMany(bucket => bucket)
+            .Select(candidate => candidate.Customer.Id).Distinct().OrderBy(id => id, StringComparer.Ordinal).ToArray();
+
+        /// <summary>One of <paramref name="customerId"/>'s looks, any of them equally likely.</summary>
+        internal Candidate ChooseFor(Random random, string customerId)
+        {
+            var looks = availableSpawnBuckets.SelectMany(bucket => bucket)
+                .Where(candidate => candidate.Customer.Id == customerId).ToArray();
+            if (looks.Length == 0) throw new InvalidOperationException($"{customerId} cannot come in.");
+            return looks[random.Next(looks.Length)];
+        }
+
         internal Candidate Choose(Random random)
         {
             var bucket = availableSpawnBuckets[random.Next(availableSpawnBuckets.Length)];
