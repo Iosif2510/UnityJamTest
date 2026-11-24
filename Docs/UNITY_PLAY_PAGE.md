@@ -2,7 +2,9 @@
 
 ## 제목
 
-시끄러운 포션공방 (Noisy Potion Workshop)
+The Noisy Potion Workshop (시끄러운 포션공방)
+
+Unity Play는 전 세계 사용자가 보는 곳이라 영어 제목을 앞에 둡니다(게임 안 영어 로고와 같은 이름).
 
 ## 짧은 설명 (한 줄)
 
@@ -53,4 +55,6 @@ co-op, multiplayer, puzzle, communication, potion, fantasy, cozy, webgl
 
 ## 썸네일
 
-`Docs/UnityPlay/thumbnail.png` (1280×720, 타이틀 화면)
+- `Docs/UnityPlay/thumbnail_en.png` (1280×720, 영어 로고, 올릴 때 이것을 씀)
+- `Docs/UnityPlay/thumbnail_ko.png` (1280×720, 한국어 로고, 국내 홍보용)
+- 다시 만들 때: 접객 씬 레이어(배경·벽·닫힌 커튼·테이블) 위에 로고를 얹은 것
