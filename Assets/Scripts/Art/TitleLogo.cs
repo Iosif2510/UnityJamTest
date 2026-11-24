@@ -37,6 +37,16 @@ namespace PotionShop
         {
             rect = (RectTransform)transform;
             rest = rect.anchoredPosition;
+            // the title written in the game's language (Resources/Localization/Logo), Korean as drawn otherwise
+            if (!Loc.IsKorean && TryGetComponent(out Image logo))
+            {
+                var art = Resources.Load<Texture2D>("Localization/Logo/logo_" + Loc.Language);
+                if (art != null)
+                {
+                    logo.sprite = Sprite.Create(art, new Rect(0, 0, art.width, art.height), new Vector2(0.5f, 0.5f), 100f);
+                    logo.preserveAspect = true;
+                }
+            }
             // the glint only shows over the logo's own shape
             if (!TryGetComponent(out Mask _)) gameObject.AddComponent<Mask>().showMaskGraphic = true;
             shine = new GameObject("Shine", typeof(RectTransform), typeof(Image)).GetComponent<RectTransform>();

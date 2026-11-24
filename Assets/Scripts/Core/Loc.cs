@@ -85,6 +85,27 @@ namespace PotionShop
         /// <summary><see cref="T"/> of a format string ({0}, {1}...), then filled in.</summary>
         public static string F(string koreanFormat, params object[] args) => string.Format(T(koreanFormat), args);
 
+        private static readonly Dictionary<string, string> StampKeys = new(StringComparer.Ordinal)
+        {
+            ["훌륭한"] = "great", ["그럭저럭"] = "okay", ["stamp-communication"] = "talk", ["stamp-slow"] = "slow",
+        };
+        private static readonly Dictionary<string, Sprite> stamps = new(StringComparer.Ordinal);
+
+        /// <summary>
+        /// A result stamp drawn with Korean wording, in the current language (Resources/Localization/Stamps);
+        /// the stamp itself in Korean or when there is no drawing for it.
+        /// </summary>
+        public static Sprite Stamp(Sprite korean)
+        {
+            if (korean == null || IsKorean || !StampKeys.TryGetValue(korean.name, out string key)) return korean;
+            string path = $"Localization/Stamps/{key}_{Language}";
+            if (stamps.TryGetValue(path, out var known) && known != null) return known;
+            var art = Resources.Load<Texture2D>(path);
+            if (art == null) return korean;
+            return stamps[path] = Sprite.Create(art, new Rect(0, 0, art.width, art.height), new Vector2(0.5f, 0.5f),
+                korean.pixelsPerUnit);
+        }
+
         /// <summary>Whether the table knows <paramref name="korean"/> (for texts found in the scenes).</summary>
         public static bool Has(string korean)
         {

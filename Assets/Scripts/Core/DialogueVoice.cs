@@ -61,6 +61,16 @@ namespace PotionShop
                 onset = "aeiou".IndexOf(lower) >= 0 ? '0' : "mnlr".IndexOf(lower) >= 0 ? 'n' : "sfhzvx".IndexOf(lower) >= 0 ? 'f' : 'p';
                 return true;
             }
+            // kana and Chinese characters: each one a syllable, its sound picked from the character so a word
+            // keeps the same murmur every time it is said
+            bool kana = c >= 'ぁ' && c <= 'ヺ' && c != '・';
+            bool han = c >= '一' && c <= '鿿';
+            if (kana || han)
+            {
+                vowel = "aeiou"[c % 5];
+                onset = "pnf0"[(c >> 3) % 4];
+                return true;
+            }
             if (char.IsDigit(c))
             {
                 vowel = "aeiou"[c % 5];

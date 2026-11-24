@@ -8,7 +8,7 @@
 // Re-running with the same --out keeps valid entries and only fills the missing or invalid ones.
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { keys, symptomTargetLength, validateEntry } from './validate.mjs';
+import { keys, limitsFor, symptomTargetLength, validateEntry } from './validate.mjs';
 
 const args = process.argv.slice(2);
 const option = name => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
@@ -16,12 +16,17 @@ const model = option('--model');
 const outPath = option('--out');
 const attempts = Number(option('--attempts') ?? 3);
 const parallel = Number(option('--parallel') ?? 4);
+const lang = option('--lang') ?? 'ko';
+const limits = limitsFor(lang);
+const targetLength = lang === 'en' ? 450 : symptomTargetLength;
 if (!model || !outPath) { console.error('--model and --out are required'); process.exit(2); }
 const key = process.env.OPENAI_API_KEY?.trim();
 if (!key) { console.error('OPENAI_API_KEY is not set'); process.exit(2); }
 
 const inputs = JSON.parse(readFileSync(new URL('./inputs.json', import.meta.url), 'utf8'));
-const prompt = readFileSync(new URL('../OrderDialogueRelay/order-dialogue.ko.txt', import.meta.url), 'utf8').trim();
+const prompt = readFileSync(new URL(`../OrderDialogueRelay/order-dialogue.${lang}.txt`, import.meta.url), 'utf8').trim();
+// Other languages keep the Korean character sheets as input and add their own disease name and banned words.
+const overlay = lang === 'ko' ? {} : JSON.parse(readFileSync(new URL(`./diseases.${lang}.json`, import.meta.url), 'utf8'));
 const format = {
   type: 'json_schema',
   name: 'order_dialogue',
@@ -36,14 +41,14 @@ const format = {
 const promptRevision = createHash('sha256').update(prompt).update(JSON.stringify(format)).digest('hex').slice(0, 16);
 
 const characters = new Map(inputs.characters.map(character => [character.code, character]));
-const diseases = new Map(inputs.diseases.map(disease => [disease.id, disease]));
+const diseases = new Map(inputs.diseases.map(disease => [disease.id, { ...disease, ...(overlay[disease.id] ?? {}) }]));
 const pairs = args.includes('--all')
   ? inputs.characters.flatMap(character => inputs.diseases.map(disease => [character.code, disease.id]))
   : (option('--pairs') ?? '').split(',').filter(Boolean).map(pair => pair.split(':'));
 if (!pairs.length) { console.error('give --pairs CODE:DIS_xx,... or --all'); process.exit(2); }
 
 const table = existsSync(outPath) ? JSON.parse(readFileSync(outPath, 'utf8'))
-  : { schemaVersion: 1, generator: { provider: 'openai', model, promptRevision }, entries: {} };
+  : { schemaVersion: 1, generator: { provider: 'openai', model, promptRevision, lang }, entries: {} };
 const usage = { inputTokens: 0, outputTokens: 0, calls: 0 };
 
 /** The same user message the runtime relay sent: one customer, one disease, the fallback lines as examples. */
@@ -53,7 +58,7 @@ export function orderFor(character, disease) {
     character,
     disease: diseaseInput,
     examples: { symptom: exampleSymptom, reactions: inputs.exampleReactions },
-    symptomTargetLength,
+    symptomTargetLength: targetLength,
   };
 }
 
@@ -90,13 +95,13 @@ async function fill([code, diseaseId]) {
   const character = characters.get(code);
   const disease = diseases.get(diseaseId);
   if (!character || !disease) return `${id}: unknown character or disease`;
-  if (table.entries[id] && !validateEntry(table.entries[id], disease).errors.length) return `${id}: kept`;
+  if (table.entries[id] && !validateEntry(table.entries[id], disease, limits).errors.length) return `${id}: kept`;
 
   let last = '';
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const lines = await generate(character, disease);
-      const { errors } = validateEntry(lines, disease);
+      const { errors } = validateEntry(lines, disease, limits);
       if (!errors.length) { table.entries[id] = lines; return `${id}: ok (attempt ${attempt})`; }
       last = errors.join('; ');
     } catch (error) { last = error.message; }

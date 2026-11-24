@@ -18,7 +18,12 @@ const squash = text => text.normalize().replace(/\s+/g, ' ');
 export const length = text => [...new Intl.Segmenter('ko', { granularity: 'grapheme' }).segment(text.trim())].length;
 
 /** Returns { errors, warnings }. An entry with errors must not go into the game. */
-export function validateEntry(entry, disease) {
+/** Length targets per language: [min, max, hard limit]. English needs about twice the characters of Korean. */
+export const limitsFor = lang => lang === 'en'
+  ? { symptom: [360, 560, 700], receive: [60, 130, 200], after: [80, 170, 240] }
+  : { symptom: [symptomTargetLength * 0.8, symptomTargetLength * 1.2, 300], receive: [30, 60, 120], after: [40, 80, 120] };
+
+export function validateEntry(entry, disease, limits = limitsFor('ko')) {
   const errors = [];
   const warnings = [];
   if (!entry || typeof entry !== 'object')
@@ -40,17 +45,17 @@ export function validateEntry(entry, disease) {
   if (/[<>]/.test(visible)) errors.push('symptom: stray or nested tag');
   const flat = squash(visible);
   for (const word of [disease.name, ...disease.bannedWords])
-    if (word && flat.includes(squash(word.trim()))) errors.push(`symptom: contains banned word "${word}"`);
+    if (word && flat.toLowerCase().includes(squash(word.trim()).toLowerCase())) errors.push(`symptom: contains banned word "${word}"`);
   if (answerId.test(visible)) errors.push('symptom: contains an answer id');
-  range('symptom', visible, symptomTargetLength * 0.8, symptomTargetLength * 1.2, 300);
+  range('symptom', visible, ...limits.symptom);
 
   for (const key of reactionKeys) {
     const line = entry[key];
     if (/[<>]/.test(line)) errors.push(`${key}: contains a tag`);
-    if (answerId.test(line) || squash(line).includes(squash(disease.name)))
+    if (answerId.test(line) || squash(line).toLowerCase().includes(squash(disease.name).toLowerCase()))
       errors.push(`${key}: names the disease or an answer id`);
     const receive = key.startsWith('rcv_');
-    range(key, line, receive ? 30 : 40, receive ? 60 : 80, 120);
+    range(key, line, ...(receive ? limits.receive : limits.after));
   }
   return { errors, warnings };
 

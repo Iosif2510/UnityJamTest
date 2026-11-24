@@ -473,7 +473,7 @@ namespace PotionShop
             if (result.TimedOut)
             {
                 await TimeoutMoment.Play(impatience, order, token);
-                await dialogueView.PlayReaction(order.GetReactionLine("timeout"), speed, token, "timeout");
+                await dialogueView.PlayReaction(Loc.T(order.GetReactionLine("timeout")), speed, token, "timeout");
                 await UniTask.Delay(gap, ignoreTimeScale: true, cancellationToken: token);
                 round.CompleteEnding(result);
                 return;

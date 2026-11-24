@@ -89,8 +89,8 @@ namespace PotionShop.Online
                   Loc.F("잉크  {0}", s.InkCorrect ? Loc.T("일치") : Loc.T("불일치")) + "\n" + Loc.T("시간 보너스");
             values.text = $"+{s.IngredientPoints}\n+{s.BottlePoints}\n+{s.InkPoints}\n+{s.TimeBonus}";
             total.text = Loc.F("총점  {0}점", s.Total);
-            stamp.sprite = s.TimedOut ? config.StampSlow : s.Stamp == 2 ? config.StampGreat :
-                s.Stamp == 1 ? config.StampOkay : config.StampSlime;
+            stamp.sprite = Loc.Stamp(s.TimedOut ? config.StampSlow : s.Stamp == 2 ? config.StampGreat :
+                s.Stamp == 1 ? config.StampOkay : config.StampSlime);
             stamp.enabled = stamp.sprite != null;
 
             // The card settles, then the stamp comes down on it.

@@ -107,6 +107,8 @@ namespace PotionShop
             if (Phase != RoundPhase.Waiting)
                 return false;
 
+            // the language may have changed on the title since the last customer
+            if (loadedCatalog != null && loadedCatalog.DialogueLanguage != Loc.Language) loadedCatalog = null;
             loadedCatalog ??= CatalogLoader.Load(catalog);
 #if UNITY_EDITOR
             CurrentOrder = EditorOrderFactory != null ? EditorOrderFactory(loadedCatalog, previousDiseaseId) :

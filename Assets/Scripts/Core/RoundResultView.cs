@@ -35,6 +35,10 @@ namespace PotionShop
             passableStamp.SetActive(false);
             fineBrewStamp.SetActive(false);
             otherStamp.gameObject.SetActive(false);
+            // the stamps' wording in the game's language
+            foreach (var stampImage in new[] { passableStamp, fineBrewStamp })
+                foreach (var picture in stampImage.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+                    picture.sprite = Loc.Stamp(picture.sprite);
             foreach (var row in new[] { ingredients, bottle, ink })
             {
                 row.textWrappingMode = TextWrappingModes.NoWrap; // an answer note may run past the label column
@@ -73,7 +77,7 @@ namespace PotionShop
             await Pop(total.rectTransform, token);
             await BetweenRows(token);
 
-            otherStamp.sprite = result.TimedOut ? timeoutStamp : failureStamp;
+            otherStamp.sprite = Loc.Stamp(result.TimedOut ? timeoutStamp : failureStamp);
             GameObject stamp = result.Stamp switch
             {
                 RoundResult.PassableStamp => passableStamp,
