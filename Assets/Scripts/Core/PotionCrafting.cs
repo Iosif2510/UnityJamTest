@@ -157,7 +157,7 @@ namespace PotionShop
 
             // slap the blank label on
             var label = Piece("Label", bottle, new Vector2(520f, -420f));
-            float labelW = bottleW * 0.8f;
+            float labelW = bottleW * 0.56f;
             label.sizeDelta = new Vector2(labelW, labelW * 325f / 512f);
             var labelImage = label.gameObject.AddComponent<Image>();
             labelImage.sprite = Label;
@@ -177,9 +177,9 @@ namespace PotionShop
 
             // write the potion and who it is for, in the chosen ink
             var inkColour = Color.Lerp(order.InkColour, Color.black, 0.25f);
-            await Write(label, quill, stage, order.Potion, 0.12f, labelW * 0.78f, 54, inkColour, 0.05f, token);
+            await Write(label, quill, stage, order.Potion, 0.12f, labelW * 0.8f, 40, inkColour, 0.05f, token);
             if (!string.IsNullOrEmpty(order.ForWhom))
-                await Write(label, quill, stage, order.ForWhom, -0.2f, labelW * 0.6f, 36, inkColour, 0.04f, token);
+                await Write(label, quill, stage, order.ForWhom, -0.2f, labelW * 0.6f, 27, inkColour, 0.04f, token);
             await Move(quill, new Vector2(980f, 560f), 0.3f, Ease.InQuad, token);
             await Wait(0.25f, token);
 
