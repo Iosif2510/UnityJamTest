@@ -282,6 +282,81 @@ grain = rng.normal(0, 1, len(x))
 scratch = (grain - lowpass(grain, 2200)) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 38 * x))) * np.interp(x, [0, 0.02, 0.1, 0.12], [0, 1, 0.7, 0])
 save("Scribble", scratch, 0.5)
 
+# The storage room's own sounds, heard from where they are (Workshop/CellarAmbience.cs): loops for the fireplace,
+# the simmering cauldron and the lanterns, and one-shots for the cellar itself (drips, a beam, steps upstairs).
+def save_loop(name, x, gain=0.8, blend=0.25):
+    """Seamless: the tail is crossfaded into the head, so the clip can loop without a click."""
+    if ONLY and name not in ONLY:
+        return
+    n = int(SR * blend)
+    head, tail = x[:n].copy(), x[-n:].copy()
+    ramp = np.linspace(0, 1, n)
+    x = x[:-n].copy()
+    x[:n] = head * ramp + tail * (1 - ramp)
+    x = x / (np.max(np.abs(x)) + 1e-9) * gain
+    wavfile.write(OUT / f"{name}.wav", SR, (x * 32767).astype(np.int16))
+    print(name, f"{len(x) / SR:.2f}s loop")
+
+
+# fireplace: a low breathing roar with wood crackles and the odd pop
+x = t(6.25)
+roar = lowpass(lowpass(rng.normal(0, 1, len(x)), 260), 260)
+roar *= 0.75 + 0.25 * np.sin(2 * np.pi * 0.35 * x) * np.sin(2 * np.pi * 0.13 * x + 1)
+crackle = np.zeros(len(x))
+for at in np.sort(rng.uniform(0, 6.2, 70)):
+    i = int(at * SR); n = int(SR * rng.uniform(0.004, 0.02))
+    burst = rng.normal(0, 1, n) * np.exp(-np.arange(n) / (n * 0.25))
+    crackle[i:i + n] += burst[:len(crackle) - i] * rng.uniform(0.2, 1.0)
+crackle = crackle - lowpass(crackle, 900)
+for at in rng.uniform(0.3, 6.0, 4):  # pops of sap
+    i = int(at * SR); n = int(SR * 0.05)
+    pop = np.sin(2 * np.pi * np.cumsum(np.full(n, rng.uniform(700, 1300))) / SR) * np.exp(-np.arange(n) / (SR * 0.008))
+    crackle[i:i + n] += 1.4 * pop[:len(crackle) - i]
+save_loop("AmbFire", roar / (np.max(np.abs(roar)) + 1e-9) * 0.9 + crackle / (np.max(np.abs(crackle)) + 1e-9) * 0.8, 0.7)
+
+# cauldron: a thick simmer with round bubbles rising and popping at different sizes
+x = t(4.25)
+simmer = lowpass(rng.normal(0, 1, len(x)), 500) - lowpass(rng.normal(0, 1, len(x)), 90)
+blups = np.zeros(len(x))
+for at in np.sort(rng.uniform(0, 4.1, 34)):
+    i = int(at * SR); n = int(SR * rng.uniform(0.04, 0.09))
+    base = rng.uniform(180, 520)
+    f = np.interp(np.arange(n), [0, n], [base, base * rng.uniform(1.8, 2.6)])
+    b = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * np.arange(n) / n) ** 2
+    blups[i:i + n] += b[:len(blups) - i] * rng.uniform(0.4, 1.0)
+save_loop("AmbCauldron", simmer / (np.max(np.abs(simmer)) + 1e-9) * 0.45 + blups / (np.max(np.abs(blups)) + 1e-9), 0.7)
+
+# lantern: an oil flame's faint breathy flutter
+x = t(3.25)
+flutter = lowpass(rng.normal(0, 1, len(x)), 700) - lowpass(rng.normal(0, 1, len(x)), 120)
+flutter *= 0.6 + 0.4 * np.abs(np.sin(2 * np.pi * 2.3 * x + np.sin(2 * np.pi * 0.7 * x)))
+save_loop("AmbLantern", flutter, 0.5)
+
+# drips: one drop into a puddle, two sizes
+for k, (lo, hi, ring) in enumerate([(900, 2100, 0.05), (650, 1500, 0.07)], 1):
+    x = t(0.35)
+    f = np.interp(x, [0, 0.03, 0.35], [lo, hi, hi * 1.05])
+    drop = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(len(x), 0.001, ring)
+    plink = np.sin(2 * np.pi * hi * 1.5 * x) * env(len(x), 0.001, 0.02) * 0.3
+    save(f"Drip{k}", drop + plink, 0.6)
+
+# a wooden beam settling: a slow stick-slip creak through a woody body
+x = t(1.1)
+rate = np.interp(x, [0, 0.3, 0.8, 1.1], [18, 34, 26, 12])
+pulses = (np.diff(np.floor(np.cumsum(rate) / SR), prepend=0) > 0).astype(float)
+body = resonator(pulses, 340, 60) + 0.7 * resonator(pulses, 720, 90) + 0.4 * resonator(pulses, 1450, 160)
+save("BeamCreak", body * np.interp(x, [0, 0.15, 0.85, 1.1], [0, 1, 0.8, 0]), 0.6)
+
+# someone walking upstairs, heard through the floorboards: two dull thumps
+x = t(0.9)
+step = np.zeros(len(x))
+for at in (0.0, 0.42):
+    i = int(at * SR); n = int(SR * 0.25)
+    thump = np.sin(2 * np.pi * np.cumsum(np.interp(np.arange(n), [0, n], [95, 60])) / SR) * np.exp(-np.arange(n) / (SR * 0.05))
+    knock = lowpass(rng.normal(0, 1, n), 400) * np.exp(-np.arange(n) / (SR * 0.012))
+    step[i:i + n] += thump + 0.6 * knock
+save("UpstairsStep", step, 0.6)
+
 # Reused project sounds that were not wired to anything.
 if ONLY:
     sys.exit(0)
