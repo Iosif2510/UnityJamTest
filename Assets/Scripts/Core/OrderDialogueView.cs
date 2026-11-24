@@ -168,12 +168,14 @@ namespace PotionShop
         {
             var text = activeLine.Text;
             var starts = activeLine.CharStarts;
-            int newest = -1;
+            int newest = -1, first = voicedChars;
             // starts can be shorter than the text (it counts text elements, not chars)
             int count = Mathf.Min(text.Length, starts.Count);
             while (voicedChars < count && starts[voicedChars] <= elapsed) newest = voicedChars++;
             // several letters in one frame (or very fast text): voice only the latest, and not too often
             if (newest < 0 || Time.unscaledTimeAsDouble - lastVoiced < MinVoiceGap) return;
+            // a word appears together with the space after it: voice its last letter, not the silent space
+            while (newest > first && !DialogueVoice.Voiced(text[newest], out _, out _)) newest--;
             if (!DialogueVoice.Voiced(text[newest], out _, out _)) return;
             lastVoiced = Time.unscaledTimeAsDouble;
             int end = text.Length - 1;
