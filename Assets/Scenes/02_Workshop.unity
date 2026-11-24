@@ -19361,6 +19361,7 @@ MonoBehaviour:
   heldItemWiggleFrequency: 2.5
   heldItemWiggleSmoothing: 12
   lockCursorOnEnable: 1
+  headBobAmplitude: {x: 0.018, y: 0.009}
 --- !u!143 &963356213
 CharacterController:
   m_ObjectHideFlags: 0
@@ -20634,7 +20635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3546410754811537582, guid: 93b89a228261ce64fbe78349d805cc29, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3871621657820076596, guid: 93b89a228261ce64fbe78349d805cc29, type: 3}
       propertyPath: m_LocalScale.x
@@ -38930,7 +38931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3546410754811537582, guid: 93b89a228261ce64fbe78349d805cc29, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3871621657820076596, guid: 93b89a228261ce64fbe78349d805cc29, type: 3}
       propertyPath: m_LocalScale.x

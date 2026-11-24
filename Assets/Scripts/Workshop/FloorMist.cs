@@ -10,7 +10,7 @@ namespace PotionShop
     public sealed class FloorMist : MonoBehaviour
     {
         private static readonly Vector3 Area = new(8.0f, 0.15f, 12.4f);
-        private const float Alpha = 0.035f, WarmRadius = 1.9f;
+        private const float Alpha = 0.05f, WarmRadius = 1.9f;
 
         private ParticleSystem mist;
         private ParticleSystem.Particle[] buffer;
