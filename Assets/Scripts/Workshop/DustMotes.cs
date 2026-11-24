@@ -3,8 +3,9 @@ using UnityEngine;
 namespace PotionShop
 {
     /// <summary>
-    /// Dust drifting in the lamplight: a slow cloud of motes around each lantern and under the chandelier, catching
-    /// the warm light and fading out away from it. Walking through a cloud pushes the motes aside.
+    /// Dust drifting through the whole room: sparse motes hanging everywhere at standing height and wandering in every
+    /// direction (no settling), with a few more around each lantern where they catch the light. Walking through
+    /// them pushes them aside.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class DustMotes : MonoBehaviour
@@ -16,40 +17,40 @@ namespace PotionShop
 
         private void Start()
         {
-            var scene = gameObject.scene;
-            var lights = CellarAtmosphere.Find(scene, "CozyLights");
+            // the hall, from knee to above head height
+            clouds.Add(Cloud("Room", new Vector3(0f, 1.6f, 0f), ParticleSystemShapeType.Box, new Vector3(8.2f, 2.8f, 12.6f), 170));
+            var lights = CellarAtmosphere.Find(gameObject.scene, "CozyLights");
             if (lights != null)
                 foreach (Transform lamp in lights)
-                    if (lamp.name.StartsWith("Lantern Light") || lamp.name == "Cauldron Glow")
-                        clouds.Add(Cloud(lamp, lamp.name == "Cauldron Glow" ? 1.3f : 1.1f, 13));
-            var chandelier = CellarAtmosphere.Find(scene, "Chandelier Light");
-            if (chandelier != null) clouds.Add(Cloud(chandelier, 2.2f, 22, -1.8f));
+                    if (lamp.name.StartsWith("Lantern Light"))
+                        clouds.Add(Cloud(lamp.name, lamp.position, ParticleSystemShapeType.Sphere, Vector3.one * 1.1f, 5));
         }
 
-        private ParticleSystem Cloud(Transform lamp, float radius, int count, float drop = 0f)
+        private ParticleSystem Cloud(string name, Vector3 at, ParticleSystemShapeType shapeType, Vector3 size, int count)
         {
-            var ps = CellarAtmosphere.NewSystem("Dust " + lamp.name, transform);
-            ps.transform.position = lamp.position + Vector3.up * drop;
+            var ps = CellarAtmosphere.NewSystem("Dust " + name, transform);
+            ps.transform.position = at;
             var main = ps.main;
             main.loop = true;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(7f, 12f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.005f, 0.03f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(10f, 18f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0f, 0.02f);
             main.startSize = new ParticleSystem.MinMaxCurve(0.01f, 0.024f);
             // amber specks catching the lamplight (white ones read as snow)
             main.startColor = new Color(1f, 0.78f, 0.5f, 0.6f);
             main.maxParticles = count;
-            main.gravityModifier = 0.002f;
+            main.gravityModifier = 0f;
             var emission = ps.emission;
-            emission.rateOverTime = count / 9f;
+            emission.rateOverTime = count / 14f;
             var shape = ps.shape;
-            shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.radius = radius;
-            // a lazy wander, as dust does in still air
+            shape.shapeType = shapeType;
+            if (shapeType == ParticleSystemShapeType.Box) shape.scale = size;
+            else shape.radius = size.x;
+            // a lazy wander, up as much as down, as dust does in still air
             var noise = ps.noise;
             noise.enabled = true;
-            noise.strength = 0.05f;
-            noise.frequency = 0.25f;
-            noise.scrollSpeed = 0.05f;
+            noise.strength = 0.08f;
+            noise.frequency = 0.2f;
+            noise.scrollSpeed = 0.04f;
             var fade = ps.colorOverLifetime;
             fade.enabled = true;
             var gradient = new Gradient();
@@ -57,7 +58,7 @@ namespace PotionShop
                 new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.2f), new GradientAlphaKey(1f, 0.75f),
                     new GradientAlphaKey(0f, 1f) });
             fade.color = gradient;
-            ps.Simulate(10f, true, true); // already hanging in the air when you come down
+            ps.Simulate(16f, true, true); // already hanging in the air when you come down
             ps.Play();
             return ps;
         }
@@ -70,7 +71,6 @@ namespace PotionShop
             var body = eyes.position;
             foreach (var cloud in clouds)
             {
-                if ((cloud.transform.position - body).sqrMagnitude > 9f) continue;
                 if (buffer.Length < cloud.main.maxParticles) buffer = new ParticleSystem.Particle[cloud.main.maxParticles];
                 int n = cloud.GetParticles(buffer);
                 bool moved = false;
