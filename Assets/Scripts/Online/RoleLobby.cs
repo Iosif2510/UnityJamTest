@@ -14,6 +14,7 @@ namespace PotionShop.Online
     {
         private const string RequestMessage = "potion.lobby.request";
         private const string StateMessage = "potion.lobby.state";
+        private const string SwapMessage = "potion.lobby.swap";
         private const float ResendInterval = 0.5f;
         private const byte PickRole = 0;
         private const byte SetEasy = 1;
@@ -35,6 +36,45 @@ namespace PotionShop.Online
                 Decide(role);
             else
                 Request(PickRole, (byte)role);
+        }
+
+        /// <summary>
+        /// Maker only, after a customer: the two players trade floors (see <see cref="RoleSwap"/>). The host flips the
+        /// agreed roles and the regular state broadcast carries the change to the other player.
+        /// </summary>
+        public void RequestSwap()
+        {
+            if (session.Role != OnlineRole.Maker || !session.PeerConnected)
+                return;
+            Debug.Log("[Online] The maker asks to swap floors.");
+            if (session.IsHost)
+                Swap();
+            else
+            {
+                var network = session.Network;
+                if (network == null || !network.IsConnectedClient)
+                    return;
+                using var writer = new FastBufferWriter(1, Allocator.Temp);
+                writer.WriteValueSafe((byte)1);
+                network.CustomMessagingManager.SendNamedMessage(SwapMessage, NetworkManager.ServerClientId, writer);
+            }
+        }
+
+        private void Swap()
+        {
+            if (hostRole is not (OnlineRole.Maker or OnlineRole.Narrator))
+                return;
+            hostRole = Other(hostRole);
+            Debug.Log($"[Online] Roles swapped: the host is now the {hostRole}.");
+            session.AssignRole(hostRole);
+            Broadcast();
+        }
+
+        private void OnSwapRequest(ulong sender, FastBufferReader reader)
+        {
+            // only the maker asks; the host must still be the narrator, so a repeated request cannot flip twice
+            if (session.IsHost && session.Role == OnlineRole.Narrator)
+                Swap();
         }
 
         public void RequestEasyMode(bool easy)
@@ -67,6 +107,7 @@ namespace PotionShop.Online
                 hostRole = OnlineRole.Undecided;
                 network.CustomMessagingManager.RegisterNamedMessageHandler(RequestMessage, OnRequest);
                 network.CustomMessagingManager.RegisterNamedMessageHandler(StateMessage, OnState);
+                network.CustomMessagingManager.RegisterNamedMessageHandler(SwapMessage, OnSwapRequest);
             }
 
             if (session.IsHost && session.PeerConnected && Time.unscaledTime - lastSentAt >= ResendInterval)

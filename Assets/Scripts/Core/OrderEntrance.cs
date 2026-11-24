@@ -59,6 +59,9 @@ namespace PotionShop
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).Bind(Pose).ToUniTask(token);
                 await LMotion.Create(.5f, 1f, .46f).WithEase(Ease.InQuad)
                     .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).Bind(Pose).ToUniTask(token);
+                // the door let the draught in: the flames gutter as the lights come back
+                Light2DFlicker.Gust();
+                GameSfx.Play("Whoosh", .22f, .6f, .05f);
             }
             finally { Hide(); }
         }

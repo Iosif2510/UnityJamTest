@@ -40,6 +40,7 @@ namespace PotionShop.Online
                     root.AddComponent<VoiceChat>();
                     root.AddComponent<NarratorSignal>();
                     root.AddComponent<FloorSounds>();
+                    root.AddComponent<RoleSwap>();
                 }
                 return instance;
             }
