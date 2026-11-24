@@ -9,15 +9,15 @@ namespace PotionShop
     /// <summary>
     /// The title screen's menu under the logo: 혼자하기 walks to the counter, 함께하기 opens the online co-op window,
     /// 옵션 opens a small settings sheet (volume, full screen, memo language) and 게임끄기 asks once before quitting.
-    /// The four buttons are copies of <see cref="template"/>, the counter's own wooden button, in a column on a soft
-    /// dark pad; each shows clearly when it is pointed at (<see cref="TitleMenuItem"/>) and the arrow keys walk them.
+    /// The four buttons are copies of <see cref="template"/>, the counter's own wooden button, centred under the
+    /// logo on a soft dark pad (게임끄기 a little apart and in red); each shows clearly when it is pointed at (<see cref="TitleMenuItem"/>) and the arrow keys walk them.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TitleMenu : MonoBehaviour
     {
         [SerializeField] private Button template;
-        [SerializeField, Min(0f)] private float spacing = 116f;
-        [SerializeField, Min(0f)] private float quitGap = 30f;
+        [SerializeField, Min(0f)] private float spacing = 76f;
+        [SerializeField, Min(0f)] private float quitGap = 14f;
         [SerializeField, Min(0f)] private float appearDelay = 0.9f;
 
         private GameObject options;
@@ -59,8 +59,8 @@ namespace PotionShop
                 var rect = (RectTransform)button.transform;
                 bool quit = i == entries.Length - 1;
                 rect.anchoredPosition = first + Vector2.down * (spacing * i + (quit ? quitGap : 0f));
-                // leaving is the quiet one: a little smaller
-                if (quit) rect.localScale = Vector3.one * 0.86f;
+                // leaving is set apart by colour: a dusty red board with cream lettering
+                if (quit) Recolour(button, QuitBoard, QuitInk);
                 var item = button.gameObject.AddComponent<TitleMenuItem>();
                 item.Menu = this;
                 item.Settle();
@@ -121,6 +121,17 @@ namespace PotionShop
         }
 
         private static void PlayTogether() => TitleOnlinePanel.Open();
+
+        private static readonly Color QuitBoard = new(0.72f, 0.38f, 0.3f), QuitInk = new(1f, 0.95f, 0.86f);
+
+        private static void Recolour(Button button, Color board, Color ink)
+        {
+            if (button.targetGraphic != null) button.targetGraphic.color = board;
+            var tmp = button.GetComponentInChildren<TMP_Text>(true);
+            if (tmp != null) tmp.color = ink;
+            var legacy = button.GetComponentInChildren<Text>(true);
+            if (legacy != null) legacy.color = ink;
+        }
 
         private static void SetLabel(Button button, string text)
         {
