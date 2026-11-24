@@ -59,6 +59,9 @@ namespace PotionShop
             }
             hudMotion = new OrderHudMotion(timerText, enterWorkshopButton);
             dialogueView.SpeechBeat += OnSpeechBeat;
+            // the name tag drops in for each new customer
+            var plate = dialogueView.transform.Find("SpeakerNameplate");
+            if (plate != null && !plate.TryGetComponent(out namePlate)) namePlate = plate.gameObject.AddComponent<NamePlateDrop>();
             if (curtainWaitingLabel != null &&
                 (orderCanvas == null || !curtainWaitingLabel.transform.IsChildOf(orderCanvas.transform)))
                 typography.Apply(curtainWaitingLabel);
@@ -290,6 +293,7 @@ namespace PotionShop
         }
 
         private bool crafting;
+        private NamePlateDrop namePlate;
 
         private async UniTaskVoid CraftAndServe(PotionCrafting.Order craft)
         {
@@ -436,6 +440,7 @@ namespace PotionShop
             SetVoice(order);
             token.ThrowIfCancellationRequested();
             dialogueView.gameObject.SetActive(true);
+            namePlate?.Present();
             enterWorkshopButton.gameObject.SetActive(true);
             await dialogueView.PlaySymptoms(order.Dialogue, order.Disease.DefaultSymptomEffect, round.Tuning.TextSpeed, token);
 
