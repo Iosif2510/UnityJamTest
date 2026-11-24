@@ -20,7 +20,12 @@ namespace PotionShop.Online
         public VoiceState State { get; private set; }
         public bool MicMuted { get; private set; }
         public bool PeerPresent => peer != null;
+#if UNITY_WEBGL
+        // the browser's Vivox has no speech events, so nobody is ever shown talking there
+        public bool PeerSpeaking => false;
+#else
         public bool PeerSpeaking => peer != null && peer.SpeechDetected;
+#endif
         public string Error { get; private set; }
 
         public event Action Changed;

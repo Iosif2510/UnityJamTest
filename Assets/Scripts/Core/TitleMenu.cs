@@ -31,16 +31,18 @@ namespace PotionShop
             var parent = (RectTransform)template.transform.parent;
             var templateRect = (RectTransform)template.transform;
             var first = templateRect.anchoredPosition;
-            var entries = new (string label, UnityEngine.Events.UnityAction action)[]
+            var entries = new System.Collections.Generic.List<(string label, UnityEngine.Events.UnityAction action)>
             {
                 (Loc.T("혼자하기"), PlaySolo),
                 (Loc.T("함께하기"), PlayTogether),
                 (Loc.T("옵션"), () => Show(options, true)),
-                (Loc.T("게임끄기"), () => Show(quitConfirm, true)),
             };
+            // a game in a browser tab is left by closing the tab
+            bool canQuit = Application.platform != RuntimePlatform.WebGLPlayer;
+            if (canQuit) entries.Add((Loc.T("게임끄기"), () => Show(quitConfirm, true)));
 
             // a soft dark pad behind the column, so the buttons read against the busy counter
-            float height = spacing * (entries.Length - 1) + quitGap + templateRect.sizeDelta.y;
+            float height = spacing * (entries.Count - 1) + (canQuit ? quitGap : 0f) + templateRect.sizeDelta.y;
             var pad = OnlineUi.Rect("Menu Pad", parent, templateRect.anchorMin, templateRect.anchorMax);
             pad.pivot = new Vector2(0.5f, 1f);
             pad.anchoredPosition = first + new Vector2(0f, templateRect.sizeDelta.y * 0.5f + 60f);
@@ -48,7 +50,7 @@ namespace PotionShop
             OnlineUiParts.Shade(pad, 0.5f);
             pad.SetSiblingIndex(templateRect.GetSiblingIndex());
 
-            for (int i = 0; i < entries.Length; i++)
+            for (int i = 0; i < entries.Count; i++)
             {
                 var button = Instantiate(template, parent);
                 button.name = "Menu " + entries[i].label;
@@ -56,7 +58,7 @@ namespace PotionShop
                 button.onClick.AddListener(entries[i].action);
                 SetLabel(button, entries[i].label);
                 var rect = (RectTransform)button.transform;
-                bool quit = i == entries.Length - 1;
+                bool quit = canQuit && i == entries.Count - 1;
                 rect.anchoredPosition = first + Vector2.down * (spacing * i + (quit ? quitGap : 0f));
                 // leaving is set apart by colour: a dusty red board with cream lettering
                 if (quit) Recolour(button, QuitBoard, QuitInk);

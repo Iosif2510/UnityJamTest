@@ -148,6 +148,10 @@ namespace PotionShop.Online
             OnlineUiParts.Button(Cell(l, 644f, 72f, 0.73f, 1f), "UI_SmallButton", Loc.T("직접 방 열기"), 26, config.BoldFont,
                 () => Finish(OnlineSession.Instance.HostLan()));
             lanRow.SetActive(false);
+#if UNITY_WEBGL
+            // a browser can neither open a room on this PC nor reach one by its address
+            lanToggle.parent.gameObject.SetActive(false);
+#endif
 
             error = OnlineUi.Label(Row(card, 540f, 36f), string.Empty, 22, config.BoldFont, OnlineUiParts.StampRed);
         }

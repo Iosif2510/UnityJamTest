@@ -204,8 +204,9 @@ namespace PotionShop
     /// <summary>
     /// Japanese and Chinese letters are mostly missing from the game's Korean fonts. While the game runs, CJK fonts
     /// go behind every TextMeshPro font as fallbacks: the computer's own CJK font for the chosen script first
-    /// (Simplified and Traditional Chinese and Japanese draw some characters differently), then the others. They are
-    /// taken out again when the game stops, so no asset changes.
+    /// (Simplified and Traditional Chinese and Japanese draw some characters differently), then the others. Where the
+    /// computer lends none (a browser), the game's own Resources/Fonts/WebCJK is used. They are taken out again when
+    /// the game stops, so no asset changes.
     /// </summary>
     internal static class LocFonts
     {
@@ -244,6 +245,8 @@ namespace PotionShop
                 var font = First(list);
                 if (font != null) ours.Add(font);
             }
+            // no system fonts to borrow (a browser): the game's own cut of the characters it shows
+            if (ours.Count == 0 && Bundled() is { } bundled) ours.Add(bundled);
             fallbacks.AddRange(ours);
             if (hooked) return;
             hooked = true;
@@ -271,6 +274,19 @@ namespace PotionShop
                 return asset;
             }
             return null;
+        }
+
+        /// <summary>Resources/Fonts/WebCJK (Tools/WebFont/subset_web_cjk.py) as a font asset, or null.</summary>
+        private static TMP_FontAsset Bundled()
+        {
+            const string key = "WebCJK";
+            if (made.TryGetValue(key, out var known) && known != null) return known;
+            var source = Resources.Load<Font>("Fonts/WebCJK");
+            if (source == null) return null;
+            var asset = TMP_FontAsset.CreateFontAsset(source, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 2048, 2048);
+            if (asset == null) return null;
+            asset.name = key + " (runtime fallback)";
+            return made[key] = asset;
         }
 
         private static void Remove()
