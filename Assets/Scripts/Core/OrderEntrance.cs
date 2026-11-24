@@ -34,7 +34,7 @@ namespace PotionShop
 
         internal void ShowLoading()
         {
-            banner.text = "대사 준비 중…";
+            banner.text = Loc.T("대사 준비 중…");
             banner.fontSize = 32;
             banner.rectTransform.anchoredPosition = Vector2.zero;
             banner.rectTransform.localRotation = Quaternion.identity;
@@ -49,7 +49,7 @@ namespace PotionShop
         internal async UniTask Play(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            banner.text = "손님입장";
+            banner.text = Loc.T("손님입장");
             banner.fontSize = 85;
             Pose(0);
             banner.gameObject.SetActive(true);

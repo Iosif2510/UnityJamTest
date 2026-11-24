@@ -78,12 +78,13 @@ namespace PotionShop
             built = true;
             panel = (RectTransform)transform;
             panelRest = panel.anchoredPosition + new Vector2(0f, DrawerDrop);
-            Add(bottles, square, "네모 병");
-            Add(bottles, heart, "하트 병");
-            Add(bottles, round, "동그란 병");
+            Add(bottles, square, Loc.T("네모 병"));
+            Add(bottles, heart, Loc.T("하트 병"));
+            Add(bottles, round, Loc.T("동그란 병"));
             foreach (var ink in inkButtons)
             {
                 var label = ink.transform.Find("Label")?.GetComponent<Text>();
+                if (label != null) label.text = Loc.T(label.text); // the ink's name in the game's language
                 Add(inks, ink, label != null ? label.text : ink.name);
             }
 
@@ -216,8 +217,8 @@ namespace PotionShop
             foreach (var c in inks) Settle(c, c == chosenInk, chosenInk != null);
             ShowPotion();
             if (hint == null) return;
-            hint.text = chosenBottle == null && chosenInk == null ? "물약병과 잉크를 하나씩 고르세요"
-                : $"{(chosenBottle != null ? chosenBottle.Name : "물약병?")}  ·  {(chosenInk != null ? chosenInk.Name : "잉크?")}";
+            hint.text = chosenBottle == null && chosenInk == null ? Loc.T("물약병과 잉크를 하나씩 고르세요")
+                : (chosenBottle != null ? chosenBottle.Name : Loc.T("물약병?")) + "  ·  " + (chosenInk != null ? chosenInk.Name : Loc.T("잉크?"));
         }
 
         /// <summary>

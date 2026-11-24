@@ -103,18 +103,18 @@ namespace PotionShop.Online
         {
             choices = OnlineUi.Rect("Choices", card, Vector2.zero, Vector2.one).gameObject;
             var c = (RectTransform)choices.transform;
-            OnlineUi.Label(Row(c, 56f, 60f), "온라인 협동", 42, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            OnlineUi.Label(Row(c, 120f, 64f), "한 사람은 아래층에서 손님을 맞고,\n한 사람은 위층 공방에서 메모를 보며 목소리로 안내해요.",
+            OnlineUi.Label(Row(c, 56f, 60f), Loc.T("온라인 협동"), 42, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Row(c, 120f, 64f), Loc.T("한 사람은 아래층에서 손님을 맞고,\n한 사람은 위층 공방에서 메모를 보며 목소리로 안내해요."),
                 22, config.BoldFont, OnlineUiParts.InkSoft, TextAnchor.UpperLeft);
 
-            OnlineUiParts.Button(Row(c, 206f, 96f), "UI_BigButton", "방 만들기", 40, config.BoldFont, () => HostCloud().Forget());
+            OnlineUiParts.Button(Row(c, 206f, 96f), "UI_BigButton", Loc.T("방 만들기"), 40, config.BoldFont, () => HostCloud().Forget());
 
             OnlineUi.Fill(Row(c, 348f, 2f), new Color(0.47f, 0.35f, 0.25f, 0.45f), false);
             var or = OnlineUi.Box("Or", c, new Vector2(0.5f, 1f), new Vector2(0f, -332f), new Vector2(84f, 34f));
             OnlineUi.Fill(or, new Color(0.99f, 0.95f, 0.87f), false);
-            OnlineUi.Label(OnlineUi.Rect("Text", or, Vector2.zero, Vector2.one), "또는", 22, config.BoldFont, OnlineUiParts.InkSoft);
+            OnlineUi.Label(OnlineUi.Rect("Text", or, Vector2.zero, Vector2.one), Loc.T("또는"), 22, config.BoldFont, OnlineUiParts.InkSoft);
 
-            OnlineUi.Label(Row(c, 384f, 40f), "친구에게 받은 코드", 26, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Row(c, 384f, 40f), Loc.T("친구에게 받은 코드"), 26, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
             codeInput = Field(Cell(c, 432f, 88f, 0f, 0.66f), "K7Q2M9", 40, 12);
             codeInput.textComponent.alignment = TextAnchor.MiddleCenter;
             ((Text)codeInput.placeholder).alignment = TextAnchor.MiddleCenter;
@@ -123,12 +123,12 @@ namespace PotionShop.Online
                 string upper = text.ToUpperInvariant();
                 if (upper != text) codeInput.SetTextWithoutNotify(upper);
             });
-            OnlineUiParts.Button(Cell(c, 440f, 72f, 0.70f, 1f), "UI_SmallButton", "들어가기", 30, config.BoldFont,
+            OnlineUiParts.Button(Cell(c, 440f, 72f, 0.70f, 1f), "UI_SmallButton", Loc.T("들어가기"), 30, config.BoldFont,
                 () => JoinCloud().Forget());
 
             // The LAN fold-out is marked with the arrow part turned on its side (the font has no triangle glyphs).
             var lanToggle = OnlineUi.Rect("LanToggle", Row(c, 590f, 48f), Vector2.zero, new Vector2(0.75f, 1f));
-            var lanText = OnlineUi.Label(lanToggle, "같은 네트워크에서 직접 연결", 24, config.BoldFont, OnlineUiParts.Ink,
+            var lanText = OnlineUi.Label(lanToggle, Loc.T("같은 네트워크에서 직접 연결"), 24, config.BoldFont, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
             lanText.raycastTarget = true;
             var lanArrow = OnlineUi.Box("Arrow", lanToggle, new Vector2(0f, 0.5f), new Vector2(352f, 0f), new Vector2(18f, 18f));
@@ -142,10 +142,10 @@ namespace PotionShop.Online
 
             lanRow = OnlineUi.Rect("Lan", c, Vector2.zero, Vector2.one).gameObject;
             var l = (RectTransform)lanRow.transform;
-            addressInput = Field(Cell(l, 644f, 72f, 0f, 0.42f), "방을 연 PC 주소", 24, 64);
-            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.44f, 0.71f), "UI_SmallButton", "직접 참가", 26, config.BoldFont,
+            addressInput = Field(Cell(l, 644f, 72f, 0f, 0.42f), Loc.T("방을 연 PC 주소"), 24, 64);
+            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.44f, 0.71f), "UI_SmallButton", Loc.T("직접 참가"), 26, config.BoldFont,
                 () => Finish(OnlineSession.Instance.JoinLan(addressInput.text)));
-            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.73f, 1f), "UI_SmallButton", "직접 방 열기", 26, config.BoldFont,
+            OnlineUiParts.Button(Cell(l, 644f, 72f, 0.73f, 1f), "UI_SmallButton", Loc.T("직접 방 열기"), 26, config.BoldFont,
                 () => Finish(OnlineSession.Instance.HostLan()));
             lanRow.SetActive(false);
 
@@ -157,8 +157,8 @@ namespace PotionShop.Online
         {
             waiting = OnlineUi.Rect("Waiting", card, Vector2.zero, Vector2.one).gameObject;
             var w = (RectTransform)waiting.transform;
-            waitTitle = OnlineUi.Label(Row(w, 70f, 64f), "방을 만들었어요", 44, config.BoldFont, OnlineUiParts.Ink);
-            waitDetail = OnlineUi.Label(Row(w, 136f, 40f), "이 코드를 친구에게 불러 주세요", 24, config.BoldFont,
+            waitTitle = OnlineUi.Label(Row(w, 70f, 64f), Loc.T("방을 만들었어요"), 44, config.BoldFont, OnlineUiParts.Ink);
+            waitDetail = OnlineUi.Label(Row(w, 136f, 40f), Loc.T("이 코드를 친구에게 불러 주세요"), 24, config.BoldFont,
                 OnlineUiParts.InkSoft);
 
             tiles = OnlineUi.Box("Tiles", w, new Vector2(0.5f, 1f), new Vector2(0f, -196f), new Vector2(700f, 120f)).gameObject;
@@ -182,7 +182,7 @@ namespace PotionShop.Online
 
             var copy = OnlineUi.Box("Copy", w, new Vector2(0.5f, 1f), new Vector2(0f, -342f), new Vector2(220f, 72f));
             copy.pivot = new Vector2(0.5f, 1f);
-            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", "코드 복사", 28, config.BoldFont, () =>
+            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", Loc.T("코드 복사"), 28, config.BoldFont, () =>
             {
                 if (OnlineSession.Exists && OnlineSession.Instance.JoinCode != null)
                     GUIUtility.systemCopyBuffer = OnlineSession.Instance.JoinCode;
@@ -193,12 +193,12 @@ namespace PotionShop.Online
             waitDots = OnlineUiParts.WaitingDots(strip, new Vector2(78f, -42f), 18f);
             status = OnlineUi.Label(OnlineUi.Rect("Text", strip, Vector2.zero, Vector2.one, new Vector2(124f, 2f),
                 new Vector2(-30f, 0f)), string.Empty, 28, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            OnlineUi.Label(Row(w, 544f, 36f), "친구가 들어오면 바로 역할 고르기로 넘어가요", 22, config.BoldFont,
+            OnlineUi.Label(Row(w, 544f, 36f), Loc.T("친구가 들어오면 바로 역할 고르기로 넘어가요"), 22, config.BoldFont,
                 OnlineUiParts.InkSoft);
 
             var leave = OnlineUi.Box("Leave", w, new Vector2(0.5f, 0f), new Vector2(0f, 92f), new Vector2(200f, 72f));
             leave.pivot = new Vector2(0.5f, 0f);
-            leaveButton = OnlineUiParts.Button(leave, "UI_SmallButton", "방 닫기", 28, config.BoldFont,
+            leaveButton = OnlineUiParts.Button(leave, "UI_SmallButton", Loc.T("방 닫기"), 28, config.BoldFont,
                 () => OnlineSession.Instance.LeaveAsync().Forget());
             waiting.SetActive(false);
         }
@@ -322,20 +322,20 @@ namespace PotionShop.Online
             copyButton.SetActive(code != null && hosting);
             for (int i = 0; i < tileLetters.Length; i++)
                 tileLetters[i].text = code != null && i < code.Length ? code[i].ToString() : string.Empty;
-            directLabel.text = code == null && hosting ? "직접 연결로 방을 열었어요" : string.Empty;
+            directLabel.text = code == null && hosting ? Loc.T("직접 연결로 방을 열었어요") : string.Empty;
 
-            waitTitle.text = busy ? "연결하는 중…" : hosting ? "방을 만들었어요" : "방에 들어가는 중…";
-            waitDetail.text = hosting && code != null ? "이 코드를 친구에게 불러 주세요"
-                : hosting ? "친구가 이 PC의 주소로 직접 참가하면 돼요" : string.Empty;
+            waitTitle.text = busy ? Loc.T("연결하는 중…") : hosting ? Loc.T("방을 만들었어요") : Loc.T("방에 들어가는 중…");
+            waitDetail.text = hosting && code != null ? Loc.T("이 코드를 친구에게 불러 주세요")
+                : hosting ? Loc.T("친구가 이 PC의 주소로 직접 참가하면 돼요") : string.Empty;
 
             if (busy)
-                waitingLine = "연결하는 중…";
+                waitingLine = Loc.T("연결하는 중…");
             else if (!session.PeerConnected)
-                waitingLine = hosting ? "친구가 들어오길 기다리는 중…" : "방에 들어가는 중…";
+                waitingLine = hosting ? Loc.T("친구가 들어오길 기다리는 중…") : Loc.T("방에 들어가는 중…");
             else
                 waitingLine = role == OnlineRole.Maker
-                    ? "친구가 위층 공방에 있어요. 닫고 손님을 받으세요."
-                    : "친구와 연결됐어요";
+                    ? Loc.T("친구가 위층 공방에 있어요. 닫고 손님을 받으세요.")
+                    : Loc.T("친구와 연결됐어요");
             status.text = waitingLine;
         }
     }

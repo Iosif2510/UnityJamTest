@@ -96,10 +96,10 @@ namespace PotionShop.Online
             if (banner == null) Build();
             banner.parent.gameObject.SetActive(true);
             bannerGroup.alpha = 0f;
-            title.text = "역할 교대!";
+            title.text = Loc.T("역할 교대!");
             detail.text = upstairs
-                ? "이번엔 위층 공방에서 메모를 찾아 알려 주세요"
-                : "이번엔 아래층 카운터에서 손님을 받아요";
+                ? Loc.T("이번엔 위층 공방에서 메모를 찾아 알려 주세요")
+                : Loc.T("이번엔 아래층 카운터에서 손님을 받아요");
         }
 
         private void Build()

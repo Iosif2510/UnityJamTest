@@ -88,11 +88,11 @@ namespace PotionShop.Online
 
         public string Describe() => State switch
         {
-            VoiceState.Connecting => "보이스 연결 중…",
-            VoiceState.On when !PeerPresent => MicMuted ? "마이크 꺼짐 [M] · 상대 대기 중" : "마이크 켜짐 [M] · 상대 대기 중",
-            VoiceState.On => (MicMuted ? "마이크 꺼짐 [M]" : "마이크 켜짐 [M]") + (PeerSpeaking ? " · 상대가 말하는 중" : ""),
-            VoiceState.Failed => "보이스 연결 실패 · 외부 음성 채팅을 사용하세요",
-            _ => "게임 내 보이스 없음 · 외부 음성 채팅을 사용하세요"
+            VoiceState.Connecting => Loc.T("보이스 연결 중…"),
+            VoiceState.On when !PeerPresent => MicMuted ? Loc.T("마이크 꺼짐 [M] · 상대 대기 중") : Loc.T("마이크 켜짐 [M] · 상대 대기 중"),
+            VoiceState.On => (MicMuted ? Loc.T("마이크 꺼짐 [M]") : Loc.T("마이크 켜짐 [M]")) + (PeerSpeaking ? Loc.T(" · 상대가 말하는 중") : ""),
+            VoiceState.Failed => Loc.T("보이스 연결 실패 · 외부 음성 채팅을 사용하세요"),
+            _ => Loc.T("게임 내 보이스 없음 · 외부 음성 채팅을 사용하세요")
         };
 
         private void Update()

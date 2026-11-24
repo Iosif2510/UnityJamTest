@@ -34,10 +34,10 @@ namespace PotionShop
             var first = templateRect.anchoredPosition;
             var entries = new (string label, UnityEngine.Events.UnityAction action)[]
             {
-                ("혼자하기", PlaySolo),
-                ("함께하기", PlayTogether),
-                ("옵션", () => Show(options, true)),
-                ("게임끄기", () => Show(quitConfirm, true)),
+                (Loc.T("혼자하기"), PlaySolo),
+                (Loc.T("함께하기"), PlayTogether),
+                (Loc.T("옵션"), () => Show(options, true)),
+                (Loc.T("게임끄기"), () => Show(quitConfirm, true)),
             };
 
             // a soft dark pad behind the column, so the buttons read against the busy counter
@@ -85,7 +85,25 @@ namespace PotionShop
             var canvas = OnlineUi.Canvas("TitleWindows", 45, transform);
             options = BuildOptions((RectTransform)canvas.transform, font);
             quitConfirm = BuildQuit((RectTransform)canvas.transform, font);
+
+            // a new language: build the title again in it, with the options sheet still open
+            Loc.Changed += Rebuild;
+            if (reopenOptions)
+            {
+                reopenOptions = false;
+                options.SetActive(true);
+            }
         }
+
+        private static bool reopenOptions;
+
+        private void Rebuild()
+        {
+            reopenOptions = options != null && options.activeSelf;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(gameObject.scene.name);
+        }
+
+        private void OnDestroy() => Loc.Changed -= Rebuild;
 
         /// <summary>One entry pointed at shows it; the others step back.</summary>
         internal void Refresh()
@@ -174,14 +192,14 @@ namespace PotionShop
         {
             var holder = new GameObject[1];
             var card = Window(root, "Options", new Vector2(860f, 500f), holder);
-            OnlineUi.Label(Row(card, 56f, 60f), "옵션", 42, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Row(card, 56f, 60f), Loc.T("옵션"), 42, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
 
             VolumeSlider.Build(Row(card, 150f, 56f), font, OnlineUiParts.Ink);
 
             // full screen on or off, as a ticked box
             var row = Row(card, 240f, 56f);
             OnlineUi.Label(OnlineUi.Rect("Label", row, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(240f, 0f)),
-                "전체 화면", 26, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+                Loc.T("전체 화면"), 26, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
             // an ink rim drawn behind the cream box (a child would draw over it)
             var rim = OnlineUi.Box("Rim", row, new Vector2(0f, 0.5f), new Vector2(247f, 0f), new Vector2(54f, 54f));
             rim.pivot = new Vector2(0f, 0.5f);
@@ -201,7 +219,7 @@ namespace PotionShop
                 GameSfx.Play("Tick", 0.8f);
             });
 
-            OnlineUi.Label(Row(card, 330f, 40f), "메모 언어 (함께하기에서 위층 친구가 읽는 메모)", 24, font, OnlineUiParts.Ink,
+            OnlineUi.Label(Row(card, 330f, 40f), Loc.IsKorean ? "언어 · Language" : Loc.T("언어"), 24, font, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
             languages = new MemoLanguagePicker(Row(card, 380f, 64f), font);
             return holder[0];
@@ -211,10 +229,10 @@ namespace PotionShop
         {
             var holder = new GameObject[1];
             var card = Window(root, "Quit", new Vector2(640f, 360f), holder);
-            OnlineUi.Label(Row(card, 80f, 70f), "게임을 끌까요?", 40, font, OnlineUiParts.Ink);
+            OnlineUi.Label(Row(card, 80f, 70f), Loc.T("게임을 끌까요?"), 40, font, OnlineUiParts.Ink);
             var go = holder[0];
-            OnlineUiParts.Button(Cell(card, 200f, 84f, 0.05f, 0.48f), "UI_SmallButton", "그만할래요", 30, font, Quit);
-            OnlineUiParts.Button(Cell(card, 200f, 84f, 0.52f, 0.95f), "UI_SmallButton", "더 할래요", 30, font,
+            OnlineUiParts.Button(Cell(card, 200f, 84f, 0.05f, 0.48f), "UI_SmallButton", Loc.T("그만할래요"), 30, font, Quit);
+            OnlineUiParts.Button(Cell(card, 200f, 84f, 0.52f, 0.95f), "UI_SmallButton", Loc.T("더 할래요"), 30, font,
                 () => Show(go, false));
             return go;
         }

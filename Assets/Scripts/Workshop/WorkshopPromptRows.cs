@@ -113,7 +113,7 @@ namespace PotionShop
         internal void ShowHeld(string leftAction, string leftKey)
         {
             primary.Show(leftAction, leftKey, 0);
-            restore.Show("내려놓기", "우클릭", 1);
+            restore.Show(Loc.T("내려놓기"), "우클릭", 1);
         }
     }
 }

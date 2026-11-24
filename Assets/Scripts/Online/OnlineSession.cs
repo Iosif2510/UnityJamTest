@@ -95,7 +95,7 @@ namespace PotionShop.Online
         {
             code = (code ?? string.Empty).Trim().ToUpperInvariant();
             if (code.Length == 0)
-                return "참가 코드를 입력하세요.";
+                return Loc.T("참가 코드를 입력하세요.");
             return await Run(async () =>
             {
                 await SignInAsync();
@@ -109,23 +109,23 @@ namespace PotionShop.Online
         /// <summary>Direct connection without Unity services. No in-game voice; meant for same-network play and testing.</summary>
         public string HostLan()
         {
-            if (busy || Role != OnlineRole.Offline) return "이미 연결 중입니다.";
+            if (busy || Role != OnlineRole.Offline) return Loc.T("이미 연결 중입니다.");
             EnsureNetwork();
             Transport.SetConnectionData("127.0.0.1", LanPort, "0.0.0.0");
             if (!Network.StartHost())
-                return "방을 열지 못했습니다. 포트 7777이 사용 중인지 확인하세요.";
+                return Loc.T("방을 열지 못했습니다. 포트 7777이 사용 중인지 확인하세요.");
             Begin(true, null, false);
             return null;
         }
 
         public string JoinLan(string address)
         {
-            if (busy || Role != OnlineRole.Offline) return "이미 연결 중입니다.";
+            if (busy || Role != OnlineRole.Offline) return Loc.T("이미 연결 중입니다.");
             address = string.IsNullOrWhiteSpace(address) ? "127.0.0.1" : address.Trim();
             EnsureNetwork();
             Transport.SetConnectionData(address, LanPort);
             if (!Network.StartClient())
-                return "연결을 시작하지 못했습니다.";
+                return Loc.T("연결을 시작하지 못했습니다.");
             Begin(false, null, false);
             return null;
         }
@@ -181,7 +181,7 @@ namespace PotionShop.Online
         private async UniTask<string> Run(Func<UniTask> connect)
         {
             if (busy || Role != OnlineRole.Offline)
-                return "이미 연결 중입니다.";
+                return Loc.T("이미 연결 중입니다.");
             busy = true;
             Changed?.Invoke();
             try
@@ -195,7 +195,7 @@ namespace PotionShop.Online
                 cloudSession = null;
                 if (Network != null && Network.IsListening)
                     Network.Shutdown();
-                return "온라인 서비스에 연결하지 못했습니다.\n" + exception.Message;
+                return Loc.T("온라인 서비스에 연결하지 못했습니다.\n") + exception.Message;
             }
             finally
             {

@@ -27,10 +27,10 @@ namespace PotionShop
 
         internal void Prepare()
         {
-            ingredients.text = "재료";
-            bottle.text = "물약병";
-            ink.text = "잉크";
-            total.text = "총점";
+            ingredients.text = Loc.T("재료");
+            bottle.text = Loc.T("물약병");
+            ink.text = Loc.T("잉크");
+            total.text = Loc.T("총점");
             ingredientPoints.text = bottlePoints.text = inkPoints.text = timeBonus.text = string.Empty;
             passableStamp.SetActive(false);
             fineBrewStamp.SetActive(false);
@@ -48,7 +48,7 @@ namespace PotionShop
                 portrait.anchoredPosition = new Vector2(-440f, -150f);
             }
             var next = transform.Find("ResultCard/NextOrderButton/Label")?.GetComponent<UnityEngine.UI.Text>();
-            if (next != null) next.text = "다음 주문";
+            if (next != null) next.text = Loc.T("다음 주문");
         }
 
         /// <param name="bottleAnswer">Name of the right bottle, shown when the choice was wrong (so the next one is better).</param>
@@ -57,19 +57,19 @@ namespace PotionShop
         {
             await DropIn(token);
             await BetweenRows(token);
-            ingredients.text = $"재료   {result.CorrectIngredients} / {RecipeEntry.RequiredIngredientKinds}";
+            ingredients.text = Loc.F("재료   {0} / {1}", result.CorrectIngredients, RecipeEntry.RequiredIngredientKinds);
             await CountUp(ingredientPoints, result.IngredientPoints, "+ {0}", token);
             await BetweenRows(token);
-            bottle.text = $"물약병  {MatchLabel(result.BottleCorrect, result.TimedOut)}{Answer(result.BottleCorrect, bottleAnswer)}";
+            bottle.text = Loc.F("물약병  {0}", MatchLabel(result.BottleCorrect, result.TimedOut)) + Answer(result.BottleCorrect, bottleAnswer);
             await CountUp(bottlePoints, result.BottlePoints, "+ {0}", token);
             await BetweenRows(token);
-            ink.text = $"잉크  {MatchLabel(result.InkCorrect, result.TimedOut)}{Answer(result.InkCorrect, inkAnswer)}";
+            ink.text = Loc.F("잉크  {0}", MatchLabel(result.InkCorrect, result.TimedOut)) + Answer(result.InkCorrect, inkAnswer);
             await CountUp(inkPoints, result.InkPoints, "+ {0}", token);
             await BetweenRows(token);
             await CountUp(timeBonus, result.TimeBonus, "+ {0}", token);
             await BetweenRows(token);
-            total.text = "총점   0점";
-            await CountUp(total, result.Total, "총점   {0}점", token, 0.55f);
+            total.text = Loc.T("총점   0점");
+            await CountUp(total, result.Total, Loc.T("총점   {0}점"), token, 0.55f);
             await Pop(total.rectTransform, token);
             await BetweenRows(token);
 
@@ -246,7 +246,7 @@ namespace PotionShop
         }
 
         private static string MatchLabel(bool correct, bool timedOut) =>
-            timedOut ? "미제출" : correct ? "일치" : "불일치";
+            timedOut ? Loc.T("미제출") : correct ? Loc.T("일치") : Loc.T("불일치");
         // (labels kept short so a right-answer note fits on the same line)
     }
 }

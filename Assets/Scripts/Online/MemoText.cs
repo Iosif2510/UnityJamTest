@@ -14,7 +14,6 @@ namespace PotionShop.Online
     internal static class MemoText
     {
         public const string Korean = "ko";
-        private const string LanguageKey = "memo.language";
         private static readonly string[] SheetNames =
             { "Cover", "POT_01", "POT_02", "POT_03", "POT_04", "POT_05", "POT_06", "CounterManual" };
 
@@ -72,25 +71,15 @@ namespace PotionShop.Online
         private static readonly Dictionary<int, Sprite> originals = new();
         private static Font font;
 
-        /// <summary>The memo language: a saved choice, else the system language when a table exists, else Korean.</summary>
+        /// <summary>The memo language: the game's language (<see cref="Loc"/>), Korean when it has no memo table.</summary>
         public static string Language
         {
             get
             {
-                string saved = PlayerPrefs.GetString(LanguageKey, string.Empty);
-                if (saved.Length > 0) return saved;
-                string system = Application.systemLanguage switch
-                {
-                    SystemLanguage.Korean => Korean,
-                    SystemLanguage.English => "en",
-                    SystemLanguage.Japanese => "ja",
-                    SystemLanguage.ChineseSimplified or SystemLanguage.Chinese => "zh-Hans",
-                    SystemLanguage.ChineseTraditional => "zh-Hant",
-                    _ => Korean
-                };
-                return system == Korean || Resources.Load<TextAsset>("MemoText/text_" + system) != null ? system : Korean;
+                string language = Loc.Language;
+                return language == Korean || Resources.Load<TextAsset>("MemoText/text_" + language) != null ? language : Korean;
             }
-            set => PlayerPrefs.SetString(LanguageKey, value);
+            set => Loc.Language = value;
         }
 
         /// <summary>

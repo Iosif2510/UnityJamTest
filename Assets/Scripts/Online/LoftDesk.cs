@@ -65,9 +65,9 @@ namespace PotionShop.Online
             for (int i = 0; i < memos.Length; i++) memos[i] = i + 1;
             tabs = new[]
             {
-                new Tab { Name = "질병과 재료", Count = $"메모 {memos.Length}장", Sheets = memos, CanSignal = true },
-                new Tab { Name = "포장", Count = "1장", Sheets = new[] { config.CounterManualIndex } },
-                new Tab { Name = "안내서", Sheets = new[] { 0 } },
+                new Tab { Name = Loc.T("질병과 재료"), Count = Loc.F("메모 {0}장", memos.Length), Sheets = memos, CanSignal = true },
+                new Tab { Name = Loc.T("포장"), Count = Loc.T("1장"), Sheets = new[] { config.CounterManualIndex } },
+                new Tab { Name = Loc.T("안내서"), Sheets = new[] { 0 } },
             };
 
             BuildTabs(root);
@@ -155,7 +155,7 @@ namespace PotionShop.Online
             // A soft dark pad quiets the props on the desk behind the cards.
             OnlineUiParts.Shade(At(table, "Shade", new Vector2(350f, 180f), new Vector2(1510f, 660f)), 0.55f);
             var hint = OnlineUi.Label(At(table, "Hint", new Vector2(390f, 852f), new Vector2(1440f, 48f)),
-                "종이를 누르면 크게 펼쳐져요", 28, config.BoldFont, OnlineUiParts.Cream);
+                Loc.T("종이를 누르면 크게 펼쳐져요"), 28, config.BoldFont, OnlineUiParts.Cream);
             OnlineUiParts.Outlined(hint);
 
             var sheets = tabs[tabIndex].Sheets;
@@ -184,7 +184,7 @@ namespace PotionShop.Online
                 {
                     // just the word in the corner, no stamp
                     var seenLabel = OnlineUi.Box("Seen", card, new Vector2(1f, 1f), new Vector2(-16f, -10f), new Vector2(96f, 40f));
-                    OnlineUiParts.Outlined(OnlineUi.Label(seenLabel, "읽음", 24, config.BoldFont, OnlineUiParts.Cream,
+                    OnlineUiParts.Outlined(OnlineUi.Label(seenLabel, Loc.T("읽음"), 24, config.BoldFont, OnlineUiParts.Cream,
                         TextAnchor.MiddleRight));
                 }
 
@@ -222,7 +222,7 @@ namespace PotionShop.Online
             next = Arrow(u, "Next", 1772f, true, () => Flip(1));
 
             toTable = OnlineUiParts.Button(At(u, "ToTable", new Vector2(490f, 916f), new Vector2(186f, 72f)),
-                "UI_SmallButton", "탁자로", 30, config.BoldFont, ShowTable);
+                "UI_SmallButton", Loc.T("탁자로"), 30, config.BoldFont, ShowTable);
 
             dots = At(u, "Dots", new Vector2(960f, 932f), new Vector2(240f, 40f));
             var layout = dots.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -234,7 +234,7 @@ namespace PotionShop.Online
                 string.Empty, 30, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
 
             var foundRect = At(u, "Found", new Vector2(1406f, 906f), new Vector2(340f, 96f));
-            found = OnlineUiParts.Button(foundRect, "UI_BigButton", "찾았어!", 42, config.BoldFont, SendFound);
+            found = OnlineUiParts.Button(foundRect, "UI_BigButton", Loc.T("찾았어!"), 42, config.BoldFont, SendFound);
             foundLabel = foundRect.GetComponentInChildren<Text>();
 
             toast = At(u, "Toast", new Vector2(838f, 118f), new Vector2(560f, 64f));
@@ -242,7 +242,7 @@ namespace PotionShop.Online
             toast.anchoredPosition += new Vector2(280f, -32f);
             OnlineUiParts.Draw(toast, "LOFT_Toast");
             OnlineUi.Label(OnlineUi.Rect("Text", toast, Vector2.zero, Vector2.one, new Vector2(30f, 2f), new Vector2(-30f, 0f)),
-                "아래층에 신호를 보냈어요", 28, config.BoldFont, OnlineUiParts.Cream);
+                Loc.T("아래층에 신호를 보냈어요"), 28, config.BoldFont, OnlineUiParts.Cream);
             toast.gameObject.SetActive(false);
             unfolded.SetActive(false);
         }
@@ -334,7 +334,7 @@ namespace PotionShop.Online
             // with no friend upstairs (solo play's memo book) there is nobody to signal
             found.gameObject.SetActive(tab.CanSignal && session != null);
             found.interactable = !signalSent;
-            foundLabel.text = signalSent ? "보냈어" : "찾았어!";
+            foundLabel.text = signalSent ? Loc.T("보냈어") : Loc.T("찾았어!");
             foundLabel.color = signalSent ? OnlineUiParts.InkSoft : OnlineUiParts.Ink;
         }
 

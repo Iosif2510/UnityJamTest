@@ -134,11 +134,12 @@ namespace PotionShop
             if (angry != null && palette != null) portrait.Show(order, palette, angry);
             portrait.Speak(1f);
             huffUntil = Time.unscaledTime + 1.8f;
-            Mutter("흥!", 1.8f);
+            Mutter(Loc.T("흥!"), 1.8f);
         }
 
-        private void Mutter(string text = "흠…", float seconds = 2.6f)
+        private void Mutter(string text = null, float seconds = 2.6f)
         {
+            text ??= Loc.T("흠…");
             if (bubble == null) bubble = MakeBubble();
             bubbleText.text = text;
             bubble.SetAsLastSibling();
@@ -188,7 +189,7 @@ namespace PotionShop
             labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
             var text = bubbleText = label.GetComponent<TextMeshProUGUI>();
             if (font != null) text.font = font;
-            text.text = "흠…";
+            text.text = Loc.T("흠…");
             text.fontSize = 38;
             text.alignment = TextAlignmentOptions.Center;
             text.textWrappingMode = TextWrappingModes.NoWrap;

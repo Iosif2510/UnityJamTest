@@ -12,7 +12,7 @@ namespace PotionShop.Online
         public static Slider Build(RectTransform row, Font font, Color textColor)
         {
             OnlineUi.Label(OnlineUi.Rect("Label", row, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(90f, 0f)),
-                "소리", 26, font, textColor, TextAnchor.MiddleLeft);
+                Loc.T("소리"), 26, font, textColor, TextAnchor.MiddleLeft);
             var area = OnlineUi.Rect("Slider", row, Vector2.zero, Vector2.one, new Vector2(90f, 8f), new Vector2(0f, -8f));
             var track = OnlineUi.Rect("Track", area, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, -5f),
                 new Vector2(0f, 5f));

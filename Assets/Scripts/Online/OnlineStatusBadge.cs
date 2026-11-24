@@ -41,7 +41,7 @@ namespace PotionShop.Online
                 new Vector2(720f, 72f));
             OnlineUiParts.Draw(toast, "LOFT_Toast");
             OnlineUi.Label(OnlineUi.Rect("Text", toast, Vector2.zero, Vector2.one, new Vector2(30f, 0f), new Vector2(-30f, 0f)),
-                "위층에서 메모를 찾았어요! 창고로 내려가세요", 28, config.BoldFont, OnlineUiParts.Cream);
+                Loc.T("위층에서 메모를 찾았어요! 창고로 내려가세요"), 28, config.BoldFont, OnlineUiParts.Cream);
             toast.gameObject.SetActive(false);
 
             visual = canvas.gameObject;
@@ -58,8 +58,8 @@ namespace PotionShop.Online
                 return;
 
             var session = OnlineSession.Instance;
-            string peer = session.PeerConnected ? "해설자 연결됨" : "해설자 없음";
-            label.text = $"온라인 · {peer} · {session.Voice.Describe()}";
+            string peer = session.PeerConnected ? Loc.T("해설자 연결됨") : Loc.T("해설자 없음");
+            label.text = Loc.F("온라인 · {0} · {1}", peer, session.Voice.Describe());
 
             float at = session.Signal.ReceivedAt;
             bool showToast = Time.unscaledTime - at < ToastSeconds;

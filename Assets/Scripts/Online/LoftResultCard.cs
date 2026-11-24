@@ -41,7 +41,7 @@ namespace PotionShop.Online
             plate.localRotation = Quaternion.Euler(0f, 0f, 2f);
             var plateImage = OnlineUi.Fill(plate, config.NamePlate != null ? Color.white : OnlineUi.Accent, false);
             plateImage.sprite = config.NamePlate;
-            OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one, new Vector2(0f, 4f), Vector2.zero), "제작 결과", 32, config.BoldFont,
+            OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Text", plate, Vector2.zero, Vector2.one, new Vector2(0f, 4f), Vector2.zero), Loc.T("제작 결과"), 32, config.BoldFont,
                 OnlineUiParts.Cream), OnlineUiParts.OutlineRed);
 
             // Item names on the left, points on the right, as on the counter's result card.
@@ -63,7 +63,7 @@ namespace PotionShop.Online
             stamp.preserveAspect = true;
 
             OnlineUiParts.Button(OnlineUi.Box("Confirm", card, new Vector2(0.5f, 0f), new Vector2(0f, 56f),
-                new Vector2(320f, 92f)), "UI_BigButton", "확인", 36, config.BoldFont, () => dismissed = true)
+                new Vector2(320f, 92f)), "UI_BigButton", Loc.T("확인"), 36, config.BoldFont, () => dismissed = true)
                 .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
             root.SetActive(false);
         }
@@ -83,11 +83,12 @@ namespace PotionShop.Online
 
         private void Fill(RoundSnapshot s)
         {
-            labels.text = s.TimedOut ? "재료\n물약병\n잉크\n시간 보너스"
-                : $"재료  {s.CorrectIngredients} / 3\n물약병  {(s.BottleCorrect ? "일치" : "불일치")}\n" +
-                  $"잉크  {(s.InkCorrect ? "일치" : "불일치")}\n시간 보너스";
+            labels.text = s.TimedOut ? Loc.T("재료\n물약병\n잉크\n시간 보너스")
+                : Loc.F("재료  {0} / 3", s.CorrectIngredients) + "\n" +
+                  Loc.F("물약병  {0}", s.BottleCorrect ? Loc.T("일치") : Loc.T("불일치")) + "\n" +
+                  Loc.F("잉크  {0}", s.InkCorrect ? Loc.T("일치") : Loc.T("불일치")) + "\n" + Loc.T("시간 보너스");
             values.text = $"+{s.IngredientPoints}\n+{s.BottlePoints}\n+{s.InkPoints}\n+{s.TimeBonus}";
-            total.text = $"총점  {s.Total}점";
+            total.text = Loc.F("총점  {0}점", s.Total);
             stamp.sprite = s.TimedOut ? config.StampSlow : s.Stamp == 2 ? config.StampGreat :
                 s.Stamp == 1 ? config.StampOkay : config.StampSlime;
             stamp.enabled = stamp.sprite != null;

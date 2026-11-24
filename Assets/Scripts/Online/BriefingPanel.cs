@@ -58,31 +58,31 @@ namespace PotionShop.Online
             // The guide memo's language, chosen here before anyone reads it.
             var pickRow = At(c, "MemoLanguage", new Vector2(64f, 884f), new Vector2(1120f, 64f));
             OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Label", pickRow, Vector2.zero, new Vector2(0f, 1f), Vector2.zero,
-                new Vector2(150f, 0f)), "메모 언어", 26, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
+                new Vector2(150f, 0f)), Loc.T("메모 언어"), 26, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
             new MemoLanguagePicker(OnlineUi.Rect("Buttons", pickRow, Vector2.zero, Vector2.one, new Vector2(160f, 0f),
                 Vector2.zero), config.BoldFont);
 
             var board = At(c, "Window", new Vector2(1220f, 64f), new Vector2(640f, 960f));
             OnlineUiParts.Draw(board, "UI_Window", true);
-            OnlineUi.Label(Line(board, 64f, 60f), "누가 위층으로 갈까요?", 40, config.BoldFont, OnlineUiParts.Ink,
+            OnlineUi.Label(Line(board, 64f, 60f), Loc.T("누가 위층으로 갈까요?"), 40, config.BoldFont, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
-            OnlineUi.Label(Line(board, 130f, 64f), "왼쪽 쪽지를 같이 읽고, 한 사람이 자리를 고르세요. 다른 사람은 남은 자리로 갑니다.",
+            OnlineUi.Label(Line(board, 130f, 64f), Loc.T("왼쪽 쪽지를 같이 읽고, 한 사람이 자리를 고르세요. 다른 사람은 남은 자리로 갑니다."),
                 22, config.BoldFont, OnlineUiParts.InkSoft, TextAnchor.UpperLeft);
 
-            RoleButton(board, 222f, "PickLoft", "NET_RoleIcon_Upstairs", "위층 · 메모 담당", "손님은 못 보고, 메모만 봐요",
+            RoleButton(board, 222f, "PickLoft", "NET_RoleIcon_Upstairs", Loc.T("위층 · 메모 담당"), Loc.T("손님은 못 보고, 메모만 봐요"),
                 () => OnlineSession.Instance.Lobby.Pick(OnlineRole.Narrator));
-            RoleButton(board, 418f, "PickCounter", "NET_RoleIcon_Downstairs", "아래층 · 손님 담당", "손님을 맞고, 재료를 집어요",
+            RoleButton(board, 418f, "PickCounter", "NET_RoleIcon_Downstairs", Loc.T("아래층 · 손님 담당"), Loc.T("손님을 맞고, 재료를 집어요"),
                 () => OnlineSession.Instance.Lobby.Pick(OnlineRole.Maker));
 
             var lamp = At(board, "Lamp", new Vector2(52f, 624f), new Vector2(18f, 18f));
             OnlineUiParts.Lamp(lamp);
-            OnlineUi.Label(Line(board, 612f, 42f, 80f), "친구 연결됨 · 고르는 중…", 24, config.BoldFont, OnlineUiParts.Ink,
+            OnlineUi.Label(Line(board, 612f, 42f, 80f), Loc.T("친구 연결됨 · 고르는 중…"), 24, config.BoldFont, OnlineUiParts.Ink,
                 TextAnchor.MiddleLeft);
             voice = OnlineUi.Label(Line(board, 656f, 34f, 80f), string.Empty, 20, config.BoldFont, OnlineUiParts.InkSoft,
                 TextAnchor.MiddleLeft);
 
-            OnlineUi.Label(Line(board, 740f, 44f), "쉬움 모드", 30, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            OnlineUi.Label(Line(board, 786f, 32f), "메모의 꼭 필요한 곳에 상자가 쳐져요", 20, config.BoldFont,
+            OnlineUi.Label(Line(board, 740f, 44f), Loc.T("쉬움 모드"), 30, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            OnlineUi.Label(Line(board, 786f, 32f), Loc.T("메모의 꼭 필요한 곳에 상자가 쳐져요"), 20, config.BoldFont,
                 OnlineUiParts.InkSoft, TextAnchor.MiddleLeft);
             var toggleRect = OnlineUi.Box("EasyMode", board, new Vector2(1f, 1f), new Vector2(-52f, -754f), new Vector2(88f, 48f));
             easyToggle = OnlineUiParts.Draw(toggleRect, "NET_Toggle_Off", true);
@@ -91,7 +91,7 @@ namespace PotionShop.Online
 
             // "연결 끊기" is a quiet underlined link, as in the mockup.
             var leave = At(board, "Leave", new Vector2(52f, 872f), new Vector2(140f, 40f));
-            var leaveText = OnlineUi.Label(leave, "연결 끊기", 24, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            var leaveText = OnlineUi.Label(leave, Loc.T("연결 끊기"), 24, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
             leaveText.raycastTarget = true;
             leave.gameObject.AddComponent<Button>().onClick.AddListener(() => OnlineSession.Instance.LeaveAsync().Forget());
             OnlineUi.Fill(OnlineUi.Rect("Underline", leave, Vector2.zero, new Vector2(0.72f, 0f), new Vector2(0f, -2f),
@@ -160,8 +160,8 @@ namespace PotionShop.Online
             {
                 OnlineUiParts.AnimateDots(travelDots);
                 travelStatus.text = session != null && session.PeerConnected
-                    ? "온라인 · 친구 연결됨 · " + session.Voice.Describe()
-                    : "연결이 끊어졌어요";
+                    ? Loc.T("온라인 · 친구 연결됨 · ") + session.Voice.Describe()
+                    : Loc.T("연결이 끊어졌어요");
             }
 
             if ((role is OnlineRole.Maker or OnlineRole.Narrator) && !session.Arrived && !travelStarted)
@@ -186,10 +186,10 @@ namespace PotionShop.Online
         {
             travelStarted = true;
             bool upstairs = role == OnlineRole.Narrator;
-            travelTitle.text = upstairs ? "위층 공방으로 가는 중…" : "아래층 카운터로 가는 중…";
+            travelTitle.text = upstairs ? Loc.T("위층 공방으로 가는 중…") : Loc.T("아래층 카운터로 가는 중…");
             travelDetail.text = upstairs
-                ? "손님은 볼 수 없으니 친구 말을 듣고 메모를 찾아 주세요"
-                : "메모는 볼 수 없으니 위층 친구에게 말로 물어보세요";
+                ? Loc.T("손님은 볼 수 없으니 친구 말을 듣고 메모를 찾아 주세요")
+                : Loc.T("메모는 볼 수 없으니 위층 친구에게 말로 물어보세요");
             travelling.SetActive(true);
             travelGroup.alpha = 0f;
             _ = LMotion.Create(0f, 1f, 0.35f).WithEase(Ease.OutQuad).Bind(alpha => travelGroup.alpha = alpha)

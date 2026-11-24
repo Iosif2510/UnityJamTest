@@ -50,7 +50,7 @@ namespace PotionShop
             OnlineUi.Fill(key, OnlineUiParts.Cream, false);
             OnlineUi.Label(OnlineUi.Rect("Text", key, Vector2.zero, Vector2.one), "Tab", 22, config.BoldFont, OnlineUiParts.Ink);
             OnlineUiParts.Outlined(OnlineUi.Label(OnlineUi.Rect("Label", hint, Vector2.zero, Vector2.one, new Vector2(86f, 0f),
-                Vector2.zero), "메모책", 26, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
+                Vector2.zero), Loc.T("메모책"), 26, config.BoldFont, OnlineUiParts.Cream, TextAnchor.MiddleLeft));
 
             // the book: the loft's desk under the same tabs and sheets
             var book = OnlineUi.Rect("Book", root, Vector2.zero, Vector2.one);
@@ -59,7 +59,7 @@ namespace PotionShop
             desk = book.gameObject.AddComponent<LoftDesk>();
             desk.Build(book, config, null);
             var title = OnlineUi.Box("Title", book, new Vector2(0f, 1f), new Vector2(36f, -28f), new Vector2(900f, 64f));
-            OnlineUiParts.Outlined(OnlineUi.Label(title, "메모책  ·  Tab으로 닫기", 34, config.BoldFont, OnlineUiParts.Cream,
+            OnlineUiParts.Outlined(OnlineUi.Label(title, Loc.T("메모책  ·  Tab으로 닫기"), 34, config.BoldFont, OnlineUiParts.Cream,
                 TextAnchor.MiddleLeft));
             OnlineUiParts.Button(OnlineUi.Box("Close", book, new Vector2(1f, 1f), new Vector2(-36f, -28f),
                 new Vector2(72f, 72f)), "UI_CloseButton", null, 0, config.BoldFont, () => Show(false));

@@ -206,7 +206,7 @@ namespace PotionShop
                 if (round.Phase == RoundPhase.Consult) return;
                 dialogueView.gameObject.SetActive(true);
                 dialogueView.SetSpeaker(string.Empty);
-                dialogueView.ShowMessage("대사를 불러오지 못했습니다.");
+                dialogueView.ShowMessage(Loc.T("대사를 불러오지 못했습니다."));
             }
             finally
             {
@@ -385,11 +385,11 @@ namespace PotionShop
             }
 
             if (consult || ending)
-                dialogueView.SetSpeaker(round.CurrentOrder.Voice?.DisplayName ?? string.Empty);
+                dialogueView.SetSpeaker(Loc.T(round.CurrentOrder.Voice?.DisplayName ?? string.Empty));
 
             if (consult)
             {
-                SetAdvanceLabel("창고로");
+                SetAdvanceLabel(Loc.T("창고로"));
                 if (!customerEntering) PlayConsult(round.CurrentOrder, StartPhasePlayback()).Forget();
             }
             else if (prescribe)
@@ -422,9 +422,9 @@ namespace PotionShop
             var order = round.CurrentOrder;
             string bottleAnswer = order == null ? null : order.Bottle switch
             {
-                BottleShape.Square => "네모 병",
-                BottleShape.Heart => "하트 병",
-                BottleShape.Round => "동그란 병",
+                BottleShape.Square => Loc.T("네모 병"),
+                BottleShape.Heart => Loc.T("하트 병"),
+                BottleShape.Round => Loc.T("동그란 병"),
                 _ => null
             };
             int inkIndex = order != null ? order.Ink.InkNumber - 1 : -1;
@@ -490,7 +490,7 @@ namespace PotionShop
             }
             if (round.Phase != RoundPhase.Ending || round.Result != result) return;
             endingReady = true;
-            SetAdvanceLabel("결과 보기");
+            SetAdvanceLabel(Loc.T("결과 보기"));
             enterWorkshopButton.gameObject.SetActive(true);
             enterWorkshopButton.interactable = true;
         }

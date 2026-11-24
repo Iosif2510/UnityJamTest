@@ -50,7 +50,7 @@ namespace PotionShop
         private double lastVoiced;
         internal TMP_FontAsset SpeakerFont => speaker.font;
 
-        public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
+        public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? Loc.T("손님") : name;
 
         public void ShowMessage(string message)
         {

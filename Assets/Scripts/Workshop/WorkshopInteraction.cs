@@ -99,7 +99,7 @@ namespace PotionShop
                         workshopAudio?.PlayTimeExpired();
                     hud.SetCrosshairVisible(false);
                     player.enabled = false;
-                    hud.ShowPrompt(action: "시간 초과");
+                    hud.ShowPrompt(action: Loc.T("시간 초과"));
                     return;
                 }
             }
@@ -124,7 +124,7 @@ namespace PotionShop
             {
                 aim.Release();
                 hud.SetCrosshairFocus(false);
-                hud.ShowPrompt(action: locked ? "" : "게임 화면을 클릭해 계속하기");
+                hud.ShowPrompt(action: locked ? "" : Loc.T("게임 화면을 클릭해 계속하기"));
                 return;
             }
 
@@ -148,7 +148,7 @@ namespace PotionShop
 
             if (cauldron != null)
             {
-                hud.ShowPrompt("가마솥", $"재료를 들고 오세요 ({inCauldron.Count}/{Required})");
+                hud.ShowPrompt(Loc.T("가마솥"), Loc.F("재료를 들고 오세요 ({0}/{1})", inCauldron.Count, Required));
                 return;
             }
 
@@ -162,13 +162,13 @@ namespace PotionShop
 
             if (AlreadyGathered(ingredient.VariantId))
             {
-                hud.ShowIngredient(ingredient.VariantId, "이미 챙긴 재료입니다");
+                hud.ShowIngredient(ingredient.VariantId, Loc.T("이미 챙긴 재료입니다"));
                 return;
             }
 
             bool hasSpace = Gathered < Required;
             hud.ShowIngredient(ingredient.VariantId,
-                hasSpace ? "집기" : "재료가 다 모였습니다. 가마솥으로 가세요",
+                hasSpace ? Loc.T("집기") : Loc.T("재료가 다 모였습니다. 가마솥으로 가세요"),
                 hasSpace ? "좌클릭" : null);
             Vector3 shelfPosition = ingredient.transform.position;
             if (hasSpace && click)
@@ -182,8 +182,8 @@ namespace PotionShop
 
         private void HandleHeldIngredient(WorkshopCauldron cauldron, bool click, bool putBack)
         {
-            if (cauldron != null) hud.ShowHeldIngredient("가마솥에 넣기", "좌클릭");
-            else hud.ShowHeldIngredient("돌려 보기", "좌클릭 드래그");
+            if (cauldron != null) hud.ShowHeldIngredient(Loc.T("가마솥에 넣기"), "좌클릭");
+            else hud.ShowHeldIngredient(Loc.T("돌려 보기"), "좌클릭 드래그");
 
             if (putBack)
             {
@@ -263,7 +263,7 @@ namespace PotionShop
             }
             transfer = new CancellationTokenSource();
             hud.SetCrosshairVisible(false);
-            hud.ShowPrompt("가마솥", "재료 넣는 중");
+            hud.ShowPrompt(Loc.T("가마솥"), Loc.T("재료 넣는 중"));
             PourIngredients(cauldron, transfer).Forget();
         }
 
@@ -321,7 +321,7 @@ namespace PotionShop
             double remaining = cauldron.RemainingSeconds;
             if (remaining > 0d)
             {
-                hud.ShowPrompt($"제조 중 · {System.Math.Ceiling(remaining):0}초");
+                hud.ShowPrompt(Loc.F("제조 중 · {0}초", (int)System.Math.Ceiling(remaining)));
                 return;
             }
 
