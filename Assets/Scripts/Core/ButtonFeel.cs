@@ -43,13 +43,14 @@ namespace PotionShop
             }
         }
 
-        // These animate their own scale (choice bounce, card hover, serve pop): leave their scale alone.
+        // These animate their own scale (choice bounce, card hover, serve pop, title menu): leave their scale alone.
         private static bool OwnsScale(string n) =>
-            n.StartsWith("Bottle_") || n.StartsWith("Ink_") || n == "ServeButton" || n == "Paper" || n == "Found";
+            n.StartsWith("Bottle_") || n.StartsWith("Ink_") || n == "ServeButton" || n == "Paper" || n == "Found" ||
+            n.StartsWith("Menu ");
 
         // These play their own, more specific sound.
         private static bool OwnsSound(string n) =>
-            OwnsScale(n) || n.StartsWith("Tab ") || n == "Previous" || n == "Next";
+            (OwnsScale(n) && !n.StartsWith("Menu ")) || n.StartsWith("Tab ") || n == "Previous" || n == "Next";
 
         private void Awake()
         {

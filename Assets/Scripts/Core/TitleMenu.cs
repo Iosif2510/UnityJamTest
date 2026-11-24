@@ -1,4 +1,3 @@
-using LitMotion;
 using PotionShop.Online;
 using TMPro;
 using UnityEngine;
@@ -10,13 +9,15 @@ namespace PotionShop
     /// <summary>
     /// The title screen's menu under the logo: 혼자하기 walks to the counter, 함께하기 opens the online co-op window,
     /// 옵션 opens a small settings sheet (volume, full screen, memo language) and 게임끄기 asks once before quitting.
-    /// The four buttons are copies of <see cref="template"/>, the counter's own wooden button, and slide up in turn.
+    /// The four buttons are copies of <see cref="template"/>, the counter's own wooden button, in a column on a soft
+    /// dark pad; each shows clearly when it is pointed at (<see cref="TitleMenuItem"/>) and the arrow keys walk them.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class TitleMenu : MonoBehaviour
     {
         [SerializeField] private Button template;
-        [SerializeField, Min(0f)] private float spacing = 98f;
+        [SerializeField, Min(0f)] private float spacing = 116f;
+        [SerializeField, Min(0f)] private float quitGap = 30f;
         [SerializeField, Min(0f)] private float appearDelay = 0.9f;
 
         private GameObject options;
@@ -24,11 +25,13 @@ namespace PotionShop
         private MemoLanguagePicker languages;
         private Toggle fullScreen;
         private bool leaving;
+        private readonly System.Collections.Generic.List<TitleMenuItem> items = new();
 
         private void Start()
         {
             var parent = (RectTransform)template.transform.parent;
-            var first = ((RectTransform)template.transform).anchoredPosition;
+            var templateRect = (RectTransform)template.transform;
+            var first = templateRect.anchoredPosition;
             var entries = new (string label, UnityEngine.Events.UnityAction action)[]
             {
                 ("혼자하기", PlaySolo),
@@ -36,6 +39,16 @@ namespace PotionShop
                 ("옵션", () => Show(options, true)),
                 ("게임끄기", () => Show(quitConfirm, true)),
             };
+
+            // a soft dark pad behind the column, so the buttons read against the busy counter
+            float height = spacing * (entries.Length - 1) + quitGap + templateRect.sizeDelta.y;
+            var pad = OnlineUi.Rect("Menu Pad", parent, templateRect.anchorMin, templateRect.anchorMax);
+            pad.pivot = new Vector2(0.5f, 1f);
+            pad.anchoredPosition = first + new Vector2(0f, templateRect.sizeDelta.y * 0.5f + 60f);
+            pad.sizeDelta = new Vector2(templateRect.sizeDelta.x + 260f, height + 120f);
+            OnlineUiParts.Shade(pad, 0.5f);
+            pad.SetSiblingIndex(templateRect.GetSiblingIndex());
+
             for (int i = 0; i < entries.Length; i++)
             {
                 var button = Instantiate(template, parent);
@@ -44,10 +57,28 @@ namespace PotionShop
                 button.onClick.AddListener(entries[i].action);
                 SetLabel(button, entries[i].label);
                 var rect = (RectTransform)button.transform;
-                rect.anchoredPosition = first + Vector2.down * spacing * i;
-                Appear(rect, appearDelay + i * 0.08f);
+                bool quit = i == entries.Length - 1;
+                rect.anchoredPosition = first + Vector2.down * (spacing * i + (quit ? quitGap : 0f));
+                // leaving is the quiet one: a little smaller
+                if (quit) rect.localScale = Vector3.one * 0.86f;
+                var item = button.gameObject.AddComponent<TitleMenuItem>();
+                item.Menu = this;
+                item.Settle();
+                item.Appear(appearDelay + i * 0.08f);
+                items.Add(item);
             }
             template.gameObject.SetActive(false);
+            // arrow keys walk the list top to bottom and wrap
+            for (int i = 0; i < items.Count; i++)
+            {
+                var button = items[i].GetComponent<Button>();
+                button.navigation = new Navigation
+                {
+                    mode = Navigation.Mode.Explicit,
+                    selectOnUp = items[(i + items.Count - 1) % items.Count].GetComponent<Button>(),
+                    selectOnDown = items[(i + 1) % items.Count].GetComponent<Button>(),
+                };
+            }
 
             var config = OnlineCoopConfig.Load();
             var font = config != null ? config.BoldFont : null;
@@ -56,12 +87,31 @@ namespace PotionShop
             quitConfirm = BuildQuit((RectTransform)canvas.transform, font);
         }
 
+        /// <summary>One entry pointed at shows it; the others step back.</summary>
+        internal void Refresh()
+        {
+            TitleMenuItem pointed = null;
+            foreach (var item in items) if (item.Pointed) pointed = item;
+            foreach (var item in items) item.SetState(item == pointed, pointed != null);
+        }
+
         private void Update()
         {
             var keyboard = Keyboard.current;
-            if (keyboard == null || !keyboard.escapeKey.wasPressedThisFrame) return;
-            if (options.activeSelf) Show(options, false);
-            else if (quitConfirm.activeSelf) Show(quitConfirm, false);
+            if (keyboard == null) return;
+            if (keyboard.escapeKey.wasPressedThisFrame)
+            {
+                if (options.activeSelf) Show(options, false);
+                else if (quitConfirm.activeSelf) Show(quitConfirm, false);
+                return;
+            }
+            // the first arrow press picks up the menu where nothing is selected yet
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            bool windowOpen = options.activeSelf || quitConfirm.activeSelf;
+            if (!windowOpen && events != null && items.Count > 0 &&
+                (keyboard.upArrowKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame) &&
+                (events.currentSelectedGameObject == null || !events.currentSelectedGameObject.activeInHierarchy))
+                events.SetSelectedGameObject(items[keyboard.upArrowKey.wasPressedThisFrame ? items.Count - 1 : 0].gameObject);
         }
 
         private void PlaySolo()
@@ -78,21 +128,6 @@ namespace PotionShop
             if (tmp != null) tmp.text = text;
             var legacy = button.GetComponentInChildren<Text>(true);
             if (legacy != null) legacy.text = text;
-        }
-
-        /// <summary>Rises a little and fades in after <paramref name="delay"/>, once the logo has landed.</summary>
-        private static void Appear(RectTransform rect, float delay)
-        {
-            var group = rect.gameObject.TryGetComponent(out CanvasGroup g) ? g : rect.gameObject.AddComponent<CanvasGroup>();
-            var rest = rect.anchoredPosition;
-            group.alpha = 0f;
-            LMotion.Create(0f, 1f, 0.35f).WithDelay(delay).WithEase(Ease.OutCubic)
-                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
-                .Bind(t =>
-                {
-                    rect.anchoredPosition = rest + Vector2.down * 24f * (1f - t);
-                    group.alpha = t;
-                }).AddTo(rect.gameObject);
         }
 
         private void Show(GameObject window, bool show)
