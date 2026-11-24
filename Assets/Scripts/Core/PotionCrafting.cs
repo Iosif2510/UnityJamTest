@@ -157,18 +157,20 @@ namespace PotionShop
 
             // slap the blank label on
             var label = Piece("Label", bottle, new Vector2(520f, -420f));
-            float labelW = bottleW * 0.56f;
+            // never wider than the glass: the biggest label that fits this bottle's shape
+            var (labelCentre, labelShare) = BottleLabelArea.For(order.Bottle);
+            float labelW = bottleW * labelShare;
             label.sizeDelta = new Vector2(labelW, labelW * 325f / 512f);
             var labelImage = label.gameObject.AddComponent<Image>();
             labelImage.sprite = Label;
-            var labelRest = new Vector2(0f, -BottleHeight * 0.14f);
+            var labelRest = new Vector2((labelCentre.x - 0.5f) * bottleW, (labelCentre.y - 0.5f) * BottleHeight);
             var labelFrom = label.anchoredPosition;
             _ = Move(quill, new Vector2(520f, 260f), 0.3f, Ease.InOutQuad, token);
             await Tween(0.28f, t =>
             {
                 float e = t * t;
                 label.anchoredPosition = Vector2.Lerp(labelFrom, labelRest, e);
-                label.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(28f, -2f, e));
+                label.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(28f, 0f, e));
                 label.localScale = Vector3.one * Mathf.Lerp(1.3f, 1f, e);
             }, label, token);
             GameSfx.Play("StampThud", 0.55f, 1.2f);
@@ -177,9 +179,9 @@ namespace PotionShop
 
             // write the potion and who it is for, in the chosen ink
             var inkColour = Color.Lerp(order.InkColour, Color.black, 0.25f);
-            await Write(label, quill, stage, order.Potion, 0.12f, labelW * 0.8f, 40, inkColour, 0.05f, token);
+            await Write(label, quill, stage, order.Potion, 0.12f, labelW * 0.8f, Mathf.RoundToInt(labelW * 0.2f), inkColour, 0.05f, token);
             if (!string.IsNullOrEmpty(order.ForWhom))
-                await Write(label, quill, stage, order.ForWhom, -0.2f, labelW * 0.6f, 27, inkColour, 0.04f, token);
+                await Write(label, quill, stage, order.ForWhom, -0.2f, labelW * 0.6f, Mathf.RoundToInt(labelW * 0.135f), inkColour, 0.04f, token);
             await Move(quill, new Vector2(980f, 560f), 0.3f, Ease.InQuad, token);
             await Wait(0.25f, token);
 

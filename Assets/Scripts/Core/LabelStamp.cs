@@ -53,11 +53,15 @@ namespace PotionShop
             shownFrom = inkPot;
             image.sprite = Cut(inkPot);
             var size = ((RectTransform)transform).rect.size;
-            stamp.sizeDelta = new Vector2(size.x * 0.44f, size.x * 0.44f * LabelArea.height / LabelArea.width *
-                                                          inkPot.rect.height / inkPot.rect.width);
+            // inside the glass: no wider than the room this bottle shape has at its label spot
+            var (centre, room) = BottleLabelArea.For(TryGetComponent(out UnityEngine.UI.Image picture) ? picture.sprite : null);
+            stamp.anchorMin = stamp.anchorMax = centre;
+            float width = size.x * Mathf.Min(0.44f, room);
+            stamp.sizeDelta = new Vector2(width, width * LabelArea.height / LabelArea.width *
+                                                 inkPot.rect.height / inkPot.rect.width);
             stamp.gameObject.SetActive(true);
             motion.TryCancel();
-            float tilt = Random.Range(-7f, 7f);
+            float tilt = Random.Range(-3f, 3f);
             if (!animate)
             {
                 stamp.localScale = Vector3.one;
