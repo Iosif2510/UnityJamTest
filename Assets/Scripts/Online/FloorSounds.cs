@@ -58,6 +58,8 @@ namespace PotionShop.Online
         /// <summary>Plays <paramref name="sound"/> as it sounds from the other floor (also for checking it offline).</summary>
         public void Hear(string sound)
         {
+            // watching the friend's hand-over at the counter, the real sounds play here already
+            if (RoundDirector.Instance != null && RoundDirector.Instance.Spectating) return;
             var clip = GameSfx.Load(sound);
             if (clip == null) return;
             source.pitch = 0.9f * (1f + UnityEngine.Random.Range(-0.05f, 0.05f));
