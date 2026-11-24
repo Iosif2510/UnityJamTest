@@ -182,10 +182,10 @@ namespace PotionShop.Online
                 cardViews.Add(view);
                 if (seen.Contains(sheets[i]))
                 {
-                    var badge = OnlineUi.Box("Seen", card, new Vector2(1f, 1f), new Vector2(-10f, -8f), new Vector2(96f, 40f));
-                    OnlineUiParts.Draw(badge, "LOFT_SeenBadge");
-                    OnlineUi.Label(OnlineUi.Rect("Text", badge, Vector2.zero, Vector2.one, new Vector2(0f, 2f), Vector2.zero),
-                        "본 장", 22, config.BoldFont, OnlineUiParts.StampRed);
+                    // just the word in the corner, no stamp
+                    var seenLabel = OnlineUi.Box("Seen", card, new Vector2(1f, 1f), new Vector2(-16f, -10f), new Vector2(96f, 40f));
+                    OnlineUiParts.Outlined(OnlineUi.Label(seenLabel, "읽음", 24, config.BoldFont, OnlineUiParts.Cream,
+                        TextAnchor.MiddleRight));
                 }
 
                 // Sheets fly in from the left one after another and settle slightly askew, like paper.
