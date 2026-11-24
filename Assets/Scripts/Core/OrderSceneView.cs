@@ -71,15 +71,16 @@ namespace PotionShop
             resultView = resultPanel.GetComponent<RoundResultView>();
             resultPortrait = resultPanel.GetComponentInChildren<PortraitView>(true);
             enterWorkshopButton.onClick.AddListener(AdvanceDialogue);
-            squareBottle.onClick.AddListener(() => SelectBottle(BottleShape.Square));
-            heartBottle.onClick.AddListener(() => SelectBottle(BottleShape.Heart));
-            roundBottle.onClick.AddListener(() => SelectBottle(BottleShape.Round));
+            // watching a friend's hand-over, the picks are theirs: clicks do nothing
+            squareBottle.onClick.AddListener(() => { if (!Watching) SelectBottle(BottleShape.Square); });
+            heartBottle.onClick.AddListener(() => { if (!Watching) SelectBottle(BottleShape.Heart); });
+            roundBottle.onClick.AddListener(() => { if (!Watching) SelectBottle(BottleShape.Round); });
             for (int i = 0; i < inkButtons.Length; i++)
             {
                 int ink = i + 1;
-                inkButtons[i].onClick.AddListener(() => SelectInk(ink));
+                inkButtons[i].onClick.AddListener(() => { if (!Watching) SelectInk(ink); });
             }
-            serveButton.onClick.AddListener(Serve);
+            serveButton.onClick.AddListener(() => { if (!Watching) Serve(); });
             var selected = prescriptionPanel.transform.Find("SelectedOptions")?.GetComponent<Text>();
             prescriptionFeel = (prescriptionPanel.TryGetComponent(out PrescriptionFeel foundPrescriptionFeel) ? foundPrescriptionFeel : prescriptionPanel.AddComponent<PrescriptionFeel>());
             prescriptionFeel.Pointed += LookAtChoice;
@@ -96,6 +97,43 @@ namespace PotionShop
             }
 
             RefreshPhase();
+
+            // a friend downstairs just handed a potion over: watch it with them
+            if (Online.SharedEnding.TakePending(out var handover)) Watch(handover).Forget();
+        }
+
+        private bool Watching => round != null && round.Spectating;
+
+        /// <summary>
+        /// Replays the friend's hand-over here: the same customer at the counter, their bottle and ink picked one
+        /// after the other, then the potion made and handed over, and the customer's reaction and result as usual.
+        /// </summary>
+        private async UniTaskVoid Watch(Online.SharedEnding.Handover handover)
+        {
+            var token = this.GetCancellationTokenOnDestroy();
+            await UniTask.Yield(token);
+            CauldronColor.ShowBrew(handover.Brew);
+            if (!round.BeginSpectating(handover.Seed, handover.PreviousDisease, handover.CustomerId, handover.Ingredients,
+                    handover.Bottle, handover.Ink, handover.RemainingSeconds))
+            {
+                Online.SharedEnding.ReturnUpstairs();
+                return;
+            }
+            RefreshPhase();
+            await UniTask.Delay(TimeSpan.FromSeconds(1.2), ignoreTimeScale: true, cancellationToken: token);
+            SelectBottle(handover.Bottle);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.8), ignoreTimeScale: true, cancellationToken: token);
+            SelectInk(handover.Ink);
+            await UniTask.Delay(TimeSpan.FromSeconds(1.0), ignoreTimeScale: true, cancellationToken: token);
+            if (round.Phase != RoundPhase.Prescribe || chosenBottle == BottleShape.Unspecified || chosenInk == 0) return;
+            servedBottle = prescriptionFeel.ChosenBottleSprite;
+            servedInk = prescriptionFeel.ChosenInkSprite;
+            var (potion, forWhom) = PotionLabelText.For(round.CurrentOrder, round.SubmittedIngredients);
+            var craft = new PotionCrafting.Order(prescriptionFeel.ChosenBottleRect, servedBottle,
+                prescriptionFeel.ChosenInkRect, servedInk, prescriptionFeel.ChosenInkColour, potion, forWhom,
+                portraitView != null ? (RectTransform)portraitView.transform : null);
+            round.SpectateServe();
+            CraftAndServe(craft).Forget();
         }
 
         private void Update()
@@ -261,6 +299,12 @@ namespace PotionShop
             }
             if (resultPanel.activeInHierarchy && round.DismissResult())
                 RefreshPhase();
+            if (round.Spectating)
+            {
+                // the friend's customer has gone: back upstairs (unless the roles swapped and this is home now)
+                round.EndSpectating();
+                Online.SharedEnding.ReturnUpstairs();
+            }
         }
 
         private void AdvanceDialogue()

@@ -32,6 +32,9 @@ namespace PotionShop
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => LastBrew = null; // no domain reload between play sessions
 
+        /// <summary>The brew a friend made downstairs (co-op replay), so the bottle fills with its colour here too.</summary>
+        internal static void ShowBrew(Color? brew) => LastBrew = brew is { a: > 0f } ? brew : null;
+
         /// <summary>The liquid's colour right now (the progress ring borrows it).</summary>
         public Color Current { get; private set; }
 

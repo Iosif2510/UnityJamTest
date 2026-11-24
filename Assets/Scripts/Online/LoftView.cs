@@ -197,7 +197,8 @@ namespace PotionShop.Online
             desk.Tick(phase, session.EasyMode, newCustomer);
 
             SetGuidance(!live ? WaitingText() : Guide(snapshot));
-            resultCard.Show(live && snapshot.HasResult && snapshot.Phase == RoundPhase.Result, snapshot);
+            // a hand-over watched at the counter already showed its result there
+            resultCard.Show(live && snapshot.HasResult && snapshot.Phase == RoundPhase.Result && !SharedEnding.Watched, snapshot);
 
             string link = session.Role != OnlineRole.Narrator ? Loc.T("연결이 끊어졌습니다") :
                 session.PeerConnected ? Loc.T("아래층과 연결됨") : Loc.T("아래층에 연결하는 중…");

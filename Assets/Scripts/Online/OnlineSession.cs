@@ -41,6 +41,7 @@ namespace PotionShop.Online
                     root.AddComponent<NarratorSignal>();
                     root.AddComponent<FloorSounds>();
                     root.AddComponent<RoleSwap>();
+                    root.AddComponent<SharedEnding>();
                 }
                 return instance;
             }

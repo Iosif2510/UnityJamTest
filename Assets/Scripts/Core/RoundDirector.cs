@@ -51,6 +51,7 @@ namespace PotionShop
         private static void ResetInstance()
         {
             Instance = null;
+            Served = null;
 #if UNITY_EDITOR
             EditorOrderFactory = null;
 #endif
@@ -218,11 +219,57 @@ namespace PotionShop
                 inkNumber is < 1 or > 6)
                 return false;
 
-            Result = RoundJudge.Score(CurrentOrder, SubmittedIngredients, bottle, inkNumber, RemainingSeconds,
+            double remaining = RemainingSeconds;
+            Result = RoundJudge.Score(CurrentOrder, SubmittedIngredients, bottle, inkNumber, remaining,
                 loadedCatalog.Tuning);
             Phase = RoundPhase.Ending;
+            Served?.Invoke(CurrentOrder, SubmittedIngredients, bottle, inkNumber, remaining);
             return true;
         }
+
+        /// <summary>Raised when a potion is handed over: the order, ingredients, bottle, ink and seconds left.</summary>
+        public static event Action<GeneratedOrder, IReadOnlyList<string>, BottleShape, int, double> Served;
+
+        /// <summary>Watching a friend's customer (co-op): this round is a replay, not this player's own.</summary>
+        internal bool Spectating { get; private set; }
+
+        /// <summary>
+        /// Sets up a replay of the friend's hand-over: the same customer (rebuilt from the order's seed, in this
+        /// player's language), the same ingredients, and the result their bottle and ink earned. The round stands at
+        /// the prescription until <see cref="SpectateServe"/>.
+        /// </summary>
+        internal bool BeginSpectating(int seed, string previousDisease, string customerId, IReadOnlyList<string> ingredients,
+            BottleShape bottle, int inkNumber, double remainingSeconds)
+        {
+            if (Phase is not (RoundPhase.Waiting or RoundPhase.Result) && !Spectating) return false;
+            if (loadedCatalog != null && loadedCatalog.DialogueLanguage != Loc.Language) loadedCatalog = null;
+            loadedCatalog ??= CatalogLoader.Load(catalog);
+            try
+            {
+                CurrentOrder = OrderGenerator.Generate(loadedCatalog, seed, string.IsNullOrEmpty(previousDisease) ? null : previousDisease,
+                    customerId);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                return false;
+            }
+            SubmittedIngredients = ingredients;
+            Result = RoundJudge.Score(CurrentOrder, ingredients, bottle, inkNumber, remainingSeconds, loadedCatalog.Tuning);
+            deadline = Time.unscaledTimeAsDouble + Math.Max(1d, remainingSeconds);
+            Spectating = true;
+            Phase = RoundPhase.Prescribe;
+            return true;
+        }
+
+        /// <summary>The replayed potion is handed over: on to the customer's reaction.</summary>
+        internal void SpectateServe()
+        {
+            if (Spectating && Phase == RoundPhase.Prescribe) Phase = RoundPhase.Ending;
+        }
+
+        /// <summary>The replay is over (its result was dismissed).</summary>
+        internal void EndSpectating() => Spectating = false;
 
         internal void CompleteEnding(RoundResult result)
         {
