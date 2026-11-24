@@ -1,35 +1,14 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PotionShop.Online
 {
     /// <summary>
-    /// A master volume slider (<see cref="GameSfx.MasterVolume"/>, saved). Shown in the title's corner and in the
-    /// loft's Esc menu, since the game has no settings screen yet. Releasing the handle plays a tick at the new level.
+    /// A master volume slider (<see cref="GameSfx.MasterVolume"/>, saved), in the title's options window and the
+    /// loft's Esc menu. Releasing the handle plays a tick at the new level.
     /// </summary>
     internal static class VolumeSlider
     {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void Install()
-        {
-            SceneManager.sceneLoaded += (scene, _) => AddToTitle(scene);
-            AddToTitle(SceneManager.GetActiveScene());
-        }
-
-        private static void AddToTitle(Scene scene)
-        {
-            if (scene.name != OnlineCoopConfig.TitleScene) return;
-            var config = OnlineCoopConfig.Load();
-            if (config == null) return;
-            var canvas = OnlineUi.Canvas("VolumeCanvas", 40);
-            SceneManager.MoveGameObjectToScene(canvas.gameObject, scene);
-            var row = OnlineUi.Box("Volume", canvas.transform, new Vector2(1f, 1f), new Vector2(-32f, -28f), new Vector2(380f, 56f));
-            OnlineUi.Fill(row, new Color(0.12f, 0.06f, 0.03f, 0.55f), false);
-            Build(OnlineUi.Rect("Inner", row, Vector2.zero, Vector2.one, new Vector2(18f, 6f), new Vector2(-18f, -6f)),
-                config.BoldFont, OnlineUiParts.Cream);
-        }
-
         public static Slider Build(RectTransform row, Font font, Color textColor)
         {
             OnlineUi.Label(OnlineUi.Rect("Label", row, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(90f, 0f)),

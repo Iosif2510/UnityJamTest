@@ -6,9 +6,9 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// Adds the online co-op entry at runtime to the screen the game waits on: the title, or the counter while its
-    /// curtain is closed. It only connects the two players; who goes upstairs is picked afterwards on the
-    /// <see cref="BriefingPanel"/>. The existing buttons keep starting the game, so offline play is unchanged.
+    /// The online co-op window, added at runtime to the title and the counter; the title's 함께하기 opens it
+    /// (<see cref="Open"/>). It only connects the two players; who goes upstairs is picked afterwards on the
+    /// <see cref="BriefingPanel"/> (also kept on the counter, for a friend who reconnects mid-game).
     /// Drawn in the B style (handoff mockups 05 and 06): one window that first offers "방 만들기" or a code, and
     /// after making a room shows the code as letter tiles while waiting for the friend.
     /// </summary>
@@ -35,7 +35,13 @@ namespace PotionShop.Online
         private InputField addressInput;
         private Button leaveButton;
         private GameObject closeButton;
-        private GameObject openButton;
+        private static TitleOnlinePanel current;
+
+        /// <summary>Opens the make-a-room / enter-a-code window (the title's 함께하기).</summary>
+        internal static void Open()
+        {
+            if (current != null && current.panel != null) current.panel.SetActive(true);
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -63,16 +69,11 @@ namespace PotionShop.Online
             var canvas = OnlineUi.Canvas("OnlineCanvas", 50, transform);
             var root = canvas.transform;
 
-            openButton = OnlineUiParts.Button(OnlineUi.Box("OpenOnline", root, new Vector2(1f, 0f), new Vector2(-40f, 40f),
-                new Vector2(320f, 96f)), "UI_BigButton", "온라인 협동", 36, config.BoldFont, () => panel.SetActive(true)).gameObject;
+            current = this;
 
             panel = OnlineUi.Rect("Panel", root, Vector2.zero, Vector2.one).gameObject;
-            // The title scene has no picture of its own yet, so it gets the darkened shop; on the counter the shop is
-            // already behind, so a warm dim is enough.
-            if (SceneManager.GetActiveScene().name == OnlineCoopConfig.TitleScene)
-                OnlineUiParts.Backdrop((RectTransform)panel.transform, "BG_Shop");
-            else
-                OnlineUi.Fill((RectTransform)panel.transform, new Color(0.12f, 0.06f, 0.03f, 0.55f));
+            // the shop is drawn behind on both the title and the counter, so a warm dim is enough
+            OnlineUi.Fill((RectTransform)panel.transform, new Color(0.12f, 0.06f, 0.03f, 0.55f));
             var card = OnlineUi.Box("Window", panel.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880f, 770f));
             card.pivot = new Vector2(0.5f, 0.5f);
             OnlineUiParts.Draw(card, "UI_Window", true);
@@ -230,11 +231,6 @@ namespace PotionShop.Online
             var round = RoundDirector.Instance;
             bool waitingForCustomer = round == null || round.Phase == RoundPhase.Waiting;
             var role = OnlineSession.CurrentRole;
-            // Not while the roles are being picked or on the walk to the counter.
-            bool walking = role is OnlineRole.Maker or OnlineRole.Narrator && !OnlineSession.Instance.Arrived;
-            bool entry = waitingForCustomer && role != OnlineRole.Undecided && !walking;
-            if (openButton.activeSelf != entry)
-                openButton.SetActive(entry);
 
             // Connected but not yet paired or assigned: the customer must not be received, so the window stays up
             // while waiting for the friend, and gives way to the briefing once they are here.
@@ -255,6 +251,7 @@ namespace PotionShop.Online
 
         private void OnDestroy()
         {
+            if (current == this) current = null;
             if (OnlineSession.Exists)
                 OnlineSession.Instance.Changed -= Refresh;
         }

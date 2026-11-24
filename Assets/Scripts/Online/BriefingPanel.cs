@@ -211,6 +211,12 @@ namespace PotionShop.Online
                 SceneManager.LoadScene(OnlineCoopConfig.LoftScene);
                 return;
             }
+            // paired on the title: the maker still has to walk down to the counter
+            if (SceneManager.GetActiveScene().name == OnlineCoopConfig.TitleScene)
+            {
+                SceneManager.LoadScene(OnlineCoopConfig.CounterScene);
+                return;
+            }
 
             _ = LMotion.Create(1f, 0f, 0.35f).WithEase(Ease.InQuad).Bind(alpha => travelGroup.alpha = alpha)
                 .AddTo(gameObject);
