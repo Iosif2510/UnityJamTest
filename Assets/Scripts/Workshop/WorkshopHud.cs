@@ -47,7 +47,8 @@ namespace PotionShop
                     continue;
 
                 foreach (var variant in kind.Variants)
-                    kindNamesByVariant.Add(variant.Id, kind.DisplayName);
+                    // only the kind shows: which of its three it is, the player tells by its look and the memos
+                    kindNamesByVariant.Add(variant.Id, $"이름 모를 {kind.DisplayName}");
             }
         }
 
@@ -163,7 +164,7 @@ namespace PotionShop
 
         internal void ShowIngredient(string variantId, string action, string key = null)
         {
-            string name = kindNamesByVariant.GetValueOrDefault(variantId, "재료");
+            string name = kindNamesByVariant.GetValueOrDefault(variantId, "이름 모를 재료");
             ShowPrompt(name, action, key);
         }
 
