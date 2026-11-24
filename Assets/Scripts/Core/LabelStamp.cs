@@ -51,14 +51,16 @@ namespace PotionShop
             if (inkPot == null) { Clear(); return; }
             if (shownFrom == inkPot && stamp.gameObject.activeSelf && animate) return;
             shownFrom = inkPot;
-            image.sprite = Cut(inkPot);
+            // just the ink's symbol (Resources/Crafting/Symbols, cut out of the pot's label with a clear background);
+            // the old square cut of the label is the fallback
+            var symbol = Symbol(inkPot);
+            image.sprite = symbol != null ? symbol : Cut(inkPot);
             var size = ((RectTransform)transform).rect.size;
             // inside the glass: no wider than the room this bottle shape has at its label spot
             var (centre, room) = BottleLabelArea.For(TryGetComponent(out UnityEngine.UI.Image picture) ? picture.sprite : null);
             stamp.anchorMin = stamp.anchorMax = centre;
-            float width = size.x * Mathf.Min(0.44f, room);
-            stamp.sizeDelta = new Vector2(width, width * LabelArea.height / LabelArea.width *
-                                                 inkPot.rect.height / inkPot.rect.width);
+            float width = size.x * Mathf.Min(symbol != null ? 0.3f : 0.44f, room);
+            stamp.sizeDelta = new Vector2(width, width * image.sprite.rect.height / image.sprite.rect.width);
             stamp.gameObject.SetActive(true);
             motion.TryCancel();
             float tilt = Random.Range(-3f, 3f);
@@ -117,6 +119,16 @@ namespace PotionShop
                     c.a = 1f - t * t;
                     fleck.color = c;
                 }).AddTo(go);
+        }
+
+        private static readonly System.Collections.Generic.Dictionary<string, Sprite> symbols = new();
+
+        private static Sprite Symbol(Sprite pot)
+        {
+            if (symbols.TryGetValue(pot.name, out var known) && known != null) return known;
+            var tex = Resources.Load<Texture2D>("Crafting/Symbols/" + pot.name);
+            if (tex == null) return null;
+            return symbols[pot.name] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
         }
 
         private static Sprite Cut(Sprite pot)
