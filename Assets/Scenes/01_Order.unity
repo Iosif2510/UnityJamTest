@@ -360,11 +360,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 183402909}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baea8648cf9819e41979b7640249acbf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2866c1ec9ccac92459eddd730a87578e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.UiVerticalFloat
-  amplitude: 6
-  period: 2.8
+  m_EditorClassIdentifier: Assembly-CSharp::PotionShop.TitleLogo
+  floatAmplitude: 6
+  floatPeriod: 2.8
+  shineEvery: 4.5
 --- !u!1 &318618505
 GameObject:
   m_ObjectHideFlags: 0
@@ -1646,7 +1647,11 @@ MonoBehaviour:
   faceHeight: 1.6
   panelShift: 0.12
   duration: 0.9
+  arrivalDelay: 1.3
   artHalfSize: {x: 12.8, y: 7.2}
+  packagingShift: -0.2
+  packagingRaise: 0.2
+  packagingZoom: 1.4
 --- !u!1 &1341793000
 GameObject:
   m_ObjectHideFlags: 0

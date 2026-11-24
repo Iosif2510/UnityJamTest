@@ -183,10 +183,11 @@ namespace PotionShop
                     order = round.CurrentOrder;
                     GameSfx.Play("DoorBell", 0.7f, 1f, 0.03f);
                     if (entrance != null) await entrance.Play(token);
-                    curtain.SetClosed(false);
                 }, token);
 
                 if (order == null || round == null || round.Phase != RoundPhase.Consult) return;
+                // the lights come back on the closed curtain, which is drawn open before the customer steps up
+                await curtain.PullOpen(token);
                 if (portraitView != null && portraitView.isActiveAndEnabled)
                     await portraitView.SlideIn(portraitOpacity, token);
                 await UniTask.Delay(TimeSpan.FromSeconds(.22), ignoreTimeScale: true, cancellationToken: token);
