@@ -523,7 +523,16 @@ namespace PotionShop
         private async UniTask ApplyEffectAsync(CustomerEffect effect, CancellationToken token)
         {
             if (portraitView == null) return;
-            if (effect == CustomerEffect.Slime && round.SlimePortrait != null)
+            if (effect == CustomerEffect.Recovered && portraitView.isActiveAndEnabled)
+            {
+                // cured: the smile comes the moment the bottle is set down, before they say a word
+                var happy = round.CurrentOrder?.Customer.HappyExpression;
+                if (happy != null && portraitColors != null) portraitView.Show(round.CurrentOrder, portraitColors, happy);
+                portraitView.Speak(1f);
+                GameSfx.Play("FoundBell", 0.45f, 1.15f, 0.04f);
+                await UniTask.Delay(TimeSpan.FromSeconds(0.35), ignoreTimeScale: true, cancellationToken: token);
+            }
+            else if (effect == CustomerEffect.Slime && round.SlimePortrait != null)
                 await portraitView.TransformIntoSlime(round.SlimePortrait, token);
             else if (effect == CustomerEffect.OddTint && portraitView.isActiveAndEnabled)
                 portraitView.Tint(OddPotionTint);
