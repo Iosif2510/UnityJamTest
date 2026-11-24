@@ -12,6 +12,7 @@ namespace PotionShop.Online
     /// the narrator flips to the neighbouring sheets with the arrows, and on the potion memos presses "찾았어!" to tell
     /// the maker downstairs that it is time for the storage room. The sheet stays open so the ingredients can be read out.
     /// The sheets are landscape drawings with the writing laid over them in the chosen language (<see cref="MemoSheetView"/>).
+    /// Built with no session it is solo play's memo book (<see cref="PotionShop.SoloMemoBook"/>): the same desk, no signal.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class LoftDesk : MonoBehaviour
@@ -76,6 +77,12 @@ namespace PotionShop.Online
 
         /// <summary>The guide is where the narrator starts while waiting for the first customer.</summary>
         public void OpenStart() => Select(2);
+
+        /// <summary>Opens the potion memos (solo play's memo book starts here), unless a tab is already open.</summary>
+        public void OpenMemos()
+        {
+            if (tabIndex < 0) Select(0);
+        }
 
         private static RectTransform At(Transform parent, string name, Vector2 topLeft, Vector2 size)
         {
@@ -324,7 +331,8 @@ namespace PotionShop.Online
                     : seen.Contains(tab.Sheets[i]) ? "LOFT_Dot_Seen" : "LOFT_Dot_Unseen");
             }
 
-            found.gameObject.SetActive(tab.CanSignal);
+            // with no friend upstairs (solo play's memo book) there is nobody to signal
+            found.gameObject.SetActive(tab.CanSignal && session != null);
             found.interactable = !signalSent;
             foundLabel.text = signalSent ? "보냈어" : "찾았어!";
             foundLabel.color = signalSent ? OnlineUiParts.InkSoft : OnlineUiParts.Ink;
@@ -332,7 +340,7 @@ namespace PotionShop.Online
 
         private void SendFound()
         {
-            if (signalSent || !session.Signal.Send())
+            if (signalSent || session == null || !session.Signal.Send())
                 return;
             signalSent = true;
             GameSfx.Play("FoundBell", 0.8f);
