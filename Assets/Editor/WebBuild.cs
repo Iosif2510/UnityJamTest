@@ -51,7 +51,16 @@ namespace PotionShop.EditorTools
         }
 
         [MenuItem("Potion Shop/Build/WebGL Build")]
-        public static void Build()
+        public static void Build() => Build(false);
+
+        /// <summary>
+        /// Builds from scratch: needed after a change the incremental build does not notice, such as a .jslib plugin
+        /// newly marked for WebGL.
+        /// </summary>
+        [MenuItem("Potion Shop/Build/WebGL Build (Clean)")]
+        public static void BuildClean() => Build(true);
+
+        public static void Build(bool clean)
         {
             ApplySettings();
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL &&
@@ -64,7 +73,7 @@ namespace PotionShop.EditorTools
                 scenes = scenes,
                 locationPathName = OutputFolder,
                 target = BuildTarget.WebGL,
-                options = BuildOptions.None,
+                options = clean ? BuildOptions.CleanBuildCache : BuildOptions.None,
             });
             var summary = report.summary;
             Debug.Log($"[WebBuild] {summary.result} in {summary.totalTime}: {summary.totalSize / (1024 * 1024)} MB at {OutputFolder}");

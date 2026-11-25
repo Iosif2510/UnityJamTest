@@ -23,6 +23,13 @@ mergeInto(LibraryManager.library, {
         navigator.clipboard.writeText(text).catch(function () { });
       }
     };
+    // a click still counts as the player's own for a moment, so try at once too (a quick tap may already be over)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        document.removeEventListener("pointerup", copy, true);
+        document.removeEventListener("touchend", copy, true);
+      }).catch(function () { });
+    }
     document.addEventListener("pointerup", copy, true);
     document.addEventListener("touchend", copy, true);
   }
