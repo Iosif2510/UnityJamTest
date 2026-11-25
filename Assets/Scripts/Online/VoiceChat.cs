@@ -34,13 +34,18 @@ namespace PotionShop.Online
         {
             if (State is VoiceState.Connecting or VoiceState.On || string.IsNullOrEmpty(channel))
                 return;
+            // turned off in the options: the friends talk elsewhere, and the microphone is never asked for
+            if (!GameSettings.VoiceChat)
+                return;
 
             Set(VoiceState.Connecting);
             try
             {
                 // a voice service that never answers (seen in browsers) must not keep "connecting" up all game
                 await Connect(channel).Timeout(TimeSpan.FromSeconds(ConnectSeconds));
-                MicMuted = VivoxService.Instance.IsInputDeviceMuted;
+                MicMuted = false;
+                SetMicLive(true);
+                ApplyFriendVolume();
                 Set(VoiceState.On);
             }
             catch (Exception exception)
@@ -93,19 +98,82 @@ namespace PotionShop.Online
         {
             if (State != VoiceState.On)
                 return;
-            if (MicMuted) VivoxService.Instance.UnmuteInputDevice();
-            else VivoxService.Instance.MuteInputDevice();
             MicMuted = !MicMuted;
+            SetMicLive(!MicMuted);
             Changed?.Invoke();
         }
+
+        /// <summary>The friend's voice at the options' level (0 is silent).</summary>
+        public void ApplyFriendVolume()
+        {
+            if (State != VoiceState.On) return;
+            float level = GameSettings.FriendVoice;
+            try
+            {
+#if UNITY_WEBGL && !UNITY_EDITOR
+                // the browser's Vivox has no volume: only all or nothing
+                SetDevicesMuted("AudioOutputDevices", level <= 0.01f);
+#else
+                var vivox = VivoxService.Instance;
+                if (level <= 0.01f) vivox.MuteOutputDevice();
+                else
+                {
+                    vivox.UnmuteOutputDevice();
+                    vivox.SetOutputDeviceVolume(Mathf.RoundToInt(Mathf.Lerp(-40f, 0f, level)));
+                }
+#endif
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning($"[Voice] Friend volume not applied: {exception.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Opens or closes this player's microphone. In a browser Vivox's own mute call does nothing (its web input
+        /// devices leave Mute empty), so the microphone would stay live behind a "muted" label; there the capture
+        /// switch underneath it is used instead.
+        /// </summary>
+        private static void SetMicLive(bool live)
+        {
+            try
+            {
+#if UNITY_WEBGL && !UNITY_EDITOR
+                SetDevicesMuted("AudioInputDevices", !live);
+#else
+                if (live) VivoxService.Instance.UnmuteInputDevice();
+                else VivoxService.Instance.MuteInputDevice();
+#endif
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning($"[Voice] Microphone switch failed: {exception.Message}");
+            }
+        }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        /// <summary>Sets Muted on Vivox's web input or output devices (its own setter reaches the browser).</summary>
+        private static void SetDevicesMuted(string devices, bool muted)
+        {
+            const System.Reflection.BindingFlags any = System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+            object service = VivoxService.Instance;
+            object client = service.GetType().GetProperty("Client", any)?.GetValue(service);
+            object audio = client?.GetType().GetProperty(devices, any)?.GetValue(client);
+            var flag = audio?.GetType().GetProperty("Muted", any);
+            if (flag == null) throw new InvalidOperationException("Vivox " + devices + " not reachable");
+            flag.SetValue(audio, muted);
+        }
+#endif
 
         public string Describe() => State switch
         {
             VoiceState.Connecting => Loc.T("보이스 연결 중…"),
             VoiceState.On when !PeerPresent => MicMuted ? Loc.T("마이크 꺼짐 [M] · 상대 대기 중") : Loc.T("마이크 켜짐 [M] · 상대 대기 중"),
             VoiceState.On => (MicMuted ? Loc.T("마이크 꺼짐 [M]") : Loc.T("마이크 켜짐 [M]")) + (PeerSpeaking ? Loc.T(" · 상대가 말하는 중") : ""),
-            VoiceState.Failed => Loc.T("보이스 연결 실패 · 외부 음성 채팅을 사용하세요"),
-            _ => Loc.T("게임 내 보이스 없음 · 외부 음성 채팅을 사용하세요")
+            VoiceState.Failed => Loc.T("보이스 연결 실패 · 마이크 권한을 확인하거나 외부 음성 채팅을 쓰세요"),
+            _ => GameSettings.VoiceChat ? Loc.T("게임 내 보이스 없음 · 외부 음성 채팅을 사용하세요")
+                : Loc.T("게임 음성 꺼 둠 (옵션) · 외부 음성 채팅을 쓰세요")
         };
 
         private void Update()

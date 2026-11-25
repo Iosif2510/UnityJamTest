@@ -39,6 +39,15 @@ namespace PotionShop
             main.maxParticles = 60;
             var emission = mist.emission;
             emission.rateOverTime = 3.2f;
+            // in a browser every overlapping puff is drawn again over the whole floor: fewer, a little smaller,
+            // a little denser each, so the haze reads the same with less overdraw
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                main.maxParticles = 34;
+                emission.rateOverTime = 1.8f;
+                main.startSize = new ParticleSystem.MinMaxCurve(2.0f, 3.4f);
+                main.startColor = new Color(0.7f, 0.6f, 0.52f, Alpha * 1.35f);
+            }
             var shape = mist.shape;
             shape.shapeType = ParticleSystemShapeType.Box;
             shape.scale = Area;

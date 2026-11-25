@@ -243,6 +243,10 @@
     "높음": { "en": "High", "ja": "高", "zh-Hans": "高", "zh-Hant": "高" },
     "보통": { "en": "Medium", "ja": "中", "zh-Hans": "中", "zh-Hant": "中" },
     "낮음": { "en": "Low", "ja": "低", "zh-Hans": "低", "zh-Hant": "低" },
-    "창고(3D) 화면을 그리는 해상도예요. 느리면 낮춰 보세요. 글자와 버튼은 그대로 선명해요.": { "en": "Resolution of the storeroom's 3D view. Lower it if the game runs slowly. Text and buttons stay sharp.", "ja": "倉庫（3D）画面の解像度です。重いときは下げてください。文字やボタンはくっきりしたままです。", "zh-Hans": "仓库（3D）画面的分辨率。卡顿时请调低。文字和按钮依然清晰。", "zh-Hant": "倉庫（3D）畫面的解析度。卡頓時請調低。文字和按鈕依然清晰。" }
+    "창고(3D) 화면을 그리는 해상도예요. 느리면 낮춰 보세요. 글자와 버튼은 그대로 선명해요.": { "en": "Resolution of the storeroom's 3D view. Lower it if the game runs slowly. Text and buttons stay sharp.", "ja": "倉庫（3D）画面の解像度です。重いときは下げてください。文字やボタンはくっきりしたままです。", "zh-Hans": "仓库（3D）画面的分辨率。卡顿时请调低。文字和按钮依然清晰。", "zh-Hant": "倉庫（3D）畫面的解析度。卡頓時請調低。文字和按鈕依然清晰。" },
+    "게임 안 음성 채팅": { "en": "In-game voice chat", "ja": "ゲーム内ボイスチャット", "zh-Hans": "游戏内语音聊天", "zh-Hant": "遊戲內語音聊天" },
+    "친구 목소리": { "en": "Friend's voice", "ja": "相手の声", "zh-Hans": "对方的声音", "zh-Hant": "對方的聲音" },
+    "보이스 연결 실패 · 마이크 권한을 확인하거나 외부 음성 채팅을 쓰세요": { "en": "Voice failed · Check microphone permission or use another voice chat", "ja": "ボイス接続失敗 · マイクの許可を確認するか、外部のボイスチャットを使ってください", "zh-Hans": "语音连接失败 · 请检查麦克风权限或使用其他语音聊天", "zh-Hant": "語音連線失敗 · 請檢查麥克風權限或使用其他語音聊天" },
+    "게임 음성 꺼 둠 (옵션) · 외부 음성 채팅을 쓰세요": { "en": "In-game voice off (options) · Use another voice chat", "ja": "ゲーム内ボイスはオフ（オプション） · 外部のボイスチャットを使ってください", "zh-Hans": "游戏语音已关闭（选项） · 请使用其他语音聊天", "zh-Hant": "遊戲語音已關閉（選項） · 請使用其他語音聊天" }
   }
 }

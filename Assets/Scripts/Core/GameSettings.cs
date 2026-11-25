@@ -41,6 +41,20 @@ namespace PotionShop
             set => PlayerPrefs.SetInt("settings.invertY", value ? 1 : 0);
         }
 
+        /// <summary>In-game voice chat in online co-op (off: the microphone is never asked for).</summary>
+        public static bool VoiceChat
+        {
+            get => PlayerPrefs.GetInt("settings.voiceChat", 1) == 1;
+            set => PlayerPrefs.SetInt("settings.voiceChat", value ? 1 : 0);
+        }
+
+        /// <summary>The friend's voice in voice chat, 0 to 1 (in a browser only silent or on).</summary>
+        public static float FriendVoice
+        {
+            get => PlayerPrefs.GetFloat("settings.friendVoice", 1f);
+            set => PlayerPrefs.SetFloat("settings.friendVoice", Mathf.Clamp01(value));
+        }
+
         public enum Quality { Auto = 0, High = 1, Medium = 2, Low = 3 }
 
         /// <summary>The storeroom's 3D resolution (see <see cref="AdaptiveRenderScale"/>).</summary>

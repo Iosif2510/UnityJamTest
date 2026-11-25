@@ -10,7 +10,7 @@ namespace PotionShop
 {
     /// <summary>
     /// The contents of the title's options window, on five tabs: 소리 (master, music, effects and the customers'
-    /// voices), 조작 (mouse speed and inverted look in the storage room), 화면 (full screen and a calm camera),
+    /// voices, and the online voice chat: on or off, and the friend's volume), 조작 (mouse speed and inverted look in the storage room), 화면 (full screen and a calm camera),
     /// 언어 and 제작자 (the team and what the game was made with, from Resources/credits.json). The last tab shown
     /// is remembered, so the window comes back on it after the title is rebuilt in a new language.
     /// </summary>
@@ -86,13 +86,13 @@ namespace PotionShop
         private void BuildSound(RectTransform page)
         {
             const float labelWidth = 250f;
-            VolumeSlider.Build(Row(page, 10f, 56f), font, OnlineUiParts.Ink, Loc.T("전체 소리"), labelWidth, 0f, 1f,
+            VolumeSlider.Build(Row(page, 0f, 52f), font, OnlineUiParts.Ink, Loc.T("전체 소리"), labelWidth, 0f, 1f,
                 () => GameSfx.MasterVolume, v => GameSfx.MasterVolume = v, Percent);
-            VolumeSlider.Build(Row(page, 90f, 56f), font, OnlineUiParts.Ink, Loc.T("음악"), labelWidth, 0f, 1f,
+            VolumeSlider.Build(Row(page, 60f, 52f), font, OnlineUiParts.Ink, Loc.T("음악"), labelWidth, 0f, 1f,
                 () => GameSettings.Music, v => GameSettings.Music = v, Percent);
-            VolumeSlider.Build(Row(page, 170f, 56f), font, OnlineUiParts.Ink, Loc.T("효과음"), labelWidth, 0f, 1f,
+            VolumeSlider.Build(Row(page, 120f, 52f), font, OnlineUiParts.Ink, Loc.T("효과음"), labelWidth, 0f, 1f,
                 () => GameSettings.Effects, v => GameSettings.Effects = v, Percent);
-            VolumeSlider.Build(Row(page, 250f, 56f), font, OnlineUiParts.Ink, Loc.T("손님 목소리"), labelWidth, 0f, 1f,
+            VolumeSlider.Build(Row(page, 180f, 52f), font, OnlineUiParts.Ink, Loc.T("손님 목소리"), labelWidth, 0f, 1f,
                 () => GameSettings.Voices, v =>
                 {
                     GameSettings.Voices = v;
@@ -100,6 +100,16 @@ namespace PotionShop
                     if (Time.unscaledTime - lastMurmur < 0.18f) return;
                     lastMurmur = Time.unscaledTime;
                     GameSfx.PlayVoice("Voice_a_n", 0.5f, 1f, 0.08f);
+                }, Percent);
+
+            // online voice chat (함께하기): whether to use it at all, and how loud the friend is
+            OnlineUi.Fill(Row(page, 246f, 2f), new Color(0.47f, 0.35f, 0.25f, 0.35f), false);
+            Tick(Row(page, 260f, 52f), Loc.T("게임 안 음성 채팅"), GameSettings.VoiceChat, on => GameSettings.VoiceChat = on);
+            VolumeSlider.Build(Row(page, 322f, 52f), font, OnlineUiParts.Ink, Loc.T("친구 목소리"), labelWidth, 0f, 1f,
+                () => GameSettings.FriendVoice, v =>
+                {
+                    GameSettings.FriendVoice = v;
+                    if (OnlineSession.Exists) OnlineSession.Instance.Voice.ApplyFriendVolume();
                 }, Percent);
         }
 
