@@ -37,8 +37,11 @@ namespace PotionShop
                 return;
 
             distance = Mathf.Repeat(distance, stepDistance);
-            emitter.PlayOneShot(steps[nextStep]);
-            nextStep = (nextStep + 1) % steps.Length;
+            // A random step (never the same one twice) at a slightly different pitch and weight each time.
+            int pick = steps.Length > 1 ? (nextStep + Random.Range(1, steps.Length)) % steps.Length : 0;
+            nextStep = pick;
+            emitter.pitch = Random.Range(0.92f, 1.08f);
+            emitter.PlayOneShot(steps[pick], Random.Range(0.8f, 1f));
         }
     }
 }

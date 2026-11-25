@@ -1,0 +1,5 @@
+Nanum Pen Script (NanumPenScript-Regular.ttf)
+Copyright (c) 2010, NAVER Corporation (https://www.navercorp.com/)
+Licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+Used for the handwritten notes on the narrator's memos. The font may be bundled with the game; it may not be sold
+on its own.

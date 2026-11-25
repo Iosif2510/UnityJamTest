@@ -1,0 +1,12 @@
+{
+  "_note": "Shown on the 제작자 tab of the title's options. Names stay as written; roles, sponsors, the jam line and the 'what' column are Korean keys into Localization/strings.json (add a line there for a new one).",
+  "team": [
+    { "role": "기획자", "name": "JiuPark" },
+    { "role": "프로그래머", "name": "Iosif2510" },
+    { "role": "3D 아티스트", "name": "Synnn" },
+    { "role": "2D 아티스트", "name": "JebeenSon" }
+  ],
+  "sponsors": [ "유니티", "한국게임산업협회", "OpenAI", "Meshy.ai" ],
+  "event": "Unity AI Game Jam (2026) 프로젝트",
+  "fonts": "Maplestory (NEXON), Nanum Pen Script (NAVER), Xiaolai, Dancing Script"
+}

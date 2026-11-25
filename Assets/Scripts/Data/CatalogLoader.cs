@@ -40,10 +40,15 @@ namespace PotionShop.Data
         public RoundTuning Tuning { get; }
         internal AppearanceBuckets Appearances { get; }
         public int AppearanceCountForInk(int inkNumber) => Appearances.Count(inkNumber);
+        /// <summary>Every customer who can come in.</summary>
+        public IReadOnlyList<string> SpawnCustomerIds => Appearances.SpawnCustomerIds;
         public IReadOnlyList<CustomerDialogueOverride> CustomerDialogue { get; internal set; }
         internal Dictionary<string, DialogueOption> SymptomFallbacks { get; } = new(StringComparer.Ordinal);
         internal IReadOnlyDictionary<string, string> ReactionLines { get; set; }
         internal Dictionary<string, CharacterVoice> Voices { get; } = new(StringComparer.Ordinal);
+        internal DialogueTable DialogueTable { get; set; }
+        /// <summary>The language the dialogue table was loaded for.</summary>
+        internal string DialogueLanguage { get; set; }
 
         public IReadOnlyList<DialogueOption> GetDiseaseDialogue(DiseaseEntry disease)
         {
@@ -169,6 +174,15 @@ namespace PotionShop.Data
             if (diseases.Keys.Any(id => id.StartsWith("DIS_", StringComparison.Ordinal)) &&
                 (loaded.ReactionLines == null || customers.Keys.Any(id => !loaded.Voices.ContainsKey(id))))
                 throw new InvalidOperationException("MVP requires reaction fallbacks and a voice for every active customer.");
+            // the customers speak the game's language: its own table (Resources/Dialogue), else the Korean one
+            loaded.DialogueLanguage = PotionShop.Loc.Language;
+            var translated = loaded.DialogueLanguage == PotionShop.Loc.Korean ? null
+                : UnityEngine.Resources.Load<UnityEngine.TextAsset>("Dialogue/DialogueTable." + loaded.DialogueLanguage);
+            loaded.DialogueTable = translated != null
+                ? DialogueTable.Load(translated, loaded.Customers, loaded.Diseases)
+                : DialogueTable.Load(catalog.DialogueTable, loaded.Customers, loaded.Diseases);
+            if (translated != null && loaded.DialogueTable.Count == 0)
+                loaded.DialogueTable = DialogueTable.Load(catalog.DialogueTable, loaded.Customers, loaded.Diseases);
             return loaded;
         }
 

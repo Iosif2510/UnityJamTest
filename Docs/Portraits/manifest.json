@@ -171,6 +171,565 @@
           "drawAfter": "eyeClosed"
         }
       }
+    },
+    "HUM_F1": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_F1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A"
+      },
+      "displayName": "클라라 · 도서관 사서",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_F1/POR_HUM_F1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "HUM_F2": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_F2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "brown",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "red",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A"
+      },
+      "displayName": "몰리 · 파이 가게 주인",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_F2/POR_HUM_F2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "HUM_M1": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_M1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "brown",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "토비 · 대장간 견습생",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_M1/POR_HUM_M1_EXPRESSION_ANGRY.png",
+          "drawAfter": "hairFront"
+        }
+      }
+    },
+    "HUM_M2": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_M2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "한스 · 등불지기",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_M2/POR_HUM_M2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "HUM_M3": {
+      "irisSolidMask": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_HUM_M3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "brown",
+      "colors": {
+        "brown": "#7A4A2A",
+        "blue": "#3F74C8",
+        "green": "#3F9A4A"
+      },
+      "defaultHair": "black",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "브루노 · 뱃사공",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/HUM_M3/POR_HUM_M3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "ELF_F2": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_F2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "purple",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "silver",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "white": "#EEEAE2",
+        "black": "#2B2A33"
+      },
+      "displayName": "로제타 · 재단사",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_F2/POR_ELF_F2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "ELF_F3": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_F3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "gold",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "white": "#EEEAE2",
+        "black": "#2B2A33"
+      },
+      "displayName": "하일 · 마부",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_F3/POR_ELF_F3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "ELF_M2": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_M2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "silver",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "white": "#EEEAE2",
+        "black": "#2B2A33"
+      },
+      "displayName": "탈리오 · 시계공",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_M2/POR_ELF_M2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "ELF_M3": {
+      "irisSolidMask": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_ELF_M3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "green",
+      "colors": {
+        "blue": "#3F74C8",
+        "green": "#3F9A4A",
+        "purple": "#8A4FC0"
+      },
+      "defaultHair": "black",
+      "hairColors": {
+        "gold": "#D9B34A",
+        "silver": "#C9CCD6",
+        "white": "#EEEAE2",
+        "black": "#2B2A33"
+      },
+      "displayName": "베른 · 숲지기",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/ELF_M3/POR_ELF_M3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "BST_F1": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_F1_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "green",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A",
+        "white": "#EEEAE2"
+      },
+      "displayName": "포피 · 토끼 찻집 직원",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_F1/POR_BST_F1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "BST_F2": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_F2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "orange",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
+      },
+      "defaultHair": "white",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A",
+        "white": "#EEEAE2"
+      },
+      "displayName": "마들렌 · 고양이 빵집 주인",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_F2/POR_BST_F2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "BST_F3": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_F3_PREVIEW.png",
+      "pupilShape": "slit",
+      "defaultEye": "blue",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A",
+        "white": "#EEEAE2"
+      },
+      "displayName": "루파 · 늑대 경비대원",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_F3/POR_BST_F3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "BST_M1": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_M1_PREVIEW.png",
+      "pupilShape": "slit",
+      "defaultEye": "yellow",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A",
+        "white": "#EEEAE2"
+      },
+      "displayName": "펠릭스 · 고양이 우편배달부",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_M1/POR_BST_M1_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "BST_M3": {
+      "irisSolidMask": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_BST_M3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "orange",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "green": "#3F9A4A",
+        "blue": "#3F74C8"
+      },
+      "defaultHair": "brown",
+      "hairColors": {
+        "black": "#2B2A33",
+        "brown": "#7A4A2A",
+        "red": "#B8352C",
+        "gold": "#D9B34A",
+        "white": "#EEEAE2"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "우르스 · 곰 목수",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/BST_M3/POR_BST_M3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "GOL_G2": {
+      "irisSolidMask": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_GOL_G2_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "yellow",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "blue": "#3F74C8"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "모스 · 다리 지킴이",
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/GOL_G2/POR_GOL_G2_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "GOL_G3": {
+      "irisSolidMask": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_GOL_G3_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "blue",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "blue": "#3F74C8"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "쿼츠 · 광산 길잡이",
+      "hairFrontIsPlaceholder": true,
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/GOL_G3/POR_GOL_G3_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
+    },
+    "GOL_G4": {
+      "irisSolidMask": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_IRIS_SOLID_MASK.png",
+      "hairBack": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_HAIR_BACK.png",
+      "eyeClosed": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_EYE_CLOSED.png",
+      "hairFront": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_HAIR_FRONT.png",
+      "base": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_BASE.png",
+      "reference": "Docs/Portraits/Previews/POR_GOL_G4_PREVIEW.png",
+      "pupilShape": "round",
+      "defaultEye": "orange",
+      "colors": {
+        "yellow": "#E0B02C",
+        "orange": "#E07A2C",
+        "blue": "#3F74C8"
+      },
+      "hairBackIsPlaceholder": true,
+      "displayName": "볼더 · 짐꾼",
+      "hairFrontIsPlaceholder": true,
+      "expressions": {
+        "happy": {
+          "sprite": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_EXPRESSION_HAPPY.png",
+          "drawAfter": "base"
+        },
+        "angry": {
+          "sprite": "Assets/Arts/Portraits/GOL_G4/POR_GOL_G4_EXPRESSION_ANGRY.png",
+          "drawAfter": "base"
+        }
+      }
     }
   },
   "endingSlime": "Assets/Arts/Portraits/SLIME/POR_SLIME_BASE.png",

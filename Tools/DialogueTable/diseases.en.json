@@ -1,0 +1,8 @@
+{
+  "DIS_01": { "name": "Shadow Lag", "bannedWords": ["shadow lag", "lagging", "delay", "curse"] },
+  "DIS_02": { "name": "Echo-Back", "bannedWords": ["echo", "reverb", "curse"] },
+  "DIS_03": { "name": "The Floats", "bannedWords": ["float", "weightless", "levitat", "gravity"] },
+  "DIS_04": { "name": "Mirror Sleep", "bannedWords": ["mirror sleep", "insomnia", "reflection sleeps"] },
+  "DIS_05": { "name": "Rain Tongue", "bannedWords": ["rain tongue", "rainwater", "rain taste", "tastes like rain"] },
+  "DIS_06": { "name": "Frost Hands", "bannedWords": ["frost", "frozen hands", "freez", "icy hands"] }
+}

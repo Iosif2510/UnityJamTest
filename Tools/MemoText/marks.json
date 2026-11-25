@@ -1,0 +1,7 @@
+{"_doc": "Easy mode: the three symptoms the customer really has (symptom) and, per ingredient, the two notes that tell it apart from its look-alikes (ingredient). Same choice as the old SheetMarks boxes.",
+ "POT_01": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]},
+ "POT_02": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]},
+ "POT_03": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]},
+ "POT_04": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]},
+ "POT_05": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]},
+ "POT_06": {"symptom": ["s1", "s2", "s3"], "ingredient": ["i1_a", "i1_b", "i2_a", "i2_b", "i3_a", "i3_b"]}}

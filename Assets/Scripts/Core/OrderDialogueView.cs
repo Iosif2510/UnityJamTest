@@ -40,9 +40,17 @@ namespace PotionShop
         private bool skipBeatPlayed;
 
         internal event Action<float> SpeechBeat;
+
+        /// <summary>Pitch of the speaking blips; each customer gets their own (set before a line plays).</summary>
+        internal float VoicePitch { get; set; } = 1f;
+
+        private const float MinVoiceGap = 0.065f;
+        private readonly DialogueVoice voice = new();
+        private int voicedChars;
+        private double lastVoiced;
         internal TMP_FontAsset SpeakerFont => speaker.font;
 
-        public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? "손님" : name;
+        public void SetSpeaker(string name) => speaker.text = string.IsNullOrWhiteSpace(name) ? Loc.T("손님") : name;
 
         public void ShowMessage(string message)
         {
@@ -72,9 +80,18 @@ namespace PotionShop
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (revealing && double.IsPositiveInfinity(skippedAt) && !eventData.dragging &&
-                eventData.button == PointerEventData.InputButton.Left)
-                skippedAt = Time.unscaledTimeAsDouble - startedAt;
+            // A click hurries the line along (twice as fast) instead of finishing it at once, so nothing is missed.
+            if (revealing && !hurried && !eventData.dragging && eventData.button == PointerEventData.InputButton.Left)
+                hurried = true;
+        }
+
+        private const double HurryRate = 2.0;
+        private bool hurried;
+
+        /// <summary>While hurried, the line's clock runs <see cref="HurryRate"/> times as fast.</summary>
+        private void Hurry()
+        {
+            if (hurried && revealing) startedAt -= Time.unscaledDeltaTime * (HurryRate - 1.0);
         }
 
         private async UniTask Reveal(DialogueTimeline line, CancellationToken token)
@@ -83,6 +100,7 @@ namespace PotionShop
             ClearLine();
             activeLine = line;
             skippedAt = double.PositiveInfinity;
+            hurried = false;
             lastScrolledIndex = -1;
             finalFrameDrawn = false;
             revealing = true;
@@ -121,6 +139,9 @@ namespace PotionShop
                 rain.gameObject.SetActive(true);
             }
             startedAt = Time.unscaledTimeAsDouble;
+            voicedChars = 0;
+            lastVoiced = double.NegativeInfinity;
+            voice.Begin();
             speechBeat = 0;
             skipBeatPlayed = false;
             SpeechBeat?.Invoke(.68f);
@@ -128,7 +149,10 @@ namespace PotionShop
             try
             {
                 while (activeLine == line && Time.unscaledTimeAsDouble - startedAt < Math.Min(line.Duration, skippedAt))
+                {
                     await UniTask.Yield(PlayerLoopTiming.Update, token);
+                    Hurry();
+                }
                 if (activeLine != line) throw new OperationCanceledException();
                 revealing = false;
                 Draw(Time.unscaledTimeAsDouble - startedAt);
@@ -138,6 +162,26 @@ namespace PotionShop
                 if (activeLine == line) ClearLine();
                 throw;
             }
+        }
+
+        private void Voice(double elapsed)
+        {
+            var text = activeLine.Text;
+            var starts = activeLine.CharStarts;
+            int newest = -1, first = voicedChars;
+            // starts can be shorter than the text (it counts text elements, not chars)
+            int count = Mathf.Min(text.Length, starts.Count);
+            while (voicedChars < count && starts[voicedChars] <= elapsed) newest = voicedChars++;
+            // several letters in one frame (or very fast text): voice only the latest, and not too often
+            if (newest < 0 || Time.unscaledTimeAsDouble - lastVoiced < MinVoiceGap) return;
+            // a word appears together with the space after it: voice its last letter, not the silent space
+            while (newest > first && !DialogueVoice.Voiced(text[newest], out _, out _)) newest--;
+            if (!DialogueVoice.Voiced(text[newest], out _, out _)) return;
+            lastVoiced = Time.unscaledTimeAsDouble;
+            int end = text.Length - 1;
+            while (end > 0 && !DialogueVoice.Voiced(text[end], out _, out _)) end--;
+            bool question = newest >= end - 1 && text.TrimEnd().EndsWith("?");
+            voice.Speak(text[newest], VoicePitch, question);
         }
 
         private void LateUpdate()
@@ -153,6 +197,8 @@ namespace PotionShop
             }
 
             double elapsed = Time.unscaledTimeAsDouble - startedAt;
+            // A murmured voice, one syllable per letter as it appears; quiet once the line is skipped or done.
+            if (revealing && elapsed < skippedAt && elapsed < activeLine.Duration) Voice(elapsed);
             if (reflow)
             {
                 activeLine.Layout = Layout(activeLine.Text);

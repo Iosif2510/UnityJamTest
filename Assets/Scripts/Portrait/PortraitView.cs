@@ -16,13 +16,19 @@ namespace PotionShop.Portraits
         [SerializeField] private PortraitColorModule colors;
         [SerializeField] private PortraitBlink blink;
         [SerializeField] private PortraitRigModule rig;
-        private MotionHandle landingMotion, speechMotion;
+        private MotionHandle landingMotion, speechMotion, pokeMotion;
         private SlimeBurstGraphic slimeBurst;
         private Quaternion restingRotation;
         private float landingProgress = 1f;
         private float speech;
         private bool poseInitialized;
         private int speechDirection = -1;
+        private float impatience;
+        private float fidgetSince = -10f, nextFidget;
+        private float look, lookTarget;
+        private float poke;
+        private int pokes;
+        private float lastPoke = -10f;
         public PortraitLayers Layers => layers;
         public PortraitBlink Blink => blink;
         public PortraitRigModule Rig => rig;
@@ -43,7 +49,7 @@ namespace PotionShop.Portraits
             colors.Apply(hairTint, palette.Get(PortraitSlot.Eyes, eyes));
             if (expression != null)
             {
-                layers.ShowExpression(expression);
+                layers.ShowExpression(expression, profile.AngryExpressionAboveHair && expression == profile.AngryExpression);
                 return;
             }
             rig?.Load(profile.RigPrefab, profile.SpineRig);
@@ -83,8 +89,13 @@ namespace PotionShop.Portraits
             finally { if (rect != null) rect.anchoredPosition = rest; }
         }
 
+        private SlimeJelly jelly;
+        private SlimeJelly Jelly => jelly != null ? jelly
+            : jelly = (layers.slime.TryGetComponent(out SlimeJelly foundSlimeJelly) ? foundSlimeJelly : layers.slime.gameObject.AddComponent<SlimeJelly>());
+
         internal void Speak(float strength)
         {
+            if (layers.slime != null && layers.slime.enabled) Jelly.Jiggle(0.5f * strength);
             CaptureRotation();
             speechMotion.TryCancel();
             speechDirection *= -1;
@@ -106,9 +117,96 @@ namespace PotionShop.Portraits
         private void ApplyGesture()
         {
             bool hasSpine = rig != null && rig.SpineRig != null;
-            rig?.SetGesture(landingProgress, speech);
-            float angle = (LandingSwing(landingProgress, 0) * 13 + speech * 19) * (hasSpine ? .45f : 1f);
-            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle);
+            rig?.SetGesture(landingProgress, Mathf.Clamp(speech + poke * .6f, -1f, 1f));
+            float angle = (LandingSwing(landingProgress, 0) * 13 + speech * 19 + poke * 11) * (hasSpine ? .45f : 1f);
+            transform.localRotation = restingRotation * Quaternion.Euler(0, 0, angle + ImpatienceAngle() - look * 6f);
+        }
+
+        /// <summary>
+        /// How restless the customer is about the time left (0 calm, 1 cross): the head tilts to one side and sways,
+        /// and every few seconds the body gives a short impatient jiggle, more often the crosser they are.
+        /// </summary>
+        public void SetImpatience(float level)
+        {
+            level = Mathf.Clamp01(level);
+            if (Mathf.Approximately(level, impatience)) return;
+            CaptureRotation();
+            if (impatience <= 0f) nextFidget = Time.unscaledTime + .4f;
+            impatience = level;
+            ApplyGesture();
+        }
+
+        private float ImpatienceAngle()
+        {
+            if (impatience <= 0f) return 0f;
+            float t = Time.unscaledTime;
+            float tilt = -4.5f * impatience + Mathf.Sin(t * 1.3f) * 1.2f * impatience;
+            float age = t - fidgetSince;
+            float fidget = age < .5f ? Mathf.Sin(age * 34f) * (1f - age / .5f) * 3.2f * impatience : 0f;
+            return tilt + fidget;
+        }
+
+        /// <summary>
+        /// The player poked the customer at <paramref name="side"/> (-1 their left edge, 1 their right): the body flinches
+        /// away and settles, a slime wobbles. Poked again and again in quick succession, the flinch turns into an
+        /// annoyed shake. Body only: the face and the words are left alone.
+        /// </summary>
+        public void Poke(float side)
+        {
+            CaptureRotation();
+            float now = Time.unscaledTime;
+            pokes = now - lastPoke < 1.2f ? pokes + 1 : 1;
+            lastPoke = now;
+            bool annoyed = pokes >= 3;
+            float strength = Mathf.Min(1f, .55f + .15f * (pokes - 1));
+            // away from the finger: poked on the right, the top leans left
+            float away = side >= 0f ? 1f : -1f;
+            if (layers.slime != null && layers.slime.enabled) Jelly.Jiggle(annoyed ? 1f : .7f * strength);
+            pokeMotion.TryCancel();
+            pokeMotion = LMotion.Create(0f, 1f, annoyed ? .62f : .4f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithOnComplete(() => { poke = 0f; ApplyGesture(); })
+                .Bind(t =>
+                {
+                    float fade = (1f - t) * (1f - t);
+                    poke = annoyed
+                        ? Mathf.Sin(t * Mathf.PI * 6f) * fade * strength * .8f
+                        : Mathf.Sin(Mathf.Min(t / .14f, 1f) * Mathf.PI * .5f) * fade * strength * away
+                          - Mathf.Sin(Mathf.Max(t - .14f, 0f) / .86f * Mathf.PI * 2f) * fade * .25f * strength * away;
+                    ApplyGesture();
+                }).AddTo(gameObject);
+        }
+
+        /// <summary>
+        /// Leans towards something the player is pointing at: -1 far left, 1 far right, 0 back upright.
+        /// </summary>
+        public void LookToward(float side)
+        {
+            CaptureRotation();
+            lookTarget = Mathf.Clamp(side, -1f, 1f);
+        }
+
+        private void LateUpdate()
+        {
+            if (!poseInitialized) return;
+            bool looking = !Mathf.Approximately(look, lookTarget) || Mathf.Abs(look) > 0.001f;
+            if (looking)
+            {
+                look = Mathf.MoveTowards(Mathf.Lerp(look, lookTarget, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 7f)),
+                    lookTarget, Time.unscaledDeltaTime * 0.05f);
+                if (impatience <= 0f)
+                {
+                    ApplyGesture();
+                    return;
+                }
+            }
+            if (impatience <= 0f) return;
+            if (Time.unscaledTime >= nextFidget)
+            {
+                fidgetSince = Time.unscaledTime;
+                nextFidget = fidgetSince + UnityEngine.Random.Range(1.6f, 2.8f) / Mathf.Lerp(1f, 1.6f, impatience);
+                if (layers.slime != null && layers.slime.enabled) Jelly.Jiggle(.3f * impatience);
+            }
+            ApplyGesture();
         }
 
         internal static float LandingSwing(float progress, float delay)
@@ -118,14 +216,23 @@ namespace PotionShop.Portraits
             return Mathf.Cos(t * Mathf.PI * 3.3f) * (1f - t) * (1f - t);
         }
 
+        private void Awake()
+        {
+            if (!TryGetComponent(out CustomerPoke _)) gameObject.AddComponent<CustomerPoke>();
+        }
+
         private void OnDisable() => ResetGesture();
 
         private void ResetGesture()
         {
             landingMotion.TryCancel();
             speechMotion.TryCancel();
+            pokeMotion.TryCancel();
             landingProgress = 1f;
             speech = 0f;
+            poke = 0f;
+            impatience = 0f;
+            look = lookTarget = 0f;
             if (poseInitialized) ApplyGesture();
         }
 
@@ -148,6 +255,9 @@ namespace PotionShop.Portraits
                 }
 
                 token.ThrowIfCancellationRequested();
+                // The pop: a sound and a held beat on the squashed pose before the slime bursts out.
+                GameSfx.Play("SlimePop", 0.9f, 1f, 0.05f);
+                await UniTask.Delay(System.TimeSpan.FromSeconds(0.06), ignoreTimeScale: true, cancellationToken: token);
                 ShowSlime(sprite);
                 colors.SetTint(SlimeTransitionTint);
                 var burst = GetSlimeBurst();
@@ -194,6 +304,8 @@ namespace PotionShop.Portraits
             foreach (var image in layers.All) image.enabled = false;
             if (layers.irisMask != null) layers.irisMask.enabled = false;
             layers.slime.sprite = sprite; layers.slime.color = Color.white; layers.slime.enabled = true;
+            // the slime's own rig: planted, breathing jelly that jiggles as it appears and when it talks
+            Jelly.Jiggle(1f);
         }
     }
 }

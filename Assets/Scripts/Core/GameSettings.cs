@@ -1,0 +1,74 @@
+using UnityEngine;
+
+namespace PotionShop
+{
+    /// <summary>
+    /// The player's settings beyond the master volume (<see cref="GameSfx.MasterVolume"/>) and the language
+    /// (<see cref="Loc"/>), saved between sessions: separate volumes for music, sound effects and the customers'
+    /// murmured voices, how fast the mouse turns the view in the storage room (and whether up is down), and a calm
+    /// camera with no head bob or bumps for players who get queasy.
+    /// </summary>
+    public static class GameSettings
+    {
+        public static float Music
+        {
+            get => PlayerPrefs.GetFloat("settings.music", 1f);
+            set => PlayerPrefs.SetFloat("settings.music", Mathf.Clamp01(value));
+        }
+
+        public static float Effects
+        {
+            get => PlayerPrefs.GetFloat("settings.effects", 1f);
+            set => PlayerPrefs.SetFloat("settings.effects", Mathf.Clamp01(value));
+        }
+
+        public static float Voices
+        {
+            get => PlayerPrefs.GetFloat("settings.voices", 1f);
+            set => PlayerPrefs.SetFloat("settings.voices", Mathf.Clamp01(value));
+        }
+
+        /// <summary>A multiplier on the view's turning speed, 0.25 to 2.5 (1 as designed).</summary>
+        public static float MouseSpeed
+        {
+            get => PlayerPrefs.GetFloat("settings.mouse", 1f);
+            set => PlayerPrefs.SetFloat("settings.mouse", Mathf.Clamp(value, 0.25f, 2.5f));
+        }
+
+        public static bool InvertY
+        {
+            get => PlayerPrefs.GetInt("settings.invertY", 0) == 1;
+            set => PlayerPrefs.SetInt("settings.invertY", value ? 1 : 0);
+        }
+
+        /// <summary>In-game voice chat in online co-op (off: the microphone is never asked for).</summary>
+        public static bool VoiceChat
+        {
+            get => PlayerPrefs.GetInt("settings.voiceChat", 1) == 1;
+            set => PlayerPrefs.SetInt("settings.voiceChat", value ? 1 : 0);
+        }
+
+        /// <summary>The friend's voice in voice chat, 0 to 1 (in a browser only silent or on).</summary>
+        public static float FriendVoice
+        {
+            get => PlayerPrefs.GetFloat("settings.friendVoice", 1f);
+            set => PlayerPrefs.SetFloat("settings.friendVoice", Mathf.Clamp01(value));
+        }
+
+        public enum Quality { Auto = 0, High = 1, Medium = 2, Low = 3 }
+
+        /// <summary>The storeroom's 3D resolution (see <see cref="AdaptiveRenderScale"/>).</summary>
+        public static Quality ScreenQuality
+        {
+            get => (Quality)Mathf.Clamp(PlayerPrefs.GetInt("settings.quality", 0), 0, 3);
+            set => PlayerPrefs.SetInt("settings.quality", (int)value);
+        }
+
+        /// <summary>No head bob while walking and no camera bumps.</summary>
+        public static bool CalmCamera
+        {
+            get => PlayerPrefs.GetInt("settings.calmCamera", 0) == 1;
+            set => PlayerPrefs.SetInt("settings.calmCamera", value ? 1 : 0);
+        }
+    }
+}

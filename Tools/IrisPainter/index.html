@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>눈 칠하기</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { display: flex; background: #1d1b20; color: #e9e3d6; font: 14px/1.5 "Malgun Gothic", "Segoe UI", sans-serif; overflow: hidden; }
+  aside { width: 280px; flex: none; padding: 14px; background: #2a272e; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  h2 { font-size: 13px; margin: 12px 0 2px; color: #cdb98a; font-weight: 600; }
+  h2:first-child { margin-top: 0; }
+  .row { display: flex; gap: 6px; align-items: center; }
+  .row > * { flex: 1; }
+  button, select { font: inherit; color: inherit; background: #3a363f; border: 1px solid #4d4853; border-radius: 6px; padding: 6px 8px; cursor: pointer; }
+  button:hover:not(:disabled) { background: #48434e; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.on { background: #7a5a22; border-color: #d2a64a; }
+  button.save { background: #b9842a; border-color: #e3b65a; color: #1d1b20; font-weight: 700; padding: 10px; }
+  button.save:disabled { background: #3a363f; border-color: #4d4853; color: inherit; font-weight: 400; }
+  label { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  input[type=range] { flex: 1; min-width: 0; }
+  .val { width: 34px; text-align: right; color: #b8b0a2; flex: none; }
+  .hint { font-size: 12px; color: #a39b8e; background: #232127; border-radius: 6px; padding: 8px; }
+  #swatch { height: 26px; flex: none; width: 70px; border-radius: 6px; border: 1px solid #4d4853;
+    background-image: linear-gradient(var(--c), var(--c)), repeating-conic-gradient(#777 0 25%, #555 0 50%); background-size: auto, 12px 12px; }
+  main { flex: 1; position: relative; min-width: 0; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: none; }
+  #toast { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); background: #111c; padding: 8px 16px; border-radius: 20px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  #toast.show { opacity: 1; }
+  .spacer { flex: 1; }
+</style>
+</head>
+<body>
+<aside>
+  <h2>캐릭터</h2>
+  <select id="character"></select>
+  <div class="row"><button id="prev">◀ 이전</button><button id="next">다음 ▶</button></div>
+
+  <h2>칠할 대상</h2>
+  <div class="row"><button id="layerBody" class="on">몸 그림 (눈 구멍)</button><button id="layerMask">마스크</button></div>
+  <div id="bodyTools">
+    <div class="row"><button id="toolPaint" class="on">찍은 색 칠하기</button><button id="toolRestore">원본 되돌리기</button></div>
+    <label style="margin-top:6px">찍은 색 <span id="pickedText" style="color:#a39b8e;font-size:12px">아직 없음</span><span id="swatch" style="--c:transparent"></span></label>
+    <div class="hint">Alt+클릭으로 그림의 한 점을 찍습니다.<br>· 홍채 안쪽을 찍고 칠하면 그 자리가 눈 색이 비치는 홍채가 됩니다.<br>· 흰자나 눈꺼풀을 찍고 칠하면 구멍이 메워집니다.</div>
+  </div>
+  <div id="maskTools" hidden>
+    <div class="row"><button id="toolMaskPaint" class="on">마스크 칠하기</button><button id="toolMaskErase">마스크 지우기</button></div>
+    <button id="fitMask" style="width:100%;margin-top:6px">마스크를 눈 구멍에 자동으로 맞추기</button>
+    <div class="hint" style="margin-top:6px">마스크는 몸 그림 뒤에 깔리므로 구멍보다 넉넉하게 덮으면 됩니다. 구멍을 덜 덮은 자리는 분홍색으로 보입니다.</div>
+  </div>
+
+  <h2>붓</h2>
+  <label>크기 [ ] <input id="radius" type="range" min="0.5" max="40" step="0.5" value="4"><span class="val" id="radiusVal"></span></label>
+  <label>가장자리 선명도 <input id="hardness" type="range" min="0" max="1" step="0.05" value="0.6"><span class="val" id="hardnessVal"></span></label>
+  <label>세기 <input id="strength" type="range" min="0.05" max="1" step="0.05" value="1"><span class="val" id="strengthVal"></span></label>
+
+  <h2>미리보기</h2>
+  <div class="row"><button data-eye="#3f9a4a">녹색</button><button data-eye="#3f74c8">파랑</button><button data-eye="#7a4a2a">갈색</button><input id="eye" type="color" value="#3f9a4a" style="flex:none;width:40px;height:32px;padding:0;border:0;background:none"></div>
+  <label><span>새는 곳 분홍 표시</span><input id="leaks" type="checkbox" checked></label>
+  <label><span>마스크 윤곽 표시</span><input id="outline" type="checkbox"></label>
+  <label><span>원본과 비교 (누르고 있기: C)</span><input id="compare" type="checkbox"></label>
+  <button id="frame">눈으로 화면 맞추기</button>
+
+  <div class="spacer"></div>
+  <div class="hint">휠: 확대 · 오른쪽/가운데 끌기 또는 스페이스+끌기: 이동<br>Ctrl+Z: 되돌리기 · Ctrl+S: 저장</div>
+  <div class="row"><button id="undo" disabled>되돌리기</button><button id="revert" disabled>처음으로</button></div>
+  <button id="save" class="save" disabled>저장됨</button>
+</aside>
+<main><canvas id="view"></canvas><div id="toast"></div></main>
+
+<script>
+const $ = id => document.getElementById(id);
+const view = $('view'), ctx = view.getContext('2d');
+const stage = document.createElement('canvas'), sctx = stage.getContext('2d');   // full-size preview, drawn scaled onto the view
+const S = {
+  names: [], index: -1, w: 0, h: 0, body: null, mask: null, original: null, img: null,
+  layer: 'body', tool: 'paint', picked: null, radius: 4, hardness: .6, strength: 1,
+  eye: [63, 154, 74], leaks: true, outline: false, compare: false,
+  cx: 0, cy: 0, zoom: 12, mouse: null, stroke: null, undo: [], dirty: false, space: false, pan: null,
+};
+
+function toast(text) { const t = $('toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 1800); }
+
+async function raw(name, kind) {
+  const buffer = await (await fetch(`/api/raw/${name}/${kind}`)).arrayBuffer();
+  const head = new DataView(buffer, 0, 8);
+  return { w: head.getUint32(0, true), h: head.getUint32(4, true), data: new Uint8ClampedArray(buffer, 8) };
+}
+
+async function load(index) {
+  if (S.dirty && !confirm('저장하지 않은 변경이 있습니다. 버리고 넘어갈까요?')) { $('character').value = S.names[S.index]; return; }
+  const name = S.names[index];
+  const [body, mask, original] = await Promise.all([raw(name, 'body'), raw(name, 'mask'), raw(name, 'original')]);
+  Object.assign(S, { index, w: body.w, h: body.h, body: body.data.slice(), mask: mask.data.slice(), original: original.data, undo: [], dirty: false, picked: null, stroke: null });
+  stage.width = S.w; stage.height = S.h; S.img = sctx.createImageData(S.w, S.h);
+  $('character').value = name;
+  composite(0, 0, S.w, S.h); frame(); syncUi();
+}
+
+// Preview = body image over (mask tinted with the eye colour) over a backdrop. Pink backdrop makes leaks obvious.
+function composite(x0, y0, x1, y1) {
+  x0 = Math.max(0, x0 | 0); y0 = Math.max(0, y0 | 0); x1 = Math.min(S.w, Math.ceil(x1)); y1 = Math.min(S.h, Math.ceil(y1));
+  if (x1 <= x0 || y1 <= y0) return;
+  const { w, mask, img, eye } = S, body = S.compare ? S.original : S.body, out = img.data;
+  const br = S.leaks ? 255 : 96, bg = S.leaks ? 0 : 92, bb = S.leaks ? 255 : 100;
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+    const i = (y * w + x) * 4, ma = mask[i + 3] / 255, ba = body[i + 3] / 255;
+    let r = br + (eye[0] * mask[i] / 255 - br) * ma, g = bg + (eye[1] * mask[i + 1] / 255 - bg) * ma, b = bb + (eye[2] * mask[i + 2] / 255 - bb) * ma;
+    r += (body[i] - r) * ba; g += (body[i + 1] - g) * ba; b += (body[i + 2] - b) * ba;
+    if (S.outline && mask[i + 3] > 0 && (x === 0 || y === 0 || x === w - 1 || y === S.h - 1 || !mask[i - 1] || !mask[i + 7] || !mask[i - w * 4 + 3] || !mask[i + w * 4 + 3])) { r = 255; g = 235; b = 0; }
+    out[i] = r; out[i + 1] = g; out[i + 2] = b; out[i + 3] = 255;
+  }
+  sctx.putImageData(img, 0, 0, x0, y0, x1 - x0, y1 - y0);
+  draw();
+}
+
+function resize() { const r = view.getBoundingClientRect(), d = devicePixelRatio || 1; view.width = Math.round(r.width * d); view.height = Math.round(r.height * d); draw(); }
+
+function draw() {
+  if (!S.img) return;
+  const d = devicePixelRatio || 1, z = S.zoom * d;
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#1d1b20'; ctx.fillRect(0, 0, view.width, view.height);
+  ctx.imageSmoothingEnabled = S.zoom < 1;
+  ctx.drawImage(stage, view.width / 2 - S.cx * z, view.height / 2 - S.cy * z, S.w * z, S.h * z);
+  if (S.mouse) {
+    ctx.beginPath(); ctx.arc(S.mouse.sx * d, S.mouse.sy * d, Math.max(2, S.radius * z), 0, Math.PI * 2);
+    ctx.lineWidth = 3; ctx.strokeStyle = '#000a'; ctx.stroke(); ctx.lineWidth = 1.5; ctx.strokeStyle = '#fff'; ctx.stroke();
+  }
+}
+
+function texel(e) { const r = view.getBoundingClientRect(); return { x: S.cx + (e.clientX - r.left - r.width / 2) / S.zoom, y: S.cy + (e.clientY - r.top - r.height / 2) / S.zoom, sx: e.clientX - r.left, sy: e.clientY - r.top }; }
+
+function frame() {
+  let x0 = S.w, x1 = 0, y0 = S.h, y1 = 0;
+  for (let y = 0; y < S.h; y++) for (let x = 0; x < S.w; x++) if (S.mask[(y * S.w + x) * 4 + 3]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  const r = view.getBoundingClientRect();
+  if (x1 < x0) { S.cx = S.w / 2; S.cy = S.h * .3; S.zoom = 3; } else { S.cx = (x0 + x1) / 2; S.cy = (y0 + y1) / 2; S.zoom = Math.max(3, Math.min(24, r.width / (x1 - x0 + 60))); }
+  draw();
+}
+
+function dab(cx, cy) {
+  const { w, h, radius } = S, soft = Math.max(.75, radius * (1 - S.hardness));
+  const target = S.layer === 'body' ? S.body : S.mask;
+  const x0 = Math.max(0, Math.floor(cx - radius)), x1 = Math.min(w - 1, Math.ceil(cx + radius)), y0 = Math.max(0, Math.floor(cy - radius)), y1 = Math.min(h - 1, Math.ceil(cy + radius));
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+    const f = Math.min(1, Math.max(0, (radius - Math.hypot(x + .5 - cx, y + .5 - cy)) / soft + .5)) * S.strength;
+    if (f <= 0) continue;
+    const i = (y * w + x) * 4;
+    let c;
+    if (S.layer === 'mask') c = [255, 255, 255, S.tool === 'erase' ? 0 : 255];
+    else if (S.tool === 'restore') c = [S.original[i], S.original[i + 1], S.original[i + 2], S.original[i + 3]];
+    else c = S.picked;
+    for (let k = 0; k < 4; k++) target[i + k] = Math.round(target[i + k] + (c[k] - target[i + k]) * f);
+  }
+  const s = S.stroke; s.x0 = Math.min(s.x0, x0); s.y0 = Math.min(s.y0, y0); s.x1 = Math.max(s.x1, x1 + 1); s.y1 = Math.max(s.y1, y1 + 1);
+}
+
+function strokeTo(p) {
+  const s = S.stroke, from = s.last || p, dist = Math.hypot(p.x - from.x, p.y - from.y), steps = Math.max(1, Math.ceil(dist / Math.max(.5, S.radius * .35)));
+  for (let k = s.last ? 1 : 0; k <= steps; k++) dab(from.x + (p.x - from.x) * k / steps, from.y + (p.y - from.y) * k / steps);
+  s.last = p;
+  const pad = S.radius + 2;
+  composite(Math.min(from.x, p.x) - pad, Math.min(from.y, p.y) - pad, Math.max(from.x, p.x) + pad, Math.max(from.y, p.y) + pad);
+}
+
+// An undo step keeps only the rectangle the stroke touched, taken from a snapshot made when the stroke began.
+function beginStroke() { S.stroke = { body: S.body.slice(), mask: S.mask.slice(), x0: S.w, y0: S.h, x1: 0, y1: 0, last: null }; }
+function endStroke() {
+  const s = S.stroke; S.stroke = null;
+  if (!s || s.x1 <= s.x0) return;
+  const cut = src => { const out = new Uint8ClampedArray((s.x1 - s.x0) * (s.y1 - s.y0) * 4); for (let y = s.y0; y < s.y1; y++) out.set(src.subarray((y * S.w + s.x0) * 4, (y * S.w + s.x1) * 4), (y - s.y0) * (s.x1 - s.x0) * 4); return out; };
+  S.undo.push({ x0: s.x0, y0: s.y0, x1: s.x1, y1: s.y1, body: cut(s.body), mask: cut(s.mask) });
+  if (S.undo.length > 60) S.undo.shift();
+  S.dirty = true; syncUi();
+}
+function undo() {
+  const u = S.undo.pop(); if (!u) return;
+  for (const key of ['body', 'mask']) for (let y = u.y0; y < u.y1; y++) S[key].set(u[key].subarray((y - u.y0) * (u.x1 - u.x0) * 4, (y - u.y0 + 1) * (u.x1 - u.x0) * 4), (y * S.w + u.x0) * 4);
+  S.dirty = true; composite(u.x0, u.y0, u.x1, u.y1); syncUi();
+}
+
+function pick(p) {
+  const x = Math.floor(p.x), y = Math.floor(p.y); if (x < 0 || y < 0 || x >= S.w || y >= S.h) return;
+  const i = (y * S.w + x) * 4; S.picked = [S.body[i], S.body[i + 1], S.body[i + 2], S.body[i + 3]]; S.layer = 'body'; S.tool = 'paint'; syncUi();
+}
+
+// Grows the mask over every see-through part of the body image that connects to it, plus a margin.
+function fitMask() {
+  const { w, h, body, mask } = S, hole = new Uint8Array(w * h), queue = [];
+  for (let i = 0; i < w * h; i++) if (mask[i * 4 + 3] && body[i * 4 + 3] < 250) { hole[i] = 1; queue.push(i); }
+  let budget = 60000;
+  while (queue.length && budget-- > 0) {
+    const i = queue.pop(), x = i % w, y = (i / w) | 0;
+    for (const n of [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, y > 0 ? i - w : -1, y < h - 1 ? i + w : -1]) if (n >= 0 && !hole[n] && body[n * 4 + 3] < 250) { hole[n] = 1; queue.push(n); }
+  }
+  if (budget <= 0) { alert('눈 구멍이 그림 바깥과 이어져 있어서 자동으로 맞추지 못했습니다. 구멍 가장자리를 먼저 메워 주세요.'); return; }
+  beginStroke(); const s = S.stroke, m = 3;
+  for (let i = 0; i < w * h; i++) if (hole[i]) {
+    const x = i % w, y = (i / w) | 0;
+    for (let dy = -m; dy <= m; dy++) for (let dx = -m; dx <= m; dx++) { const nx = x + dx, ny = y + dy; if (nx >= 0 && ny >= 0 && nx < w && ny < h) mask.fill(255, (ny * w + nx) * 4, (ny * w + nx) * 4 + 4); }
+    s.x0 = Math.min(s.x0, x - m); s.y0 = Math.min(s.y0, y - m); s.x1 = Math.max(s.x1, x + m + 1); s.y1 = Math.max(s.y1, y + m + 1);
+  }
+  s.x0 = Math.max(0, s.x0); s.y0 = Math.max(0, s.y0); s.x1 = Math.min(w, s.x1); s.y1 = Math.min(h, s.y1);
+  endStroke(); composite(0, 0, w, h); toast('마스크를 눈 구멍에 맞췄습니다.');
+}
+
+async function save() {
+  if (!S.dirty) return;
+  const size = S.w * S.h * 4, out = new Uint8Array(8 + size * 2), head = new DataView(out.buffer);
+  head.setUint32(0, S.w, true); head.setUint32(4, S.h, true); out.set(S.body, 8); out.set(S.mask, 8 + size);
+  const res = await fetch(`/api/save/${S.names[S.index]}`, { method: 'POST', body: out });
+  if (!res.ok) { alert('저장하지 못했습니다: ' + (await res.text())); return; }
+  S.dirty = false; syncUi(); toast(`${S.names[S.index]} 저장했습니다.`);
+}
+
+function syncUi() {
+  $('layerBody').classList.toggle('on', S.layer === 'body'); $('layerMask').classList.toggle('on', S.layer === 'mask');
+  $('bodyTools').hidden = S.layer !== 'body'; $('maskTools').hidden = S.layer !== 'mask';
+  $('toolPaint').classList.toggle('on', S.tool !== 'restore'); $('toolRestore').classList.toggle('on', S.tool === 'restore');
+  $('toolMaskPaint').classList.toggle('on', S.tool !== 'erase'); $('toolMaskErase').classList.toggle('on', S.tool === 'erase');
+  $('swatch').style.setProperty('--c', S.picked ? `rgba(${S.picked[0]},${S.picked[1]},${S.picked[2]},${S.picked[3] / 255})` : 'transparent');
+  $('pickedText').textContent = S.picked ? `비침 ${Math.round(100 - S.picked[3] / 2.55)}%` : '아직 없음';
+  for (const k of ['radius', 'hardness', 'strength']) { $(k).value = S[k]; $(k + 'Val').textContent = k === 'radius' ? S[k] : Math.round(S[k] * 100) + '%'; }
+  $('undo').disabled = !S.undo.length; $('undo').textContent = `되돌리기 (${S.undo.length})`;
+  $('revert').disabled = !S.dirty; $('save').disabled = !S.dirty; $('save').textContent = S.dirty ? '저장 (PNG 두 장)' : '저장됨';
+  $('prev').disabled = S.index <= 0; $('next').disabled = S.index >= S.names.length - 1;
+  document.title = (S.dirty ? '● ' : '') + '눈 칠하기' + (S.index >= 0 ? ' · ' + S.names[S.index] : '');
+}
+
+view.addEventListener('contextmenu', e => e.preventDefault());
+view.addEventListener('pointerdown', e => {
+  view.setPointerCapture(e.pointerId); const p = texel(e);
+  if (e.button === 1 || e.button === 2 || (e.button === 0 && S.space)) { S.pan = { x: e.clientX, y: e.clientY }; return; }
+  if (e.button !== 0) return;
+  if (e.altKey) { pick(p); return; }
+  if (S.layer === 'body' && S.tool === 'paint' && !S.picked) { toast('먼저 Alt+클릭으로 칠할 색을 찍어 주세요.'); return; }
+  beginStroke(); strokeTo(p);
+});
+view.addEventListener('pointermove', e => {
+  S.mouse = texel(e);
+  if (S.pan) { S.cx -= (e.clientX - S.pan.x) / S.zoom; S.cy -= (e.clientY - S.pan.y) / S.zoom; S.pan = { x: e.clientX, y: e.clientY }; }
+  else if (S.stroke) { strokeTo(S.mouse); return; }
+  draw();
+});
+view.addEventListener('pointerup', () => { S.pan = null; if (S.stroke) endStroke(); });
+view.addEventListener('pointerleave', () => { S.mouse = null; draw(); });
+view.addEventListener('wheel', e => {
+  e.preventDefault(); const before = texel(e); S.zoom = Math.max(.4, Math.min(48, S.zoom * (e.deltaY > 0 ? .87 : 1.15)));
+  const after = texel(e); S.cx += before.x - after.x; S.cy += before.y - after.y; draw();
+}, { passive: false });
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { S.space = true; e.preventDefault(); }
+  else if (e.key === '[') { S.radius = Math.max(.5, S.radius - (S.radius > 6 ? 2 : .5)); syncUi(); draw(); }
+  else if (e.key === ']') { S.radius = Math.min(40, S.radius + (S.radius >= 6 ? 2 : .5)); syncUi(); draw(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
+  else if (e.key.toLowerCase() === 'c' && !S.compare) { S.compare = true; $('compare').checked = true; composite(0, 0, S.w, S.h); }
+});
+addEventListener('keyup', e => {
+  if (e.code === 'Space') S.space = false;
+  else if (e.key.toLowerCase() === 'c') { S.compare = false; $('compare').checked = false; composite(0, 0, S.w, S.h); }
+});
+addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+addEventListener('resize', resize);
+
+$('character').onchange = e => load(S.names.indexOf(e.target.value));
+$('prev').onclick = () => load(S.index - 1); $('next').onclick = () => load(S.index + 1);
+$('layerBody').onclick = () => { S.layer = 'body'; S.tool = 'paint'; syncUi(); };
+$('layerMask').onclick = () => { S.layer = 'mask'; S.tool = 'paint'; syncUi(); };
+$('toolPaint').onclick = () => { S.tool = 'paint'; syncUi(); }; $('toolRestore').onclick = () => { S.tool = 'restore'; syncUi(); };
+$('toolMaskPaint').onclick = () => { S.tool = 'paint'; syncUi(); }; $('toolMaskErase').onclick = () => { S.tool = 'erase'; syncUi(); };
+$('fitMask').onclick = fitMask; $('frame').onclick = frame; $('undo').onclick = undo; $('save').onclick = save;
+$('revert').onclick = () => { if (confirm('저장하지 않은 변경을 모두 버릴까요?')) { S.dirty = false; load(S.index); } };
+for (const k of ['radius', 'hardness', 'strength']) $(k).oninput = e => { S[k] = +e.target.value; syncUi(); draw(); };
+const setEye = hex => { S.eye = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)); $('eye').value = hex; composite(0, 0, S.w, S.h); };
+document.querySelectorAll('[data-eye]').forEach(b => b.onclick = () => setEye(b.dataset.eye));
+$('eye').oninput = e => setEye(e.target.value);
+$('leaks').onchange = e => { S.leaks = e.target.checked; composite(0, 0, S.w, S.h); };
+$('outline').onchange = e => { S.outline = e.target.checked; composite(0, 0, S.w, S.h); };
+$('compare').onchange = e => { S.compare = e.target.checked; composite(0, 0, S.w, S.h); };
+
+(async () => {
+  S.names = await (await fetch('/api/characters')).json();
+  $('character').innerHTML = S.names.map(n => `<option>${n}</option>`).join('');
+  resize(); await load(Math.max(0, S.names.indexOf('BST_F2')));
+})();
+</script>
+</body>
+</html>

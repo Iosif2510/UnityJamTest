@@ -41,6 +41,25 @@ namespace PotionShop
             timerMotion = SwayTimer(rect);
         }
 
+        private static readonly System.Collections.Generic.Dictionary<Transform, (Vector3 rest, MotionHandle motion)> bounces = new();
+
+        /// <summary>A quick squash-and-settle on a pressed choice; repeated presses restart from its rest size.</summary>
+        internal static void Bounce(Transform target, float peak = 1.12f)
+        {
+            if (target == null) return;
+            Vector3 rest = target.localScale;
+            if (bounces.TryGetValue(target, out var running))
+            {
+                running.motion.TryCancel();
+                rest = running.rest;
+            }
+            var handle = LMotion.Create(peak, 1f, 0.3f).WithEase(Ease.OutElastic)
+                .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                .WithOnComplete(() => bounces.Remove(target))
+                .Bind(s => { if (target != null) target.localScale = rest * s; });
+            bounces[target] = (rest, handle);
+        }
+
         internal static MotionHandle SwayTimer(RectTransform rect) => LMotion.Create(0f, 2 * Mathf.PI, 2f)
             .WithScheduler(MotionScheduler.UpdateIgnoreTimeScale).WithLoops(-1)
             .Bind(phase =>
@@ -64,6 +83,14 @@ namespace PotionShop
                     if (background != null)
                         background.color = Color.Lerp(low, backgroundColor, .5f + .5f * Mathf.Cos(phase));
                 });
+        }
+
+        /// <summary>Greyed out but still pressable: the button only explains why it cannot go yet.</summary>
+        internal void LockWorkshop()
+        {
+            buttonMotion.TryCancel();
+            if (label != null) label.color = new Color(labelColor.r, labelColor.g, labelColor.b, labelColor.a * 0.6f);
+            if (background != null) background.color = backgroundColor * new Color(.62f, .6f, .58f, 1f);
         }
 
         internal void Stop()

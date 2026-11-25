@@ -60,14 +60,20 @@ namespace PotionShop.Portraits
             var vertices = spine.Vertices;
             var sourceUVs = spine.UVs;
             var triangles = spine.Triangles;
+            // A sprite packed into an atlas keeps only its non-empty rectangle. The rig's UVs address the whole
+            // canvas, so they are mapped into that rectangle (padding is zero for an unpacked full-canvas sprite).
+            var padding = DataUtility.GetPadding(sprite);
+            var canvas = sprite.rect.size;
+            float left = padding.x / canvas.x, bottom = padding.y / canvas.y;
+            float width = 1f - (padding.x + padding.z) / canvas.x, height = 1f - (padding.y + padding.w) / canvas.y;
             vh.Clear();
             for (int i = 0; i < vertices.Length; i += 2)
             {
                 var position = new Vector3(
                     rect.x + (vertices[i] - bounds.x) / bounds.width * rect.width,
                     rect.y + (vertices[i + 1] - bounds.y) / bounds.height * rect.height);
-                var texCoord = new Vector2(Mathf.Lerp(uv.x, uv.z, sourceUVs[i]),
-                    Mathf.Lerp(uv.y, uv.w, 1f - sourceUVs[i + 1]));
+                var texCoord = new Vector2(Mathf.LerpUnclamped(uv.x, uv.z, (sourceUVs[i] - left) / width),
+                    Mathf.LerpUnclamped(uv.y, uv.w, (1f - sourceUVs[i + 1] - bottom) / height));
                 vh.AddVert(position, color, texCoord);
             }
             for (int i = 0; i < triangles.Length; i += 3)

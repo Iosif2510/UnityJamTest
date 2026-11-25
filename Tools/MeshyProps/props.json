@@ -1,0 +1,96 @@
+{
+  "style": "Stylized low-poly cartoon game asset, simple geometric shapes, clean topology, flat shading, vibrant but harmonious colors, hand-painted appearance, optimized for real-time game engines, no background, isolated 3D object.",
+  "polycount": 2000,
+  "props": {
+    "Hourglass": {
+      "prompt": "A single desk hourglass: two rounded glass bulbs joined at a narrow neck, pale sand in the lower bulb, held between a round dark wooden top plate and base plate by three thin turned wooden posts with small brass caps. Warm fantasy apothecary style."
+    },
+    "DeskBell": {
+      "prompt": "A single small brass call bell hanging from a short curved wooden bracket on a square wooden base, with a short pull cord ending in a wooden bead. Warm fantasy apothecary style, slightly worn brass."
+    },
+    "InkwellQuill": {
+      "prompt": "A single squat dark glass inkwell with a brass collar, with one long white feather quill standing in it, on a small round wooden coaster. Warm fantasy apothecary style."
+    },
+    "CandleHolder": {
+      "prompt": "A single brass chamberstick candle holder: a shallow round dish with a ring handle, holding one short cream wax candle with drips and a small flame. Warm fantasy apothecary style."
+    },
+    "NoteBasket": {
+      "prompt": "A single small woven wicker basket hanging on a rope with a simple wooden pulley hook at the top, as used to haul notes between floors, with one folded paper note inside. Warm fantasy apothecary style."
+    },
+    "BookStack": {
+      "style": "cozy",
+      "prompt": "A single stack of three chunky old books lying flat, slightly offset and tilted, covers in dusty purple, soft teal and muted maroon with cream page edges and small gold corner details."
+    },
+    "PotionTrio": {
+      "style": "cozy",
+      "prompt": "A small group of three round potion bottles standing together on a tiny wooden tray: one tall pink, one squat mint green, one lavender, each with a cork stopper and a little paper label, liquid inside clearly visible."
+    },
+    "HerbBundle": {
+      "style": "cozy",
+      "prompt": "A single bundle of dried herbs hanging upside down, stems tied together with twine and a short loop of rope at the top for hanging, leaves in muted sage green and dusty lavender flowers."
+    },
+    "Pumpkin": {
+      "style": "cozy",
+      "prompt": "A single chunky round pumpkin with deep soft ribs, a short curly green stem and one small leaf, warm muted orange."
+    },
+    "WoodenCrate": {
+      "style": "cozy",
+      "prompt": "A single small wooden storage crate with plank sides, rounded edges and a slightly open lid, a few rolled parchments and a small bottle peeking out, warm mauve brown wood."
+    },
+    "ClayJar": {
+      "style": "cozy",
+      "prompt": "A single round ceramic apothecary jar with a wide neck, a cloth cover tied with string on top, glazed in soft teal with a cream band."
+    },
+    "RoundRug": {
+      "style": "cozy",
+      "prompt": "A single flat round woven rug lying on the floor, concentric rings in dusty mauve, cream and lavender with a soft fringe, very thin."
+    },
+    "ArchedWindow": {
+      "style": "cozy",
+      "prompt": "A single arched wooden window frame for a wall, with a round top, cross-shaped mullions dividing it into small panes, a deep sill with a small potted plant, mauve painted wood, panes left empty."
+    },
+    "Broom": {
+      "style": "cozy",
+      "prompt": "A single witch broom standing upright, a slightly crooked wooden handle and a fat bundle of straw bristles tied with a purple ribbon."
+    },
+    "HangingPlant": {
+      "style": "cozy",
+      "prompt": "A single round clay flower pot hanging from three ropes, with lush trailing ivy leaves spilling over the rim, soft teal-green leaves, terracotta pot."
+    },
+    "Workbench": {
+      "style": "cozy",
+      "prompt": "A single sturdy apothecary workbench table with thick rounded wooden top, chunky legs, a low shelf underneath holding two baskets, mauve brown wood, empty table top."
+    },
+    "Bookcase": {
+      "style": "cozy",
+      "prompt": "A single tall chunky bookcase with four shelves packed with leaning colorful books, a few jars and a small potted plant, rounded wooden frame with a little arched top, mauve brown wood."
+    },
+    "Bench": {
+      "style": "cozy",
+      "prompt": "A single low wooden bench with rounded thick plank seat and four short stubby legs, a soft lavender cushion on one end, mauve brown wood, empty seat."
+    },
+    "ApothecaryCabinet": {
+      "style": "cozy",
+      "prompt": "A single small apothecary cabinet with many little square drawers with round brass knobs and tiny paper labels, rounded wooden frame, mauve brown wood, flat empty top."
+    },
+    "WoodenDoor": {
+      "style": "cozy",
+      "prompt": "A single rounded arched wooden door in a thick stone frame for a cottage wall, vertical planks, black iron hinges and a ring handle, a small wreath of dried herbs hanging on it, flat back."
+    },
+    "Fireplace": {
+      "style": "cozy",
+      "prompt": "A single small cozy stone fireplace for a wall, rounded chunky stones, an arched opening with logs and soft glowing embers inside, a wooden mantel shelf on top, flat back."
+    },
+    "Chandelier": {
+      "style": "cozy",
+      "prompt": "A single round wrought iron hanging chandelier ring holding six short cream candles with small flames, hanging from three short chains joined at a top hook, a few ivy leaves wrapped around the ring."
+    },
+    "DryingRack": {
+      "style": "cozy",
+      "prompt": "A single hanging wooden herb drying rack: one horizontal wooden pole hung from two ropes, with five small bundles of dried herbs and flowers hanging upside down from it in sage green, lavender and dusty pink."
+    }
+  },
+  "styles": {
+    "cozy": "Cozy stylized diorama prop, chunky rounded proportions, soft bevelled edges, smooth clay-like matte surface, simple shapes, muted pastel colors (dusty mauve, lavender, cream, soft teal, pumpkin orange), handmade toy look, isolated object."
+  }
+}

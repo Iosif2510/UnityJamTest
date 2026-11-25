@@ -1,0 +1,176 @@
+{
+ "LOFT_Chip_Current": [
+  18,
+  12,
+  18,
+  12
+ ],
+ "LOFT_Chip_Done": [
+  18,
+  12,
+  18,
+  12
+ ],
+ "LOFT_Chip_Upcoming": [
+  18,
+  12,
+  18,
+  12
+ ],
+ "LOFT_Nameplate": [
+  74,
+  2,
+  74,
+  2
+ ],
+ "LOFT_PaperShadow": [
+  16,
+  16,
+  16,
+  16
+ ],
+ "LOFT_Tab_Blink": [
+  24,
+  30,
+  36,
+  24
+ ],
+ "LOFT_Tab_Hover": [
+  24,
+  30,
+  36,
+  24
+ ],
+ "LOFT_Tab_Normal": [
+  24,
+  30,
+  36,
+  24
+ ],
+ "LOFT_Tab_Selected": [
+  24,
+  30,
+  36,
+  24
+ ],
+ "LOFT_Toast": [
+  36,
+  2,
+  36,
+  2
+ ],
+ "NET_Input_Error": [
+  16,
+  15,
+  16,
+  15
+ ],
+ "NET_Input_Focused": [
+  16,
+  15,
+  16,
+  15
+ ],
+ "NET_Input_Normal": [
+  16,
+  15,
+  16,
+  15
+ ],
+ "NET_RoleButton_Hover": [
+  20,
+  26,
+  28,
+  18
+ ],
+ "NET_RoleButton_Normal": [
+  20,
+  26,
+  28,
+  18
+ ],
+ "NET_RoleButton_Selected": [
+  20,
+  26,
+  28,
+  18
+ ],
+ "NET_RoleButton_Taken": [
+  20,
+  26,
+  28,
+  18
+ ],
+ "NET_StatusStrip": [
+  12,
+  4,
+  12,
+  4
+ ],
+ "NET_WaitBar": [
+  44,
+  4,
+  44,
+  4
+ ],
+ "UI_BigButton_Disabled": [
+  71,
+  31,
+  71,
+  40
+ ],
+ "UI_BigButton_Hover": [
+  71,
+  31,
+  71,
+  40
+ ],
+ "UI_BigButton_Normal": [
+  71,
+  31,
+  71,
+  40
+ ],
+ "UI_BigButton_Pressed": [
+  71,
+  31,
+  71,
+  40
+ ],
+ "UI_SmallButton_Hover": [
+  44,
+  23,
+  44,
+  29
+ ],
+ "UI_SmallButton_Normal": [
+  44,
+  23,
+  44,
+  29
+ ],
+ "UI_SmallButton_Pressed": [
+  44,
+  23,
+  44,
+  29
+ ],
+ "UI_Timer_Fill": [
+  17,
+  2,
+  18,
+  2
+ ],
+ "UI_Timer_Frame": [
+  32,
+  2,
+  32,
+  2
+ ],
+ "UI_Window": [
+  80,
+  80,
+  80,
+  80
+ ]
+}

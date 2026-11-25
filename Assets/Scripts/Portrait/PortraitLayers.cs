@@ -19,9 +19,11 @@ namespace PotionShop.Portraits
         public IrisDetailPair ActiveIrisDetail { get; private set; }
         public bool UsesBakedIris { get; private set; }
         public IEnumerable<Image> All => new[] { hairBack, irisLeft, irisRight, baseImage, eyeClosed, hairFront, slime };
+        private int? eyeClosedSiblingIndex;
 
         public void Compose(CustomerProfile profile)
         {
+            RestoreEyeLayerOrder();
             Set(hairBack, profile.HairBack); Set(baseImage, profile.BasePortrait);
             Set(eyeClosed, profile.EyeClosed); Set(hairFront, profile.HairFront);
             eyeClosed.enabled = false;
@@ -51,7 +53,28 @@ namespace PotionShop.Portraits
             }
         }
 
-        public void ShowExpression(Sprite sprite) => Set(eyeClosed, sprite);
+        public void ShowExpression(Sprite sprite, bool aboveHair = false)
+        {
+            RestoreEyeLayerOrder();
+            Set(eyeClosed, sprite);
+            if (!aboveHair || sprite == null || hairFront == null || eyeClosed.transform.parent != hairFront.transform.parent)
+                return;
+
+            var eyeIndex = eyeClosed.transform.GetSiblingIndex();
+            var hairIndex = hairFront.transform.GetSiblingIndex();
+            if (eyeIndex < hairIndex)
+            {
+                eyeClosedSiblingIndex = eyeIndex;
+                eyeClosed.transform.SetSiblingIndex(hairIndex);
+            }
+        }
+
+        private void RestoreEyeLayerOrder()
+        {
+            if (!eyeClosedSiblingIndex.HasValue) return;
+            eyeClosed.transform.SetSiblingIndex(eyeClosedSiblingIndex.Value);
+            eyeClosedSiblingIndex = null;
+        }
 
         private static void Set(Image image, Sprite sprite)
         { image.sprite = sprite; image.enabled = sprite != null; image.raycastTarget = false; }

@@ -1694,7 +1694,6 @@ MonoBehaviour:
   timerFill: {fileID: 6238307255422242350}
   promptTitle: {fileID: 8855915085292057291}
   promptAction: {fileID: 427395813012916106}
-  keycap: {fileID: 5397576635778812403}
   keyText: {fileID: 6976093018278139866}
   crosshair: {fileID: 5349844330231742217}
   pocketPreviews:
@@ -1702,6 +1701,9 @@ MonoBehaviour:
   - {fileID: 6958159702835395990}
   - {fileID: 258095903804765290}
   ingredients: {fileID: 11400000, guid: 40c1191eed393854b8a15c327d222a2a, type: 2}
+  leftClickIcon: {fileID: 21300000, guid: f1e2d99a5b70a224e9eabe83a711e9a3, type: 3}
+  rightClickIcon: {fileID: 21300000, guid: 99bd91760f67d914abb6f3402fe71981, type: 3}
+  leftDragIcon: {fileID: 21300000, guid: e82945aa0e0f69644b8c10c3745a55ce, type: 3}
 --- !u!1 &5237464061142648538
 GameObject:
   m_ObjectHideFlags: 0
@@ -2488,16 +2490,16 @@ RectTransform:
   m_GameObject: {fileID: 6804583393653302813}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8698883778053050048}
   - {fileID: 2515152828859723217}
   m_Father: {fileID: 6357173703965575737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 160}
   m_SizeDelta: {x: 560, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5219014012668306505

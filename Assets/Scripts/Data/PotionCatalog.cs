@@ -27,6 +27,8 @@ namespace PotionShop.Data
         [SerializeField] private PortraitColorCatalog portraitColors;
         [SerializeField] private CharacterVoiceCatalog characterVoices;
         [SerializeField] private DialogueCatalog fallbackDialogue;
+        [SerializeField, Tooltip("Pre-generated lines per customer and disease (Tools/DialogueTable). Optional.")]
+        private TextAsset dialogueTable;
 
         public CustomerCatalog Customers => customers;
         public DiseaseRecipeCatalog DiseasesAndRecipes => diseasesAndRecipes;
@@ -36,5 +38,6 @@ namespace PotionShop.Data
         public PortraitColorCatalog PortraitColors => portraitColors;
         public CharacterVoiceCatalog CharacterVoices => characterVoices;
         public DialogueCatalog FallbackDialogue => fallbackDialogue;
+        public TextAsset DialogueTable => dialogueTable;
     }
 }

@@ -22,7 +22,7 @@ MonoBehaviour:
     featureC: "\uAC13 \uB05D\uC774 \uBFB0\uC871\uD558\uB2E4"
     variants:
     - id: A1
-      displayName: "\uB2EC\uBE5B\uBC84\uC12F"
+      displayName: "\uBCC4\uBC24\uBC84\uC12F"
       prefab: {fileID: 7883260442365680393, guid: 2d5902f5d71a9fa45825e167653bbc81, type: 3}
       features: 0000000001000000
       distinctPoint: "\uAC13\uC774 \uB465\uAE00\uB2E4"
@@ -45,11 +45,9 @@ MonoBehaviour:
   - id: B
     status: 1
     displayName: "\uBFCC\uB9AC"
-    baseAppearance: "\uD759\uBE5B \uAECD\uC9C8, \uB450 \uAC08\uB798\uB85C \uAC08\uB77C\uC9C4
-      \uB9E4\uB048\uD55C \uBAB8"
+    baseAppearance: "\uD759\uBE5B \uAECD\uC9C8, \uC717\uBA74\uC774 \uC798\uB9B0 \uB9E4\uB048\uD55C \uBFCC\uB9AC \uD1A0\uB9C9"
     featureA: "\uAECD\uC9C8\uC774 \uBCF4\uB78F\uBE5B\uC774\uB2E4"
-    featureB: "\uBAB8\uC5D0 \uC0AC\uB78C \uC5BC\uAD74 \uAC19\uC740 \uBB34\uB2AC\uAC00
-      \uC788\uB2E4"
+    featureB: "\uC798\uB9B0 \uB2E8\uBA74\uC5D0 \uB098\uC774\uD14C\uAC00 \uC788\uB2E4"
     featureC: "\uBAB8\uC5D0 \uD639\uC774 \uB3CB\uC544 \uC788\uB2E4"
     variants:
     - id: B1
@@ -70,7 +68,7 @@ MonoBehaviour:
       displayName: "\uB450\uAEBC\uBE44\uBFCC\uB9AC"
       prefab: {fileID: 8828050863376627082, guid: ca212162fb8dfc643855dda0775ab552, type: 3}
       features: 0200000000000000
-      distinctPoint: "\uC5BC\uAD74 \uBB34\uB2AC \uC5C6\uC74C"
+      distinctPoint: "\uB2E8\uBA74 \uB098\uC774\uD14C \uC5C6\uC74C"
       bookletThumbnail: {fileID: 21300000, guid: 831ba6b9f413f9246a8e2ce33a05ec3b, type: 3}
       usesPlaceholderArt: 0
   - id: C
@@ -82,21 +80,21 @@ MonoBehaviour:
     featureC: "\uB05D\uC774 \uB450 \uAC08\uB798\uB85C \uAC08\uB77C\uC84C\uB2E4"
     variants:
     - id: C1
-      displayName: "\uC62C\uBE7C\uBBF8\uAE43"
+      displayName: "\uBA39\uBD93\uAE43"
       prefab: {fileID: 6969705253127459398, guid: cbefda3d1a162fa48a0990d16e386506, type: 3}
       features: 0000000001000000
       distinctPoint: "\uB05D\uC774 \uAC08\uB77C\uC9C0\uC9C0 \uC54A\uC74C"
       bookletThumbnail: {fileID: 21300000, guid: 5420f54faade96a46a65df604b42eb33, type: 3}
       usesPlaceholderArt: 0
     - id: C2
-      displayName: "\uC81C\uBE44\uAE43"
+      displayName: "\uB9AC\uBCF8\uAE43"
       prefab: {fileID: 8199928473536256230, guid: 6fb0bf2e09380934882ea89d9c2ef032, type: 3}
       features: 0100000002000000
       distinctPoint: "\uB05D\uC774 \uAE4C\uB9E3\uC9C0 \uC54A\uC74C"
       bookletThumbnail: {fileID: 21300000, guid: 64979a6c462881b4d9a44ac240ae94e2, type: 3}
       usesPlaceholderArt: 0
     - id: C3
-      displayName: "\uAE4C\uB9C8\uADC0\uAE43"
+      displayName: "\uADF8\uC744\uC74C\uAE43"
       prefab: {fileID: 8227705088564790167, guid: 4716451a5df96464790b0fef54d3d0ae, type: 3}
       features: 0200000000000000
       distinctPoint: "\uC904\uBB34\uB2AC \uC5C6\uC74C"
@@ -105,46 +103,45 @@ MonoBehaviour:
   - id: D
     status: 1
     displayName: "\uC218\uC815"
-    baseAppearance: "\uD22C\uBA85\uD55C \uC218\uC815 \uAE30\uB465 \uBA87 \uAC1C,
-      \uB05D\uC774 \uBFB0\uC871\uD558\uB2E4"
-    featureA: "\uBD84\uD64D\uBE5B\uC774 \uB3C8\uB2E4"
-    featureB: "\uC548\uC5D0 \uAE4C\uB9CC \uC528\uC557\uC774 \uB4E4\uC5B4 \uC788\uB2E4"
+    baseAppearance: "\uD55C \uAC00\uC9C0 \uC0C9 \uC218\uC815 \uBB34\uB354\uAE30, \uB05D\uC774 \uBFB0\uC871\uD558\uB2E4, \uB3CC \uC5C6\uC774 \uBCF4\uC11D\uB9CC"
+    featureA: "\uB450 \uAC00\uC9C0 \uC0C9\uC774 \uC11E\uC5EC \uC788\uB2E4"
+    featureB: "\uB3CC\uC5D0 \uBD99\uC5B4 \uC788\uB2E4"
     featureC: "\uAE30\uB465 \uB05D\uC774 \uBB49\uD22D\uD558\uB2E4"
     variants:
     - id: D1
-      displayName: "\uBD04\uC7A0\uC218\uC815"
+      displayName: "\uC0C8\uBCBD\uC218\uC815"
       prefab: {fileID: 8551785505205497793, guid: 30fc34bc05564cf4f95353d8b7a3ed34, type: 3}
       features: 0000000001000000
       distinctPoint: "\uB05D\uC774 \uBFB0\uC871\uD568"
       bookletThumbnail: {fileID: 21300000, guid: 4851aa5704900fc41af8b3b75acc31ac, type: 3}
       usesPlaceholderArt: 0
     - id: D2
-      displayName: "\uC528\uB208\uC218\uC815"
+      displayName: "\uC5BC\uC74C\uC218\uC815"
       prefab: {fileID: 3092118217698663960, guid: 27f2efdcc37e56a45a511f4a33299fac, type: 3}
       features: 0100000002000000
-      distinctPoint: "\uD22C\uBA85\uD568"
+      distinctPoint: "\uD55C \uAC00\uC9C0 \uC0C9"
       bookletThumbnail: {fileID: 21300000, guid: f4a5293dd430bff4c9f0961ce42fccc9, type: 3}
       usesPlaceholderArt: 0
     - id: D3
       displayName: "\uB178\uC744\uC218\uC815"
       prefab: {fileID: 4403065743133368857, guid: dbb64cb4567bb6249bb4ddf6930a6254, type: 3}
       features: 0200000000000000
-      distinctPoint: "\uC528\uC557 \uC5C6\uC74C"
+      distinctPoint: "\uB3CC \uC5C6\uC774 \uBCF4\uC11D\uB9CC"
       bookletThumbnail: {fileID: 21300000, guid: 7f12383c49e31354ea90aa9dc2ca639f, type: 3}
       usesPlaceholderArt: 0
   - id: E
     status: 1
     displayName: "\uC54C"
-    baseAppearance: "\uD770 \uC54C, \uB3D9\uADF8\uB780 \uC6D0\uD615"
+    baseAppearance: "\uC5B4\uB290 \uC9D0\uC2B9\uC774 \uB0B3\uC558\uB294\uC9C0 \uC544\uBB34\uB3C4 \uBAA8\uB974\uB294 \uC54C. \uD770 \uAECD\uC9C8, \uB465\uADFC \uBAA8\uC591"
     featureA: "\uAECD\uC9C8\uC774 \uAC08\uC0C9\uC774\uB2E4"
-    featureB: "\uAC80\uC740 \uBC18\uC810\uC774 \uC788\uB2E4"
-    featureC: "\uD0C0\uC6D0\uD615\uC774\uB2E4 (\uC544\uB2CC \uAC83\uC740 \uC6D0\uD615)"
+    featureB: "\uBC18\uC810\uC774 \uC788\uB2E4"
+    featureC: "\uAE38\uCB49\uD558\uB2E4 (\uC544\uB2CC \uAC83\uC740 \uB465\uAE00\uB2E4)"
     variants:
     - id: E1
-      displayName: "\uC9C0\uBE60\uADC0\uC54C"
+      displayName: "\uCFE0\uD0A4\uC54C"
       prefab: {fileID: 8865574589608924429, guid: d0b27ea1672560d48a801ae096e66918, type: 3}
       features: 0000000001000000
-      distinctPoint: "\uC6D0\uD615\uC774\uB2E4"
+      distinctPoint: "\uB465\uAE00\uB2E4"
       bookletThumbnail: {fileID: 21300000, guid: f0c6eaa9d2341b64c973ae2c5a43c9d8, type: 3}
       usesPlaceholderArt: 0
     - id: E2
@@ -170,21 +167,21 @@ MonoBehaviour:
     featureC: "\uAC00\uC2DC\uAC00 \uB3CB\uC544 \uC788\uB2E4"
     variants:
     - id: F1
-      displayName: "\uADE4\uBE5B\uC18C\uB77C"
+      displayName: "\uD30C\uB3C4\uC18C\uB77C"
       prefab: {fileID: 2599187755359564214, guid: 7fb364c5efee54b46b4b942fc0e86ab4, type: 3}
       features: 0000000001000000
       distinctPoint: "\uAC00\uC2DC \uC5C6\uC74C"
       bookletThumbnail: {fileID: 21300000, guid: d7b635d190286dd45b3c7602d9493f31, type: 3}
       usesPlaceholderArt: 0
     - id: F2
-      displayName: "\uC131\uAC8C\uC18C\uB77C"
+      displayName: "\uC655\uAD00\uC18C\uB77C"
       prefab: {fileID: 2510567663730425341, guid: fbb62a7de90666843b4cc4f43a433d34, type: 3}
       features: 0100000002000000
       distinctPoint: "\uC548\uCABD\uC774 \uD76C\uB2E4"
       bookletThumbnail: {fileID: 21300000, guid: 8c35594a2613f3b459d3da3e25777df2, type: 3}
       usesPlaceholderArt: 0
     - id: F3
-      displayName: "\uACE0\uBE14\uB9B0\uC18C\uB77C"
+      displayName: "\uD683\uBD88\uC18C\uB77C"
       prefab: {fileID: 8412487396589333507, guid: 687cb5cddf0fbc8428c1b5e629692bed, type: 3}
       features: 0200000000000000
       distinctPoint: "\uBB3C\uACB0\uBB34\uB2AC \uC5C6\uC74C"

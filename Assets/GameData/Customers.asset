@@ -14,17 +14,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PotionShop.Data.CustomerCatalog
   allowAllCustomers: 0
   spawnPool:
+  - HUM_M1
+  - HUM_M2
+  - HUM_M3
+  - HUM_F1
+  - HUM_F2
   - HUM_F3
   - ELF_M1
+  - ELF_M2
+  - ELF_M3
   - ELF_F1
+  - ELF_F2
+  - ELF_F3
+  - BST_M1
   - BST_M2
+  - BST_M3
+  - BST_F1
+  - BST_F2
+  - BST_F3
   - GOL_G1
+  - GOL_G2
+  - GOL_G3
+  - GOL_G4
   profiles:
   - id: HUM_M1
     status: 1
     speciesId: species.human
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: c0383797f0a545e9a94ceaec5ebd0d6a, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB300\uC7A5\uAC04 \uACAC\uC2B5\uC0DD"
@@ -34,10 +51,11 @@ MonoBehaviour:
       \uC18C\uB9E4"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 19b8c75ab75c447db5aec6cc6f1419cb, type: 3}
+    happyExpression: {fileID: 21300000, guid: 7edc2022a2d44ca589259f33fc95530a, type: 3}
+    angryExpression: {fileID: 21300000, guid: f8bf0de99d194be3b34f951bddc7da08, type: 3}
+    angryExpressionAboveHair: 1
+    hairFront: {fileID: 21300000, guid: a5a557a4f8294a42a377cccbcb9cf477, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
     useAccessoryTint: 0
@@ -54,8 +72,8 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 650a248f633f4dc0888575e026fbbea9, type: 3}
+    bakedIris: {fileID: 21300000, guid: c230203498964176abd651beb196f996, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -64,7 +82,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.human
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 36c79f9fbf9e4460b2bd62911ce8980d, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB4F1\uBD88\uC9C0\uAE30"
@@ -74,10 +92,10 @@ MonoBehaviour:
       \uC870\uB07C"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: e262b86d93fa4489a8fb4107efd92ce6, type: 3}
+    happyExpression: {fileID: 21300000, guid: 50774c91db8a49869934d4343b5fa435, type: 3}
+    angryExpression: {fileID: 21300000, guid: 27282f60c01e4faa8febbf134b0fa33a, type: 3}
+    hairFront: {fileID: 21300000, guid: b4511f290429402988797c83cccffd73, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
     useAccessoryTint: 0
@@ -94,8 +112,8 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 412746c0db4e431882893c2db07333df, type: 3}
+    bakedIris: {fileID: 21300000, guid: 7fcbfd9ceac24505ad5e25da00df26be, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -104,7 +122,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.human
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 2e21e97add0e47daa72f362f7a42c394, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uBC43\uC0AC\uACF5"
@@ -114,10 +132,10 @@ MonoBehaviour:
       \uC678\uD22C, \uD587\uBCD5\uC5D0 \uD0C4 \uD53C\uBD80"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: b8691226ffc843f6bf7a70e644fa4db2, type: 3}
+    happyExpression: {fileID: 21300000, guid: 394643ad91d64f919316b51ad43be61c, type: 3}
+    angryExpression: {fileID: 21300000, guid: 46ce48dab2ac4c61b709ed2642df28ce, type: 3}
+    hairFront: {fileID: 21300000, guid: 035042f99f4b47778b2d427492fc1bce, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
     useAccessoryTint: 0
@@ -134,8 +152,8 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 2df3d2776e2e4961b8c1077daa8a3b66, type: 3}
+    bakedIris: {fileID: 21300000, guid: e1ffbf5183814ad8bb292139d522173b, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -144,7 +162,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.human
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 749e4138762e407db59b3e34d5ae1950, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB3C4\uC11C\uAD00 \uC0AC\uC11C"
@@ -153,11 +171,11 @@ MonoBehaviour:
     genNotes: "20\uB300, \uAE54\uB054\uD55C \uC778\uC0C1, \uB2E8\uC815\uD55C \uBE14\uB77C\uC6B0\uC2A4"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 4a8a652bef824b738e18d17d92c64418, type: 3}
+    happyExpression: {fileID: 21300000, guid: 23beb3f1e83a41f8b10fdcb789482b2d, type: 3}
+    angryExpression: {fileID: 21300000, guid: 3c06a0ec21a74cd1a52cf0bb54595322, type: 3}
+    hairFront: {fileID: 21300000, guid: 3ad4bab48529499bb56eb71408382242, type: 3}
+    hairBack: {fileID: 21300000, guid: fcf694b10f234883b85c3f427418d1e9, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -171,19 +189,49 @@ MonoBehaviour:
     - EYE_BROWN
     - EYE_BLUE
     - EYE_GREEN
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.490048
+      y: 0.6820288
+      width: 0.0420964
+      height: 0.0272836
+    - serializedVersion: 2
+      x: 0.5896281
+      y: 0.6911114
+      width: 0.0391684
+      height: 0.0253901
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 0bf012a5b15a4223a2db17f5c5deb916, type: 3}
     bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 24763d5f9c3047ab971a05fb31ce572a, type: 3}
     irisDetailStyle: 0
-    irisDetails: []
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: HUM_F2
     status: 1
     speciesId: species.human
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: b6c2f0e94d4141b5a0ad50028eb185a2, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uD30C\uC774 \uAC00\uAC8C \uC8FC\uC778"
@@ -193,11 +241,11 @@ MonoBehaviour:
       \uC55E\uC136"
     earType: 18
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 6519c2ddbb954474800fac4d823d5377, type: 3}
+    happyExpression: {fileID: 21300000, guid: 0a6f135458134bef89d4a95644b99553, type: 3}
+    angryExpression: {fileID: 21300000, guid: 9bcc82a54ac241569840be9539016780, type: 3}
+    hairFront: {fileID: 21300000, guid: 6aba1d8628524b568966cf100cb310e1, type: 3}
+    hairBack: {fileID: 21300000, guid: 7e09fc9f60ce432886d2b246a413a1e1, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -213,8 +261,8 @@ MonoBehaviour:
     - EYE_GREEN
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 78043c110146453a96184c2553ef0f42, type: 3}
+    bakedIris: {fileID: 21300000, guid: 74b0730307c5443b8e8cff2fa4e75082, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -303,7 +351,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.elf
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 2560486f8c334dc9b7d8baf2e9a65bf5, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC2DC\uACC4\uACF5"
@@ -313,11 +361,11 @@ MonoBehaviour:
       \uCF54\uD2B8"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 95367158bd594b0fa3313854a6113986, type: 3}
+    happyExpression: {fileID: 21300000, guid: de49c66913ec46af90641b359103903b, type: 3}
+    angryExpression: {fileID: 21300000, guid: 4d30b786011a4f86a40ec5eb1db2523a, type: 3}
+    hairFront: {fileID: 21300000, guid: 97e97a434a6f41fbac0a0079ad4c77be, type: 3}
+    hairBack: {fileID: 21300000, guid: 02bfcc92d61e4fceb6aaf628bc8cff22, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -333,8 +381,8 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 6ee6e1964c124a788bcd9ea0a352f7ce, type: 3}
+    bakedIris: {fileID: 21300000, guid: ae42ce180ef54745b358ce96cbecfe24, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -343,7 +391,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.elf
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: ec8401d2f3e048b58a3a0b859849b0e9, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC232\uC9C0\uAE30"
@@ -352,11 +400,11 @@ MonoBehaviour:
     genNotes: "\uC7A5\uB144, \uACFC\uBB35\uD55C \uC778\uC0C1, \uAC00\uC8FD \uC870\uB07C"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 608c4b2890884d8cbc900cfe86876ecc, type: 3}
+    happyExpression: {fileID: 21300000, guid: f144c97c1aae47d0b9c896711483a34d, type: 3}
+    angryExpression: {fileID: 21300000, guid: 1f9b3f6bf805440e81b062d4dcfbf0f7, type: 3}
+    hairFront: {fileID: 21300000, guid: 701329997de84c5ea29568b770e4aba9, type: 3}
+    hairBack: {fileID: 21300000, guid: 366f5630223a49f4b930359d0e1ec252, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -372,8 +420,8 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: ec53bf7aeecd443eb36ee632e7eac3ac, type: 3}
+    bakedIris: {fileID: 21300000, guid: f2af991f62094adf8e6cae3e581a1d30, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -452,7 +500,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.elf
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 54b20f6c4bbf4896b663b6f408252ecd, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC7AC\uB2E8\uC0AC"
@@ -462,11 +510,11 @@ MonoBehaviour:
       \uBAA9\uC5D0 \uC904\uC790"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 47028fc8fda1465eaffe758acf597d03, type: 3}
+    happyExpression: {fileID: 21300000, guid: 30de0e65e7cf4c609bbb38a0f5aec954, type: 3}
+    angryExpression: {fileID: 21300000, guid: 8699ce585c8d483aa2e4b6b971c726dc, type: 3}
+    hairFront: {fileID: 21300000, guid: 4a09abb4e3db45a8913f6b1d4ffefe8b, type: 3}
+    hairBack: {fileID: 21300000, guid: 807d3bc7164b42c486319501ae776019, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -482,8 +530,8 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: bd43eabb88244fe18f3329d2280693dd, type: 3}
+    bakedIris: {fileID: 21300000, guid: 053ea3a9614b4e449ab068a7557bd6d2, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -492,7 +540,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.elf
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 7819fa5f6d0647278698be39fca04cb6, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB9C8\uBD80"
@@ -501,11 +549,11 @@ MonoBehaviour:
     genNotes: "\uC7A5\uB144, \uD138\uD138\uD55C \uC778\uC0C1, \uC5EC\uD589\uBCF5"
     earType: 19
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 4606db77c6d74dbe96800ba96ef012a7, type: 3}
+    happyExpression: {fileID: 21300000, guid: 3fc0133ada8c4ebe812a8f8188d770a4, type: 3}
+    angryExpression: {fileID: 21300000, guid: 50b00ffb054046008a8090bd0f278403, type: 3}
+    hairFront: {fileID: 21300000, guid: 871895bef03b472192d63802cfdb3685, type: 3}
+    hairBack: {fileID: 21300000, guid: 36917e779f754e528fcd15a47c2eb818, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -521,8 +569,8 @@ MonoBehaviour:
     - EYE_PURPLE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 36840e3bfe9641859e5e22b14a97b485, type: 3}
+    bakedIris: {fileID: 21300000, guid: 5414d1dc6d3644a69606a4fdcd7d259d, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -531,7 +579,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 9d0890ad544e4d05982c608aea00c128, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC6B0\uD3B8\uBC30\uB2EC\uBD80"
@@ -541,11 +589,11 @@ MonoBehaviour:
       \uC7AC\uD0B7"
     earType: 20
     hasFang: 1
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: fd243ca52fce4fda8ebf27827437ed5b, type: 3}
+    happyExpression: {fileID: 21300000, guid: 15739f8aed704d0da914e91b2f07edeb, type: 3}
+    angryExpression: {fileID: 21300000, guid: 05ff9e9f46d544478e3a8f1cab4a346b, type: 3}
+    hairFront: {fileID: 21300000, guid: 5063cfe511774e8989dab4d911a0387f, type: 3}
+    hairBack: {fileID: 21300000, guid: 95898612d3554db78951ee1739cde189, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -561,14 +609,44 @@ MonoBehaviour:
     - EYE_ORANGE
     - EYE_GREEN
     - EYE_BLUE
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.4291772
+      y: 0.6805344
+      width: 0.0490339
+      height: 0.0317698
+    - serializedVersion: 2
+      x: 0.5219267
+      y: 0.6918893
+      width: 0.0449523
+      height: 0.0291304
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: df345cd6f4944c029ea371102773b823, type: 3}
     bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
-    irisDetailStyle: 0
-    irisDetails: []
+    irisMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 9b8c42b8dce345c5a4771379c86c4cf4, type: 3}
+    irisDetailStyle: 3
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: BST_M2
     status: 1
     speciesId: species.beastfolk
@@ -615,7 +693,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 1
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: ce0927bf1d76448ebf5a79cc43b0dabe, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uBAA9\uC218"
@@ -624,10 +702,10 @@ MonoBehaviour:
     genNotes: "\uACF0, 50\uB300, \uC21C\uD55C \uC778\uC0C1, \uB2C8\uD2B8"
     earType: 20
     hasFang: 1
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 955d436b154a4fce88fffe3762ecae54, type: 3}
+    happyExpression: {fileID: 21300000, guid: c90dacd282724377835bbfbb46387b20, type: 3}
+    angryExpression: {fileID: 21300000, guid: c5b526f0cbf2487dbcad6bd60756389b, type: 3}
+    hairFront: {fileID: 21300000, guid: bb85f31c21b84d6b9c53fb11ca5f0bf2, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
     useAccessoryTint: 0
@@ -646,8 +724,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 6f4449cb702c4b2fa483a8f45d8c7c27, type: 3}
+    bakedIris: {fileID: 21300000, guid: f1fe8757d6f54979b1ab035978623cac, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -656,7 +734,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: c212a428299b4b75ac9d9bb8748bbd2d, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uCC3B\uC9D1 \uC9C1\uC6D0"
@@ -666,11 +744,11 @@ MonoBehaviour:
       \uBAA9\uB3C4\uB9AC"
     earType: 20
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: c70cb4ff68624e19b7a01ac59b398407, type: 3}
+    happyExpression: {fileID: 21300000, guid: 4e6d06637fa54bd39ee51fa5a966ee37, type: 3}
+    angryExpression: {fileID: 21300000, guid: c9fd5dffed2047b18497909e4d8f6374, type: 3}
+    hairFront: {fileID: 21300000, guid: 16f329e3815541c7a902d15ac8fcb97c, type: 3}
+    hairBack: {fileID: 21300000, guid: 6d203fc964fa4b939b55c3f7c2ff8672, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -688,8 +766,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: f83a5624328149aa8ed63b30647a57cf, type: 3}
+    bakedIris: {fileID: 21300000, guid: 4c52b0b85aff4e249db52e14cbffd68a, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -698,7 +776,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.beastfolk
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 23394acace3640fc8158275c27c09294, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uBE75\uC9D1 \uC8FC\uC778"
@@ -707,11 +785,11 @@ MonoBehaviour:
     genNotes: "\uACE0\uC591\uC774, 30\uB300, \uB290\uAE0B\uD55C \uC778\uC0C1, \uCE74\uB514\uAC74"
     earType: 20
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 52a7f923a8d44a9f813479019ca44845, type: 3}
+    happyExpression: {fileID: 21300000, guid: 7e0f004c87214c71ae7700c68f0fe045, type: 3}
+    angryExpression: {fileID: 21300000, guid: 55c0491bca184e0ba012a7771df797da, type: 3}
+    hairFront: {fileID: 21300000, guid: b3d366504ef7452fa31817a69fe8726d, type: 3}
+    hairBack: {fileID: 21300000, guid: 915ea9d6fcd94a87862b892ba61cb960, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -727,19 +805,49 @@ MonoBehaviour:
     - EYE_ORANGE
     - EYE_GREEN
     - EYE_BLUE
-    irisRegions: []
+    irisRegions:
+    - serializedVersion: 2
+      x: 0.4718527
+      y: 0.6826791
+      width: 0.0328571
+      height: 0.0213605
+    - serializedVersion: 2
+      x: 0.5658068
+      y: 0.69467
+      width: 0.032449
+      height: 0.0208163
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: a9f64310db354353bfb34bc9e965056f, type: 3}
     bakedIris: {fileID: 0}
-    irisMask: {fileID: 0}
-    irisVariantsMask: {fileID: 0}
+    irisMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
+    irisVariantsMask: {fileID: 21300000, guid: 6c182adbdf654cf9b4b3bee8f4d13de9, type: 3}
     irisDetailStyle: 0
-    irisDetails: []
+    irisDetails:
+    - style: 0
+      left: {fileID: 21300000, guid: 302b223bdc3b5eaaaaa5626d689a0ed1, type: 3}
+      right: {fileID: 21300000, guid: fdf313f6016751d38fdb43852c1b1f9c, type: 3}
+      sourceHueDegrees: 175
+    - style: 1
+      left: {fileID: 21300000, guid: 56ebb0ed875652dc8279b729f4c0f5c3, type: 3}
+      right: {fileID: 21300000, guid: 67680f99d39b572ab328d7ffc3cbb8a6, type: 3}
+      sourceHueDegrees: 170
+    - style: 2
+      left: {fileID: 21300000, guid: b3d153702b2954428508db251235abd9, type: 3}
+      right: {fileID: 21300000, guid: 20ea0658bf9152f1a62a9933b6c96cfe, type: 3}
+      sourceHueDegrees: 175
+    - style: 3
+      left: {fileID: 21300000, guid: c09a99b73d2a5e2c9ca789e3f68d41b1, type: 3}
+      right: {fileID: 21300000, guid: eedca388d3c552f48e76c21d95363091, type: 3}
+      sourceHueDegrees: 170
+    - style: 4
+      left: {fileID: 21300000, guid: 83ddf84c151f51afa831023f40c8788d, type: 3}
+      right: {fileID: 21300000, guid: 314827dd7f3e50a6981f2a2cbdffecfb, type: 3}
+      sourceHueDegrees: 175
   - id: BST_F3
     status: 1
     speciesId: species.beastfolk
     gender: 2
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 0ea1c23bbbaf4d8ab05fe67fc89d56a7, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uACBD\uBE44\uB300\uC6D0"
@@ -748,11 +856,11 @@ MonoBehaviour:
     genNotes: "\uB291\uB300, 40\uB300, \uB2F9\uB2F9\uD55C \uC778\uC0C1, \uB9DD\uD1A0"
     earType: 20
     hasFang: 1
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
-    hairBack: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: baffcfe8f05a4db785c901ff8c3ad573, type: 3}
+    happyExpression: {fileID: 21300000, guid: f06d618fef7e4e628f8f7936177f38e4, type: 3}
+    angryExpression: {fileID: 21300000, guid: 47e88d5431e1430484d4dc69ecc42628, type: 3}
+    hairFront: {fileID: 21300000, guid: e551d2c6f7bc4cbaa8630f64df559381, type: 3}
+    hairBack: {fileID: 21300000, guid: 491e751ef0e64b9089fb9b80a73e28e3, type: 3}
     hairColors: 
     useAccessoryTint: 0
     accessoryTint: {r: 1, g: 1, b: 1, a: 1}
@@ -770,8 +878,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 7c1ccc7eb1684f76b869f7da6ade7829, type: 3}
+    bakedIris: {fileID: 21300000, guid: 5992b28436b44435b9b35f84e46b454b, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -815,7 +923,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.golem
     gender: 3
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: 81e43d79d19948d7834c583faf8e5257, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uB2E4\uB9AC \uC9C0\uD0B4\uC774"
@@ -824,10 +932,10 @@ MonoBehaviour:
     genNotes: "\uBAB8\uC5D0 \uC774\uB07C"
     earType: 1
     hasFang: 1
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
-    hairFront: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: e0f5d2e3f4244a5d90ee817a532f6509, type: 3}
+    happyExpression: {fileID: 21300000, guid: 595b070e7f894c0198618f4d8c950bcd, type: 3}
+    angryExpression: {fileID: 21300000, guid: 0b585da725014fd7b2e78290bea315df, type: 3}
+    hairFront: {fileID: 21300000, guid: 7b1f706ab9604a77ac6855bfbde32f85, type: 3}
     hairBack: {fileID: 0}
     hairColors: 
     useAccessoryTint: 0
@@ -840,8 +948,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: a4c4f804578a4a2cb43ffaacbd9b37cf, type: 3}
+    bakedIris: {fileID: 21300000, guid: 5ee0426d8a9e4da981754e647871738d, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -850,7 +958,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.golem
     gender: 3
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: b09397e4d68b434c8cd32bea39a7b786, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uAD11\uC0B0 \uAE38\uC7A1\uC774"
@@ -859,9 +967,9 @@ MonoBehaviour:
     genNotes: "\uBAB8\uC774 \uC218\uC815 \uACB0\uC815"
     earType: 1
     hasFang: 0
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: d8ffdc3366f645778be6a632857f6794, type: 3}
+    happyExpression: {fileID: 21300000, guid: 0c9edfa7e7024fd58ac07af60081e89b, type: 3}
+    angryExpression: {fileID: 21300000, guid: 9fe2cbd361454745997088d93afaf709, type: 3}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -875,8 +983,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 3703fb333f044aea85d3578d4502aa3c, type: 3}
+    bakedIris: {fileID: 21300000, guid: 99142def7b4d488ca4599c0b3b397099, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0
@@ -885,7 +993,7 @@ MonoBehaviour:
     status: 1
     speciesId: species.golem
     gender: 3
-    basePortrait: {fileID: 0}
+    basePortrait: {fileID: 21300000, guid: b5db973027014d349e393ce9de78576e, type: 3}
     parts: []
     fixedAppearance: 1
     job: "\uC9D0\uAFBC"
@@ -894,9 +1002,9 @@ MonoBehaviour:
     genNotes: "\uD654\uBA74\uC744 \uAF49 \uCC44\uC6B0\uB294 \uD06C\uAE30"
     earType: 1
     hasFang: 1
-    eyeClosed: {fileID: 0}
-    happyExpression: {fileID: 0}
-    angryExpression: {fileID: 0}
+    eyeClosed: {fileID: 21300000, guid: 189d036e5a70405ca1fa2df45cdd89b4, type: 3}
+    happyExpression: {fileID: 21300000, guid: 6ccf8dbfc2274119ade7d7f87996e9dd, type: 3}
+    angryExpression: {fileID: 21300000, guid: 91d4dd509a2643e6828e1f786dc1db08, type: 3}
     hairFront: {fileID: 0}
     hairBack: {fileID: 0}
     hairColors: 
@@ -910,8 +1018,8 @@ MonoBehaviour:
     - EYE_BLUE
     irisRegions: []
     rigPrefab: {fileID: 0}
-    spineRig: {fileID: 0}
-    bakedIris: {fileID: 0}
+    spineRig: {fileID: 4900000, guid: 777643807189401a9a10592d928a82be, type: 3}
+    bakedIris: {fileID: 21300000, guid: 5905d50867464df390219ec465adae2e, type: 3}
     irisMask: {fileID: 0}
     irisVariantsMask: {fileID: 0}
     irisDetailStyle: 0

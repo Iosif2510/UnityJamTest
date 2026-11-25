@@ -73,6 +73,7 @@ namespace PotionShop
         {
             try
             {
+                Footsteps(token).Forget();
                 await Fade(0, 1, .13f, token);
                 while (true)
                 {
@@ -91,6 +92,19 @@ namespace PotionShop
                 }
             }
             finally { Release(); }
+        }
+
+        /// <summary>A few steps on the stairs while the screen is dark, so changing rooms sounds like walking there.</summary>
+        private static async UniTaskVoid Footsteps(CancellationToken token)
+        {
+            int first = UnityEngine.Random.Range(1, 5);
+            for (int i = 0; i < 4; i++)
+            {
+                GameSfx.Play("Step" + ((first + i) % 4 + 1), 0.55f - i * 0.08f, 1f, 0.06f);
+                if (await UniTask.Delay(TimeSpan.FromSeconds(0.17), ignoreTimeScale: true, cancellationToken: token)
+                        .SuppressCancellationThrow())
+                    return;
+            }
         }
 
         private UniTask Fade(float start, float end, float duration, CancellationToken token) =>
