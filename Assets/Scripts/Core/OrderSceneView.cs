@@ -47,6 +47,13 @@ namespace PotionShop
         private int chosenInk;
         private bool endingReady;
 
+        // online: the storeroom waits for the friend's "찾았어!", and the result card opens on both screens together
+        private GeneratedOrder lockOrder;
+        private float lockSince = float.NegativeInfinity;
+        private bool memoLocked;
+        private bool waitingFriend;
+        private bool sharedEnding;
+
         private void Start()
         {
             round = RoundDirector.Instance;
@@ -133,7 +140,7 @@ namespace PotionShop
                 prescriptionFeel.ChosenInkRect, servedInk, prescriptionFeel.ChosenInkColour, potion, forWhom,
                 portraitView != null ? (RectTransform)portraitView.transform : null);
             round.SpectateServe();
-            CraftAndServe(craft).Forget();
+            CraftAndServe(craft, Online.CounterTogether.FriendShares(true)).Forget();
         }
 
         private void Update()
@@ -143,6 +150,7 @@ namespace PotionShop
 
             if (shownPhase != round.Phase && !crafting)
                 RefreshPhase();
+            RefreshStorageLock();
 
             if (timerText.gameObject.activeSelf && !crafting) // the clock stopped when the potion was handed over
             {
@@ -311,14 +319,75 @@ namespace PotionShop
         {
             if (endingReady && round.Phase == RoundPhase.Ending)
             {
+                if (waitingFriend) return;
+                if (sharedEnding && Online.CounterTogether.FriendShares(Watching))
+                {
+                    ShowResultTogether().Forget();
+                    return;
+                }
                 endingReady = false;
                 round.CompleteEnding(round.Result);
                 RefreshPhase();
+            }
+            else if (enterWorkshopButton.interactable && memoLocked)
+            {
+                // the friend upstairs is still looking for the memo
+                FloatingNote.Show((RectTransform)enterWorkshopButton.transform, Loc.T("아직 찾고 있어요"), 1.6f);
+                GameSfx.Play("Blip", 0.7f, 0.8f);
+                OrderHudMotion.Bounce(enterWorkshopButton.transform, 0.92f);
             }
             else if (enterWorkshopButton.interactable && round.TryEnterStorage())
             {
                 enterWorkshopButton.interactable = false;
                 hudMotion.HighlightWorkshop(false);
+            }
+        }
+
+        /// <summary>"결과 보기" online: grey "친구 기다리는 중…" until the friend presses it too, then both cards open.</summary>
+        private async UniTaskVoid ShowResultTogether()
+        {
+            waitingFriend = true;
+            var result = round.Result;
+            hudMotion.LockWorkshop();
+            SetAdvanceLabel(Loc.T("친구 기다리는 중…"));
+            GameSfx.Play("StampThud", 0.6f);
+            try
+            {
+                await Online.CounterTogether.Agree(Online.PairTopic.Result, 0f, this.GetCancellationTokenOnDestroy());
+            }
+            catch (OperationCanceledException) { return; }
+            finally { waitingFriend = false; }
+            if (round.Phase != RoundPhase.Ending || round.Result != result || !endingReady) return;
+            endingReady = false;
+            hudMotion.HighlightWorkshop(false);
+            round.CompleteEnding(result);
+            RefreshPhase();
+        }
+
+        /// <summary>
+        /// Online, the maker's "창고로" stays grey until the friend upstairs pressed "찾았어!" for this customer, then
+        /// lights up with a bounce.
+        /// </summary>
+        private void RefreshStorageLock()
+        {
+            var order = round.CurrentOrder;
+            if (order != lockOrder)
+            {
+                lockOrder = order;
+                lockSince = Time.unscaledTime;
+            }
+            bool locked = round.Phase == RoundPhase.Consult && !endingReady && !Watching &&
+                Online.CounterTogether.MemoStillHidden(lockSince);
+            if (locked == memoLocked) return;
+            memoLocked = locked;
+            if (!enterWorkshopButton.interactable || round.Phase != RoundPhase.Consult) return;
+            if (locked)
+                hudMotion.LockWorkshop();
+            else
+            {
+                hudMotion.HighlightWorkshop(true);
+                OrderHudMotion.Bounce(enterWorkshopButton.transform, 1.2f);
+                GameSfx.Play("FoundBell", 0.7f);
             }
         }
 
@@ -333,19 +402,30 @@ namespace PotionShop
                 portraitView != null ? (RectTransform)portraitView.transform : null);
             // the score and the clock are settled now; the crafting scene plays before the customer reacts
             if (!round.TryServe(chosenBottle, chosenInk)) return;
-            CraftAndServe(craft).Forget();
+            CraftAndServe(craft, Online.CounterTogether.FriendShares(false)).Forget();
         }
 
         private bool crafting;
         private NamePlateDrop namePlate;
 
-        private async UniTaskVoid CraftAndServe(PotionCrafting.Order craft)
+        private async UniTaskVoid CraftAndServe(PotionCrafting.Order craft, bool together = false)
         {
             crafting = true;
             serveButton.interactable = false;
+            var token = this.GetCancellationTokenOnDestroy();
             try
             {
-                await PotionCrafting.Play(craft, this.GetCancellationTokenOnDestroy());
+                // online, the potion is made on both screens at the same moment: the maker waits here while the
+                // friend walks down and watches the bottle and ink being picked
+                sharedEnding = false;
+                if (together)
+                {
+                    var serveRect = (RectTransform)serveButton.transform;
+                    if (!Watching) FloatingNote.Show(serveRect, Loc.T("친구가 내려오는 중…"), 0f);
+                    try { sharedEnding = await Online.CounterTogether.Agree(Online.PairTopic.Ending, Watching ? 10f : 20f, token); }
+                    finally { FloatingNote.Hide(serveRect); }
+                }
+                await PotionCrafting.Play(craft, token);
             }
             catch (OperationCanceledException) { return; }
             finally
@@ -491,7 +571,8 @@ namespace PotionShop
             if (round.Phase == RoundPhase.Consult && round.CurrentOrder == order)
             {
                 enterWorkshopButton.interactable = true;
-                hudMotion.HighlightWorkshop(true);
+                if (memoLocked) hudMotion.LockWorkshop();
+                else hudMotion.HighlightWorkshop(true);
             }
         }
 

@@ -65,6 +65,8 @@ namespace PotionShop.Online
         {
             var label = rect.gameObject.AddComponent<Text>();
             label.font = font;
+            // the CJK font is light next to the Korean bold one
+            if (font != null && font.name == "WebCJK") label.fontStyle = FontStyle.Bold;
             label.text = text;
             label.fontSize = size;
             label.color = color;

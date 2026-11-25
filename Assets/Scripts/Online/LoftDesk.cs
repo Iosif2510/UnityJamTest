@@ -31,7 +31,13 @@ namespace PotionShop.Online
             public bool CanSignal;
             public Button Button;
             public Image Image;
+            public Image Glow;
         }
+
+        // the tab that has news from downstairs: it glows until the narrator opens it
+        private int glowTab = -1;
+        private int lastGlowTarget = -1;
+        private float glowSince;
 
         private OnlineCoopConfig config;
         private OnlineSession session;
@@ -99,6 +105,9 @@ namespace PotionShop.Online
             {
                 int index = i;
                 var tab = tabs[i];
+                // a warm halo drawn just behind the tab, pulsing while there is news for it
+                var halo = At(root, "Glow " + tab.Name, new Vector2(18f, tops[i] - 12f), new Vector2(304f, heights[i] + 24f));
+                tab.Glow = OnlineUi.Fill(halo, new Color(1f, 0.78f, 0.3f, 0f), false);
                 var rect = At(root, "Tab " + tab.Name, new Vector2(30f, tops[i]), new Vector2(280f, heights[i]));
                 tab.Button = OnlineUiParts.Button(rect, "LOFT_Tab", null, 0, config.BoldFont, () => Select(index));
                 tab.Image = (Image)tab.Button.targetGraphic;
@@ -116,6 +125,7 @@ namespace PotionShop.Online
             if (index == tabIndex && page < 0 && tabs[index].Sheets.Length > 1)
                 return;
             tabIndex = index;
+            if (index == glowTab) glowTab = -1; // seen
             RefreshTabs();
             GameSfx.Play("PageTurn", 0.7f, 0.9f, 0.06f);
             FloorSounds.Send("PageTurn");
@@ -132,6 +142,13 @@ namespace PotionShop.Online
             {
                 bool selected = i == tabIndex;
                 bool blink = i == blinkTab && !selected && Mathf.Repeat(Time.unscaledTime, 1f) < 0.5f;
+                if (tabs[i].Glow != null)
+                {
+                    // a soft pulse, about twice a second
+                    float pulse = i == glowTab ? 0.25f + 0.55f * Mathf.Abs(Mathf.Sin((Time.unscaledTime - glowSince) * 3.2f)) : 0f;
+                    var c = tabs[i].Glow.color;
+                    if (!Mathf.Approximately(c.a, pulse)) tabs[i].Glow.color = new Color(c.r, c.g, c.b, pulse);
+                }
                 var sprite = OnlineUiParts.Get(selected ? "LOFT_Tab_Selected" : blink ? "LOFT_Tab_Blink" : "LOFT_Tab_Normal");
                 if (tabs[i].Image.sprite == sprite)
                     continue;
@@ -377,6 +394,26 @@ namespace PotionShop.Online
                 RoundPhase.Prescribe => 1,
                 _ => -1
             };
+            // News from downstairs makes a tab glow: the customer starts talking (the memos), or the three
+            // ingredients are in and brewed (packing). It glows until opened; on the open tab, for a few seconds.
+            int glowTarget = phase switch
+            {
+                RoundPhase.Consult => 0,
+                RoundPhase.Prescribe => 1,
+                _ => -1
+            };
+            if (glowTarget != lastGlowTarget)
+            {
+                lastGlowTarget = glowTarget;
+                if (glowTarget >= 0)
+                {
+                    glowTab = glowTarget;
+                    glowSince = Time.unscaledTime;
+                    GameSfx.Play("StepChime", 0.5f, 1.1f);
+                }
+            }
+            if (glowTab >= 0 && glowTab == tabIndex && page < 0 && Time.unscaledTime - glowSince > 3f)
+                glowTab = -1;
             RefreshTabs();
 
             // Sheets lay out a frame after they are built; resize their writing once they have a size.

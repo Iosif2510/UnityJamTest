@@ -54,8 +54,8 @@ namespace PotionShop.Online
         public Sprite DeskBackground => deskBackground;
         public Sprite ParchmentPanel => parchmentPanel;
         public Sprite WoodButton => woodButton;
-        public Font BodyFont => bodyFont;
-        public Font BoldFont => boldFont != null ? boldFont : bodyFont;
+        public Font BodyFont => LocFonts.Legacy(bodyFont);
+        public Font BoldFont => LocFonts.Legacy(boldFont != null ? boldFont : bodyFont);
         public Sprite[] MemoSheets => memoSheets;
         public string[] MemoLabels => memoLabels;
         public int CounterManualIndex => memoSheets.Length - 1;

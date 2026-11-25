@@ -9,41 +9,66 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// After each customer the two friends vote whether to trade floors. Both see the same window (swap / keep); if
-    /// they agree, that is what happens. If not, each rolls a die and the higher roll's choice wins (a tie is rolled
-    /// again). No vote within <see cref="VoteSeconds"/> counts as "keep". The host counts the ballots and rolls, so
-    /// both players see the same dice; a swap then goes through <see cref="RoleLobby"/> as before.
+    /// After each customer the two friends vote whether to trade floors. Both see the same window: pressing 바꾸기 or
+    /// 그대로 puts that player's P1/P2 mark on it, and once both have picked the button below reads "위치로!" (same pick)
+    /// or "주사위 굴리기!" (split). When both pressed it, a split is settled by one die each, the higher roll's pick
+    /// winning (the host rolls, a tie is rolled again). No pick within <see cref="VoteSeconds"/> counts as "keep".
+    /// The picks go through <see cref="PairReady"/>; a swap then goes through <see cref="RoleLobby"/> as before.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class SwapVote : MonoBehaviour
     {
         private const string MessageName = "potion.vote";
-        private const byte Open = 0, Ballot = 1, Outcome = 2, OpenRequest = 3;
-        private const float VoteSeconds = 20f;
+        private const byte Open = 0, OpenRequest = 3;
+        private const sbyte SwapPick = 1, KeepPick = 2;
+        private const float VoteSeconds = 30f;
         private const float RollSeconds = 1.6f;
         private const float OutcomeSeconds = 2.2f;
 
         private OnlineSession session;
         private NetworkManager registeredOn;
 
-        // host's count
-        private bool counting;
-        private sbyte hostBallot = -1, guestBallot = -1;
-
         // this player's window
         private GameObject window;
         private CanvasGroup group;
         private Text question, note, myDie, friendDie, myDieLabel, friendDieLabel;
-        private Button swapButton, keepButton;
+        private Text swapTag, keepTag, goLabel;
+        private Button swapButton, keepButton, goButton;
+        private Image goImage;
+        private bool settling;
         private GameObject diceRow;
         private bool open;
         private float openedAt;
-        private bool voted;
-
         /// <summary>True while the window is up: the counter waits before the next customer.</summary>
         public bool Voting => open;
 
         private void Awake() => session = GetComponent<OnlineSession>();
+
+        private void Start()
+        {
+            var pairs = session.Pairs;
+            pairs.Went += OnWent;
+            // the host rolls the dice for a split vote, so both screens show the same ones
+            pairs.Extra = topic => topic == PairTopic.Swap ? Roll() : null;
+        }
+
+        private void OnDestroy()
+        {
+            if (session != null && session.Pairs != null) session.Pairs.Went -= OnWent;
+        }
+
+        private byte[] Roll()
+        {
+            var pairs = session.Pairs;
+            if (pairs.Choice(PairTopic.Swap, 0) == pairs.Choice(PairTopic.Swap, 1)) return new byte[] { 0, 0 };
+            byte hostRoll, guestRoll;
+            do
+            {
+                hostRoll = (byte)UnityEngine.Random.Range(1, 7);
+                guestRoll = (byte)UnityEngine.Random.Range(1, 7);
+            } while (hostRoll == guestRoll);
+            return new[] { hostRoll, guestRoll };
+        }
 
         /// <summary>Called on the maker when a customer has been sent off.</summary>
         public void Begin()
@@ -70,50 +95,27 @@ namespace PotionShop.Online
             if (!open) return;
             if (!session.PeerConnected) { Close(); return; }
 
+            if (settling) return;
+            var pairs = session.Pairs;
+            bool picked = pairs.Choice(PairTopic.Swap, pairs.Me) > 0;
             float left = VoteSeconds - (Time.unscaledTime - openedAt);
-            if (!voted)
+            if (left <= 0f && !pairs.IsReady(PairTopic.Swap, pairs.Me))
             {
-                note.text = Loc.F("{0}초 안에 고르지 않으면 그대로 해요", Mathf.Max(0, Mathf.CeilToInt(left)));
-                if (left <= 0f) Cast(false);
+                // too slow: "그대로", and ready
+                if (!picked) pairs.Choose(PairTopic.Swap, KeepPick);
+                if (BothPicked(pairs)) pairs.SetReady(PairTopic.Swap);
             }
+            note.text = picked ? string.Empty : Loc.F("{0}초 안에 고르지 않으면 그대로 해요", Mathf.Max(0, Mathf.CeilToInt(left)));
+            RefreshPicks(pairs);
         }
 
         // ---- host ---------------------------------------------------------------------------------------------
 
         private void HostOpen()
         {
-            counting = true;
-            hostBallot = guestBallot = -1;
+            session.Pairs.Reset(PairTopic.Swap);
             Send(Open, 0, null);
             ShowWindow();
-        }
-
-        private void HostCount()
-        {
-            if (!counting || hostBallot < 0 || guestBallot < 0) return;
-            counting = false;
-            bool swap;
-            byte hostRoll = 0, guestRoll = 0;
-            if (hostBallot == guestBallot)
-                swap = hostBallot == 1;
-            else
-            {
-                do
-                {
-                    hostRoll = (byte)UnityEngine.Random.Range(1, 7);
-                    guestRoll = (byte)UnityEngine.Random.Range(1, 7);
-                } while (hostRoll == guestRoll);
-                swap = (hostRoll > guestRoll ? hostBallot : guestBallot) == 1;
-            }
-            using (var writer = new FastBufferWriter(4, Allocator.Temp))
-            {
-                writer.WriteValueSafe(Outcome);
-                writer.WriteValueSafe(swap ? (byte)1 : (byte)0);
-                writer.WriteValueSafe(hostRoll);
-                writer.WriteValueSafe(guestRoll);
-                session.Network.CustomMessagingManager.SendNamedMessageToAll(MessageName, writer);
-            }
-            ShowOutcome(swap, hostRoll, guestRoll).Forget();
         }
 
         // ---- messages -----------------------------------------------------------------------------------------
@@ -140,35 +142,64 @@ namespace PotionShop.Online
                 case Open when !session.IsHost:
                     ShowWindow();
                     break;
-                case Ballot when session.IsHost && counting:
-                    reader.ReadValueSafe(out byte choice);
-                    guestBallot = (sbyte)choice;
-                    HostCount();
-                    break;
-                case Outcome when !session.IsHost:
-                    reader.ReadValueSafe(out byte swap);
-                    reader.ReadValueSafe(out byte hostRoll);
-                    reader.ReadValueSafe(out byte guestRoll);
-                    // seen from the guest: "my" die is the guest's
-                    ShowOutcome(swap == 1, guestRoll, hostRoll).Forget();
-                    break;
             }
         }
 
-        private void Cast(bool swap)
+        private void Pick(sbyte pick)
         {
-            if (voted) return;
-            voted = true;
-            swapButton.interactable = keepButton.interactable = false;
-            note.text = Loc.T("친구의 선택을 기다리는 중…");
+            var pairs = session.Pairs;
+            if (settling || pairs.Choice(PairTopic.Swap, pairs.Me) == pick) return;
+            pairs.Choose(PairTopic.Swap, pick);
             GameSfx.Play("Tick", 0.8f);
-            if (session.IsHost)
-            {
-                hostBallot = swap ? (sbyte)1 : (sbyte)0;
-                HostCount();
-            }
-            else
-                Send(Ballot, swap ? (byte)1 : (byte)0, NetworkManager.ServerClientId);
+        }
+
+        private void PressGo()
+        {
+            var pairs = session.Pairs;
+            if (settling || !BothPicked(pairs)) return;
+            pairs.SetReady(PairTopic.Swap);
+            GameSfx.Play("StampThud", 0.6f);
+        }
+
+        private static bool BothPicked(PairReady pairs) =>
+            pairs.Choice(PairTopic.Swap, 0) > 0 && pairs.Choice(PairTopic.Swap, 1) > 0;
+
+        /// <summary>The P1/P2 marks on 바꾸기 / 그대로 and what the button below says.</summary>
+        private void RefreshPicks(PairReady pairs)
+        {
+            swapTag.text = Tags(pairs, SwapPick);
+            keepTag.text = Tags(pairs, KeepPick);
+            bool both = BothPicked(pairs);
+            bool meReady = pairs.IsReady(PairTopic.Swap, pairs.Me);
+            bool live = both && !meReady;
+            goButton.interactable = live;
+            goImage.color = live ? new Color(1f, 0.82f, 0.42f) : new Color(0.62f, 0.6f, 0.58f);
+            goLabel.fontSize = meReady ? 24 : 30;
+            goLabel.text = meReady ? Loc.T("친구 기다리는 중…")
+                : !both ? Loc.T("둘 다 고르면 시작")
+                : pairs.Choice(PairTopic.Swap, 0) == pairs.Choice(PairTopic.Swap, 1) ? Loc.T("위치로!")
+                : Loc.T("주사위 굴리기!");
+        }
+
+        private static string Tags(PairReady pairs, sbyte pick)
+        {
+            bool p1 = pairs.Choice(PairTopic.Swap, 0) == pick, p2 = pairs.Choice(PairTopic.Swap, 1) == pick;
+            return p1 && p2 ? "P1 P2" : p1 ? "P1" : p2 ? "P2" : string.Empty;
+        }
+
+        private void OnWent(PairTopic topic, byte[] extra)
+        {
+            if (topic != PairTopic.Swap || !open || settling) return;
+            var pairs = session.Pairs;
+            sbyte hostPick = pairs.Choice(PairTopic.Swap, 0), guestPick = pairs.Choice(PairTopic.Swap, 1);
+            byte hostRoll = extra != null && extra.Length >= 2 ? extra[0] : (byte)0;
+            byte guestRoll = extra != null && extra.Length >= 2 ? extra[1] : (byte)0;
+            bool swap = hostPick == guestPick || hostRoll == 0
+                ? hostPick == SwapPick
+                : (hostRoll > guestRoll ? hostPick : guestPick) == SwapPick;
+            // seen from each player: "my" die first
+            if (session.IsHost) ShowOutcome(swap, hostRoll, guestRoll).Forget();
+            else ShowOutcome(swap, guestRoll, hostRoll).Forget();
         }
 
         // ---- window -------------------------------------------------------------------------------------------
@@ -177,14 +208,16 @@ namespace PotionShop.Online
         {
             if (window == null) Build();
             open = true;
-            voted = false;
+            settling = false;
             openedAt = Time.unscaledTime;
             question.text = Loc.T("다음 손님은 역할을 바꿔서 할까요?");
             note.text = string.Empty;
             diceRow.SetActive(false);
             swapButton.gameObject.SetActive(true);
             keepButton.gameObject.SetActive(true);
+            goButton.gameObject.SetActive(true);
             swapButton.interactable = keepButton.interactable = true;
+            RefreshPicks(session.Pairs);
             window.SetActive(true);
             group.alpha = 0f;
             GameSfx.Play("Paper", 0.6f, 1.05f, 0.05f);
@@ -195,9 +228,11 @@ namespace PotionShop.Online
         private async UniTaskVoid ShowOutcome(bool swap, byte myRoll, byte friendRoll)
         {
             if (window == null || !open) ShowWindow();
+            settling = true;
             var token = this.GetCancellationTokenOnDestroy();
             swapButton.gameObject.SetActive(false);
             keepButton.gameObject.SetActive(false);
+            goButton.gameObject.SetActive(false);
             if (myRoll > 0)
             {
                 // the votes split: both dice tumble, then land
@@ -231,7 +266,7 @@ namespace PotionShop.Online
         private void Close()
         {
             open = false;
-            counting = false;
+            settling = false;
             if (window != null) window.SetActive(false);
         }
 
@@ -244,26 +279,50 @@ namespace PotionShop.Online
             var root = (RectTransform)canvas.transform;
             window = root.gameObject;
             OnlineUi.Fill(OnlineUi.Rect("Dim", root, Vector2.zero, Vector2.one), new Color(0.12f, 0.06f, 0.03f, 0.55f));
-            var card = OnlineUi.Box("Window", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 440f));
+            var card = OnlineUi.Box("Window", root, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 520f));
             card.pivot = new Vector2(0.5f, 0.5f);
             group = card.gameObject.AddComponent<CanvasGroup>();
             OnlineUiParts.Draw(card, "UI_Window", true);
             question = OnlineUi.Label(OnlineUi.Rect("Question", card, new Vector2(0f, 1f), Vector2.one, new Vector2(48f, -150f),
                 new Vector2(-48f, -50f)), string.Empty, 38, font, OnlineUiParts.Ink);
 
-            swapButton = OnlineUiParts.Button(OnlineUi.Box("Swap", card, new Vector2(0.5f, 0.5f), new Vector2(-170f, -30f),
-                new Vector2(280f, 88f)), "UI_SmallButton", Loc.T("바꾸기"), 32, font, () => Cast(true));
-            keepButton = OnlineUiParts.Button(OnlineUi.Box("Keep", card, new Vector2(0.5f, 0.5f), new Vector2(170f, -30f),
-                new Vector2(280f, 88f)), "UI_SmallButton", Loc.T("그대로"), 32, font, () => Cast(false));
+            swapButton = OnlineUiParts.Button(OnlineUi.Box("Swap", card, new Vector2(0.5f, 0.5f), new Vector2(-180f, 0f),
+                new Vector2(320f, 96f)), "UI_SmallButton", Loc.T("바꾸기"), 32, font, () => Pick(SwapPick));
+            keepButton = OnlineUiParts.Button(OnlineUi.Box("Keep", card, new Vector2(0.5f, 0.5f), new Vector2(180f, 0f),
+                new Vector2(320f, 96f)), "UI_SmallButton", Loc.T("그대로"), 32, font, () => Pick(KeepPick));
+            swapTag = Tag((RectTransform)swapButton.transform, font);
+            keepTag = Tag((RectTransform)keepButton.transform, font);
+
+            // below: "위치로!" / "주사위 굴리기!" once both have picked
+            var goRect = OnlineUi.Box("Go", card, new Vector2(0.5f, 0f), new Vector2(0f, 120f), new Vector2(360f, 84f));
+            goRect.pivot = new Vector2(0.5f, 0.5f);
+            goButton = OnlineUiParts.Button(goRect, "UI_SmallButton", Loc.T("주사위 굴리기!"), 30, font, PressGo);
+            goImage = (Image)goButton.targetGraphic;
+            goLabel = goRect.GetComponentInChildren<Text>();
 
             diceRow = OnlineUi.Rect("Dice", card, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, -110f),
                 new Vector2(0f, 40f)).gameObject;
             (myDie, myDieLabel) = Die((RectTransform)diceRow.transform, -150f, font);
             (friendDie, friendDieLabel) = Die((RectTransform)diceRow.transform, 150f, font);
 
-            note = OnlineUi.Label(OnlineUi.Rect("Note", card, Vector2.zero, new Vector2(1f, 0f), new Vector2(48f, 34f),
-                new Vector2(-48f, 90f)), string.Empty, 24, font, OnlineUiParts.InkSoft);
+            note = OnlineUi.Label(OnlineUi.Rect("Note", card, Vector2.zero, new Vector2(1f, 0f), new Vector2(48f, 24f),
+                new Vector2(-48f, 72f)), string.Empty, 24, font, OnlineUiParts.InkSoft);
             window.SetActive(false);
+        }
+
+        /// <summary>The empty slot on the right of a choice where P1 / P2 shows.</summary>
+        private static Text Tag(RectTransform button, Font font)
+        {
+            var label = button.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                var lr = label.rectTransform;
+                lr.offsetMax = new Vector2(lr.offsetMax.x - 90f, lr.offsetMax.y);
+            }
+            var tag = OnlineUi.Label(OnlineUi.Box("Who", button, new Vector2(1f, 0.5f), new Vector2(-16f, 0f),
+                new Vector2(100f, 60f)), string.Empty, 28, font, OnlineUiParts.StampRed, TextAnchor.MiddleRight);
+            ((RectTransform)tag.transform).pivot = new Vector2(1f, 0.5f);
+            return tag;
         }
 
         private static (Text face, Text label) Die(RectTransform row, float x, Font font)

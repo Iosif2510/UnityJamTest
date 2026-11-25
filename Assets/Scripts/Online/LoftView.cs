@@ -31,7 +31,6 @@ namespace PotionShop.Online
         private RectTransform guidanceBox;
         private Text status;
         private LoftResultCard resultCard;
-        private GameObject menu;
         private string shownGuidance;
         private float roundLimit;
         private TimerUrgency clockUrgency;
@@ -57,7 +56,6 @@ namespace PotionShop.Online
 
             resultCard = gameObject.AddComponent<LoftResultCard>();
             resultCard.Build(root, config, BandHeight);
-            BuildMenu(root);
         }
 
         /// <summary>Top band: name plate, hourglass and bar with the time left, then where the maker is.</summary>
@@ -126,41 +124,8 @@ namespace PotionShop.Online
                 TextAnchor.LowerLeft));
         }
 
-        /// <summary>Esc opens a small window to leave the loft, so no button has to sit on the desk.</summary>
-        private void BuildMenu(RectTransform root)
-        {
-            menu = OnlineUi.Rect("Menu", root, Vector2.zero, Vector2.one).gameObject;
-            OnlineUi.Fill((RectTransform)menu.transform, new Color(0.12f, 0.06f, 0.03f, 0.72f));
-            var card = OnlineUi.Box("Window", menu.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(820f, 690f));
-            card.pivot = new Vector2(0.5f, 0.5f);
-            OnlineUiParts.Draw(card, "UI_Window");
-            OnlineUi.Label(OnlineUi.Rect("Title", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -130f),
-                new Vector2(0f, -50f)), Loc.T("위층 공방"), 44, config.BoldFont, OnlineUiParts.Ink);
-            OnlineUi.Label(OnlineUi.Rect("LanguageTitle", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(70f, -196f),
-                new Vector2(-70f, -150f)), Loc.T("메모 언어"), 28, config.BoldFont, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
-            languages = new MemoLanguagePicker(OnlineUi.Rect("Languages", card, new Vector2(0f, 1f), new Vector2(1f, 1f),
-                new Vector2(70f, -276f), new Vector2(-70f, -204f)), config.BoldFont);
-            VolumeSlider.Build(OnlineUi.Rect("Volume", card, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(70f, -350f),
-                new Vector2(-70f, -298f)), config.BoldFont, OnlineUiParts.Ink);
-            OnlineUiParts.Button(OnlineUi.Box("Resume", card, new Vector2(0.5f, 0f), new Vector2(0f, 190f), new Vector2(400f, 96f)),
-                "UI_BigButton", Loc.T("계속하기"), 36, config.BoldFont, () => menu.SetActive(false))
-                .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
-            OnlineUiParts.Button(OnlineUi.Box("Leave", card, new Vector2(0.5f, 0f), new Vector2(0f, 70f), new Vector2(320f, 80f)),
-                "UI_SmallButton", Loc.T("공방에서 나가기"), 30, config.BoldFont, () => Leave().Forget())
-                .GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0f);
-            menu.SetActive(false);
-        }
-
-        private MemoLanguagePicker languages;
-
         private void Update()
         {
-            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true && !resultCard.Visible)
-            {
-                menu.SetActive(!menu.activeSelf);
-                languages.Refresh();
-            }
-
             var sync = session.Sync;
             bool live = session.Role == OnlineRole.Narrator && session.PeerConnected && sync.HasSnapshot;
             var snapshot = live ? sync.Latest : default;
@@ -256,11 +221,5 @@ namespace PotionShop.Online
                 .Bind(scale => guidanceBox.localScale = new Vector3(scale, scale, 1f)).AddTo(gameObject);
         }
 
-        private async UniTaskVoid Leave()
-        {
-            await session.LeaveAsync();
-            // Build index 0 is whichever screen the game starts on (title or counter).
-            SceneManager.LoadScene(0);
-        }
     }
 }

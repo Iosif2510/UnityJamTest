@@ -20,10 +20,16 @@ namespace PotionShop
         {
             if (leaving) return;
             leaving = true;
+            bool going = await LeaveToTitle();
+            if (this != null) leaving = going;
+        }
+
+        /// <summary>Leaves the room (if playing together) and walks back to the title; false if that could not start.</summary>
+        internal static async UniTask<bool> LeaveToTitle()
+        {
             if (OnlineSession.Exists && OnlineSession.CurrentRole != OnlineRole.Offline)
                 await OnlineSession.Instance.LeaveAsync();
-            if (this == null) return;
-            leaving = SceneDimmer.Instance.TryLoad(OnlineCoopConfig.TitleScene);
+            return SceneDimmer.Instance.TryLoad(OnlineCoopConfig.TitleScene);
         }
     }
 }

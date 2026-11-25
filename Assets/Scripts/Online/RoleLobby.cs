@@ -60,6 +60,12 @@ namespace PotionShop.Online
             }
         }
 
+        /// <summary>Host only: the roles both players agreed on in the briefing (the host plays <paramref name="roleOfHost"/>).</summary>
+        internal void HostDecide(OnlineRole roleOfHost)
+        {
+            if (session.IsHost && roleOfHost is OnlineRole.Maker or OnlineRole.Narrator) Decide(roleOfHost);
+        }
+
         /// <summary>Host only: the two players trade floors (decided by <see cref="SwapVote"/>).</summary>
         internal void HostSwap()
         {

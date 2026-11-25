@@ -42,6 +42,7 @@ namespace PotionShop.Online
                     root.AddComponent<FloorSounds>();
                     root.AddComponent<RoleSwap>();
                     root.AddComponent<SwapVote>();
+                    root.AddComponent<PairReady>();
                     root.AddComponent<SharedEnding>();
                 }
                 return instance;
@@ -66,6 +67,7 @@ namespace PotionShop.Online
         public RoundSync Sync => GetComponent<RoundSync>();
         public VoiceChat Voice => GetComponent<VoiceChat>();
         public RoleLobby Lobby => GetComponent<RoleLobby>();
+        public PairReady Pairs => GetComponent<PairReady>();
         public NarratorSignal Signal => GetComponent<NarratorSignal>();
 
         /// <summary>Raised whenever role, code, or peer connection changes.</summary>

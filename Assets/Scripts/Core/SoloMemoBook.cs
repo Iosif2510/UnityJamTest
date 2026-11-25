@@ -24,6 +24,11 @@ namespace PotionShop
         private LoftDesk desk;
         private RectTransform hint;
         private bool open;
+
+        /// <summary>True while a memo book is open, so the Esc menu waits for it to close first.</summary>
+        internal static bool OpenNow { get; private set; }
+
+        private void OnDestroy() => OpenNow = false;
         private GeneratedOrder shownOrder;
         private MotionHandle fade;
 
@@ -111,6 +116,7 @@ namespace PotionShop
         {
             if (open == show) return;
             open = show;
+            OpenNow = show;
             var book = group.gameObject;
             fade.TryCancel();
             if (show)

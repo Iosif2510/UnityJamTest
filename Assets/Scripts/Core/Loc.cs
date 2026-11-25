@@ -155,8 +155,13 @@ namespace PotionShop
         private static void Install()
         {
             LocFonts.Apply();
-            SceneManager.sceneLoaded += (scene, _) => LocalizeScene(scene);
+            SceneManager.sceneLoaded += (scene, _) =>
+            {
+                LocalizeScene(scene);
+                LocFonts.SwapScene(scene);
+            };
             LocalizeScene(SceneManager.GetActiveScene());
+            LocFonts.SwapScene(SceneManager.GetActiveScene());
         }
 
         /// <summary>Every fixed text in the scene whose Korean is in the table follows the language.</summary>
@@ -287,6 +292,64 @@ namespace PotionShop
             if (asset == null) return null;
             asset.name = key + " (runtime fallback)";
             return made[key] = asset;
+        }
+
+        // ---- one font per line in Japanese and Chinese ----------------------------------------------------------
+        // The Korean fonts have kana but no kanji, so a Japanese line drew its kana in one font and its kanji in
+        // another. In those languages the game's texts are drawn wholly in the CJK font instead.
+
+        private static Font legacyCjk;
+
+        /// <summary>True for Japanese and both Chinese scripts.</summary>
+        internal static bool CjkScript => Loc.Language is "ja" or "zh-Hans" or "zh-Hant";
+
+        /// <summary>The font a UI Text should use: the CJK font in Japanese and Chinese, else <paramref name="korean"/>.</summary>
+        internal static Font Legacy(Font korean)
+        {
+            if (!CjkScript || (korean != null && !IsGameFont(korean.name))) return korean;
+            if (legacyCjk == null) legacyCjk = Resources.Load<Font>("Fonts/WebCJK");
+            return legacyCjk != null ? legacyCjk : korean;
+        }
+
+        private static TMP_FontAsset Tmp(TMP_FontAsset korean)
+        {
+            if (!CjkScript || ours.Count == 0 || korean == null || ours.Contains(korean)) return korean;
+            var cjk = ours[0];
+            // Hangul and anything else missing still comes from the game's own font
+            cjk.fallbackFontAssetTable ??= new List<TMP_FontAsset>();
+            if (!cjk.fallbackFontAssetTable.Contains(korean)) cjk.fallbackFontAssetTable.Add(korean);
+            return cjk;
+        }
+
+        private static bool IsGameFont(string name) => name.StartsWith("Maplestory");
+
+        /// <summary>Japanese and Chinese: the scene's texts in the game's fonts are moved to the CJK font.</summary>
+        internal static void SwapScene(Scene scene)
+        {
+            if (!CjkScript || !scene.IsValid()) return;
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                foreach (var text in root.GetComponentsInChildren<Text>(true))
+                    if (text.font != null && IsGameFont(text.font.name))
+                    {
+                        text.font = Legacy(text.font);
+                        if (text.font.name == "WebCJK") text.fontStyle = FontStyle.Bold;
+                    }
+                foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    var font = text.font;
+                    if (font == null || !IsGameFont(font.name)) continue;
+                    var cjk = Tmp(font);
+                    if (cjk == font) continue;
+                    var styled = text.fontSharedMaterial;
+                    text.font = cjk;
+                    // a styled material (outline, shadow) is remade for the CJK font's atlas
+                    if (styled != null && styled != font.material)
+                        text.fontSharedMaterial = TMP_MaterialManager.GetFallbackMaterial(styled, cjk.material);
+                    // the bundled font is light next to the Korean bold one
+                    if (cjk.name.StartsWith("WebCJK")) text.fontStyle |= FontStyles.Bold;
+                }
+            }
         }
 
         private static void Remove()

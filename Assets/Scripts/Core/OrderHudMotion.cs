@@ -85,6 +85,14 @@ namespace PotionShop
                 });
         }
 
+        /// <summary>Greyed out but still pressable: the button only explains why it cannot go yet.</summary>
+        internal void LockWorkshop()
+        {
+            buttonMotion.TryCancel();
+            if (label != null) label.color = new Color(labelColor.r, labelColor.g, labelColor.b, labelColor.a * 0.6f);
+            if (background != null) background.color = backgroundColor * new Color(.62f, .6f, .58f, 1f);
+        }
+
         internal void Stop()
         {
             SetTimer(false);

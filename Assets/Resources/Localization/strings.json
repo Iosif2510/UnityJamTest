@@ -247,6 +247,16 @@
     "게임 안 음성 채팅": { "en": "In-game voice chat", "ja": "ゲーム内ボイスチャット", "zh-Hans": "游戏内语音聊天", "zh-Hant": "遊戲內語音聊天" },
     "친구 목소리": { "en": "Friend's voice", "ja": "相手の声", "zh-Hans": "对方的声音", "zh-Hant": "對方的聲音" },
     "보이스 연결 실패 · 마이크 권한을 확인하거나 외부 음성 채팅을 쓰세요": { "en": "Voice failed · Check microphone permission or use another voice chat", "ja": "ボイス接続失敗 · マイクの許可を確認するか、外部のボイスチャットを使ってください", "zh-Hans": "语音连接失败 · 请检查麦克风权限或使用其他语音聊天", "zh-Hant": "語音連線失敗 · 請檢查麥克風權限或使用其他語音聊天" },
-    "게임 음성 꺼 둠 (옵션) · 외부 음성 채팅을 쓰세요": { "en": "In-game voice off (options) · Use another voice chat", "ja": "ゲーム内ボイスはオフ（オプション） · 外部のボイスチャットを使ってください", "zh-Hans": "游戏语音已关闭（选项） · 请使用其他语音聊天", "zh-Hant": "遊戲語音已關閉（選項） · 請使用其他語音聊天" }
+    "게임 음성 꺼 둠 (옵션) · 외부 음성 채팅을 쓰세요": { "en": "In-game voice off (options) · Use another voice chat", "ja": "ゲーム内ボイスはオフ（オプション） · 外部のボイスチャットを使ってください", "zh-Hans": "游戏语音已关闭（选项） · 请使用其他语音聊天", "zh-Hant": "遊戲語音已關閉（選項） · 請使用其他語音聊天" },
+    "둘 다 고르면 시작": { "en": "Both pick to start", "ja": "二人とも選んだら開始", "zh-Hans": "两人都选好后开始", "zh-Hant": "兩人都選好後開始" },
+    "시작 {0}": { "en": "Start {0}", "ja": "スタート {0}", "zh-Hans": "开始 {0}", "zh-Hant": "開始 {0}" },
+    "아직 찾고 있어요": { "en": "Still looking for it", "ja": "まだ探しています", "zh-Hans": "还在找", "zh-Hant": "還在找" },
+    "왼쪽 쪽지를 같이 읽고, 각자 갈 자리를 누르세요. 서로 다른 자리를 고르고 둘 다 준비를 누르면 시작해요.": { "en": "Read the note on the left together, then each press where you'll go. Pick different places and both press Ready to start.", "ja": "左のメモを一緒に読んで、それぞれ行く場所を押してください。違う場所を選んで二人とも準備を押すと始まります。", "zh-Hans": "一起读左边的便条，各自点击要去的位置。选好不同的位置并都点击准备后开始。", "zh-Hant": "一起讀左邊的便條，各自點擊要去的位置。選好不同的位置並都點擊準備後開始。" },
+    "위치로!": { "en": "To your places!", "ja": "位置について！", "zh-Hans": "各就各位！", "zh-Hant": "各就各位！" },
+    "주사위 굴리기!": { "en": "Roll the dice!", "ja": "サイコロを振る！", "zh-Hans": "掷骰子！", "zh-Hant": "擲骰子！" },
+    "준비": { "en": "Ready", "ja": "準備", "zh-Hans": "准备", "zh-Hant": "準備" },
+    "친구 기다리는 중…": { "en": "Waiting for friend…", "ja": "相手を待っています…", "zh-Hans": "正在等待对方…", "zh-Hant": "正在等待對方…" },
+    "친구가 내려오는 중…": { "en": "Your friend is coming down…", "ja": "相手が降りてきています…", "zh-Hans": "对方正在下楼…", "zh-Hant": "對方正在下樓…" },
+    "보이스 연결 실패 · 외부 음성 채팅을 쓰세요": { "en": "Voice failed · Use another voice chat", "ja": "ボイス接続失敗 · 外部のボイスチャットを使ってください", "zh-Hans": "语音连接失败 · 请使用其他语音聊天", "zh-Hant": "語音連線失敗 · 請使用其他語音聊天" }
   }
 }
