@@ -17,13 +17,19 @@ namespace PotionShop
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
-            SceneManager.sceneLoaded += (scene, _) => Add(scene);
+            // without a domain reload the editor keeps the last play's handler; one is enough
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
             Add(SceneManager.GetActiveScene());
         }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Add(scene);
 
         private static void Add(Scene scene)
         {
             if (scene.name != Scene) return;
+            foreach (var existing in scene.GetRootGameObjects())
+                if (existing.name == "Cellar Atmosphere") return;
             var root = new GameObject("Cellar Atmosphere");
             SceneManager.MoveGameObjectToScene(root, scene);
             root.AddComponent<CellarAmbience>();
@@ -31,6 +37,7 @@ namespace PotionShop
             root.AddComponent<FloorMist>();
             root.AddComponent<CauldronGlow>();
             root.AddComponent<AirDraft>();
+            root.AddComponent<CauldronSteamFallback>();
         }
 
         /// <summary>The player's eyes (and ears), or null before the player exists.</summary>

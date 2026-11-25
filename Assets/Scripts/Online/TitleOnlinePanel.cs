@@ -1,3 +1,4 @@
+using LitMotion;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -186,11 +187,21 @@ namespace PotionShop.Online
 
             var copy = OnlineUi.Box("Copy", w, new Vector2(0.5f, 1f), new Vector2(0f, -342f), new Vector2(220f, 72f));
             copy.pivot = new Vector2(0.5f, 1f);
-            copyButton = OnlineUiParts.Button(copy, "UI_SmallButton", Loc.T("코드 복사"), 28, config.BoldFont, () =>
+            // the copy happens on the press (a browser allows it only during the click itself), the button just shows it
+            var copyBtn = OnlineUiParts.Button(copy, "UI_SmallButton", Loc.T("코드 복사"), 28, config.BoldFont, () => { });
+            var copier = copy.gameObject.AddComponent<ClipboardCopy>();
+            copier.Text = () => OnlineSession.Exists ? OnlineSession.Instance.JoinCode : null;
+            var copyLabel = copy.GetComponentInChildren<Text>();
+            copier.Copied += () =>
             {
-                if (OnlineSession.Exists && OnlineSession.Instance.JoinCode != null)
-                    GUIUtility.systemCopyBuffer = OnlineSession.Instance.JoinCode;
-            }).gameObject;
+                GameSfx.Play("Tick", 0.8f);
+                if (copyLabel == null) return;
+                copyLabel.text = Loc.T("복사했어요!");
+                LMotion.Create(0f, 1f, 1.6f).WithScheduler(MotionScheduler.UpdateIgnoreTimeScale)
+                    .WithOnComplete(() => { if (copyLabel != null) copyLabel.text = Loc.T("코드 복사"); })
+                    .RunWithoutBinding().AddTo(copy.gameObject);
+            };
+            copyButton = copyBtn.gameObject;
 
             var strip = Row(w, 446f, 84f);
             OnlineUiParts.Draw(strip, "NET_WaitBar");

@@ -41,6 +41,15 @@ namespace PotionShop
             set => PlayerPrefs.SetInt("settings.invertY", value ? 1 : 0);
         }
 
+        public enum Quality { Auto = 0, High = 1, Medium = 2, Low = 3 }
+
+        /// <summary>The storeroom's 3D resolution (see <see cref="AdaptiveRenderScale"/>).</summary>
+        public static Quality ScreenQuality
+        {
+            get => (Quality)Mathf.Clamp(PlayerPrefs.GetInt("settings.quality", 0), 0, 3);
+            set => PlayerPrefs.SetInt("settings.quality", (int)value);
+        }
+
         /// <summary>No head bob while walking and no camera bumps.</summary>
         public static bool CalmCamera
         {

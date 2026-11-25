@@ -21,15 +21,18 @@ Unity Play에는 웹 빌드만 올릴 수 있습니다. 이 문서는 받은 프
    - 그대로 쓰려면 Jiudev 조직에 멤버로 초대받아야 합니다.
    - 팀 조직의 프로젝트로 바꾸려면 그 프로젝트의 대시보드에서 **Relay, Lobby, Vivox**를 켜야 온라인 협동이 됩니다. 바꾸면 `ProjectSettings/ProjectSettings.asset`과 `ProjectSettings/Packages/com.unity.services.*`가 바뀝니다.
 4. **회사·제품 이름** (Project Settings > Player): 지금 `DoSiSa` / `NoisyPotionStore`입니다. Unity Play에 보일 이름이 다르면 바꿉니다.
-5. **웹 설정 적용**: 메뉴 **Potion Shop > Build > Web Settings**를 누릅니다.
-   - Brotli 압축, 압축 해제 대체(서버 설정과 상관없이 열림), 데이터 캐시, 백그라운드 실행이 켜집니다.
-6. **빌드**: 메뉴 **Potion Shop > Build > WebGL Build**를 누르면 웹으로 전환한 뒤 프로젝트 옆 `Build/WebGL`에 빌드합니다.
+5. **웹용 에셋 최적화(처음 한 번)**: 메뉴 **Potion Shop > Build > Optimize Assets For Web**를 누릅니다.
+   - 텍스처·아틀라스에 웹 전용 압축(DXT)을 걸고, 재료 모델에 Mesh LOD를 켭니다. PC판에는 영향이 없습니다.
+   - 이미 적용된 것은 건너뛰므로 여러 번 눌러도 됩니다. 저장소에는 적용된 상태로 올라가 있습니다.
+6. **웹 설정 적용**: 메뉴 **Potion Shop > Build > Web Settings**를 누릅니다.
+   - Brotli 압축, 압축 해제 대체(서버 설정과 상관없이 열림), 데이터 캐시, 백그라운드 실행, 웹 정적 배칭이 켜집니다.
+7. **빌드**: 메뉴 **Potion Shop > Build > WebGL Build**를 누르면 웹으로 전환한 뒤 프로젝트 옆 `Build/WebGL`에 빌드합니다.
    - 처음 전환할 때 모든 에셋을 다시 가져오느라 오래 걸립니다.
-7. **Unity Play 업로드**
-   - File > Build Profiles > Web에서 **Publish to Play**로 올립니다.
+8. **Unity Play 업로드**
+   - File > Build Profiles > Web에서 **Publish to Play**로 올립니다. 이미 올린 게임을 바꿀 때는 **Update existing game**에서 그 게임을 고릅니다(업로드 페이지에 zip을 다시 올리면 새 게임이 생길 수 있음).
    - 버튼이 없으면 Package Manager에서 **WebGL Publisher**(`com.unity.connect.share`)를 설치합니다.
    - 용량 한도는 현재 문서 기준 1 GB이고, 예전 문서에는 압축 파일 500 MB로 나옵니다. 넘으면 텍스처 크기를 줄여야 합니다.
-8. **업로드 후 확인**: Unity Play 페이지에서 다음을 확인합니다.
+9. **업로드 후 확인**: Unity Play 페이지에서 다음을 확인합니다.
    - 혼자하기 한 판
    - 언어를 일본어나 중국어로 바꿔서 글자가 네모로 나오지 않는지
    - 함께하기 방 만들기와 다른 PC나 브라우저에서 코드로 들어가기

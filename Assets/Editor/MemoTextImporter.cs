@@ -16,7 +16,8 @@ namespace PotionShop.EditorTools
             var importer = (TextureImporter)assetImporter;
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
-            importer.mipmapEnabled = true; // cards show the sheet at a quarter size
+            // no mipmaps: a browser leaves a mipmapped 1920x1080 sheet uncompressed (22 MB each instead of 2 MB)
+            importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.maxTextureSize = 2048;
             importer.textureCompression = TextureImporterCompression.CompressedHQ;

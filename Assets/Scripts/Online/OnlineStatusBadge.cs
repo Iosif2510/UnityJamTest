@@ -51,7 +51,9 @@ namespace PotionShop.Online
         private void Update()
         {
             // Hidden on the walk downstairs, whose own strip already says the same.
-            bool show = OnlineSession.CurrentRole == OnlineRole.Maker && OnlineSession.Instance.Arrived;
+            // and in the loft, which shows its own status (the roles flip there a moment before the walk down)
+            bool show = OnlineSession.CurrentRole == OnlineRole.Maker && OnlineSession.Instance.Arrived &&
+                        UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != OnlineCoopConfig.LoftScene;
             if (visual.activeSelf != show)
                 visual.SetActive(show);
             if (!show)

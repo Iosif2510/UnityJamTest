@@ -200,7 +200,8 @@ namespace PotionShop.Online
             // a hand-over watched at the counter already showed its result there
             resultCard.Show(live && snapshot.HasResult && snapshot.Phase == RoundPhase.Result && !SharedEnding.Watched, snapshot);
 
-            string link = session.Role != OnlineRole.Narrator ? Loc.T("연결이 끊어졌습니다") :
+            string link = session.Role == OnlineRole.Maker ? Loc.T("아래층으로 내려가는 중…") :
+                session.Role != OnlineRole.Narrator ? Loc.T("연결이 끊어졌습니다") :
                 session.PeerConnected ? Loc.T("아래층과 연결됨") : Loc.T("아래층에 연결하는 중…");
             status.text = link + "\n" + session.Voice.Describe() +
                 (session.EasyMode ? Loc.T("\n쉬움 모드: 노랑은 증상, 초록은 구별점") : string.Empty) + Loc.T("\nEsc: 메뉴");

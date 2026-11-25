@@ -38,7 +38,7 @@ A sick customer walks into a small potion workshop with a storeroom in the cella
 - **Maker (downstairs)**: listen to the symptoms, hunt for ingredients in the dark storeroom, brew them in the cauldron, then pick the bottle and ink and hand the potion over.
 - **Guide (upstairs)**: can't see the customer. Read the notes spread over the workshop desk and tell your friend which illness it is and what goes in.
 
-Neither of you can see the other's screen. Cure the customer in three minutes by talking it through. You swap floors after every customer, and you both watch the ending together.
+Neither of you can see the other's screen. Cure the customer in three minutes by talking it through. After each customer you vote to swap floors or keep them (a split vote goes to the dice), and you both watch the ending together.
 
 - Solo: open the memo book (Tab) and play alone.
 - Together: make a room and read the 6-letter code to a friend. In-game voice chat (microphone permission needed).

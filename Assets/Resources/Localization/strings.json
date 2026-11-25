@@ -222,6 +222,27 @@
     "후원": { "en": "Sponsors", "ja": "協賛", "zh-Hans": "赞助", "zh-Hant": "贊助" },
     "유니티": { "en": "Unity", "ja": "Unity", "zh-Hans": "Unity", "zh-Hant": "Unity" },
     "한국게임산업협회": { "en": "Korea Game Industry Association", "ja": "韓国ゲーム産業協会", "zh-Hans": "韩国游戏产业协会", "zh-Hant": "韓國遊戲產業協會" },
-    "Unity AI Game Jam (2026) 프로젝트": { "en": "A Unity AI Game Jam (2026) project", "ja": "Unity AI Game Jam (2026) 参加作品", "zh-Hans": "Unity AI Game Jam (2026) 参赛作品", "zh-Hant": "Unity AI Game Jam (2026) 參賽作品" }
+    "Unity AI Game Jam (2026) 프로젝트": { "en": "A Unity AI Game Jam (2026) project", "ja": "Unity AI Game Jam (2026) 参加作品", "zh-Hans": "Unity AI Game Jam (2026) 参赛作品", "zh-Hant": "Unity AI Game Jam (2026) 參賽作品" },
+    "아래층으로 내려가는 중…": { "en": "Heading downstairs…", "ja": "下の階へ移動中…", "zh-Hans": "正在下楼…", "zh-Hant": "正在下樓…" },
+    "{0}초 안에 고르지 않으면 그대로 해요": { "en": "If you don't choose in {0} s, roles stay the same", "ja": "{0}秒以内に選ばないと、そのままになります", "zh-Hans": "{0} 秒内未选择则保持不变", "zh-Hant": "{0} 秒內未選擇則維持不變" },
+    "친구의 선택을 기다리는 중…": { "en": "Waiting for your friend's choice…", "ja": "相手の選択を待っています…", "zh-Hans": "正在等待对方选择…", "zh-Hant": "正在等待對方選擇…" },
+    "다음 손님은 역할을 바꿔서 할까요?": { "en": "Swap roles for the next customer?", "ja": "次のお客さんは役割を交代しますか？", "zh-Hans": "下一位顾客要交换角色吗？", "zh-Hant": "下一位顧客要交換角色嗎？" },
+    "의견이 갈렸어요! 주사위로 정해요": { "en": "You disagree! Let the dice decide", "ja": "意見が分かれました！サイコロで決めましょう", "zh-Hans": "意见不一致！用骰子决定吧", "zh-Hant": "意見不一致！用骰子決定吧" },
+    "나": { "en": "You", "ja": "あなた", "zh-Hans": "你", "zh-Hant": "你" },
+    "친구": { "en": "Friend", "ja": "相手", "zh-Hans": "对方", "zh-Hant": "對方" },
+    "역할을 바꿔요!": { "en": "Swapping roles!", "ja": "役割を交代します！", "zh-Hans": "交换角色！", "zh-Hant": "交換角色！" },
+    "이대로 계속해요!": { "en": "Keeping the same roles!", "ja": "このまま続けます！", "zh-Hans": "保持原样继续！", "zh-Hant": "維持原樣繼續！" },
+    "내 주사위가 더 높아요": { "en": "Your die rolled higher", "ja": "あなたのサイコロの方が大きい", "zh-Hans": "你的骰子点数更大", "zh-Hant": "你的骰子點數更大" },
+    "친구 주사위가 더 높아요": { "en": "Your friend's die rolled higher", "ja": "相手のサイコロの方が大きい", "zh-Hans": "对方的骰子点数更大", "zh-Hant": "對方的骰子點數更大" },
+    "둘의 생각이 같아요": { "en": "You both chose the same", "ja": "二人とも同じ考えです", "zh-Hans": "你们的选择一样", "zh-Hant": "你們的選擇一樣" },
+    "바꾸기": { "en": "Swap", "ja": "交代する", "zh-Hans": "交换", "zh-Hant": "交換" },
+    "그대로": { "en": "Keep", "ja": "そのまま", "zh-Hans": "不变", "zh-Hant": "不變" },
+    "복사했어요!": { "en": "Copied!", "ja": "コピーしました！", "zh-Hans": "已复制！", "zh-Hant": "已複製！" },
+    "화면 품질": { "en": "Screen quality", "ja": "画質", "zh-Hans": "画面质量", "zh-Hant": "畫面品質" },
+    "자동": { "en": "Auto", "ja": "自動", "zh-Hans": "自动", "zh-Hant": "自動" },
+    "높음": { "en": "High", "ja": "高", "zh-Hans": "高", "zh-Hant": "高" },
+    "보통": { "en": "Medium", "ja": "中", "zh-Hans": "中", "zh-Hant": "中" },
+    "낮음": { "en": "Low", "ja": "低", "zh-Hans": "低", "zh-Hant": "低" },
+    "창고(3D) 화면을 그리는 해상도예요. 느리면 낮춰 보세요. 글자와 버튼은 그대로 선명해요.": { "en": "Resolution of the storeroom's 3D view. Lower it if the game runs slowly. Text and buttons stay sharp.", "ja": "倉庫（3D）画面の解像度です。重いときは下げてください。文字やボタンはくっきりしたままです。", "zh-Hans": "仓库（3D）画面的分辨率。卡顿时请调低。文字和按钮依然清晰。", "zh-Hant": "倉庫（3D）畫面的解析度。卡頓時請調低。文字和按鈕依然清晰。" }
   }
 }

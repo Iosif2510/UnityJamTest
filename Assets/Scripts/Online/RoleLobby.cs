@@ -60,6 +60,12 @@ namespace PotionShop.Online
             }
         }
 
+        /// <summary>Host only: the two players trade floors (decided by <see cref="SwapVote"/>).</summary>
+        internal void HostSwap()
+        {
+            if (session.IsHost && session.PeerConnected) Swap();
+        }
+
         private void Swap()
         {
             if (hostRole is not (OnlineRole.Maker or OnlineRole.Narrator))

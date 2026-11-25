@@ -41,6 +41,7 @@ namespace PotionShop.Online
                     root.AddComponent<NarratorSignal>();
                     root.AddComponent<FloorSounds>();
                     root.AddComponent<RoleSwap>();
+                    root.AddComponent<SwapVote>();
                     root.AddComponent<SharedEnding>();
                 }
                 return instance;
@@ -85,7 +86,7 @@ namespace PotionShop.Online
             {
                 await SignInAsync();
                 EnsureNetwork();
-                var options = new SessionOptions { MaxPlayers = 2 }.WithRelayNetwork();
+                var options = new SessionOptions { MaxPlayers = 2 }.WithRelayNetwork(await OnlineRelayRegion.PickAsync());
                 cloudSession = await MultiplayerService.Instance.CreateSessionAsync(options);
                 Begin(true, cloudSession.Code, true);
                 Voice.JoinAsync(cloudSession.Code).Forget();
@@ -234,6 +235,9 @@ namespace PotionShop.Online
             var root = new GameObject("OnlineNetwork");
             root.SetActive(false);
             var transport = root.AddComponent<UnityTransport>();
+#if UNITY_WEBGL
+            transport.UseWebSockets = true; // Relay in a browser is WebSockets only
+#endif
             Network = root.AddComponent<NetworkManager>();
             // The two players are in different scenes for most of a round, so Netcode must not sync scenes.
             Network.NetworkConfig = new NetworkConfig { NetworkTransport = transport, EnableSceneManagement = false };

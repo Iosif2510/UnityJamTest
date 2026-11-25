@@ -38,18 +38,9 @@ namespace PotionShop.Online
             Set(VoiceState.Connecting);
             try
             {
-                var vivox = VivoxService.Instance;
-                await vivox.InitializeAsync();
-                if (!subscribed)
-                {
-                    vivox.ParticipantAddedToChannel += OnParticipantAdded;
-                    vivox.ParticipantRemovedFromChannel += OnParticipantRemoved;
-                    subscribed = true;
-                }
-                if (!vivox.IsLoggedIn)
-                    await vivox.LoginAsync();
-                await vivox.JoinGroupChannelAsync("potion_" + channel, ChatCapability.AudioOnly);
-                MicMuted = vivox.IsInputDeviceMuted;
+                // a voice service that never answers (seen in browsers) must not keep "connecting" up all game
+                await Connect(channel).Timeout(TimeSpan.FromSeconds(ConnectSeconds));
+                MicMuted = VivoxService.Instance.IsInputDeviceMuted;
                 Set(VoiceState.On);
             }
             catch (Exception exception)
@@ -58,6 +49,23 @@ namespace PotionShop.Online
                 Error = exception.Message;
                 Set(VoiceState.Failed);
             }
+        }
+
+        private const float ConnectSeconds = 20f;
+
+        private async UniTask Connect(string channel)
+        {
+            var vivox = VivoxService.Instance;
+            await vivox.InitializeAsync();
+            if (!subscribed)
+            {
+                vivox.ParticipantAddedToChannel += OnParticipantAdded;
+                vivox.ParticipantRemovedFromChannel += OnParticipantRemoved;
+                subscribed = true;
+            }
+            if (!vivox.IsLoggedIn)
+                await vivox.LoginAsync();
+            await vivox.JoinGroupChannelAsync("potion_" + channel, ChatCapability.AudioOnly);
         }
 
         public async UniTask LeaveAsync()

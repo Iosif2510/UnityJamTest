@@ -116,7 +116,50 @@ namespace PotionShop
             fullScreen = Tick(Row(page, 10f, 56f), Loc.T("전체 화면"), Screen.fullScreen,
                 on => Screen.fullScreenMode = on ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed);
             Tick(Row(page, 100f, 56f), Loc.T("화면 흔들림 줄이기"), GameSettings.CalmCamera, on => GameSettings.CalmCamera = on);
-            Note(Row(page, 170f, 80f), Loc.T("걸을 때 시야가 출렁이지 않고, 부딪혀도 화면이 튀지 않아요. 멀미가 나면 켜 보세요."));
+            Note(Row(page, 166f, 64f), Loc.T("걸을 때 시야가 출렁이지 않고, 부딪혀도 화면이 튀지 않아요. 멀미가 나면 켜 보세요."));
+            QualityPicker(Row(page, 240f, 56f));
+            Note(Row(page, 306f, 60f), Loc.T("창고(3D) 화면을 그리는 해상도예요. 느리면 낮춰 보세요. 글자와 버튼은 그대로 선명해요."));
+        }
+
+        /// <summary>화면 품질: four buttons, the chosen one lit like the language picker's.</summary>
+        private void QualityPicker(RectTransform row)
+        {
+            const float labelWidth = 330f;
+            OnlineUi.Label(OnlineUi.Rect("Label", row, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(labelWidth, 0f)),
+                Loc.T("화면 품질"), 26, font, OnlineUiParts.Ink, TextAnchor.MiddleLeft);
+            var area = OnlineUi.Rect("Choices", row, Vector2.zero, Vector2.one, new Vector2(labelWidth, 0f), Vector2.zero);
+            var layout = area.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 8f;
+            layout.childControlWidth = layout.childControlHeight = true;
+            layout.childForceExpandWidth = layout.childForceExpandHeight = true;
+            var choices = new (GameSettings.Quality value, string label)[]
+            {
+                (GameSettings.Quality.Auto, "자동"), (GameSettings.Quality.High, "높음"),
+                (GameSettings.Quality.Medium, "보통"), (GameSettings.Quality.Low, "낮음"),
+            };
+            var parts = new List<(GameSettings.Quality value, Image board, Text label)>();
+            void Light()
+            {
+                foreach (var (value, board, label) in parts)
+                {
+                    bool on = value == GameSettings.ScreenQuality;
+                    board.color = on ? new Color(1f, 0.82f, 0.42f) : new Color(0.93f, 0.9f, 0.86f);
+                    if (label != null) label.color = on ? OnlineUiParts.Ink : new Color(0.29f, 0.18f, 0.12f, 0.8f);
+                }
+            }
+            foreach (var (value, text) in choices)
+            {
+                var chosen = value;
+                var cell = OnlineUi.Rect(text, area, Vector2.zero, Vector2.zero);
+                var button = OnlineUiParts.Button(cell, "UI_SmallButton", Loc.T(text), 22, font, () =>
+                {
+                    GameSettings.ScreenQuality = chosen;
+                    GameSfx.Play("Tick", 0.8f);
+                    Light();
+                });
+                parts.Add((value, (Image)button.targetGraphic, cell.GetComponentInChildren<Text>()));
+            }
+            Light();
         }
 
         private void BuildLanguage(RectTransform page)

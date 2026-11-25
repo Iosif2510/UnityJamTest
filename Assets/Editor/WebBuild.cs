@@ -28,7 +28,26 @@ namespace PotionShop.EditorTools
             PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
             PlayerSettings.WebGL.nameFilesAsHashes = false;
             PlayerSettings.runInBackground = true; // the friend keeps hearing and seeing the round in a background tab
+            // static batching was on for the desktop only; the storeroom's fixed props need it in a browser too
+            SetStaticBatching(BuildTarget.WebGL, true);
             Debug.Log("[WebBuild] Web player settings applied.");
+        }
+
+        /// <summary>The per-platform static batching switch (Player Settings > Other), set through its internal API.</summary>
+        private static void SetStaticBatching(BuildTarget target, bool on)
+        {
+            const System.Reflection.BindingFlags any = System.Reflection.BindingFlags.Static |
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+            var get = typeof(PlayerSettings).GetMethod("GetBatchingForPlatform", any);
+            var set = typeof(PlayerSettings).GetMethod("SetBatchingForPlatform", any);
+            if (get == null || set == null)
+            {
+                Debug.LogWarning("[WebBuild] Could not reach the static batching setting; set it by hand for WebGL.");
+                return;
+            }
+            var args = new object[] { target, 0, 0 };
+            get.Invoke(null, args);
+            set.Invoke(null, new object[] { target, on ? 1 : 0, (int)args[2] });
         }
 
         [MenuItem("Potion Shop/Build/WebGL Build")]

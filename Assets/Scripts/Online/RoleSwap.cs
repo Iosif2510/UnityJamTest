@@ -7,9 +7,9 @@ using UnityEngine.UI;
 namespace PotionShop.Online
 {
     /// <summary>
-    /// In co-op the two friends trade floors after every customer: once the maker sends the customer off (the result
-    /// is dismissed), the maker asks <see cref="RoleLobby"/> to swap, and when the roles flip each player is told so on
-    /// a banner and walks to the other floor (the counter or the loft).
+    /// In co-op the two friends may trade floors after every customer: once the maker sends the customer off (the
+    /// result is dismissed), both vote on it (<see cref="SwapVote"/>), and when the roles flip each player is told so
+    /// on a banner and walks to the other floor (the counter or the loft).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class RoleSwap : MonoBehaviour
@@ -36,7 +36,7 @@ namespace PotionShop.Online
                 Travel(role).Forget();
             shownRole = role;
 
-            // The maker just sent a customer off: time to trade places.
+            // The maker just sent a customer off: time to vote on trading places.
             var round = RoundDirector.Instance;
             RoundPhase? phase = role == OnlineRole.Maker && round != null ? round.Phase : null;
             if (phase == RoundPhase.Waiting && lastPhase == RoundPhase.Result && session.Arrived && session.PeerConnected)
@@ -51,7 +51,7 @@ namespace PotionShop.Online
                 cancellationToken: this.GetCancellationTokenOnDestroy());
             if (session.Role == OnlineRole.Maker && session.PeerConnected && RoundDirector.Instance != null &&
                 RoundDirector.Instance.Phase == RoundPhase.Waiting)
-                session.Lobby.RequestSwap();
+                GetComponent<SwapVote>().Begin();
         }
 
         private async UniTaskVoid Travel(OnlineRole role)
